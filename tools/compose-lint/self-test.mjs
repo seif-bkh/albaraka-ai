@@ -104,6 +104,9 @@ const MUTATIONS = [
   { id: 'M24 the specs mount becomes read-write', run: (c) => {
     svc(c, 'server').volumes = svc(c, 'server').volumes.map((v) => v.replace(':ro', ''));
   }, expect: '[E05] server specs mount must be read-only' },
+  { id: 'M-health-sh the server healthcheck is run by dash (no /dev/tcp)', run: (c) => {
+    svc(c, 'server').healthcheck.test = ['CMD-SHELL', "sh -c 'exec 3<>/dev/tcp/127.0.0.1/8080; grep -q UP <&3'"];
+  }, expect: '[S01] server healthcheck must run through bash' },
 
   // ── R / N ───────────────────────────────────────────────────────────────────────────────────
   { id: 'M25 redis loses appendonly', run: (c) => { svc(c, 'redis').command = ['redis-server']; }, expect: '[R01] redis must run with --appendonly yes' },

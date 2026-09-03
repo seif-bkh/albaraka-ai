@@ -260,6 +260,10 @@ for (const f of ['application.yaml', 'application-dev.yaml', 'application-uat.ya
     if (!vols.includes('../specs:/app/specs:ro')) err('[E05] server must mount ../specs:/app/specs:ro — Flyway seeds and the i18n spec files are filesystem paths in application.yaml');
     if (!vols.includes('/app/specs:ro')) err('[E05] server specs mount must be read-only');
     if (srv.depends_on?.postgres?.condition !== 'service_healthy') err('[E05] server must wait for postgres service_healthy (Flyway runs at boot)');
+    const shealth = JSON.stringify(srv.healthcheck?.test || []);
+    if (shealth.includes('/dev/tcp') && !shealth.includes('bash -c')) {
+      err('[S01] server healthcheck must run through bash -c — eclipse-temurin:21-jre is Ubuntu, /bin/sh is dash, and /dev/tcp is a bash feature; under dash the check fails instantly and the container is marked unhealthy forever while the app runs fine');
+    }
   }
   // ADR-009: internal RAG contract wiring
   if (srv) {
