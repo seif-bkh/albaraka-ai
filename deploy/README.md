@@ -4,8 +4,11 @@
 
 ```bash
 cp .env.example .env          # keys optional — demo runs in mock mode
-make up                       # = docker compose --profile app up -d --build
+make up                       # = docker compose -f deploy/docker-compose.yml --profile app up -d --build
 ```
+
+> The compose file lives in `deploy/` — always run from the repository root, and
+> always pass `-f deploy/docker-compose.yml` (or use `make up`).
 
 | URL | What |
 |---|---|
@@ -43,10 +46,10 @@ in mock mode and needs no provider keys.
 ## Known constraints
 
 * **The app plane needs Docker BuildKit** (default on Docker Desktop and modern Engine):
-  `docker compose --profile app build` pulls the `maven:3.9-eclipse-temurin-21` builder
+  `docker compose -f deploy/docker-compose.yml --profile app build` pulls the `maven:3.9-eclipse-temurin-21` builder
   (server image) and `node:22-alpine` (both SPAs) on first build.
 * Wait for the health-gated start: the `server` container starts only after
   postgres/redis/keycloak/minio/rag-assistant are healthy; nginx after the server.
-* Postgres `pgdata` is a named volume; reset with `docker compose down -v` (deletes demo data).
+* Postgres `pgdata` is a named volume; reset with `docker compose -f deploy/docker-compose.yml down -v` (deletes demo data).
 * Keycloak import runs **once** (empty DB). Realm edits afterwards: `kcadm` per
   `specs/keycloak/README.md`.

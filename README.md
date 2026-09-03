@@ -40,7 +40,7 @@ behaviour does not require a deployment.
 
 ```bash
 cp .env.example .env      # optional keys; mock mode needs none
-make up                   # docker compose --profile app up --build
+make up                   # docker compose -f deploy/docker-compose.yml --profile app up --build
 # frontoffice http://localhost:8082 · backoffice http://localhost:8082/admin
 # API health http://localhost:8081/actuator/health/liveness · Keycloak http://localhost:8080
 ```
