@@ -172,7 +172,9 @@ jobs:
           docker compose --env-file .env -f deploy/docker-compose.yml --profile app build 2>&1 | tee /tmp/devstack-build.log
           exit ${PIPESTATUS[0]}
       - name: Boot the application
-        run: docker compose --env-file .env -f deploy/docker-compose.yml --profile app up -d --no-build
+        run: |
+          docker compose --env-file .env -f deploy/docker-compose.yml --profile app up -d --no-build 2>&1 | tee /tmp/devstack-boot.log
+          exit ${PIPESTATUS[0]}
       - name: Wait for Spring liveness (max 9 min)
         run: |
           for i in $(seq 1 54); do
@@ -208,8 +210,8 @@ jobs:
       - name: Emit devstack logs as annotations (API-readable)
         if: failure()
         run: |
-          for f in /tmp/devstack-build.log /tmp/devstack-logs.txt; do
-            [ -f "$f" ] && grep -inE "error|exception|failed|cannot find|fatal|exit code" "$f" | tail -n 30 | sed 's/^/::error file=devstack.log::/'
+          for f in /tmp/devstack-build.log /tmp/devstack-boot.log /tmp/devstack-logs.txt; do
+            [ -f "$f" ] && grep -inE "error|exception|failed|cannot find|fatal|exit code|unknown" "$f" | tail -n 25 | sed 's/^/::error file=devstack.log::/'
           done
       - name: Upload devstack logs (always)
         if: always()

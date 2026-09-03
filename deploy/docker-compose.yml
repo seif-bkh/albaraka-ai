@@ -90,6 +90,7 @@ services:
             -e 's|$${BACKOFFICE_URL}|'"$${BACKOFFICE_URL:-http://localhost:8082/admin}"'|g' \
             -e 's|$${BANK_PUBLIC_URL}|'"$${BANK_PUBLIC_URL:-http://localhost:8082}"'|g' \
             -e 's|$${WIDGET_REDIRECT_URI}|'"$${WIDGET_REDIRECT_URI:-http://localhost:8082/assistant/callback}"'|g' \
+            -e 's|$${BRIDGE_CLIENT_SECRET}|'"$${BRIDGE_CLIENT_SECRET}"'|g' \
             /tmp/realm-template.json > /opt/keycloak/data/import/albaraka-realm.json
         exec /opt/keycloak/bin/kc.sh start-dev --import-realm
     environment:
@@ -99,6 +100,7 @@ services:
       KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
       KC_DB_USERNAME: albaraka
       KC_DB_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      BRIDGE_CLIENT_SECRET: ${KEYCLOAK_BRIDGE_CLIENT_SECRET:?set KEYCLOAK_BRIDGE_CLIENT_SECRET in .env}
       # tokens must be issued with the browser-visible issuer so the API can validate them
       KC_HOSTNAME: localhost
       KC_HOSTNAME_PORT: 8080
@@ -218,6 +220,7 @@ services:
       RAG_CONTRACT: "1"
       RAG_PROVIDER_MODE: ${RAG_PROVIDER_MODE:-mock}
       RAG_VECTOR_BACKEND: ${RAG_VECTOR_BACKEND:-mock}
+      KEYCLOAK_BRIDGE_CLIENT_SECRET: ${KEYCLOAK_BRIDGE_CLIENT_SECRET:?set KEYCLOAK_BRIDGE_CLIENT_SECRET in .env}
       ALBARAKA_DAILY_BUDGET_USD: ${ALBARAKA_DAILY_BUDGET_USD:-5.00}
       SEED_MODE: IF_EMPTY
       STORAGE_PROVIDER: minio

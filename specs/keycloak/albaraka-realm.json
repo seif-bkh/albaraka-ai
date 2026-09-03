@@ -551,7 +551,7 @@
       "bearerOnly": false,
       "standardFlowEnabled": true,
       "implicitFlowEnabled": false,
-      "directAccessGrantsEnabled": true,
+      "directAccessGrantsEnabled": false,
       "serviceAccountsEnabled": false,
       "frontchannelLogout": true,
       "fullScopeAllowed": true,
@@ -566,7 +566,7 @@
       ],
       "notBefore": 0,
       "attributes": {
-        "pkce.code.challenge.method": "",
+        "pkce.code.challenge.method": "S256",
         "post.logout.redirect.uris": "+",
         "access.token.lifespan": "600",
         "client.session.idle.timeout": "1800",
@@ -688,6 +688,42 @@
       "defaultClientScopes": [],
       "optionalClientScopes": [],
       "authorizationServicesEnabled": false
+    },
+    {
+      "clientId": "albaraka-assistant-bridge",
+      "name": "Assistant — server-side token bridge",
+      "description": "Confidential client used ONLY by the Spring API for the backoffice password grant (DAG). SPA clients stay PKCE; this client never handles browser redirects.",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "bearerOnly": false,
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": false,
+      "consentRequired": false,
+      "rootUrl": "",
+      "baseUrl": "",
+      "redirectUris": [],
+      "webOrigins": [],
+      "secret": "${BRIDGE_CLIENT_SECRET}",
+      "attributes": {
+        "access.token.lifespan": "900"
+      },
+      "protocolMappers": [
+        {
+          "name": "aud-assistant-api",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "albaraka-assistant-api",
+            "id.token.claim": "false",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "false"
+          }
+        }
+      ]
     }
   ],
   "clientScopes": [

@@ -145,6 +145,7 @@ const CLIENT_SPEC = [
   { id: 'albaraka-assistant-widget', publicClient: true, bearerOnly: false, standardFlow: true, serviceAccounts: false, pkce: 'S256', tokenLife: 300 },
   { id: 'albaraka-backoffice-web', publicClient: true, bearerOnly: false, standardFlow: true, serviceAccounts: false, pkce: 'S256', tokenLife: 600 },
   { id: 'albaraka-assistant-service', publicClient: false, bearerOnly: false, standardFlow: false, serviceAccounts: true, pkce: null, tokenLife: 900 },
+  { id: 'albaraka-assistant-bridge', publicClient: false, bearerOnly: false, standardFlow: false, serviceAccounts: false, pkce: null, tokenLife: 900, directAccess: true },
   { id: 'albaraka-assistant-api', publicClient: false, bearerOnly: true, standardFlow: false, serviceAccounts: false, pkce: null, tokenLife: null },
 ];
 {
@@ -160,7 +161,8 @@ const CLIENT_SPEC = [
     if (c.standardFlowEnabled !== s.standardFlow) err(`${s.id}: standardFlowEnabled is ${c.standardFlowEnabled}, expected ${s.standardFlow}`);
     if (c.serviceAccountsEnabled !== s.serviceAccounts) err(`${s.id}: serviceAccountsEnabled is ${c.serviceAccountsEnabled}, expected ${s.serviceAccounts}`);
     if (c.implicitFlowEnabled !== false) err(`${s.id}: implicit flow must stay disabled`);
-    if (c.directAccessGrantsEnabled !== false) err(`${s.id}: direct access grants (password grant) must stay disabled`);
+    const expectedDag = s.directAccess === true;
+    if (c.directAccessGrantsEnabled !== expectedDag) err(`${s.id}: direct access grants must be ${expectedDag ? 'enabled ONLY on the server-side bridge client' : 'disabled'} — SPA clients never use the password grant`);
     if (c.enabled !== true) err(`${s.id}: client is disabled`);
     // no committed secret, ever
     if (typeof c.secret === 'string' && c.secret && !c.secret.startsWith('${')) err(`${s.id}: carries a literal client secret — secrets are provisioned from Vault at deploy time`);
