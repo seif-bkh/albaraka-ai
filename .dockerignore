@@ -1,0 +1,11 @@
+# build context hygiene — compose builds from the repo root (deploy/docker/*.Dockerfile)
+.git
+**/node_modules
+**/dist
+**/.venv
+**/__pycache__
+**/.pytest_cache
+**/.mypy_cache
+.devenv
+.env
+**/*.log
