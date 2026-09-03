@@ -1,0 +1,2576 @@
+openapi: 3.1.0
+info:
+  title: Al-Mouchir — Trilingual Sharia-Compliant RAG Assistant API
+  version: 1.0.0
+  description: |
+    API contract for both facades of the Al Baraka Bank Tunisia assistant:
+
+    * **Frontoffice** (`/api/v1/**`) — customer and agent conversation endpoints, public knowledge.
+    * **Backoffice** (`/api/v1/admin/**`) — knowledge, governance, tuning, quality, audit.
+
+    Design rules are in `docs/08-api-design.md`. Streaming answers use Server-Sent Events; the event
+    grammar is normative and documented under the `POST /assistant/conversations/{id}/messages`
+    operation.
+
+    This file is the source of truth: TypeScript types (`libs/shared-contracts`) and Spring controller
+    interfaces are generated from it, and `oasdiff` blocks breaking changes in CI.
+  contact:
+    name: Al-Mouchir architecture
+  license:
+    name: Proprietary — internal design documentation
+servers:
+  - url: https://assistant.albaraka.com.tn
+    description: Production
+  - url: https://assistant-uat.albaraka.com.tn
+    description: UAT (real approved knowledge base copy)
+  - url: http://localhost:8080
+    description: Local development
+tags:
+  - { name: assistant, description: Frontoffice conversation endpoints }
+  - { name: public, description: Public knowledge base and reference data }
+  - { name: admin-documents, description: Knowledge base management }
+  - { name: admin-ingestion, description: Parsing, chunking and embedding jobs }
+  - { name: admin-reviews, description: Sharia review board and fatwa requests }
+  - { name: admin-prompts, description: Prompt studio }
+  - { name: admin-retrieval, description: Retrieval lab and configuration }
+  - { name: admin-models, description: Model and provider configuration }
+  - { name: admin-guardrails, description: Guardrail policies, lexicons and events }
+  - { name: admin-quality, description: Feedback, QA, golden set, evaluations }
+  - { name: admin-analytics, description: Usage, intents, cost, coverage, governance KPIs }
+  - { name: admin-content-ops, description: Glossary, Derja map, assistant configuration, agencies }
+  - { name: admin-audit, description: Audit log, chain verification, evidence packs, erasure }
+  - { name: admin-operations, description: Kill switch, caches, health, release bundles }
+
+security:
+  - keycloakJwt: []
+  - {}
+
+paths:
+  # ───────────────────────────────────────────── FRONTOFFICE ─────────────────────────────────────
+  /api/v1/assistant/config:
+    get:
+      tags: [assistant]
+      operationId: getAssistantConfig
+      summary: Bootstrap configuration for the frontoffice and the widget
+      security: [{}, { keycloakJwt: [] }]
+      parameters: [ { $ref: '#/components/parameters/AcceptLanguage' } ]
+      responses:
+        '200':
+          description: Configuration
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AssistantConfig' }
+        '503': { $ref: '#/components/responses/ServiceDisabled' }
+
+  /api/v1/assistant/conversations:
+    post:
+      tags: [assistant]
+      operationId: createConversation
+      summary: Create a conversation
+      parameters: [ { $ref: '#/components/parameters/AcceptLanguage' }, { $ref: '#/components/parameters/CorrelationId' } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CreateConversationRequest' }
+      responses:
+        '201':
+          description: Conversation created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Conversation' }
+        '429': { $ref: '#/components/responses/RateLimited' }
+        '503': { $ref: '#/components/responses/ServiceDisabled' }
+
+  /api/v1/assistant/conversations/{conversationId}:
+    parameters: [ { $ref: '#/components/parameters/ConversationId' } ]
+    get:
+      tags: [assistant]
+      operationId: getConversation
+      summary: Retrieve a conversation with its messages
+      parameters:
+        - { $ref: '#/components/parameters/AcceptLanguage' }
+        - { name: cursor, in: query, schema: { type: string } }
+        - { name: limit, in: query, schema: { type: integer, default: 50, maximum: 200 } }
+      responses:
+        '200':
+          description: Conversation
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ConversationDetail' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    delete:
+      tags: [assistant]
+      operationId: eraseConversation
+      summary: Erase a conversation (data-subject right)
+      responses:
+        '204': { description: Erased }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /api/v1/assistant/conversations/{conversationId}/messages:
+    post:
+      tags: [assistant]
+      operationId: sendMessage
+      summary: Send a message and stream the answer (SSE)
+      description: |
+        Returns `text/event-stream`. The normative event grammar is:
+
+        1. `accepted` — message persisted, `{messageId, conversationId, locale, dir}`
+        2. `status`* — pipeline stage labels, localised
+        3. `sources` — citations, **always before the first token**
+        4. `token`* — incremental answer deltas
+        5. exactly one of `answer` | `refusal` | `error`
+        6. `done` — terminal, with token counters
+
+        Re-submitting with the same `Idempotency-Key` returns the persisted answer instead of
+        regenerating. `Last-Event-ID` resumption is not supported in v1.
+      parameters:
+        - { $ref: '#/components/parameters/ConversationId' }
+        - { $ref: '#/components/parameters/AcceptLanguage' }
+        - { $ref: '#/components/parameters/CorrelationId' }
+        - { $ref: '#/components/parameters/IdempotencyKey' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/SendMessageRequest' }
+      responses:
+        '200':
+          description: SSE stream
+          headers:
+            X-Correlation-Id: { schema: { type: string } }
+            Cache-Control: { schema: { type: string, example: no-store } }
+          content:
+            text/event-stream:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/SseAccepted'
+                  - $ref: '#/components/schemas/SseStatus'
+                  - $ref: '#/components/schemas/SseSources'
+                  - $ref: '#/components/schemas/SseToken'
+                  - $ref: '#/components/schemas/SseAnswer'
+                  - $ref: '#/components/schemas/SseRefusal'
+                  - $ref: '#/components/schemas/SseError'
+                  - $ref: '#/components/schemas/SseDone'
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+        '429': { $ref: '#/components/responses/RateLimited' }
+        '503': { $ref: '#/components/responses/ProviderUnavailable' }
+
+  /api/v1/assistant/messages/{messageId}/feedback:
+    post:
+      tags: [assistant]
+      operationId: submitFeedback
+      summary: Rate an answer
+      parameters:
+        - { $ref: '#/components/parameters/MessageId' }
+        - { $ref: '#/components/parameters/AcceptLanguage' }
+        - { $ref: '#/components/parameters/IdempotencyKey' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/FeedbackRequest' }
+      responses:
+        '201':
+          description: Feedback recorded
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Feedback' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /api/v1/assistant/messages/{messageId}/sources:
+    get:
+      tags: [assistant]
+      operationId: getMessageSources
+      summary: Full citation detail for an answer
+      parameters: [ { $ref: '#/components/parameters/MessageId' }, { $ref: '#/components/parameters/AcceptLanguage' } ]
+      responses:
+        '200':
+          description: Citations
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Citation' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /api/v1/assistant/conversations/{conversationId}/handoff:
+    post:
+      tags: [assistant]
+      operationId: requestHandoff
+      summary: Escalate to a human advisor or a branch
+      parameters:
+        - { $ref: '#/components/parameters/ConversationId' }
+        - { $ref: '#/components/parameters/AcceptLanguage' }
+        - { $ref: '#/components/parameters/IdempotencyKey' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/HandoffRequest' }
+      responses:
+        '201':
+          description: Handoff created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Handoff' }
+
+  /api/v1/assistant/fatwa-requests:
+    post:
+      tags: [assistant]
+      operationId: createFatwaRequest
+      summary: Submit a question to the Islamic Banking Standards Compliance Committee
+      parameters:
+        - { $ref: '#/components/parameters/AcceptLanguage' }
+        - { $ref: '#/components/parameters/IdempotencyKey' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/FatwaRequestInput' }
+      responses:
+        '201':
+          description: Request registered
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FatwaRequest' }
+        '429': { $ref: '#/components/responses/RateLimited' }
+
+  /api/v1/public/kb/search:
+    get:
+      tags: [public]
+      operationId: searchPublicKb
+      summary: Search published knowledge directly (transparency surface)
+      security: [{}, { keycloakJwt: [] }]
+      parameters:
+        - { name: q, in: query, required: true, schema: { type: string, minLength: 2, maxLength: 300 } }
+        - { $ref: '#/components/parameters/AcceptLanguage' }
+        - { name: collection, in: query, schema: { type: string } }
+        - { name: product, in: query, schema: { type: string } }
+        - { name: page, in: query, schema: { type: integer, default: 0 } }
+        - { name: size, in: query, schema: { type: integer, default: 20, maximum: 50 } }
+      responses:
+        '200':
+          description: Results
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/KbSearchPage' }
+
+  /api/v1/public/documents/{documentId}:
+    get:
+      tags: [public]
+      operationId: getPublicDocument
+      summary: Read a published document
+      security: [{}, { keycloakJwt: [] }]
+      parameters:
+        - { name: documentId, in: path, required: true, schema: { type: string, format: uuid } }
+        - { $ref: '#/components/parameters/AcceptLanguage' }
+      responses:
+        '200':
+          description: Document
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PublicDocument' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /api/v1/public/agencies:
+    get:
+      tags: [public]
+      operationId: listAgencies
+      summary: Branch and agency locator data
+      security: [{}, { keycloakJwt: [] }]
+      parameters:
+        - { $ref: '#/components/parameters/AcceptLanguage' }
+        - { name: region, in: query, schema: { type: string } }
+        - { name: q, in: query, schema: { type: string } }
+      responses:
+        '200':
+          description: Agencies
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Agency' }
+
+  # ───────────────────────────────────────────── BACKOFFICE ──────────────────────────────────────
+  /api/v1/admin/documents:
+    get:
+      tags: [admin-documents]
+      operationId: listDocuments
+      summary: List documents
+      parameters: [ { $ref: '#/components/parameters/Page' }, { $ref: '#/components/parameters/Size' },
+                    { $ref: '#/components/parameters/Sort' }, { $ref: '#/components/parameters/AcceptLanguage' },
+                    { name: q, in: query, schema: { type: string } },
+                    { name: collection, in: query, schema: { type: string } },
+                    { name: state, in: query, schema: { $ref: '#/components/schemas/LifecycleState' } },
+                    { name: product, in: query, schema: { type: string } },
+                    { name: lang, in: query, schema: { type: string } },
+                    { name: audience, in: query, schema: { $ref: '#/components/schemas/Audience' } },
+                    { name: expiresWithinDays, in: query, schema: { type: integer } } ]
+      responses:
+        '200':
+          description: Page of documents
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DocumentPage' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+    post:
+      tags: [admin-documents]
+      operationId: createDocument
+      summary: Upload a new document (multipart)
+      parameters: [ { $ref: '#/components/parameters/IdempotencyKey' } ]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file, collectionCode, titleFr]
+              properties:
+                file: { type: string, format: binary }
+                collectionCode: { type: string }
+                externalRef: { type: string }
+                titleFr: { type: string }
+                titleAr: { type: string }
+                titleEn: { type: string }
+                sourceLang: { type: string, example: fr-FR }
+                classification: { $ref: '#/components/schemas/Classification' }
+                audience: { $ref: '#/components/schemas/Audience' }
+                productCodes:
+                  type: array
+                  items: { type: string }
+                  style: form
+                  explode: true
+                validFrom: { type: string, format: date }
+                validTo: { type: string, format: date }
+                chunkingPolicy: { type: string, example: PRODUCT_SHEET }
+      responses:
+        '202':
+          description: Document created and ingestion queued
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DocumentDetail' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '415':
+          description: Unsupported format
+          content:
+            application/problem+json:
+              schema: { $ref: '#/components/schemas/Problem' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+
+  /api/v1/admin/documents/{documentId}:
+    parameters: [ { $ref: '#/components/parameters/DocumentId' } ]
+    get:
+      tags: [admin-documents]
+      operationId: getDocument
+      summary: Document detail with versions and state
+      responses:
+        '200':
+          description: Document
+          headers: { ETag: { schema: { type: string } } }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DocumentDetail' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    patch:
+      tags: [admin-documents]
+      operationId: updateDocumentMetadata
+      summary: Update metadata (creates no new content version)
+      parameters: [ { $ref: '#/components/parameters/IfMatch' } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/DocumentMetadataPatch' }
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DocumentDetail' }
+        '409': { $ref: '#/components/responses/Conflict' }
+
+  /api/v1/admin/documents/{documentId}/versions:
+    post:
+      tags: [admin-documents]
+      operationId: createDocumentVersion
+      summary: Create a new content version (never mutates an existing one)
+      parameters: [ { $ref: '#/components/parameters/DocumentId' }, { $ref: '#/components/parameters/IdempotencyKey' } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CreateDocumentVersionRequest' }
+      responses:
+        '201':
+          description: Version created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DocumentVersion' }
+
+  /api/v1/admin/documents/{documentId}/chunks:
+    get:
+      tags: [admin-documents]
+      operationId: listChunks
+      summary: List chunks of the current (or a given) version
+      parameters:
+        - { $ref: '#/components/parameters/DocumentId' }
+        - { name: versionNo, in: query, schema: { type: integer } }
+        - { name: lang, in: query, schema: { type: string } }
+      responses:
+        '200':
+          description: Chunks
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Chunk' }
+
+  /api/v1/admin/chunks/{chunkId}:
+    parameters: [ { name: chunkId, in: path, required: true, schema: { type: string, format: uuid } } ]
+    get:
+      tags: [admin-documents]
+      operationId: getChunk
+      summary: Chunk as stored, as normalised, and as the model sees it
+      responses:
+        '200':
+          description: Chunk detail
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ChunkDetail' }
+    patch:
+      tags: [admin-documents]
+      operationId: patchChunk
+      summary: Edit a chunk (creates a new document version and re-enters review)
+      parameters: [ { $ref: '#/components/parameters/IfMatch' } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content: { type: string }
+                headingPath: { type: array, items: { type: string } }
+                lang: { type: string }
+      responses:
+        '201':
+          description: New version created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DocumentVersion' }
+        '409': { $ref: '#/components/responses/Conflict' }
+
+  /api/v1/admin/documents/{documentId}/withdraw:
+    post:
+      tags: [admin-documents]
+      operationId: withdrawDocument
+      summary: Emergency removal from retrieval (opens an incident)
+      parameters: [ { $ref: '#/components/parameters/DocumentId' }, { $ref: '#/components/parameters/IdempotencyKey' } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [reason]
+              properties:
+                reason: { type: string }
+                severity: { type: string, enum: [S1, S2, S3, S4], default: S2 }
+      responses:
+        '200': { description: Withdrawn }
+        '403': { $ref: '#/components/responses/Forbidden' }
+
+  /api/v1/admin/documents/{documentId}/deprecate:
+    post:
+      tags: [admin-documents]
+      operationId: deprecateDocument
+      summary: Deprecate a document (stops retrieval at `valid_to` or immediately)
+      parameters: [ { $ref: '#/components/parameters/DocumentId' } ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                effectiveAt: { type: string, format: date-time }
+                reason: { type: string }
+      responses:
+        '200': { description: Deprecated }
+
+  /api/v1/admin/ingestion-jobs:
+    get:
+      tags: [admin-ingestion]
+      operationId: listIngestionJobs
+      parameters: [ { $ref: '#/components/parameters/Page' }, { $ref: '#/components/parameters/Size' },
+                    { name: status, in: query, schema: { $ref: '#/components/schemas/JobStatus' } } ]
+      responses:
+        '200':
+          description: Jobs
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/IngestionJobPage' }
+    post:
+      tags: [admin-ingestion]
+      operationId: triggerIngestionJob
+      summary: Trigger ingestion or re-indexing
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/IngestionJobRequest' }
+      responses:
+        '202':
+          description: Job queued
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/IngestionJob' }
+
+  /api/v1/admin/ingestion-jobs/{jobId}:
+    get:
+      tags: [admin-ingestion]
+      operationId: getIngestionJob
+      parameters: [ { name: jobId, in: path, required: true, schema: { type: string, format: uuid } } ]
+      responses:
+        '200':
+          description: Job
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/IngestionJob' }
+
+  /api/v1/admin/ingestion-jobs/{jobId}/retry:
+    post:
+      tags: [admin-ingestion]
+      operationId: retryIngestionJob
+      parameters: [ { name: jobId, in: path, required: true, schema: { type: string, format: uuid } } ]
+      responses:
+        '202': { description: Retried }
+
+  /api/v1/admin/reviews:
+    get:
+      tags: [admin-reviews]
+      operationId: listReviews
+      parameters:
+        - { $ref: '#/components/parameters/Page' }
+        - { $ref: '#/components/parameters/Size' }
+        - { name: assignee, in: query, schema: { type: string, enum: [me, all] } }
+        - { name: state, in: query, schema: { $ref: '#/components/schemas/ReviewState' } }
+        - { name: tier, in: query, schema: { $ref: '#/components/schemas/RiskTier' } }
+        - { name: overdue, in: query, schema: { type: boolean } }
+      responses:
+        '200':
+          description: Reviews
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ReviewPage' }
+    post:
+      tags: [admin-reviews]
+      operationId: submitReview
+      summary: Submit a subject for review
+      parameters: [ { $ref: '#/components/parameters/IdempotencyKey' } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/SubmitReviewRequest' }
+      responses:
+        '201':
+          description: Review created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Review' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+
+  /api/v1/admin/reviews/{reviewId}:
+    get:
+      tags: [admin-reviews]
+      operationId: getReview
+      parameters: [ { $ref: '#/components/parameters/ReviewId' } ]
+      responses:
+        '200':
+          description: Review with tasks and subject diff
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ReviewDetail' }
+
+  /api/v1/admin/reviews/{reviewId}/tasks/{taskId}/decision:
+    post:
+      tags: [admin-reviews]
+      operationId: decideReviewTask
+      summary: Record an approval decision (two-eyes enforced)
+      parameters:
+        - { $ref: '#/components/parameters/ReviewId' }
+        - { name: taskId, in: path, required: true, schema: { type: string, format: uuid } }
+        - { $ref: '#/components/parameters/IfMatch' }
+        - { $ref: '#/components/parameters/IdempotencyKey' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ReviewDecisionRequest' }
+      responses:
+        '200':
+          description: Decision recorded
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Review' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '422':
+          description: Governance violation (self-approval, quorum, invalid transition)
+          content:
+            application/problem+json:
+              schema: { $ref: '#/components/schemas/Problem' }
+
+  /api/v1/admin/reviews/{reviewId}/refer-to-committee:
+    post:
+      tags: [admin-reviews]
+      operationId: referToCommittee
+      parameters: [ { $ref: '#/components/parameters/ReviewId' } ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                note: { type: string }
+                committeeMeetingDate: { type: string, format: date }
+      responses:
+        '200': { description: Referred }
+
+  /api/v1/admin/documents/{documentId}/publish:
+    post:
+      tags: [admin-reviews]
+      operationId: publishDocument
+      summary: Publish an approved version (atomic state + index + cache epoch + audit)
+      parameters: [ { $ref: '#/components/parameters/DocumentId' }, { $ref: '#/components/parameters/IdempotencyKey' } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [versionNo]
+              properties:
+                versionNo: { type: integer }
+      responses:
+        '200':
+          description: Published
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PublishResult' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+
+  /api/v1/admin/fatwa-requests:
+    get:
+      tags: [admin-reviews]
+      operationId: listFatwaRequests
+      parameters: [ { $ref: '#/components/parameters/Page' }, { $ref: '#/components/parameters/Size' },
+                    { name: state, in: query, schema: { type: string, enum: [OPEN, ASSIGNED, ANSWERED, PUBLISHED_AS_KB, CLOSED] } } ]
+      responses:
+        '200':
+          description: Requests
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content: { type: array, items: { $ref: '#/components/schemas/FatwaRequest' } }
+                  page: { $ref: '#/components/schemas/PageMeta' }
+
+  /api/v1/admin/fatwa-requests/{requestId}/answer:
+    post:
+      tags: [admin-reviews]
+      operationId: answerFatwaRequest
+      parameters: [ { name: requestId, in: path, required: true, schema: { type: string, format: uuid } } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [answerFr, answerAr]
+              properties:
+                answerFr: { type: string }
+                answerAr: { type: string }
+                answerEn: { type: string }
+                committeeRef: { type: string }
+                notifyCustomer: { type: boolean, default: false }
+      responses:
+        '200': { description: Answered }
+
+  /api/v1/admin/fatwa-requests/{requestId}/publish-as-document:
+    post:
+      tags: [admin-reviews]
+      operationId: publishFatwaAsDocument
+      summary: Turn a committee answer into a T3 knowledge document
+      parameters: [ { name: requestId, in: path, required: true, schema: { type: string, format: uuid } } ]
+      responses:
+        '201':
+          description: Draft document created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DocumentDetail' }
+
+  /api/v1/admin/prompts:
+    get:
+      tags: [admin-prompts]
+      operationId: listPromptTemplates
+      responses:
+        '200':
+          description: Prompt templates with their active versions
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/PromptTemplate' }
+
+  /api/v1/admin/prompts/{code}/versions:
+    post:
+      tags: [admin-prompts]
+      operationId: createPromptVersion
+      parameters: [ { name: code, in: path, required: true, schema: { type: string } },
+                    { $ref: '#/components/parameters/IdempotencyKey' } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CreatePromptVersionRequest' }
+      responses:
+        '201':
+          description: Draft version created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PromptVersion' }
+
+  /api/v1/admin/prompt-versions/{versionId}:
+    get:
+      tags: [admin-prompts]
+      operationId: getPromptVersion
+      parameters: [ { $ref: '#/components/parameters/PromptVersionId' } ]
+      responses:
+        '200':
+          description: Version, with diff against the active one
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PromptVersionDetail' }
+
+  /api/v1/admin/prompt-versions/{versionId}/preview:
+    post:
+      tags: [admin-prompts]
+      operationId: previewPromptVersion
+      summary: Replay sample queries against a draft prompt version
+      parameters: [ { $ref: '#/components/parameters/PromptVersionId' } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                queries: { type: array, items: { type: string } }
+                locale: { type: string }
+                compareWithActive: { type: boolean, default: true }
+                sampleFromTraffic: { type: integer, description: Take the last N real queries for an intent }
+                intent: { type: string }
+      responses:
+        '200':
+          description: Side-by-side preview
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PromptPreviewResult' }
+
+  /api/v1/admin/prompt-versions/{versionId}/activate:
+    post:
+      tags: [admin-prompts]
+      operationId: activatePromptVersion
+      parameters: [ { $ref: '#/components/parameters/PromptVersionId' }, { $ref: '#/components/parameters/IdempotencyKey' } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ActivateVersionRequest' }
+      responses:
+        '200': { description: Activated }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+
+  /api/v1/admin/prompt-versions/{versionId}/rollback:
+    post:
+      tags: [admin-prompts]
+      operationId: rollbackPromptVersion
+      parameters: [ { $ref: '#/components/parameters/PromptVersionId' } ]
+      responses:
+        '200': { description: Rolled back to the previous active version }
+
+  /api/v1/admin/retrieval-lab/query:
+    post:
+      tags: [admin-retrieval]
+      operationId: retrievalLabQuery
+      summary: Run a query through the whole pipeline and expose every intermediate score
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RetrievalLabRequest' }
+      responses:
+        '200':
+          description: Full trace
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/RetrievalLabResult' }
+
+  /api/v1/admin/retrieval-lab/compare:
+    post:
+      tags: [admin-retrieval]
+      operationId: retrievalLabCompare
+      summary: Compare two configurations over a query set
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RetrievalLabCompareRequest' }
+      responses:
+        '200':
+          description: Comparison
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/RetrievalLabCompareResult' }
+
+  /api/v1/admin/retrieval-configs:
+    get:
+      tags: [admin-retrieval]
+      operationId: listRetrievalConfigs
+      responses:
+        '200':
+          description: Configs
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/RetrievalConfig' }
+    post:
+      tags: [admin-retrieval]
+      operationId: createRetrievalConfig
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RetrievalConfig' }
+      responses:
+        '201': { description: Created }
+
+  /api/v1/admin/retrieval-configs/{configId}/activate:
+    post:
+      tags: [admin-retrieval]
+      operationId: activateRetrievalConfig
+      parameters: [ { name: configId, in: path, required: true, schema: { type: string, format: uuid } } ]
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ActivateVersionRequest' }
+      responses:
+        '200': { description: Activated }
+
+  /api/v1/admin/model-configs:
+    get:
+      tags: [admin-models]
+      operationId: listModelConfigs
+      responses:
+        '200':
+          description: Model configs by purpose
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/ModelConfig' }
+    post:
+      tags: [admin-models]
+      operationId: createModelConfig
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ModelConfig' }
+      responses:
+        '201': { description: Created }
+
+  /api/v1/admin/model-configs/{configId}/test:
+    post:
+      tags: [admin-models]
+      operationId: testModelConfig
+      parameters: [ { name: configId, in: path, required: true, schema: { type: string, format: uuid } } ]
+      responses:
+        '200':
+          description: Connection test result
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ProviderTestResult' }
+
+  /api/v1/admin/providers/status:
+    get:
+      tags: [admin-models]
+      operationId: getProviderStatus
+      responses:
+        '200':
+          description: Provider health, quota and budget
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/ProviderStatus' }
+
+  /api/v1/admin/guardrails/policies:
+    get:
+      tags: [admin-guardrails]
+      operationId: listGuardrailPolicies
+      responses:
+        '200':
+          description: Policies
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/GuardrailPolicy' }
+
+  /api/v1/admin/guardrails/policies/{code}/versions:
+    post:
+      tags: [admin-guardrails]
+      operationId: createGuardrailPolicyVersion
+      parameters: [ { name: code, in: path, required: true, schema: { type: string } } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/GuardrailPolicy' }
+      responses:
+        '201': { description: Draft created }
+
+  /api/v1/admin/guardrails/policies/{code}/activate:
+    post:
+      tags: [admin-guardrails]
+      operationId: activateGuardrailPolicy
+      parameters: [ { name: code, in: path, required: true, schema: { type: string } } ]
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ActivateVersionRequest' }
+      responses:
+        '200': { description: Activated }
+        '403': { $ref: '#/components/responses/Forbidden' }
+
+  /api/v1/admin/guardrails/events:
+    get:
+      tags: [admin-guardrails]
+      operationId: listGuardrailEvents
+      parameters:
+        - { $ref: '#/components/parameters/Page' }
+        - { $ref: '#/components/parameters/Size' }
+        - { name: policy, in: query, schema: { type: string } }
+        - { name: severity, in: query, schema: { type: string, enum: [CRITICAL, HIGH, MEDIUM, LOW] } }
+        - { name: decision, in: query, schema: { type: string, enum: [BLOCK, WARN, LOG, PASS] } }
+        - { name: from, in: query, schema: { type: string, format: date-time } }
+        - { name: to, in: query, schema: { type: string, format: date-time } }
+      responses:
+        '200':
+          description: Events
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content: { type: array, items: { $ref: '#/components/schemas/GuardrailEvent' } }
+                  page: { $ref: '#/components/schemas/PageMeta' }
+
+  /api/v1/admin/guardrails/lexicons/{code}:
+    put:
+      tags: [admin-guardrails]
+      operationId: updateLexicon
+      parameters: [ { name: code, in: path, required: true, schema: { type: string } } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                entries:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      fr: { type: string }
+                      ar: { type: string }
+                      en: { type: string }
+                      transliterations: { type: array, items: { type: string } }
+                      derja: { type: array, items: { type: string } }
+                      severity: { type: string, enum: [CRITICAL, HIGH, MEDIUM, LOW] }
+      responses:
+        '200': { description: Updated }
+
+  /api/v1/admin/conversations:
+    get:
+      tags: [admin-quality]
+      operationId: listConversations
+      parameters:
+        - { $ref: '#/components/parameters/Page' }
+        - { $ref: '#/components/parameters/Size' }
+        - { name: intent, in: query, schema: { type: string } }
+        - { name: refusalCode, in: query, schema: { type: string } }
+        - { name: lang, in: query, schema: { type: string } }
+        - { name: channel, in: query, schema: { type: string } }
+        - { name: rating, in: query, schema: { type: string } }
+        - { name: blocked, in: query, schema: { type: boolean } }
+        - { name: from, in: query, schema: { type: string, format: date-time } }
+        - { name: to, in: query, schema: { type: string, format: date-time } }
+        - name: reasonCode
+          in: query
+          description: Required to read raw personal content (break-glass, audited)
+          schema: { type: string }
+      responses:
+        '200':
+          description: Conversations
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ConversationPage' }
+
+  /api/v1/admin/messages/{messageId}/trace:
+    get:
+      tags: [admin-quality]
+      operationId: getMessageTrace
+      summary: Full retrieval and generation trace of an answer (replay view)
+      parameters: [ { $ref: '#/components/parameters/MessageId' } ]
+      responses:
+        '200':
+          description: Trace
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/RetrievalLabResult' }
+
+  /api/v1/admin/messages/{messageId}/redact:
+    post:
+      tags: [admin-quality]
+      operationId: redactMessage
+      parameters: [ { $ref: '#/components/parameters/MessageId' } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [reason]
+              properties:
+                reason: { type: string }
+                scope: { type: string, enum: [PII_ONLY, FULL_CONTENT], default: PII_ONLY }
+      responses:
+        '200': { description: Redacted }
+
+  /api/v1/admin/feedback:
+    get:
+      tags: [admin-quality]
+      operationId: listFeedback
+      parameters: [ { $ref: '#/components/parameters/Page' }, { $ref: '#/components/parameters/Size' },
+                    { name: status, in: query, schema: { type: string, enum: [NEW, TRIAGED, IN_PROGRESS, RESOLVED, DISMISSED] } },
+                    { name: rating, in: query, schema: { $ref: '#/components/schemas/FeedbackRating' } } ]
+      responses:
+        '200':
+          description: Feedback
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content: { type: array, items: { $ref: '#/components/schemas/Feedback' } }
+                  page: { $ref: '#/components/schemas/PageMeta' }
+
+  /api/v1/admin/feedback/{feedbackId}/triage:
+    post:
+      tags: [admin-quality]
+      operationId: triageFeedback
+      parameters: [ { name: feedbackId, in: path, required: true, schema: { type: string, format: uuid } } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [action]
+              properties:
+                action:
+                  type: string
+                  enum: [FIX_KB, FIX_PROMPT, FIX_POLICY, ADD_TO_GOLDEN_SET, ESCALATE_SHARIA, DISMISS]
+                comment: { type: string }
+                targetDocumentId: { type: string, format: uuid }
+                targetChunkId: { type: string, format: uuid }
+      responses:
+        '200': { description: Triaged }
+
+  /api/v1/admin/eval/cases:
+    get:
+      tags: [admin-quality]
+      operationId: listEvalCases
+      parameters: [ { $ref: '#/components/parameters/Page' }, { $ref: '#/components/parameters/Size' },
+                    { name: tag, in: query, schema: { type: string } } ]
+      responses:
+        '200':
+          description: Cases
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/EvalCase' }
+    post:
+      tags: [admin-quality]
+      operationId: createEvalCase
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/EvalCase' }
+      responses:
+        '201': { description: Created }
+
+  /api/v1/admin/eval/runs:
+    get:
+      tags: [admin-quality]
+      operationId: listEvalRuns
+      responses:
+        '200':
+          description: Runs
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/EvalRun' }
+    post:
+      tags: [admin-quality]
+      operationId: startEvalRun
+      summary: Run the evaluation gate against a release bundle
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/EvalRunRequest' }
+      responses:
+        '202':
+          description: Run started
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/EvalRun' }
+
+  /api/v1/admin/eval/runs/{runId}/scorecard:
+    get:
+      tags: [admin-quality]
+      operationId: getEvalScorecard
+      parameters: [ { name: runId, in: path, required: true, schema: { type: string, format: uuid } } ]
+      responses:
+        '200':
+          description: Scorecard
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/EvalScorecard' }
+
+  /api/v1/admin/analytics/overview:
+    get:
+      tags: [admin-analytics]
+      operationId: getAnalyticsOverview
+      parameters:
+        - { name: from, in: query, schema: { type: string, format: date } }
+        - { name: to, in: query, schema: { type: string, format: date } }
+      responses:
+        '200':
+          description: Overview metrics
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AnalyticsOverview' }
+
+  /api/v1/admin/analytics/coverage-gaps:
+    get:
+      tags: [admin-analytics]
+      operationId: getCoverageGaps
+      summary: Refused/unanswered topics ranked by frequency — the KB to-do list
+      responses:
+        '200':
+          description: Gaps
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    topic: { type: string }
+                    occurrences: { type: integer }
+                    locales: { type: array, items: { type: string } }
+                    sampleQuestions: { type: array, items: { type: string } }
+                    lastSeen: { type: string, format: date-time }
+
+  /api/v1/admin/analytics/governance-kpis:
+    get:
+      tags: [admin-analytics]
+      operationId: getGovernanceKpis
+      responses:
+        '200':
+          description: Governance KPIs (doc 05 §12)
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: { type: number }
+
+  /api/v1/admin/glossary:
+    get:
+      tags: [admin-content-ops]
+      operationId: listGlossary
+      parameters: [ { name: q, in: query, schema: { type: string } },
+                    { name: domain, in: query, schema: { type: string } },
+                    { name: shariaSensitive, in: query, schema: { type: boolean } } ]
+      responses:
+        '200':
+          description: Terms
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/GlossaryTerm' }
+    post:
+      tags: [admin-content-ops]
+      operationId: createGlossaryTerm
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/GlossaryTerm' }
+      responses:
+        '201': { description: Created (T3 review if `shariaSensitive`) }
+
+  /api/v1/admin/glossary/{termId}:
+    put:
+      tags: [admin-content-ops]
+      operationId: updateGlossaryTerm
+      parameters: [ { name: termId, in: path, required: true, schema: { type: string, format: uuid } } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/GlossaryTerm' }
+      responses:
+        '200': { description: Updated }
+
+  /api/v1/admin/glossary/scan:
+    post:
+      tags: [admin-content-ops]
+      operationId: scanGlossaryViolations
+      summary: Scan published content for forbidden renderings
+      responses:
+        '200':
+          description: Violations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    chunkId: { type: string, format: uuid }
+                    documentTitle: { type: string }
+                    term: { type: string }
+                    forbiddenRendering: { type: string }
+                    excerpt: { type: string }
+
+  /api/v1/admin/assistant-config:
+    get:
+      tags: [admin-content-ops]
+      operationId: listAssistantConfig
+      responses:
+        '200':
+          description: Configuration entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/AssistantConfigEntry' }
+    put:
+      tags: [admin-content-ops]
+      operationId: updateAssistantConfig
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AssistantConfigEntry' }
+      responses:
+        '200': { description: Updated }
+
+  /api/v1/admin/audit/events:
+    get:
+      tags: [admin-audit]
+      operationId: listAuditEvents
+      parameters:
+        - { $ref: '#/components/parameters/Page' }
+        - { $ref: '#/components/parameters/Size' }
+        - { name: actor, in: query, schema: { type: string } }
+        - { name: action, in: query, schema: { type: string } }
+        - { name: subjectType, in: query, schema: { type: string } }
+        - { name: subjectId, in: query, schema: { type: string } }
+        - { name: from, in: query, schema: { type: string, format: date-time } }
+        - { name: to, in: query, schema: { type: string, format: date-time } }
+      responses:
+        '200':
+          description: Events
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content: { type: array, items: { $ref: '#/components/schemas/AuditEvent' } }
+                  page: { $ref: '#/components/schemas/PageMeta' }
+
+  /api/v1/admin/audit/chain/verify:
+    post:
+      tags: [admin-audit]
+      operationId: verifyAuditChain
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                from: { type: string, format: date-time }
+                to: { type: string, format: date-time }
+      responses:
+        '200':
+          description: Verification result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  valid: { type: boolean }
+                  eventsChecked: { type: integer }
+                  headHash: { type: string }
+                  wormHeadHash: { type: string }
+                  firstBrokenSeq: { type: [integer, 'null'] }
+
+  /api/v1/admin/audit/evidence-pack:
+    post:
+      tags: [admin-audit]
+      operationId: buildEvidencePack
+      summary: Build the committee / BCT evidence pack
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [from, to]
+              properties:
+                from: { type: string, format: date }
+                to: { type: string, format: date }
+                format: { type: string, enum: [PDF, JSON, CSV], default: PDF }
+                sampleSize: { type: integer, default: 50 }
+      responses:
+        '202':
+          description: Pack generation queued
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  jobId: { type: string, format: uuid }
+                  downloadUrl: { type: string }
+
+  /api/v1/admin/kill-switch:
+    post:
+      tags: [admin-operations]
+      operationId: setKillSwitch
+      summary: Enable, restrict or disable the assistant (effective ≤ 5 s, gateway-enforced)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [mode, reason]
+              properties:
+                mode: { type: string, enum: [ON, AGENTS_ONLY, OFF] }
+                reason: { type: string }
+                severity: { type: string, enum: [S1, S2, S3, S4] }
+      responses:
+        '200': { description: Applied and audited }
+        '403': { $ref: '#/components/responses/Forbidden' }
+
+  /api/v1/admin/caches/flush:
+    post:
+      tags: [admin-operations]
+      operationId: flushCaches
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                targets:
+                  type: array
+                  items: { type: string, enum: [SEMANTIC_ANSWER, QUERY_EMBEDDING, RETRIEVAL_RESULT, DICTIONARIES, ALL] }
+      responses:
+        '200': { description: Flushed }
+
+  /api/v1/admin/release-bundles:
+    get:
+      tags: [admin-operations]
+      operationId: listReleaseBundles
+      responses:
+        '200':
+          description: Bundles
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/ReleaseBundle' }
+    post:
+      tags: [admin-operations]
+      operationId: promoteReleaseBundle
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [bundleId, targetEnv]
+              properties:
+                bundleId: { type: string, format: uuid }
+                targetEnv: { type: string, enum: [dev, uat, prod] }
+                evalRunId: { type: string, format: uuid }
+      responses:
+        '202': { description: Promotion started }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+
+components:
+  securitySchemes:
+    keycloakJwt:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Keycloak access token. Roles come from `realm_access.roles`; retrieval scope from group attributes.
+
+  parameters:
+    AcceptLanguage:
+      name: Accept-Language
+      in: header
+      schema: { type: string, enum: [fr-FR, ar-TN, en-GB], default: fr-FR }
+    CorrelationId:
+      name: X-Correlation-Id
+      in: header
+      schema: { type: string, format: uuid }
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      schema: { type: string, format: uuid }
+    IfMatch:
+      name: If-Match
+      in: header
+      required: true
+      schema: { type: string }
+    Page:
+      name: page
+      in: query
+      schema: { type: integer, default: 0, minimum: 0 }
+    Size:
+      name: size
+      in: query
+      schema: { type: integer, default: 25, minimum: 1, maximum: 200 }
+    Sort:
+      name: sort
+      in: query
+      schema: { type: string, example: updatedAt,desc }
+    ConversationId:
+      name: conversationId
+      in: path
+      required: true
+      schema: { type: string, format: uuid }
+    MessageId:
+      name: messageId
+      in: path
+      required: true
+      schema: { type: string, format: uuid }
+    DocumentId:
+      name: documentId
+      in: path
+      required: true
+      schema: { type: string, format: uuid }
+    ReviewId:
+      name: reviewId
+      in: path
+      required: true
+      schema: { type: string, format: uuid }
+    PromptVersionId:
+      name: versionId
+      in: path
+      required: true
+      schema: { type: string, format: uuid }
+
+  responses:
+    BadRequest:
+      description: Validation failure
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+    Unauthenticated:
+      description: Missing or invalid token
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+    Forbidden:
+      description: Insufficient authority (or MFA step-up required)
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+    NotFound:
+      description: Not found
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+    Conflict:
+      description: Optimistic-lock or state conflict
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+    Unprocessable:
+      description: Business or governance rule violation
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+    RateLimited:
+      description: Rate limit exceeded
+      headers:
+        Retry-After: { schema: { type: integer } }
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+    ProviderUnavailable:
+      description: Provider unavailable, rate limited or budget exhausted — degradation ladder engaged
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+    ServiceDisabled:
+      description: The assistant is disabled by the kill switch
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+
+  schemas:
+    # ─────────────── enums ───────────────
+    Locale:
+      type: string
+      enum: [fr-FR, ar-TN, en-GB]
+    Direction:
+      type: string
+      enum: [ltr, rtl]
+    LifecycleState:
+      type: string
+      enum: [DRAFT, IN_REVIEW, CHANGES_REQUESTED, SHARIA_APPROVED, PUBLISHED, DEPRECATED, WITHDRAWN, RETIRED]
+    ReviewState:
+      type: string
+      enum: [PENDING, IN_REVIEW, CHANGES_REQUESTED, APPROVED, REJECTED, WITHDRAWN]
+    RiskTier:
+      type: string
+      enum: [T1_LOW, T2_MEDIUM, T3_HIGH]
+    Audience:
+      type: string
+      enum: [PUBLIC, AGENT, INTERNAL]
+    Classification:
+      type: string
+      enum: [PUBLIC, INTERNAL, CONFIDENTIAL, RESTRICTED]
+    Channel:
+      type: string
+      enum: [WEB_APP, WIDGET, AGENT_DESK, API]
+    JobStatus:
+      type: string
+      enum: [QUEUED, RUNNING, SUCCEEDED, FAILED, CANCELLED]
+    FeedbackRating:
+      type: string
+      enum: [UP, DOWN, SHARIA_CONCERN, FACTUAL_ERROR, WRONG_LANGUAGE, INCOMPLETE, OFFENSIVE]
+    RefusalCode:
+      type: string
+      enum: [REF-01, REF-02, REF-03, REF-04, REF-05, REF-06]
+      description: |
+        REF-01 abuse/injection · REF-02 prohibited topic · REF-03 no-fatwa ·
+        REF-04 personal/account data out of scope · REF-05 not in approved knowledge ·
+        REF-06 out of scope (other bank, general advice)
+    Intent:
+      type: string
+      enum: [PRODUCT_QUESTION, PRODUCT_COMPARISON, SHARIA_CONCEPT, RELIGIOUS_RULING_REQUEST, PROCEDURE,
+             TARIFF_FEES, BRANCH_LOCATOR, DIGITAL_CHANNEL, ACCOUNT_STATUS, COMPLAINT, SMALL_TALK,
+             OUT_OF_SCOPE, ABUSE, ADVERSARIAL]
+
+    # ─────────────── common ───────────────
+    Problem:
+      type: object
+      description: RFC 9457 problem details, extended with a stable bank code and trilingual titles
+      properties:
+        type: { type: string, format: uri }
+        title: { type: string }
+        title_ar: { type: string }
+        title_en: { type: string }
+        status: { type: integer }
+        code: { type: string, example: RAG.NO_APPROVED_CONTENT }
+        detail: { type: string }
+        instance: { type: string }
+        correlationId: { type: string, format: uuid }
+        refusalCode: { $ref: '#/components/schemas/RefusalCode' }
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              field: { type: string }
+              message: { type: string }
+    PageMeta:
+      type: object
+      properties:
+        number: { type: integer }
+        size: { type: integer }
+        totalElements: { type: integer }
+        totalPages: { type: integer }
+    LocalizedText:
+      type: object
+      properties:
+        fr: { type: string }
+        ar: { type: string }
+        en: { type: string }
+
+    # ─────────────── frontoffice ───────────────
+    AssistantConfig:
+      type: object
+      properties:
+        assistantName: { type: string, example: Al-Mouchir }
+        enabled: { type: boolean }
+        mode: { type: string, enum: [ON, AGENTS_ONLY, OFF] }
+        locales: { type: array, items: { $ref: '#/components/schemas/Locale' } }
+        defaultLocale: { $ref: '#/components/schemas/Locale' }
+        suggestedQuestions:
+          type: array
+          items:
+            type: object
+            properties:
+              id: { type: string }
+              locale: { $ref: '#/components/schemas/Locale' }
+              text: { type: string }
+              intent: { type: string }
+        disclaimers:
+          type: array
+          items:
+            type: object
+            properties:
+              id: { type: string, example: DISC-GENERAL }
+              locale: { $ref: '#/components/schemas/Locale' }
+              text: { type: string }
+        piiWarning: { $ref: '#/components/schemas/LocalizedText' }
+        featureFlags:
+          type: object
+          properties:
+            voiceInput: { type: boolean }
+            widgetEnabled: { type: boolean }
+            handoffEnabled: { type: boolean }
+            fatwaRequestEnabled: { type: boolean }
+            publicKbSearch: { type: boolean }
+        limits:
+          type: object
+          properties:
+            maxMessageChars: { type: integer, example: 4000 }
+            maxTurnsPerConversation: { type: integer, example: 20 }
+            messagesPerMinute: { type: integer, example: 6 }
+        support:
+          type: object
+          properties:
+            phone: { type: string }
+            hoursFr: { type: string }
+            hoursAr: { type: string }
+            hoursEn: { type: string }
+    CreateConversationRequest:
+      type: object
+      properties:
+        channel: { $ref: '#/components/schemas/Channel' }
+        locale: { $ref: '#/components/schemas/Locale' }
+        pageContext: { type: string, description: Optional originating page URL passed by the widget host }
+    Conversation:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        channel: { $ref: '#/components/schemas/Channel' }
+        locale: { $ref: '#/components/schemas/Locale' }
+        dir: { $ref: '#/components/schemas/Direction' }
+        state: { type: string, enum: [ACTIVE, ARCHIVED, ESCALATED, CLOSED] }
+        startedAt: { type: string, format: date-time }
+        limits:
+          type: object
+          properties:
+            maxTurns: { type: integer }
+            remainingTurns: { type: integer }
+    ConversationDetail:
+      allOf:
+        - $ref: '#/components/schemas/Conversation'
+        - type: object
+          properties:
+            messages: { type: array, items: { $ref: '#/components/schemas/Message' } }
+            nextCursor: { type: [string, 'null'] }
+    SendMessageRequest:
+      type: object
+      required: [text]
+      properties:
+        text: { type: string, minLength: 1, maxLength: 4000 }
+        locale: { $ref: '#/components/schemas/Locale' }
+        clientId: { type: string, description: Client-side message id for optimistic rendering }
+    Message:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        conversationId: { type: string, format: uuid }
+        ordinal: { type: integer }
+        role: { type: string, enum: [USER, ASSISTANT, SYSTEM, AGENT] }
+        content: { type: string }
+        locale: { $ref: '#/components/schemas/Locale' }
+        dir: { $ref: '#/components/schemas/Direction' }
+        intent: { $ref: '#/components/schemas/Intent' }
+        citations: { type: array, items: { $ref: '#/components/schemas/Citation' } }
+        refusalCode: { $ref: '#/components/schemas/RefusalCode' }
+        disclaimers: { type: array, items: { type: string } }
+        needsHuman: { type: boolean }
+        createdAt: { type: string, format: date-time }
+    Citation:
+      type: object
+      properties:
+        id: { type: string, example: S1 }
+        chunkId: { type: string, format: uuid }
+        documentId: { type: string, format: uuid }
+        documentTitle: { type: string }
+        documentTitleLocale: { $ref: '#/components/schemas/Locale' }
+        collectionCode: { type: string }
+        headingPath: { type: array, items: { type: string } }
+        excerpt: { type: string }
+        url: { type: string, example: /api/v1/public/documents/…#S1 }
+        locale: { $ref: '#/components/schemas/Locale' }
+        validFrom: { type: [string, 'null'], format: date }
+        validUntil: { type: [string, 'null'], format: date }
+        score: { type: number, format: float }
+    FeedbackRequest:
+      type: object
+      required: [rating]
+      properties:
+        rating: { $ref: '#/components/schemas/FeedbackRating' }
+        comment: { type: string, maxLength: 1000 }
+        contactOptIn: { type: boolean, default: false }
+        contact: { type: string, description: Only stored if `contactOptIn` is true }
+    Feedback:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        messageId: { type: string, format: uuid }
+        rating: { $ref: '#/components/schemas/FeedbackRating' }
+        comment: { type: string }
+        status: { type: string, enum: [NEW, TRIAGED, IN_PROGRESS, RESOLVED, DISMISSED] }
+        resolutionRef: { type: string }
+        createdAt: { type: string, format: date-time }
+    HandoffRequest:
+      type: object
+      properties:
+        reason: { type: string }
+        preferredChannel: { type: string, enum: [CALL, BRANCH, EMAIL] }
+        agencyCode: { type: string }
+        contact: { type: string }
+    Handoff:
+      type: object
+      properties:
+        ref: { type: string }
+        state: { type: string }
+        createdAt: { type: string, format: date-time }
+    FatwaRequestInput:
+      type: object
+      required: [question]
+      properties:
+        question: { type: string, maxLength: 2000 }
+        locale: { $ref: '#/components/schemas/Locale' }
+        conversationId: { type: string, format: uuid }
+        messageId: { type: string, format: uuid }
+        contact: { type: string }
+    FatwaRequest:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        ref: { type: string, example: FR-2026-00123 }
+        state: { type: string, enum: [OPEN, ASSIGNED, ANSWERED, PUBLISHED_AS_KB, CLOSED] }
+        questionFr: { type: string }
+        questionAr: { type: string }
+        questionEn: { type: string }
+        slaDueAt: { type: string, format: date-time }
+        createdAt: { type: string, format: date-time }
+    KbSearchPage:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            type: object
+            properties:
+              documentId: { type: string, format: uuid }
+              chunkId: { type: string, format: uuid }
+              title: { type: string }
+              headingPath: { type: array, items: { type: string } }
+              excerpt: { type: string }
+              locale: { $ref: '#/components/schemas/Locale' }
+              score: { type: number }
+              validUntil: { type: [string, 'null'], format: date }
+        page: { $ref: '#/components/schemas/PageMeta' }
+    PublicDocument:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        title: { type: string }
+        collectionCode: { type: string }
+        productCodes: { type: array, items: { type: string } }
+        locale: { $ref: '#/components/schemas/Locale' }
+        bodyMarkdown: { type: string }
+        validFrom: { type: [string, 'null'], format: date }
+        validTo: { type: [string, 'null'], format: date }
+        versionNo: { type: integer }
+    Agency:
+      type: object
+      properties:
+        code: { type: string }
+        nameFr: { type: string }
+        nameAr: { type: string }
+        nameEn: { type: string }
+        region: { type: string }
+        address: { type: string }
+        phone: { type: string }
+        lat: { type: number }
+        lon: { type: number }
+        hours: { type: string }
+
+    # ─────────────── SSE events ───────────────
+    SseAccepted:
+      type: object
+      description: 'event: accepted'
+      properties:
+        event: { type: string, const: accepted }
+        data:
+          type: object
+          properties:
+            messageId: { type: string, format: uuid }
+            conversationId: { type: string, format: uuid }
+            locale: { $ref: '#/components/schemas/Locale' }
+            dir: { $ref: '#/components/schemas/Direction' }
+    SseStatus:
+      type: object
+      description: 'event: status'
+      properties:
+        event: { type: string, const: status }
+        data:
+          type: object
+          properties:
+            stage: { type: string, enum: [SCREENING, RETRIEVING, RERANKING, GENERATING, VERIFYING] }
+            label: { type: string }
+    SseSources:
+      type: object
+      description: 'event: sources — always emitted before the first token'
+      properties:
+        event: { type: string, const: sources }
+        data:
+          type: object
+          properties:
+            citations: { type: array, items: { $ref: '#/components/schemas/Citation' } }
+    SseToken:
+      type: object
+      description: 'event: token'
+      properties:
+        event: { type: string, const: token }
+        data:
+          type: object
+          properties:
+            delta: { type: string }
+    SseAnswer:
+      type: object
+      description: 'event: answer — terminal'
+      properties:
+        event: { type: string, const: answer }
+        data: { $ref: '#/components/schemas/AnswerPayload' }
+    SseRefusal:
+      type: object
+      description: 'event: refusal — terminal'
+      properties:
+        event: { type: string, const: refusal }
+        data: { $ref: '#/components/schemas/RefusalPayload' }
+    SseError:
+      type: object
+      description: 'event: error — terminal'
+      properties:
+        event: { type: string, const: error }
+        data:
+          type: object
+          properties:
+            code: { type: string }
+            retryAfterMs: { type: integer }
+            degradationStep: { type: integer, minimum: 1, maximum: 5 }
+    SseDone:
+      type: object
+      description: 'event: done — always last'
+      properties:
+        event: { type: string, const: done }
+        data:
+          type: object
+          properties:
+            messageId: { type: string, format: uuid }
+            tokensIn: { type: integer }
+            tokensOut: { type: integer }
+            latencyMs: { type: integer }
+    AnswerPayload:
+      type: object
+      properties:
+        messageId: { type: string, format: uuid }
+        answerMarkdown: { type: string }
+        language: { $ref: '#/components/schemas/Locale' }
+        dir: { $ref: '#/components/schemas/Direction' }
+        confidence: { type: number, minimum: 0, maximum: 1 }
+        usedSources: { type: array, items: { type: string } }
+        citations: { type: array, items: { $ref: '#/components/schemas/Citation' } }
+        caveats: { type: array, items: { type: string } }
+        disclaimers: { type: array, items: { type: string } }
+        needsHuman: { type: boolean }
+        cached: { type: boolean }
+        models:
+          type: object
+          properties:
+            chat: { type: string }
+            reranker: { type: string }
+            degradationStep: { type: integer }
+        latencyMs: { type: integer }
+        ttftMs: { type: integer }
+    RefusalPayload:
+      type: object
+      properties:
+        messageId: { type: string, format: uuid }
+        refusalCode: { $ref: '#/components/schemas/RefusalCode' }
+        title: { type: string }
+        body: { type: string }
+        locale: { $ref: '#/components/schemas/Locale' }
+        sources: { type: array, items: { $ref: '#/components/schemas/Citation' } }
+        fatwaRequestRef: { type: [string, 'null'] }
+        handoffAvailable: { type: boolean }
+
+    # ─────────────── knowledge ───────────────
+    DocumentSummary:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        title: { type: string }
+        titleAr: { type: string }
+        collectionCode: { type: string }
+        productCodes: { type: array, items: { type: string } }
+        sourceLang: { $ref: '#/components/schemas/Locale' }
+        audience: { $ref: '#/components/schemas/Audience' }
+        classification: { $ref: '#/components/schemas/Classification' }
+        lifecycleState: { $ref: '#/components/schemas/LifecycleState' }
+        currentVersionNo: { type: integer }
+        chunkCount: { type: integer }
+        validFrom: { type: [string, 'null'], format: date }
+        validTo: { type: [string, 'null'], format: date }
+        updatedAt: { type: string, format: date-time }
+        updatedBy: { type: string }
+    DocumentDetail:
+      allOf:
+        - $ref: '#/components/schemas/DocumentSummary'
+        - type: object
+          properties:
+            externalRef: { type: string }
+            titleFr: { type: string }
+            titleEn: { type: string }
+            sourceUri: { type: string }
+            mimeType: { type: string }
+            sizeBytes: { type: integer }
+            sha256: { type: string }
+            ownerRole: { type: string }
+            versions: { type: array, items: { $ref: '#/components/schemas/DocumentVersion' } }
+            reviews: { type: array, items: { $ref: '#/components/schemas/Review' } }
+    DocumentPage:
+      type: object
+      properties:
+        content: { type: array, items: { $ref: '#/components/schemas/DocumentSummary' } }
+        page: { $ref: '#/components/schemas/PageMeta' }
+    DocumentMetadataPatch:
+      type: object
+      properties:
+        titleFr: { type: string }
+        titleAr: { type: string }
+        titleEn: { type: string }
+        collectionCode: { type: string }
+        productCodes: { type: array, items: { type: string } }
+        audience: { $ref: '#/components/schemas/Audience' }
+        classification: { $ref: '#/components/schemas/Classification' }
+        validFrom: { type: string, format: date }
+        validTo: { type: string, format: date }
+        ownerRole: { type: string }
+    CreateDocumentVersionRequest:
+      type: object
+      required: [bodyText]
+      properties:
+        bodyText: { type: string }
+        bodyLang: { $ref: '#/components/schemas/Locale' }
+        changeSummary: { $ref: '#/components/schemas/LocalizedText' }
+        chunkingPolicy: { type: string, enum: [PRODUCT_SHEET, TARIFF_TABLE, PROCEDURE, SHARIA_NOTE, FAQ, REGULATION, GENERIC] }
+    DocumentVersion:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        documentId: { type: string, format: uuid }
+        versionNo: { type: integer }
+        state: { $ref: '#/components/schemas/LifecycleState' }
+        bodyLang: { $ref: '#/components/schemas/Locale' }
+        changeSummary: { $ref: '#/components/schemas/LocalizedText' }
+        chunkCount: { type: integer }
+        publishedAt: { type: [string, 'null'], format: date-time }
+        publishedBy: { type: [string, 'null'] }
+        createdAt: { type: string, format: date-time }
+        etag: { type: string }
+    Chunk:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        documentVersionId: { type: string, format: uuid }
+        ordinal: { type: integer }
+        content: { type: string }
+        headingPath: { type: array, items: { type: string } }
+        tokenCount: { type: integer }
+        lang: { $ref: '#/components/schemas/Locale' }
+        isTranslation: { type: boolean }
+        machineTranslated: { type: boolean }
+        sourceChunkId: { type: [string, 'null'], format: uuid }
+        searchable: { type: boolean }
+        embeddingStatus: { type: string, enum: [PENDING, EMBEDDED, FAILED, STALE] }
+        embeddingModel: { type: string }
+        embeddingDim: { type: integer }
+        forbiddenRenderingHits: { type: array, items: { type: string } }
+    ChunkDetail:
+      allOf:
+        - $ref: '#/components/schemas/Chunk'
+        - type: object
+          properties:
+            normalizedText: { type: string }
+            tsvTokens: { type: array, items: { type: string } }
+            asTheModelSeesIt: { type: string, description: Contextual header + content, exactly as embedded }
+            translations: { type: array, items: { $ref: '#/components/schemas/Chunk' } }
+            lastCitedBy: { type: array, items: { type: string, format: uuid } }
+    PublishResult:
+      type: object
+      properties:
+        documentId: { type: string, format: uuid }
+        versionNo: { type: integer }
+        publishedAt: { type: string, format: date-time }
+        chunksMadeSearchable: { type: integer }
+        kbEpoch: { type: integer }
+        evalRunRequired: { type: boolean }
+    IngestionJobRequest:
+      type: object
+      properties:
+        type: { type: string, enum: [INGEST_DOCUMENT, RECHUNK, REEMBED, REINDEX_MODEL_CHANGE, TRANSLATE] }
+        documentId: { type: string, format: uuid }
+        embeddingModel: { type: string }
+        embeddingDim: { type: integer }
+        priority: { type: string, enum: [LOW, NORMAL, HIGH], default: NORMAL }
+    IngestionJob:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        type: { type: string }
+        status: { $ref: '#/components/schemas/JobStatus' }
+        stage: { type: string, enum: [PARSE, CLEAN, CHUNK, NORMALISE, TRANSLATE, EMBED, STORE, DONE] }
+        progress: { type: number, minimum: 0, maximum: 1 }
+        documentId: { type: [string, 'null'], format: uuid }
+        attempts: { type: integer }
+        error: { type: [string, 'null'] }
+        quarantineReason: { type: [string, 'null'], description: Set when Prompt Guard flagged the content at ingestion }
+        createdAt: { type: string, format: date-time }
+        finishedAt: { type: [string, 'null'], format: date-time }
+    IngestionJobPage:
+      type: object
+      properties:
+        content: { type: array, items: { $ref: '#/components/schemas/IngestionJob' } }
+        page: { $ref: '#/components/schemas/PageMeta' }
+
+    # ─────────────── governance ───────────────
+    SubmitReviewRequest:
+      type: object
+      required: [subjectType, subjectId]
+      properties:
+        subjectType: { type: string, enum: [DOCUMENT_VERSION, PROMPT_VERSION, GUARDRAIL_POLICY, GLOSSARY_TERM, RETRIEVAL_CONFIG, MODEL_CONFIG] }
+        subjectId: { type: string, format: uuid }
+        requestedTier: { $ref: '#/components/schemas/RiskTier' }
+        note: { $ref: '#/components/schemas/LocalizedText' }
+    Review:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        ref: { type: string, example: R-2026-0143 }
+        subjectType: { type: string }
+        subjectId: { type: string, format: uuid }
+        subjectLabel: { type: string }
+        riskTier: { $ref: '#/components/schemas/RiskTier' }
+        state: { $ref: '#/components/schemas/ReviewState' }
+        submittedBy: { type: string }
+        submittedAt: { type: string, format: date-time }
+        dueAt: { type: string, format: date-time }
+        decidedAt: { type: [string, 'null'], format: date-time }
+        decisionReason: { $ref: '#/components/schemas/LocalizedText' }
+        committeeRef: { type: [string, 'null'] }
+        tasks: { type: array, items: { $ref: '#/components/schemas/ReviewTask' } }
+    ReviewDetail:
+      allOf:
+        - $ref: '#/components/schemas/Review'
+        - type: object
+          properties:
+            riskFactors: { type: array, items: { type: string } }
+            diff:
+              type: object
+              properties:
+                before: { type: string }
+                after: { type: string }
+                hunks: { type: array, items: { type: object } }
+            chunks: { type: array, items: { $ref: '#/components/schemas/Chunk' } }
+            glossaryViolations: { type: array, items: { type: string } }
+            previewAvailable: { type: boolean }
+    ReviewTask:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        assigneeRole: { type: string }
+        assigneeId: { type: [string, 'null'] }
+        required: { type: boolean }
+        decision: { type: [string, 'null'], enum: [APPROVE, REQUEST_CHANGES, REJECT] }
+        comments: { type: [string, 'null'] }
+        decidedAt: { type: [string, 'null'], format: date-time }
+    ReviewDecisionRequest:
+      type: object
+      required: [decision, reason]
+      properties:
+        decision: { type: string, enum: [APPROVE, REQUEST_CHANGES, REJECT] }
+        reason: { $ref: '#/components/schemas/LocalizedText' }
+        scope: { type: string, enum: [ALL_CHUNKS, SELECTED_CHUNKS], default: ALL_CHUNKS }
+        chunkIds: { type: array, items: { type: string, format: uuid } }
+    ReviewPage:
+      type: object
+      properties:
+        content: { type: array, items: { $ref: '#/components/schemas/Review' } }
+        page: { $ref: '#/components/schemas/PageMeta' }
+    ConversationPage:
+      type: object
+      properties:
+        content: { type: array, items: { $ref: '#/components/schemas/Conversation' } }
+        page: { $ref: '#/components/schemas/PageMeta' }
+
+    # ─────────────── tuning ───────────────
+    PromptTemplate:
+      type: object
+      properties:
+        code: { type: string, enum: [SYSTEM_ASSISTANT, SYSTEM_RERANKER, QUERY_REWRITE, INTENT_CLASSIFIER, GUARDRAIL_JUDGE, EVAL_JUDGE, ANSWER_CONTRACT, SUMMARIZER] }
+        locale: { type: string }
+        description: { type: string }
+        activeVersionNo: { type: integer }
+        requiresShariaApproval: { type: boolean }
+    PromptVersion:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        code: { type: string }
+        locale: { type: string }
+        versionNo: { type: integer }
+        state: { type: string, enum: [DRAFT, IN_REVIEW, ACTIVE, RETIRED] }
+        body: { type: string }
+        variables: { type: array, items: { type: string } }
+        protectedClauses: { type: array, items: { type: string } }
+        requiresShariaApproval: { type: boolean }
+        reviewId: { type: [string, 'null'], format: uuid }
+        evalRunId: { type: [string, 'null'], format: uuid }
+        activatedAt: { type: [string, 'null'], format: date-time }
+        activatedBy: { type: [string, 'null'] }
+        etag: { type: string }
+    CreatePromptVersionRequest:
+      type: object
+      required: [body]
+      properties:
+        body: { type: string }
+        locale: { type: string }
+        changeNote: { $ref: '#/components/schemas/LocalizedText' }
+        basedOnVersionId: { type: string, format: uuid }
+    PromptVersionDetail:
+      allOf:
+        - $ref: '#/components/schemas/PromptVersion'
+        - type: object
+          properties:
+            diffAgainstActive: { type: string }
+            tokenEstimate: { type: integer }
+            removedProtectedClauses: { type: array, items: { type: string } }
+    PromptPreviewResult:
+      type: object
+      properties:
+        comparisons:
+          type: array
+          items:
+            type: object
+            properties:
+              query: { type: string }
+              locale: { $ref: '#/components/schemas/Locale' }
+              activeAnswer: { type: string }
+              draftAnswer: { type: string }
+              citationsDiffer: { type: boolean }
+              guardrailDelta: { type: string }
+              latencyDeltaMs: { type: integer }
+    ActivateVersionRequest:
+      type: object
+      properties:
+        canaryPercent: { type: integer, minimum: 0, maximum: 100, default: 100 }
+        evalRunId: { type: string, format: uuid, description: Mandatory for T3 subjects }
+        note: { type: string }
+    RetrievalLabRequest:
+      type: object
+      required: [query]
+      properties:
+        query: { type: string }
+        locale: { $ref: '#/components/schemas/Locale' }
+        audience: { $ref: '#/components/schemas/Audience' }
+        channel: { $ref: '#/components/schemas/Channel' }
+        retrievalConfigId: { type: [string, 'null'], format: uuid }
+        promptVersionId: { type: [string, 'null'], format: uuid }
+        modelConfigId: { type: [string, 'null'], format: uuid }
+        overrides: { $ref: '#/components/schemas/RetrievalConfig' }
+        generate: { type: boolean, default: true }
+        includeInReviewContent: { type: boolean, default: false, description: Watermarked preview for reviewers }
+    RetrievalLabResult:
+      type: object
+      properties:
+        traceId: { type: string, format: uuid }
+        language: { $ref: '#/components/schemas/Locale' }
+        intent: { $ref: '#/components/schemas/Intent' }
+        normalizedQuery: { type: string }
+        expandedQueries: { type: array, items: { type: string } }
+        candidates: { type: array, items: { $ref: '#/components/schemas/RetrievalCandidate' } }
+        contextTokens: { type: integer }
+        budgetTokens: { type: integer }
+        assembledContext: { type: array, items: { type: string } }
+        answer: { $ref: '#/components/schemas/AnswerPayload' }
+        guardrails:
+          type: object
+          properties:
+            input: { type: string }
+            output: { type: string }
+            numericClaims: { type: object, properties: { checked: { type: integer }, ungrounded: { type: integer } } }
+            violations: { type: array, items: { type: string } }
+        latency:
+          type: object
+          properties:
+            embeddingMs: { type: integer }
+            searchMs: { type: integer }
+            rerankMs: { type: integer }
+            ttftMs: { type: integer }
+            totalMs: { type: integer }
+        cost:
+          type: object
+          properties:
+            usd: { type: number }
+            tokensIn: { type: integer }
+            tokensOut: { type: integer }
+        versions:
+          type: object
+          properties:
+            promptVersion: { type: integer }
+            retrievalConfig: { type: integer }
+            modelConfig: { type: integer }
+            kbEpoch: { type: integer }
+    RetrievalCandidate:
+      type: object
+      properties:
+        chunkId: { type: string, format: uuid }
+        documentTitle: { type: string }
+        headingPath: { type: array, items: { type: string } }
+        lang: { $ref: '#/components/schemas/Locale' }
+        strategy: { type: string, enum: [DENSE, FTS, TRGM] }
+        rank: { type: integer }
+        score: { type: number }
+        rrfScore: { type: number }
+        rerankScore: { type: [integer, 'null'] }
+        reasonCode: { type: [string, 'null'], enum: [PRODUCT_TERMS, PROCEDURE_STEPS, TARIFF, SHARIA_BASIS, OFF_TOPIC, OUTDATED, null] }
+        selected: { type: boolean }
+        excludedBecause: { type: [string, 'null'], enum: [BELOW_THRESHOLD, AUDIENCE_FILTER, VALIDITY_EXPIRED, DROPPED_BY_RERANKER, DEDUPED_TRANSLATION, BUDGET, null] }
+        excerpt: { type: string }
+    RetrievalLabCompareRequest:
+      type: object
+      properties:
+        queries: { type: array, items: { type: string } }
+        goldenSetTag: { type: string }
+        configA: { $ref: '#/components/schemas/RetrievalConfig' }
+        configB: { $ref: '#/components/schemas/RetrievalConfig' }
+    RetrievalLabCompareResult:
+      type: object
+      properties:
+        metricsA: { type: object, additionalProperties: { type: number } }
+        metricsB: { type: object, additionalProperties: { type: number } }
+        delta: { type: object, additionalProperties: { type: number } }
+        perQuery: { type: array, items: { type: object } }
+    RetrievalConfig:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        versionNo: { type: integer }
+        state: { type: string, enum: [DRAFT, ACTIVE, RETIRED] }
+        channel: { $ref: '#/components/schemas/Channel' }
+        topKDense: { type: integer, default: 25 }
+        topKFts: { type: integer, default: 20 }
+        topKTrgm: { type: integer, default: 10 }
+        rrfK: { type: integer, default: 60 }
+        wDense: { type: number, default: 1.0 }
+        wFts: { type: number, default: 0.85 }
+        wTrgm: { type: number, default: 0.45 }
+        minScoreDense: { type: number, default: 0.35 }
+        minScoreFts: { type: number, default: 0.05 }
+        rerankEnabled: { type: boolean, default: true }
+        rerankTopN: { type: integer, default: 8 }
+        rerankMinRelevance: { type: integer, default: 4 }
+        contextTokenBudget: { type: integer, default: 6000 }
+        mmrLambda: { type: number, default: 0.75 }
+        hydeEnabled: { type: boolean, default: false }
+        queryExpansionEnabled: { type: boolean, default: true }
+        crossLingualEnabled: { type: boolean, default: true }
+        crossLingualFallbackMinHits: { type: integer, default: 3 }
+        boostRecentDays: { type: integer, default: 90 }
+    ModelConfig:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        code: { type: string, enum: [CHAT_PRIMARY, CHAT_FAST, CHAT_FALLBACK, RERANKER, GUARD_SAFETY, GUARD_INJECTION, EMBEDDING] }
+        provider: { type: string, enum: [GROQ, GOOGLE, ONPREM] }
+        modelId: { type: string, example: llama-3.3-70b-versatile }
+        state: { type: string, enum: [DRAFT, ACTIVE, RETIRED] }
+        temperature: { type: number }
+        topP: { type: number }
+        maxTokens: { type: integer }
+        timeoutMs: { type: integer }
+        retries: { type: integer }
+        fallbackConfigId: { type: [string, 'null'], format: uuid }
+        rateLimitPerMin: { type: integer }
+        dailyBudgetUsd: { type: number }
+        enabled: { type: boolean }
+        embeddingDim: { type: [integer, 'null'] }
+        taskType: { type: [string, 'null'], enum: [RETRIEVAL_QUERY, RETRIEVAL_DOCUMENT] }
+    ProviderTestResult:
+      type: object
+      properties:
+        ok: { type: boolean }
+        latencyMs: { type: integer }
+        modelId: { type: string }
+        tokensIn: { type: integer }
+        tokensOut: { type: integer }
+        costUsd: { type: number }
+        error: { type: [string, 'null'] }
+        sampleOutput: { type: [string, 'null'] }
+    ProviderStatus:
+      type: object
+      properties:
+        provider: { type: string }
+        healthy: { type: boolean }
+        circuitState: { type: string, enum: [CLOSED, OPEN, HALF_OPEN] }
+        latencyP95Ms: { type: integer }
+        errorRate: { type: number }
+        callsToday: { type: integer }
+        spendTodayUsd: { type: number }
+        budgetTodayUsd: { type: number }
+        degradationActive: { type: boolean }
+
+    # ─────────────── guardrails, quality, audit ───────────────
+    GuardrailPolicy:
+      type: object
+      properties:
+        code: { type: string, enum: [PROHIBITED_TOPICS, NO_FATWA, PII_EGRESS, INJECTION, NUMERIC_CLAIMS, LANGUAGE_CONSISTENCY, HALLUCINATED_ENTITIES, RATE_LIMIT, MAX_TURNS, OUTPUT_TOXICITY] }
+        versionNo: { type: integer }
+        state: { type: string, enum: [DRAFT, IN_REVIEW, ACTIVE, RETIRED] }
+        appliesTo: { type: string, enum: [INPUT, OUTPUT, BOTH] }
+        severity: { type: string, enum: [BLOCK, WARN, LOG] }
+        enabled: { type: boolean }
+        params: { type: object, additionalProperties: true }
+        riskTier: { $ref: '#/components/schemas/RiskTier' }
+    GuardrailEvent:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        messageId: { type: [string, 'null'], format: uuid }
+        chunkId: { type: [string, 'null'], format: uuid, description: Set when the trigger was ingested content (indirect injection) }
+        policyCode: { type: string }
+        policyVersion: { type: integer }
+        decision: { type: string, enum: [BLOCK, WARN, LOG, PASS] }
+        severity: { type: string, enum: [CRITICAL, HIGH, MEDIUM, LOW] }
+        violationCode: { type: string }
+        evidence: { type: string, description: Redacted snippet }
+        refusalCode: { $ref: '#/components/schemas/RefusalCode' }
+        createdAt: { type: string, format: date-time }
+    EvalCase:
+      type: object
+      properties:
+        id: { type: string, example: GS-AR-MOUR-014 }
+        question: { type: string }
+        questionLang: { $ref: '#/components/schemas/Locale' }
+        expectedAnswerLang: { $ref: '#/components/schemas/Locale' }
+        expectedIntents: { type: array, items: { $ref: '#/components/schemas/Intent' } }
+        mustCiteChunks: { type: array, items: { type: string } }
+        mustNotCiteChunks: { type: array, items: { type: string } }
+        mustContainTerms: { type: array, items: { type: string } }
+        mustNotContainTerms: { type: array, items: { type: string } }
+        mustContainPatterns: { type: array, items: { type: string } }
+        expectRefusalCode: { $ref: '#/components/schemas/RefusalCode' }
+        referenceAnswer: { type: string }
+        tags: { type: array, items: { type: string } }
+        weight: { type: integer, default: 1 }
+        source: { type: string }
+    EvalRunRequest:
+      type: object
+      properties:
+        scope: { type: string, enum: [PR_SUBSET, FULL, RED_TEAM_ONLY], default: FULL }
+        bundle:
+          type: object
+          properties:
+            kbEpoch: { type: integer }
+            promptVersions: { type: object, additionalProperties: { type: integer } }
+            retrievalConfigVersion: { type: integer }
+            modelConfigVersion: { type: integer }
+            guardrailPolicyVersions: { type: object, additionalProperties: { type: integer } }
+        tags: { type: array, items: { type: string } }
+    EvalRun:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        scope: { type: string }
+        status: { $ref: '#/components/schemas/JobStatus' }
+        caseCount: { type: integer }
+        gate: { type: string, enum: [PASS, FAIL, RUNNING] }
+        costUsd: { type: number }
+        startedAt: { type: string, format: date-time }
+        finishedAt: { type: [string, 'null'], format: date-time }
+    EvalScorecard:
+      type: object
+      properties:
+        runId: { type: string, format: uuid }
+        bundle: { type: object, additionalProperties: true }
+        cases: { type: integer }
+        duration: { type: string }
+        cost: { type: number }
+        gate: { type: string, enum: [PASS, FAIL] }
+        scores:
+          type: object
+          additionalProperties:
+            type: object
+            properties:
+              value: { type: number }
+              threshold: { type: number }
+              status: { type: string, enum: [PASS, FAIL, WARN] }
+              previous: { type: number }
+        perLocale:
+          type: object
+          additionalProperties:
+            type: object
+            additionalProperties: { type: number }
+        regressions:
+          type: array
+          items:
+            type: object
+            properties:
+              caseId: { type: string }
+              metric: { type: string }
+              from: { type: number }
+              to: { type: number }
+              hint: { type: string }
+        improvements: { type: integer }
+    GlossaryTerm:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        canonicalCode: { type: string, example: MOURABAHA }
+        termFr: { type: string }
+        termAr: { type: string }
+        termEn: { type: string }
+        transliterationAr: { type: string }
+        definitionFr: { type: string }
+        definitionAr: { type: string }
+        definitionEn: { type: string }
+        forbiddenRenderings: { type: array, items: { type: string } }
+        domain: { type: string, enum: [PRODUCT, SHARIA, PROCEDURE, FINANCIAL, DIGITAL, GOVERNANCE, TECHNICAL] }
+        shariaSensitive: { type: boolean }
+        status: { type: string, enum: [ACTIVE, DEPRECATED] }
+    AssistantConfigEntry:
+      type: object
+      properties:
+        key: { type: string, example: suggested_questions.fr-FR }
+        value: {}
+        valueType: { type: string, enum: [STRING, TEXT, JSON, BOOL, INT] }
+        locale: { type: [string, 'null'] }
+        riskTier: { $ref: '#/components/schemas/RiskTier' }
+        updatedAt: { type: string, format: date-time }
+        updatedBy: { type: string }
+    AuditEvent:
+      type: object
+      properties:
+        seq: { type: integer, format: int64 }
+        id: { type: string, format: uuid }
+        occurredAt: { type: string, format: date-time }
+        actor: { type: string }
+        actorRole: { type: string }
+        action: { type: string, example: DOCUMENT_PUBLISH }
+        subjectType: { type: string }
+        subjectId: { type: string }
+        before: { type: object, additionalProperties: true }
+        after: { type: object, additionalProperties: true }
+        reason: { type: [string, 'null'] }
+        reasonCode: { type: [string, 'null'], description: Break-glass reason for personal-data access }
+        correlationId: { type: string }
+        prevHash: { type: string }
+        hash: { type: string }
+    AnalyticsOverview:
+      type: object
+      properties:
+        period:
+          type: object
+          properties:
+            from: { type: string, format: date }
+            to: { type: string, format: date }
+        conversations: { type: integer }
+        messages: { type: integer }
+        answeredRate: { type: number }
+        refusalRate: { type: number }
+        thumbsUpRate: { type: number }
+        thumbsDownRate: { type: number }
+        byLocale: { type: object, additionalProperties: { type: integer } }
+        byChannel: { type: object, additionalProperties: { type: integer } }
+        byIntent: { type: object, additionalProperties: { type: integer } }
+        byRefusalCode: { type: object, additionalProperties: { type: integer } }
+        latencyP50Ms: { type: integer }
+        latencyP95Ms: { type: integer }
+        cacheHitRate: { type: number }
+        costUsd: { type: number }
+        costPerAnswerUsd: { type: number }
+        degradationSteps: { type: object, additionalProperties: { type: integer } }
+    ReleaseBundle:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        gitSha: { type: string }
+        imageTag: { type: string }
+        kbEpoch: { type: integer }
+        promptVersions: { type: object, additionalProperties: { type: integer } }
+        retrievalConfigVersion: { type: integer }
+        modelConfigVersions: { type: object, additionalProperties: { type: integer } }
+        guardrailPolicyVersions: { type: object, additionalProperties: { type: integer } }
+        evalRunId: { type: [string, 'null'], format: uuid }
+        gate: { type: string, enum: [PASS, FAIL, PENDING] }
+        approvals: { type: array, items: { type: string } }
+        environments: { type: array, items: { type: string, enum: [dev, uat, prod] } }
+        createdAt: { type: string, format: date-time }
