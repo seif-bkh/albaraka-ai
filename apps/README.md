@@ -15,18 +15,20 @@ Al Baraka-inspired green / gold / cream design system:
 npm install                    # first time
 npm run build:ui               # build shared-ui (required by the apps)
 
-# Terminal 1 — backend (Express + embedded PostgreSQL, port 8080)
-cd ../server && npm run dev
+# Option A (full application): from the repository root
+cd .. && make up               # docker compose --profile app up --build
 
-# Terminal 2 — this workspace
+# Option B (UI only, against a locally running server on :8080):
+cd ../server && docker compose -f ../deploy/docker-compose.yml --profile app up -d rag-assistant server postgres redis keycloak minio
+# then, in this workspace:
 npm run serve:fo               # http://localhost:4200
 npm run serve:bo               # http://localhost:4201
 ```
 
-Both dev servers proxy `/api/*` to `http://127.0.0.1:8080` (`proxy.conf.json`)
-and bind `0.0.0.0` so the sandbox live preview can reach them.
+Both dev servers proxy `/api/*` to `http://127.0.0.1:8080` (Spring, `proxy.conf.json`) and bind
+`0.0.0.0` so the sandbox live preview can reach them.
 
-## Dev users (demo auth)
+## Dev users (Keycloak realm `albaraka`, imported by compose)
 
 `admin@albaraka.tn / Admin#123` · `sharia@albaraka.tn / Sharia#123` ·
 `reviewer@albaraka.tn / Review#123` · `compliance@albaraka.tn / Compliance#123` ·

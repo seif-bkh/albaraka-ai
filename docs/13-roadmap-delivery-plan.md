@@ -3,7 +3,7 @@
 > **Execution status — 2026-09-03 (architecture update per ADR-009):** the runtime stack is now
 > **Spring Boot 4.1 (Java 21) + a dedicated Python RAG service** (FastAPI + LangChain 1.x) + Angular 22.
 > The **deliverable is `deploy/docker-compose.yml`** — from your host, `make up` boots the entire
-> application (PostgreSQL/pgvector, Redis, Keycloak, MinIO, `server`, `rag-assistant`, `web`) with
+> application (PostgreSQL/pgvector, Redis, Keycloak, MinIO, `server`, `rag-assistant`, `frontoffice-web`, `backoffice-web`, nginx edge) with
 > mock providers by default and real Groq/Google once keys are set. The earlier Node parity backend
 > is preserved in `legacy/node-parity/` for reference only. Checkmarks below are updated as phases
 > reach their acceptance criteria.

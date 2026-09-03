@@ -17,36 +17,40 @@ behaviour does not require a deployment.
 
 ## Current state
 
-> **All phases in execution (2026-09-03).** The repository now contains the full design
-> (Phase 0, unchanged as the contract) **and** the runtime implementation:
+> **All phases in execution (2026-09-03).** The repository contains the full Phase 0 contract
+> **and** the executable application, runnable from your host with one command:
 >
-> * `server/` — Node 22 parity backend on Express + **embedded PostgreSQL** (the real
->   `specs/db/schema.sql` executed verbatim, Flyway seeds V900–V903, trilingual demo KB),
->   RAG pipeline with guardrails REF-01/03/04/05, SSE chat per `specs/openapi.yaml` §3.1,
->   Sharia governance with two-eyes + hash-chained audit.
-> * `albaraka-web/` — Angular 22 workspace: **frontoffice-web** (public chat, FR/AR/EN with
->   RTL, Al Baraka-inspired green/gold UI) and **backoffice-web** (admin console: documents,
->   Sharia review board, prompts, retrieval config, models, audit chain, feedback).
-> * Root `Makefile` with real targets (`make dev`, `make web`, `make admin`, `make eval`…).
-> * Golden evaluation gate `server/scripts/eval-golden.mjs` — **8/8 green**.
+> * `deploy/docker-compose.yml` — **`make up`** boots the complete stack: PostgreSQL+pgvector,
+>   Redis, Keycloak (realm import + MFA structure + 5 demo users), MinIO, **`rag-assistant`**
+>   (Python 3.12 · FastAPI · LangChain 1.x — mock mode by default, no keys needed),
+>   **`server`** (Spring Boot 4.1 · Java 21 · WebFlux — Flyway V1 schema + V2 demo KB),
+>   **`frontoffice-web`** and **`backoffice-web`** (Angular 22), and an nginx edge (`:8082`).
+> * `rag-assistant/` — LLM/embedding egress, guard classification and the retrieval pipeline;
+>   golden gate `python -m pytest -q` → **8/8 green**; SSE per docs/08 §8.
+> * `server/` — Spring modular monolith: chat SSE orchestration, knowledge-base lifecycle,
+>   two-eyes Sharia reviews, hash-chained audit, Keycloak token bridge.
+> * `apps/` — Angular 22 workspace (frontoffice + backoffice + shared-ui), Al Baraka-inspired
+>   green/teal design, FR primary + AR RTL + EN.
+> * `legacy/node-parity/` — previous Node backend, reference only (ADR-009).
 >
-> The Spring Boot / Java 21 topology, `apps/`, `libs/`, Keycloak MFA and Docker deployment
-> remain the documented **production target** (§ docs/02 §1.b); this sandbox has no JVM or
-> Docker, so the Node parity backend is the executable implementation of the same contracts.
+> Developer-mode alternative: run `rag-assistant` and the Angular dev servers locally with
+> `make rag-test` / `npm run serve:fo` — the dev proxies still target `:8080` (Spring).
 
 ### Quickstart
 
 ```bash
-make dev          # backend :8080 (starts embedded PostgreSQL on :55433, seeds demo KB)
-make web          # front-office :4200  → preview the assistant chat
-make admin        # back-office  :4201  → admin@albaraka.tn / Admin#123
-make eval         # 8-case golden gate
+cp .env.example .env      # optional keys; mock mode needs none
+make up                   # docker compose --profile app up --build
+# frontoffice http://localhost:8082 · backoffice http://localhost:8082/admin
+# API health http://localhost:8081/actuator/health/liveness · Keycloak http://localhost:8080
 ```
 
-Demo users: `admin@albaraka.tn/Admin#123`, `sharia@albaraka.tn/Sharia#123`,
-`reviewer@albaraka.tn/Review#123`, `compliance@albaraka.tn/Compliance#123`,
-`agent@albaraka.tn/Agent#123`. Providers run in `local-mock` by default; set
-`GROQ_API_KEY`/`GOOGLE_API_KEY` to use the real models.
+```
+Demo users (Keycloak realm `albaraka`): `admin@albaraka.tn/Admin#123` (platform-admin),
+`sharia@albaraka.tn/Sharia#123` (sharia-officer), `reviewer@albaraka.tn/Review#123` (analyst),
+`compliance@albaraka.tn/Compliance#123` (compliance), `agent@albaraka.tn/Agent#123` (branch-agent).
+The RAG service runs in **mock** mode by default; set `GROQ_API_KEY` + `GOOGLE_API_KEY` and
+`RAG_PROVIDER_MODE=live` to use the real models.
 
 ## Document map
 
@@ -86,7 +90,8 @@ Demo users: `admin@albaraka.tn/Admin#123`, `sharia@albaraka.tn/Sharia#123`,
 
 | Concern | Decision | ADR |
 |---|---|---|
-| Backend | Java 21 · Spring Boot 4.1.x · Spring AI 2.0.x · Maven multi-module **modular monolith** | [ADR-005](docs/adr/ADR-005-modular-monolith.md) · [ADR-008](docs/adr/ADR-008-platform-versions.md) |
+| Backend | Java 21 · Spring Boot 4.1.x · WebFlux · Maven multi-module **modular monolith**; no Spring AI on the Java side (ADR-009) | [ADR-005](docs/adr/ADR-005-modular-monolith.md) · [ADR-008](docs/adr/ADR-008-platform-versions.md) · [ADR-009](docs/adr/ADR-009-python-rag-service.md) |
+| RAG service | Python 3.12 · FastAPI · LangChain 1.x · `langchain-postgres` (PGVectorStore) — the ONLY egress to Groq/Google | [ADR-009](docs/adr/ADR-009-python-rag-service.md) |
 | Frontend | Angular 22 (standalone, signals, zoneless) · two apps + shared UI lib | [ADR-008](docs/adr/ADR-008-platform-versions.md) |
 | LLM | **Groq** (OpenAI-compatible) — `llama-3.3-70b-versatile` primary, `llama-3.1-8b-instant` for utility tasks, `llama-guard-4-12b` + `llama-prompt-guard-2-86m` for moderation | [ADR-002](docs/adr/ADR-002-llm-groq-embeddings-google.md) |
 | Embeddings | **Google** `gemini-embedding-001` @ 1536 dims (Matryoshka), `taskType` split query/document | [ADR-002](docs/adr/ADR-002-llm-groq-embeddings-google.md) |

@@ -377,7 +377,7 @@ version and the model config together as a **release bundle** (see [`12-deployme
 | Integration | Testcontainers (Postgres+pgvector, Redis) | every PR |
 | Contract | OpenAPI diff (`oasdiff`) | breaking change ⇒ major version bump required |
 | LLM adapters | WireMock-recorded fixtures | tests never call paid APIs |
-| RAG quality | Eval harness on golden set | faithfulness ≥ 0.85, policy-violation ≤ 1 % |
+| RAG quality | Eval harness on golden set (rag-assistant pytest gate + `tools/eval-lint`) | faithfulness ≥ 0.85, policy-violation ≤ 1 % |
 | Frontend | Vitest + Angular Testing Library, Playwright e2e | a11y (axe) + RTL snapshot tests |
 | Security | OWASP dependency-check, Trivy, ZAP baseline | no HIGH unpatched |
 
