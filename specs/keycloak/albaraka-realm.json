@@ -70,7 +70,6 @@
   "webAuthnPolicyUserVerificationRequirement": "required",
   "webAuthnPolicyCreateTimeout": 0,
   "webAuthnPolicyAvoidSameAuthenticatorRegister": true,
-  "parRequestUriLifespan": 60,
   "adminPermissionsEnabled": false,
   "organizationEnabled": false,
   "clientPoliciesPolicies": {
