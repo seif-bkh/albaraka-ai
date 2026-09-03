@@ -1,50 +1,50 @@
-## run 33812748280 — keycloak
+## run 33813549042 — keycloak
 keycloak-1  | WARNING: Hostname v1 options [hostname-port] are still in use, please review your configuration
 keycloak-1  | Updating the configuration and installing your custom providers, if any. Please wait.
-keycloak-1  | 2026-09-03 22:23:55,681 INFO  [io.quarkus.deployment.QuarkusAugmentor] (main) Quarkus augmentation completed in 7648ms
+keycloak-1  | 2026-09-03 22:34:03,566 INFO  [io.quarkus.deployment.QuarkusAugmentor] (main) Quarkus augmentation completed in 8175ms
 keycloak-1  | WARNING: Hostname v1 options [hostname-port] are still in use, please review your configuration
 keycloak-1  | Running the server in development mode. DO NOT use this configuration in production.
-keycloak-1  | 2026-09-03 22:23:57,972 INFO  [org.keycloak.url.HostnameV2ProviderFactory] (main) If hostname is specified, hostname-strict is effectively ignored
-keycloak-1  | 2026-09-03 22:23:59,168 INFO  [org.infinispan.CONTAINER] (main) ISPN000974: Virtual threads support: enabled
-keycloak-1  | 2026-09-03 22:24:00,106 INFO  [org.hibernate.orm.jdbc.batch] (JPA Startup Thread) HHH100501: Automatic JDBC statement batching enabled (maximum batch size 32)
-keycloak-1  | 2026-09-03 22:24:01,184 INFO  [org.keycloak.quarkus.runtime.storage.database.liquibase.QuarkusJpaUpdaterProvider] (main) Initializing database schema. Using changelog META-INF/jpa-changelog-master.xml
-keycloak-1  | 2026-09-03 22:24:07,830 INFO  [org.infinispan.CONTAINER] (main) ISPN000556: Starting user marshaller 'org.infinispan.commons.marshall.ImmutableProtoStreamMarshaller'
-keycloak-1  | 2026-09-03 22:24:08,181 INFO  [org.keycloak.connections.infinispan.DefaultInfinispanConnectionProviderFactory] (main) Node name: node_845861, Site name: null
-keycloak-1  | 2026-09-03 22:24:08,335 INFO  [org.keycloak.quarkus.runtime.storage.database.jpa.DatabaseIndexChecker] (db-index-checker) Running database index checker
-keycloak-1  | 2026-09-03 22:24:08,338 INFO  [org.keycloak.models.workflow.WorkflowsEventListenerFactory] (main) Workflow runner task scheduled: next execution at 10:24:08, then every PT12H
-keycloak-1  | 2026-09-03 22:24:08,436 INFO  [org.keycloak.exportimport.dir.DirImportProvider] (main) Importing from directory /opt/keycloak/bin/../data/import
-keycloak-1  | 2026-09-03 22:24:08,460 INFO  [org.keycloak.services] (main) KC-SERVICES0050: Initializing master realm
-keycloak-1  | 2026-09-03 22:24:10,069 INFO  [org.keycloak.services] (main) KC-SERVICES0030: Full model import requested. Strategy: IGNORE_EXISTING
-keycloak-1  | 2026-09-03 22:24:10,772 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:24:10,787 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'profile' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:24:10,904 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:24:10,910 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'profile' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:24:10,973 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'webauthn' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:24:10,979 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:24:10,984 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'profile' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:24:10,991 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'email' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:24:10,996 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'roles' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:24:11,056 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:24:12,650 INFO  [org.keycloak.exportimport.util.ImportUtils] (main) Realm 'albaraka' imported
-keycloak-1  | 2026-09-03 22:24:12,656 INFO  [org.keycloak.services] (main) KC-SERVICES0032: Import finished successfully
-keycloak-1  | 2026-09-03 22:24:12,768 INFO  [org.keycloak.services] (main) KC-SERVICES0077: Created temporary admin user with username admin
-keycloak-1  | 2026-09-03 22:24:12,934 INFO  [org.keycloak.services.resources.KeycloakApplication] (main) Bootstrap completed in 12.716000 seconds
-keycloak-1  | 2026-09-03 22:24:13,036 INFO  [io.quarkus] (main) Keycloak 26.6.3 on JVM (powered by Quarkus 3.33.2) started in 17.194s. Listening on: http://0.0.0.0:8080. Management interface listening on http://0.0.0.0:9000.
-keycloak-1  | 2026-09-03 22:24:13,036 INFO  [io.quarkus] (main) Profile dev activated. 
-keycloak-1  | 2026-09-03 22:24:13,036 INFO  [io.quarkus] (main) Installed features: [agroal, cdi, hibernate-orm, jdbc-postgresql, keycloak, micrometer, narayana-jta, opentelemetry, reactive-routes, rest, rest-jackson, smallrye-context-propagation, smallrye-health, vertx]
+keycloak-1  | 2026-09-03 22:34:05,427 INFO  [org.keycloak.url.HostnameV2ProviderFactory] (main) If hostname is specified, hostname-strict is effectively ignored
+keycloak-1  | 2026-09-03 22:34:07,164 INFO  [org.infinispan.CONTAINER] (main) ISPN000974: Virtual threads support: enabled
+keycloak-1  | 2026-09-03 22:34:08,252 INFO  [org.hibernate.orm.jdbc.batch] (JPA Startup Thread) HHH100501: Automatic JDBC statement batching enabled (maximum batch size 32)
+keycloak-1  | 2026-09-03 22:34:09,587 INFO  [org.keycloak.quarkus.runtime.storage.database.liquibase.QuarkusJpaUpdaterProvider] (main) Initializing database schema. Using changelog META-INF/jpa-changelog-master.xml
+keycloak-1  | 2026-09-03 22:34:16,351 INFO  [org.infinispan.CONTAINER] (main) ISPN000556: Starting user marshaller 'org.infinispan.commons.marshall.ImmutableProtoStreamMarshaller'
+keycloak-1  | 2026-09-03 22:34:16,747 INFO  [org.keycloak.connections.infinispan.DefaultInfinispanConnectionProviderFactory] (main) Node name: node_566373, Site name: null
+keycloak-1  | 2026-09-03 22:34:16,918 INFO  [org.keycloak.quarkus.runtime.storage.database.jpa.DatabaseIndexChecker] (db-index-checker) Running database index checker
+keycloak-1  | 2026-09-03 22:34:16,924 INFO  [org.keycloak.models.workflow.WorkflowsEventListenerFactory] (main) Workflow runner task scheduled: next execution at 10:34:16, then every PT12H
+keycloak-1  | 2026-09-03 22:34:17,036 INFO  [org.keycloak.exportimport.dir.DirImportProvider] (main) Importing from directory /opt/keycloak/bin/../data/import
+keycloak-1  | 2026-09-03 22:34:17,069 INFO  [org.keycloak.services] (main) KC-SERVICES0050: Initializing master realm
+keycloak-1  | 2026-09-03 22:34:18,537 INFO  [org.keycloak.services] (main) KC-SERVICES0030: Full model import requested. Strategy: IGNORE_EXISTING
+keycloak-1  | 2026-09-03 22:34:19,413 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
+keycloak-1  | 2026-09-03 22:34:19,422 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'profile' doesn't exist. Ignoring
+keycloak-1  | 2026-09-03 22:34:19,526 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
+keycloak-1  | 2026-09-03 22:34:19,532 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'profile' doesn't exist. Ignoring
+keycloak-1  | 2026-09-03 22:34:19,593 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'webauthn' doesn't exist. Ignoring
+keycloak-1  | 2026-09-03 22:34:19,600 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
+keycloak-1  | 2026-09-03 22:34:19,606 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'profile' doesn't exist. Ignoring
+keycloak-1  | 2026-09-03 22:34:19,612 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'email' doesn't exist. Ignoring
+keycloak-1  | 2026-09-03 22:34:19,618 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'roles' doesn't exist. Ignoring
+keycloak-1  | 2026-09-03 22:34:19,678 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
+keycloak-1  | 2026-09-03 22:34:20,920 INFO  [org.keycloak.exportimport.util.ImportUtils] (main) Realm 'albaraka' imported
+keycloak-1  | 2026-09-03 22:34:20,926 INFO  [org.keycloak.services] (main) KC-SERVICES0032: Import finished successfully
+keycloak-1  | 2026-09-03 22:34:21,008 INFO  [org.keycloak.services] (main) KC-SERVICES0077: Created temporary admin user with username admin
+keycloak-1  | 2026-09-03 22:34:21,157 INFO  [org.keycloak.services.resources.KeycloakApplication] (main) Bootstrap completed in 12.781000 seconds
+keycloak-1  | 2026-09-03 22:34:21,248 INFO  [io.quarkus] (main) Keycloak 26.6.3 on JVM (powered by Quarkus 3.33.2) started in 17.522s. Listening on: http://0.0.0.0:8080. Management interface listening on http://0.0.0.0:9000.
+keycloak-1  | 2026-09-03 22:34:21,248 INFO  [io.quarkus] (main) Profile dev activated. 
+keycloak-1  | 2026-09-03 22:34:21,248 INFO  [io.quarkus] (main) Installed features: [agroal, cdi, hibernate-orm, jdbc-postgresql, keycloak, micrometer, narayana-jta, opentelemetry, reactive-routes, rest, rest-jackson, smallrye-context-propagation, smallrye-health, vertx]
 
 ## ps -a
 NAME                            IMAGE                                              COMMAND                  SERVICE           CREATED         STATUS                     PORTS
-albaraka-ai-backoffice-web-1    albaraka-ai/backoffice-web:dev                     "/docker-entrypoint.…"   backoffice-web    6 minutes ago   Created                    
-albaraka-ai-frontoffice-web-1   albaraka-ai/frontoffice-web:dev                    "/docker-entrypoint.…"   frontoffice-web   6 minutes ago   Created                    
-albaraka-ai-keycloak-1          quay.io/keycloak/keycloak:26.6.3                   "/bin/bash -ec 'mkdi…"   keycloak          6 minutes ago   Up 6 minutes (healthy)     8443/tcp, 0.0.0.0:8080->8080/tcp, [::]:8080->8080/tcp, 9000/tcp
-albaraka-ai-minio-1             quay.io/minio/minio:RELEASE.2025-03-12T18-04-18Z   "/usr/bin/docker-ent…"   minio             6 minutes ago   Up 6 minutes (healthy)     0.0.0.0:9000-9001->9000-9001/tcp, [::]:9000-9001->9000-9001/tcp
-albaraka-ai-minio-init-1        quay.io/minio/mc:RELEASE.2025-03-12T17-29-24Z      "/bin/sh -ec 'until …"   minio-init        6 minutes ago   Exited (0) 6 minutes ago   
-albaraka-ai-nginx-1             nginx:1.28-alpine                                  "/docker-entrypoint.…"   nginx             6 minutes ago   Created                    
-albaraka-ai-postgres-1          pgvector/pgvector:0.8.1-pg17                       "docker-entrypoint.s…"   postgres          6 minutes ago   Up 6 minutes (healthy)     0.0.0.0:5432->5432/tcp, [::]:5432->5432/tcp
-albaraka-ai-rag-assistant-1     albaraka-ai/rag-assistant:dev                      "uvicorn rag_assista…"   rag-assistant     6 minutes ago   Up 6 minutes (healthy)     8000/tcp
-albaraka-ai-redis-1             redis:7.4-alpine                                   "docker-entrypoint.s…"   redis             6 minutes ago   Up 6 minutes (healthy)     0.0.0.0:6379->6379/tcp, [::]:6379->6379/tcp
-albaraka-ai-server-1            albaraka-ai/server:dev                             "java -jar app.jar"      server            6 minutes ago   Up 5 minutes (unhealthy)   0.0.0.0:8081->8080/tcp, [::]:8081->8080/tcp
+albaraka-ai-backoffice-web-1    albaraka-ai/backoffice-web:dev                     "/docker-entrypoint.…"   backoffice-web    3 minutes ago   Up 3 minutes (healthy)     80/tcp
+albaraka-ai-frontoffice-web-1   albaraka-ai/frontoffice-web:dev                    "/docker-entrypoint.…"   frontoffice-web   3 minutes ago   Up 3 minutes (healthy)     80/tcp
+albaraka-ai-keycloak-1          quay.io/keycloak/keycloak:26.6.3                   "/bin/bash -ec 'mkdi…"   keycloak          3 minutes ago   Up 3 minutes (healthy)     8443/tcp, 0.0.0.0:8080->8080/tcp, [::]:8080->8080/tcp, 9000/tcp
+albaraka-ai-minio-1             quay.io/minio/minio:RELEASE.2025-03-12T18-04-18Z   "/usr/bin/docker-ent…"   minio             3 minutes ago   Up 3 minutes (healthy)     0.0.0.0:9000-9001->9000-9001/tcp, [::]:9000-9001->9000-9001/tcp
+albaraka-ai-minio-init-1        quay.io/minio/mc:RELEASE.2025-03-12T17-29-24Z      "/bin/sh -ec 'until …"   minio-init        3 minutes ago   Exited (0) 3 minutes ago   
+albaraka-ai-nginx-1             nginx:1.28-alpine                                  "/docker-entrypoint.…"   nginx             3 minutes ago   Up 3 minutes               0.0.0.0:8082->80/tcp, [::]:8082->80/tcp
+albaraka-ai-postgres-1          pgvector/pgvector:0.8.1-pg17                       "docker-entrypoint.s…"   postgres          3 minutes ago   Up 3 minutes (healthy)     0.0.0.0:5432->5432/tcp, [::]:5432->5432/tcp
+albaraka-ai-rag-assistant-1     albaraka-ai/rag-assistant:dev                      "uvicorn rag_assista…"   rag-assistant     3 minutes ago   Up 3 minutes (healthy)     8000/tcp
+albaraka-ai-redis-1             redis:7.4-alpine                                   "docker-entrypoint.s…"   redis             3 minutes ago   Up 3 minutes (healthy)     0.0.0.0:6379->6379/tcp, [::]:6379->6379/tcp
+albaraka-ai-server-1            albaraka-ai/server:dev                             "java -jar app.jar"      server            3 minutes ago   Up 3 minutes (healthy)     0.0.0.0:8081->8080/tcp, [::]:8081->8080/tcp
 
 ## postgres
 postgres-1  | The files belonging to this database system will be owned by user "postgres".
@@ -73,10 +73,10 @@ postgres-1  |     pg_ctl -D /var/lib/postgresql/data -l logfile start
 postgres-1  | 
 postgres-1  | initdb: warning: enabling "trust" authentication for local connections
 postgres-1  | initdb: hint: You can change this by editing pg_hba.conf or using the option -A, or --auth-local and --auth-host, the next time you run initdb.
-postgres-1  | waiting for server to start....2026-09-03 22:23:41.086 UTC [49] LOG:  starting PostgreSQL 17.8 (Debian 17.8-1.pgdg12+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit
-postgres-1  | 2026-09-03 22:23:41.086 UTC [49] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
-postgres-1  | 2026-09-03 22:23:41.089 UTC [52] LOG:  database system was shut down at 2026-09-03 22:23:41 UTC
-postgres-1  | 2026-09-03 22:23:41.093 UTC [49] LOG:  database system is ready to accept connections
+postgres-1  | waiting for server to start....2026-09-03 22:33:48.336 UTC [49] LOG:  starting PostgreSQL 17.8 (Debian 17.8-1.pgdg12+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit
+postgres-1  | 2026-09-03 22:33:48.336 UTC [49] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+postgres-1  | 2026-09-03 22:33:48.339 UTC [52] LOG:  database system was shut down at 2026-09-03 22:33:48 UTC
+postgres-1  | 2026-09-03 22:33:48.343 UTC [49] LOG:  database system is ready to accept connections
 postgres-1  |  done
 postgres-1  | server started
 postgres-1  | CREATE DATABASE
@@ -86,27 +86,25 @@ postgres-1  | /usr/local/bin/docker-entrypoint.sh: running /docker-entrypoint-in
 postgres-1  | CREATE DATABASE
 postgres-1  | 
 postgres-1  | 
-postgres-1  | waiting for server to shut down...2026-09-03 22:23:41.331 UTC [49] LOG:  received fast shutdown request
-postgres-1  | .2026-09-03 22:23:41.332 UTC [49] LOG:  aborting any active transactions
-postgres-1  | 2026-09-03 22:23:41.335 UTC [49] LOG:  background worker "logical replication launcher" (PID 55) exited with exit code 1
-postgres-1  | 2026-09-03 22:23:41.335 UTC [50] LOG:  shutting down
-postgres-1  | 2026-09-03 22:23:41.336 UTC [50] LOG:  checkpoint starting: shutdown immediate
-postgres-1  | 2026-09-03 22:23:41.363 UTC [50] LOG:  checkpoint complete: wrote 1836 buffers (11.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.025 s, sync=0.003 s, total=0.029 s; sync files=597, longest=0.001 s, average=0.001 s; distance=8476 kB, estimate=8476 kB; lsn=0/1D2BED8, redo lsn=0/1D2BED8
-postgres-1  | 2026-09-03 22:23:41.372 UTC [49] LOG:  database system is shut down
+postgres-1  | waiting for server to shut down...2026-09-03 22:33:48.586 UTC [49] LOG:  received fast shutdown request
+postgres-1  | .2026-09-03 22:33:48.586 UTC [49] LOG:  aborting any active transactions
+postgres-1  | 2026-09-03 22:33:48.589 UTC [49] LOG:  background worker "logical replication launcher" (PID 55) exited with exit code 1
+postgres-1  | 2026-09-03 22:33:48.590 UTC [50] LOG:  shutting down
+postgres-1  | 2026-09-03 22:33:48.590 UTC [50] LOG:  checkpoint starting: shutdown immediate
+postgres-1  | 2026-09-03 22:33:48.620 UTC [50] LOG:  checkpoint complete: wrote 1836 buffers (11.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.027 s, sync=0.003 s, total=0.031 s; sync files=597, longest=0.001 s, average=0.001 s; distance=8476 kB, estimate=8476 kB; lsn=0/1D2BED8, redo lsn=0/1D2BED8
+postgres-1  | 2026-09-03 22:33:48.629 UTC [49] LOG:  database system is shut down
 postgres-1  |  done
 postgres-1  | server stopped
 postgres-1  | 
 postgres-1  | PostgreSQL init process complete; ready for start up.
 postgres-1  | 
-postgres-1  | 2026-09-03 22:23:41.457 UTC [1] LOG:  starting PostgreSQL 17.8 (Debian 17.8-1.pgdg12+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit
-postgres-1  | 2026-09-03 22:23:41.457 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
-postgres-1  | 2026-09-03 22:23:41.457 UTC [1] LOG:  listening on IPv6 address "::", port 5432
-postgres-1  | 2026-09-03 22:23:41.458 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
-postgres-1  | 2026-09-03 22:23:41.461 UTC [67] LOG:  database system was shut down at 2026-09-03 22:23:41 UTC
-postgres-1  | 2026-09-03 22:23:41.474 UTC [1] LOG:  database system is ready to accept connections
-postgres-1  | 2026-09-03 22:24:00.243 UTC [95] ERROR:  relation "migration_model" does not exist at character 25
-postgres-1  | 2026-09-03 22:24:00.243 UTC [95] STATEMENT:  SELECT ID, VERSION FROM MIGRATION_MODEL ORDER BY UPDATE_TIME DESC
-postgres-1  | 2026-09-03 22:24:01.143 UTC [104] ERROR:  relation "public.databasechangeloglock" does not exist at character 22
-postgres-1  | 2026-09-03 22:24:01.143 UTC [104] STATEMENT:  SELECT COUNT(*) FROM public.databasechangeloglock
-postgres-1  | 2026-09-03 22:28:41.536 UTC [65] LOG:  checkpoint starting: time
-postgres-1  | 2026-09-03 22:29:46.772 UTC [65] LOG:  checkpoint complete: wrote 655 buffers (4.0%); 0 WAL file(s) added, 0 removed, 1 recycled; write=65.228 s, sync=0.004 s, total=65.236 s; sync files=625, longest=0.001 s, average=0.001 s; distance=4510 kB, estimate=4510 kB; lsn=0/2193848, redo lsn=0/21937B8
+postgres-1  | 2026-09-03 22:33:48.713 UTC [1] LOG:  starting PostgreSQL 17.8 (Debian 17.8-1.pgdg12+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit
+postgres-1  | 2026-09-03 22:33:48.713 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+postgres-1  | 2026-09-03 22:33:48.713 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+postgres-1  | 2026-09-03 22:33:48.714 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+postgres-1  | 2026-09-03 22:33:48.717 UTC [67] LOG:  database system was shut down at 2026-09-03 22:33:48 UTC
+postgres-1  | 2026-09-03 22:33:48.729 UTC [1] LOG:  database system is ready to accept connections
+postgres-1  | 2026-09-03 22:34:08.402 UTC [95] ERROR:  relation "migration_model" does not exist at character 25
+postgres-1  | 2026-09-03 22:34:08.402 UTC [95] STATEMENT:  SELECT ID, VERSION FROM MIGRATION_MODEL ORDER BY UPDATE_TIME DESC
+postgres-1  | 2026-09-03 22:34:09.539 UTC [105] ERROR:  relation "public.databasechangeloglock" does not exist at character 22
+postgres-1  | 2026-09-03 22:34:09.539 UTC [105] STATEMENT:  SELECT COUNT(*) FROM public.databasechangeloglock
