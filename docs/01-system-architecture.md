@@ -37,7 +37,7 @@ flowchart LR
     subgraph FE["Frontend tier (Angular 22)"]
         FO[apps/frontoffice-web<br/>SPA + embeddable widget]
         BO[apps/backoffice-web<br/>admin SPA]
-        SH[(libs/shared-ui<br/>design system + contracts)]
+        SH[(apps/projects/shared-ui<br/>design system + contracts)]
     end
     subgraph EDGE["Edge"]
         NG[Nginx / API gateway<br/>TLS · WAF · rate limit · CORS]
@@ -116,10 +116,14 @@ Modules communicate through **published interfaces only** — enforced by
 
 | Module | Responsibility | Owns tables | Must NOT |
 |---|---|---|---|
-| `assistant-api` | REST controllers, SSE orchestration (calls RAG service), DTO mapping | — | Contain business rules or SQL |
-| `assistant-identity` | JWT validation, claims→authorities mapping, tenant/locale resolution | `user_preference` | Talk to Keycloak admin API from request threads |
-| `knowledge` | Documents, versions, chunks, translations, glossary, collections, publication state | `document`, `document_version`, `chunk`, `chunk_translation`, `term_glossary`, `collection` | Call a model |
-| `ingestion` | Intake API, job queue (files → `ingestion_job`/`embedding_job`), re-index orchestration | `ingestion_job`, `embedding_job` | Parse content or embed (Python does) |
+| `assistant-domain-shared` | Enums, config properties, error envelope, RAG contract DTOs (plain records) | — | Spring modules may not re-declare contract types |
+| `assistant-api` | REST controllers, SSE orchestration (calls RAG service), Keycloak JWT → authorities, /auth/login bridge | — | Contain business rules or SQL (read-only admin queries live in the controller layer) |
+| `assistant-rag-client` | HTTP client for the internal RAG contract, SSE frame parsing, ingest hook | — | Contain RAG logic or call a provider |
+| `assistant-knowledge` | Documents, versions, chunks, collection, publication state | `document`, `document_version`, `chunk`, `chunk_embedding`, `collection` | Call a model (embeddings are Python's job) |
+| `assistant-governance` | Sharia review workflow, two-eyes task routing, fatwa-request refs | `sharia_review`, `review_task`, `fatwa_request` | Publish content itself (it flips state, `knowledge` reacts) |
+| `assistant-analytics` | Conversation/message/trace/usage persistence used by chat orchestration | `conversation`, `message`, `retrieval_trace`, `llm_call_log`, `guardrail_event` | Mutate knowledge |
+| `assistant-audit` | Append-only hash-chained event log | `audit_event` | Update or delete a row (DB trigger forbids it) |
+| `assistant-boot` | Composition root: datasource, Flyway migrations (V1 schema, V2 demo KB), actuator | — | Contain business logic |
 | `governance` | Sharia review workflow, approvals, two-eyes enforcement, fatwa-request routing | `review_task`, `sharia_review`, `fatwa_request` | Publish content itself (it flips state, `knowledge` reacts) |
 | `analytics` | Metrics aggregation, feedback, QA queues, cost/token accounting, dashboards API | `feedback`, `conversation_metric`, `token_usage`, `eval_run` | Mutate knowledge |
 | `audit` | Append-only hash-chained event log, export for regulators/committee | `audit_event` | Update or delete a row (DB trigger forbids it) |
@@ -296,7 +300,7 @@ One Angular 22 workspace (`apps/`) with two applications and one shared library:
 ```
 apps/frontoffice-web   ← chat experience, widget entry point, public KB search
 apps/backoffice-web    ← admin console (lazy-loaded feature routes)
-apps/shared-ui         ← chat bubble, source card, locale switcher, RTL layout shell,
+apps/projects/shared-ui ← chat bubble, source card, locale switcher, RTL layout shell,
                           accessible data table, approval stepper + trilingual dictionary
 ```
 
@@ -306,9 +310,10 @@ apps/shared-ui         ← chat bubble, source card, locale switcher, RTL layout
   `ChatStreamService` exposing a signal of partial tokens.
 * **i18n**: runtime locale loading with `dir` switching through the `shared-ui` dictionary and
   `<html lang/dir>` (see [`06-i18n-trilingual-rtl.md`](06-i18n-trilingual-rtl.md)).
-* **Auth**: Keycloak OIDC PKCE (backoffice requires MFA). Frontoffice allows anonymous use with
-  an ephemeral device id; in the local demo profile, a dev login endpoint stands in for Keycloak
-  (see `server/README.md`).
+* **Auth**: Keycloak OIDC PKCE for the SPAs; the backoffice SPA signs in through the Spring
+  `/api/v1/auth/login` bridge (password grant on `albaraka-backoffice-web`, realm import in
+  `specs/keycloak/albaraka-realm.json` ships the 5 demo users). Frontoffice allows anonymous use
+  with an ephemeral device id.
 * **Design system**: custom Al Baraka theme (green/gold palette, Arabic-first typography) in
   `shared-ui` — no Material dependency in the demo build.
 
