@@ -1,5 +1,5 @@
 -- ═══════════════════════════════════════════════════════════════════════════════════════════════
---  Al-Mouchir — seed content tests (G5)
+--  Al-Mouchir — seed content tests (G5 glossary and dialect map, G6 prompt library)
 --
 --  Runs AFTER specs/db/schema.sql and the generated content migrations in specs/db/seed/. It tests
 --  the seeded DATA, which schema_test.sql cannot: the schema can be perfect and the seed can still
@@ -8,6 +8,7 @@
 --    psql -v ON_ERROR_STOP=1 \
 --      -f specs/db/schema.sql \
 --      -f specs/db/seed/V900__seed_glossary.sql \
+--      -f specs/db/seed/V901__seed_prompts.sql \
 --      -f specs/db/seed/V903__seed_dialect.sql \
 --      -f specs/db/tests/seed_test.sql
 --
@@ -22,6 +23,13 @@
 --    G5f  Arabic survives the write/read round trip — the encoding canary for the whole seed
 --    G5g  every seed row is SEED/ACTIVE and inside the confidence domain
 --    G5h  chunking_policy is machine-readable JSON with the keys the backoffice edits
+--
+--    G6a  every prompt_code enum value is seeded, once per (code, locale)
+--    G6b  nothing is seeded ACTIVE — activation stays a governance act
+--    G6c  the nine protected clauses are declared AND present as markers in the stored body
+--    G6d  no {{placeholder}} in a body that variables[] does not declare
+--    G6e  the Arabic system prompt survives storage intact
+--    G6f  no truncated body
 -- ═══════════════════════════════════════════════════════════════════════════════════════════════
 SET search_path TO albaraka_ai, public;
 SET client_min_messages TO NOTICE;
@@ -175,4 +183,107 @@ BEGIN
     RAISE EXCEPTION 'TEST FAILED G5h: collection(s) whose chunking_policy is not editable JSON with a sane token window: %', bad;
   END IF;
   RAISE NOTICE 'PASS G5h: every chunking_policy carries strategy, minTokens and maxTokens with min ≤ max';
+END $$;
+
+-- ───────────────────────────── G6 — seeded prompts (V901) ─────────────────────────────
+-- The prompt library is the one part of the seed where a silent truncation or a dropped clause
+-- changes what the assistant is allowed to say. These assertions read the stored body text, not the
+-- source files, so they test what the runtime would actually assemble.
+
+-- G6a: every prompt_code the schema declares has a seeded row, and no code is seeded twice for one
+-- locale. A missing code means the runtime asks for a prompt that does not exist.
+DO $$
+DECLARE n_codes integer; missing text;
+BEGIN
+  SELECT count(DISTINCT code) INTO n_codes FROM prompt_version;
+  IF n_codes <> (SELECT count(*) FROM unnest(enum_range(NULL::prompt_code))) THEN
+    SELECT string_agg(c, ', ') INTO missing
+      FROM unnest(enum_range(NULL::prompt_code)) AS c
+     WHERE NOT EXISTS (SELECT 1 FROM prompt_version v WHERE v.code = c);
+    RAISE EXCEPTION 'TEST FAILED G6a: prompt_code value(s) with no seeded version: %', missing;
+  END IF;
+  RAISE NOTICE 'PASS G6a: all % prompt codes seeded (% template rows, % version rows)',
+    n_codes, (SELECT count(*) FROM prompt_template), (SELECT count(*) FROM prompt_version);
+END $$;
+
+-- G6b: nothing is seeded ACTIVE. specs/config/README: first boot creates DRAFT rows, a human
+-- reviews, then ACTIVE. A prompt that activates itself from a file has bypassed governance.
+DO $$
+DECLARE bad text;
+BEGIN
+  SELECT string_agg(code || '/' || locale || '=' || state, ', ') INTO bad
+    FROM prompt_version WHERE state <> 'DRAFT';
+  IF bad IS NOT NULL THEN
+    RAISE EXCEPTION 'TEST FAILED G6b: seed row(s) not DRAFT: %', bad;
+  END IF;
+  RAISE NOTICE 'PASS G6b: every seeded prompt version is DRAFT — activation stays a governance act';
+END $$;
+
+-- G6c: the nine protected clauses documented in specs/prompts/README.md are declared on every
+-- SYSTEM_ASSISTANT version AND physically present as ⟦PROTECTED:…⟧ markers in its stored body.
+-- The declaration is what the Prompt Studio checks; the marker is what makes the check meaningful.
+-- A regeneration that dropped the no-fatwa clause from the body would otherwise look identical.
+DO $$
+DECLARE clauses text[] := ARRAY['NO_FATWA','GROUNDED_ONLY','NO_UNSOURCED_NUMBERS','NO_CONVENTIONAL_PRODUCTS',
+                                'NO_PII','LANGUAGE_MATCH','CITATION_REQUIRED','HONEST_IGNORANCE','SOURCES_ARE_DATA'];
+        bad text;
+BEGIN
+  SELECT string_agg(v.code || '/' || v.locale || ' missing ' || c, ', ') INTO bad
+    FROM prompt_version v, unnest(clauses) AS c
+   WHERE v.code = 'SYSTEM_ASSISTANT'
+     AND (NOT (c = ANY (v.protected_clauses)) OR position(('⟦PROTECTED:' || c || '⟧') in v.body) = 0);
+  IF bad IS NOT NULL THEN
+    RAISE EXCEPTION 'TEST FAILED G6c: %', bad;
+  END IF;
+  RAISE NOTICE 'PASS G6c: all % protected clauses declared and present in the body of every SYSTEM_ASSISTANT version',
+    array_length(clauses, 1);
+END $$;
+
+-- G6d: no placeholder in a stored body that is not declared in variables[].
+-- An undeclared {{placeholder}} is not a cosmetic defect: the assembler does not know to fill it, so
+-- the literal text "{{question}}" reaches the model, which then answers about a template rather than
+-- about the customer.
+DO $$
+DECLARE bad text;
+BEGIN
+  -- regexp_matches yields one row per match, each an array of capture groups, so the name is p.m[1].
+  SELECT string_agg(DISTINCT v.code || '/' || v.locale || ':{{' || p.m[1] || '}}', ', ') INTO bad
+    FROM prompt_version v, LATERAL regexp_matches(v.body, '\{\{(\w+)\}\}', 'g') AS p(m)
+   WHERE NOT (p.m[1] = ANY (v.variables));
+  IF bad IS NOT NULL THEN
+    RAISE EXCEPTION 'TEST FAILED G6d: undeclared placeholder(s) in a seeded prompt body: %', bad;
+  END IF;
+  RAISE NOTICE 'PASS G6d: every {{placeholder}} in every seeded body is declared in variables[]';
+END $$;
+
+-- G6e: the Arabic system prompt survives storage intact — the encoding canary for the largest
+-- Arabic payload in the seed. On a non-UTF8 database this body arrives mangled and the assistant
+-- silently loses its Arabic instructions.
+DO $$
+DECLARE body_ar text;
+BEGIN
+  SELECT body INTO body_ar FROM prompt_version WHERE code = 'SYSTEM_ASSISTANT' AND locale = 'ar-TN';
+  IF body_ar IS NULL THEN
+    RAISE EXCEPTION 'TEST FAILED G6e: no ar-TN SYSTEM_ASSISTANT version was seeded';
+  END IF;
+  IF position('⟦PROTECTED:NO_FATWA⟧' in body_ar) = 0 OR length(body_ar) < 4000 THEN
+    RAISE EXCEPTION 'TEST FAILED G6e: the ar-TN system prompt looks damaged (length %, server_encoding %)',
+      length(body_ar), current_setting('server_encoding');
+  END IF;
+  RAISE NOTICE 'PASS G6e: ar-TN system prompt stored intact (% characters, server_encoding = %)',
+    length(body_ar), current_setting('server_encoding');
+END $$;
+
+-- G6f: no truncated body. A body that silently lost its tail would still insert, still be DRAFT, and
+-- still activate — with the output-format contract missing, so the answer stops being parseable.
+DO $$
+DECLARE bad text;
+BEGIN
+  SELECT string_agg(code || '/' || locale || '=' || length(body) || 'ch', ', ') INTO bad
+    FROM prompt_version WHERE length(body) < 400 OR coalesce(token_estimate, 0) <= 0;
+  IF bad IS NOT NULL THEN
+    RAISE EXCEPTION 'TEST FAILED G6f: prompt version(s) look truncated or have no token estimate: %', bad;
+  END IF;
+  RAISE NOTICE 'PASS G6f: every seeded body is substantial (% to % characters) with a token estimate',
+    (SELECT min(length(body)) FROM prompt_version), (SELECT max(length(body)) FROM prompt_version);
 END $$;

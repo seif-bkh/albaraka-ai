@@ -40,12 +40,24 @@ import { createHash } from 'node:crypto';
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createRequire } from 'node:module';
+
+const require = createRequire(import.meta.url);
+const yaml = require('js-yaml');
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, '..', '..');
 const OUT = join(root, 'specs', 'db', 'seed');
 
 const read = (p) => readFileSync(join(root, p), 'utf8');
+
+/** Reads a CREATE TYPE … AS ENUM body out of schema.sql. The enum is the schema's, not ours. */
+function enumValues(name) {
+  const sql = read('specs/db/schema.sql');
+  const m = sql.match(new RegExp(`CREATE TYPE ${name}\\s+AS ENUM\\s*\\(([\\s\\S]*?)\\);`));
+  if (!m) throw new Error(`schema.sql declares no enum ${name}`);
+  return [...m[1].matchAll(/'([^']+)'/g)].map((x) => x[1]);
+}
 
 /** The schema the DDL creates. Hardcoding it is how a seed ends up inserting into `public`. */
 const SCHEMA = (() => {
@@ -368,11 +380,184 @@ ${ctx.map((r) => `--   ${r.derjaAr} → ${r.msa}   when ${r.contextWhen}`).join(
   ], body);
 }
 
+
+// ─────────────────────────────────────────────────────────────────────────────────────────────────
+//  V901 — the prompt library
+// ─────────────────────────────────────────────────────────────────────────────────────────────────
+
+const PROMPT_FILES = ['system.assistant.fr.md', 'system.assistant.ar.md', 'system.assistant.en.md',
+  'guardrail.sharia.judge.md'];
+
+/** Approximation only: the runtime replaces token_estimate with a real tokenizer count. Over-
+ *  estimating is the safe direction, because this number feeds the context budget guard. Arabic
+ *  carries more meaning per character in BPE vocabularies, so it gets a smaller divisor. */
+const estimateTokens = (body, locale) => Math.ceil(body.length / (locale === 'ar-TN' ? 2.5 : 4));
+
+function parsePromptBlocks() {
+  const blocks = [];
+
+  // Front-matter files: `---` meta `---` then the whole remainder is the body.
+  for (const file of PROMPT_FILES) {
+    const text = read(`specs/prompts/${file}`);
+    const m = text.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
+    if (!m) throw new Error(`V901: ${file} has no YAML front matter — the importer contract in specs/prompts/README.md requires it`);
+    blocks.push({ file, meta: yaml.load(m[1]), body: m[2].trim() });
+  }
+
+  // utility.prompts.md: a document header (which lists all six codes and is NOT a prompt) followed
+  // by one section per prompt, each with a ```yaml block and a ```text body.
+  const util = read('specs/prompts/utility.prompts.md');
+  const sections = [...util.matchAll(/^## \d+\. `([A-Z_]+)`\n([\s\S]*?)(?=^## \d+\. `|$(?![\s\S]))/gm)];
+  if (!sections.length) throw new Error('V901: parsed no sections out of utility.prompts.md');
+  for (const [, code, section] of sections) {
+    const meta = section.match(/```yaml\n([\s\S]*?)```/);
+    const body = section.match(/```text\n([\s\S]*?)```/);
+    if (!meta) throw new Error(`V901: utility.prompts.md section ${code} has no \`\`\`yaml metadata block`);
+    if (!body) throw new Error(`V901: utility.prompts.md section ${code} has no \`\`\`text prompt body`);
+    const parsed = yaml.load(meta[1]);
+    if (parsed.code !== code) throw new Error(`V901: section heading says ${code} but its front matter says ${parsed.code}`);
+    blocks.push({ file: 'utility.prompts.md', meta: parsed, body: body[1].trim() });
+  }
+  return blocks;
+}
+
+function buildV901() {
+  const blocks = parsePromptBlocks();
+  const CODES = enumValues('prompt_code');
+  const LOCALES = enumValues('locale_code');
+  const ROLES = enumValues('model_role');
+
+  // Every prompt code the schema declares must have a seeded row, or the runtime asks for a prompt
+  // that does not exist and falls back to no system prompt at all.
+  const missing = CODES.filter((c) => !blocks.some((b) => b.meta.code === c));
+  if (missing.length) throw new Error(`V901: prompt_code enum value(s) with no prompt file: ${missing.join(', ')}`);
+  const unknown = blocks.filter((b) => !CODES.includes(b.meta.code));
+  if (unknown.length) throw new Error(`V901: file(s) declare a code the enum does not have: ${unknown.map((b) => b.meta.code).join(', ')}`);
+
+  for (const b of blocks) {
+    const m = b.meta;
+    if (!LOCALES.includes(m.locale)) {
+      throw new Error(`V901: ${b.file} declares locale '${m.locale}', which is not in locale_code (${LOCALES.join(', ')}). Language-neutral prompts use fr-FR as the canonical row — see the note in utility.prompts.md's document header.`);
+    }
+    if (m.model_role && !ROLES.includes(m.model_role)) throw new Error(`V901: ${m.code} declares model_role '${m.model_role}', not in the model_role enum`);
+    if (!m.body === undefined && !b.body) throw new Error(`V901: ${m.code} has an empty prompt body`);
+    // The front-matter clause list and the inline markers are two statements of one fact; if they
+    // disagree, the Prompt Studio would enforce a clause the body does not contain.
+    const inline = [...new Set([...b.body.matchAll(/⟦PROTECTED:([A-Z_]+)⟧/g)].map((x) => x[1]))].sort();
+    const declared = [...(m.protected_clauses || [])].sort();
+    if (inline.join() !== declared.join()) {
+      throw new Error(`V901: ${m.code} (${m.locale}) declares protected_clauses [${declared.join(', ')}] but its body marks [${inline.join(', ')}]`);
+    }
+  }
+
+  const tplRows = [];
+  const verRows = [];
+  const routing = {};
+  for (const b of blocks) {
+    const m = b.meta;
+    const localeField = `description_${m.locale.split('-')[0]}`;
+    const desc = { fr: null, ar: null, en: null };
+    desc[localeField.split('_')[1]] = `Importé de specs/prompts/${b.file} — rôle modèle ${m.model_role || '(non déclaré)'}.`;
+    tplRows.push([q(m.code), q(m.locale), q(desc.fr), q(desc.ar), q(desc.en), bool(!!m.requires_sharia_approval)]);
+
+    const tokens = estimateTokens(b.body, m.locale);
+    verRows.push([
+      q(uuidv5(`prompt_version:${m.code}:${m.locale}:${m.version}`)), q(m.code), q(m.locale), n(m.version),
+      q(b.body), arr(m.variables || []), arr(m.protected_clauses || []), bool(!!m.requires_sharia_approval),
+      // Seeded DRAFT whatever the file says. specs/config/README: "first boot ──► seed rows created
+      // as DRAFT ──► review ──► ACTIVE". A source file cannot grant itself ACTIVE.
+      q('DRAFT'),
+      q(`Baseline v${m.version} imported from specs/prompts/${b.file}. Seeded DRAFT; activation goes through the governance workflow (docs/05 §4).`),
+      q(`النسخة الأساسية v${m.version} مستوردة من specs/prompts/${b.file}. تُزرع بصيغة DRAFT ويعتمد تفعيلها مسار الحوكمة.`),
+      q(`Baseline v${m.version} imported from specs/prompts/${b.file}. Seeded as DRAFT; activation follows the governance workflow.`),
+      n(100), n(tokens), n(0), q('flyway:V901__seed_prompts'),
+    ]);
+    if (m.model_role) {
+      // One binding per code, across every locale row it has. A code bound to two different roles
+      // depending on the answer language would be a routing bug, not a feature.
+      const prev = routing[m.code];
+      if (prev && prev.modelRole !== m.model_role) {
+        throw new Error(`V901: ${m.code} is bound to ${prev.modelRole} for one locale and ${m.model_role} for ${m.locale}`);
+      }
+      routing[m.code] = {
+        ...(prev || {}), modelRole: m.model_role,
+        locales: [...new Set([...(prev?.locales || []), m.locale])],
+        ...(m.output_schema ? { outputSchema: m.output_schema } : {}),
+        ...(m.max_tokens ? { maxTokens: m.max_tokens } : {}),
+        ...(m.temperature !== undefined ? { temperature: m.temperature } : {}),
+        ...(m.latency_budget_ms ? { latencyBudgetMs: m.latency_budget_ms } : {}),
+      };
+    }
+  }
+
+  const body = `SET search_path TO ${SCHEMA}, public;
+
+-- ── prompt_template ──────────────────────────────────────────────────────────────────────────────
+-- ${tplRows.length} rows: one per (code, locale). Language-neutral prompts are stored under the canonical
+-- locale fr-FR because locale_code has no neutral member; the runtime resolves (code, answer_lang)
+-- and falls back to the canonical row, so one classifier serves all three languages.
+${insert('prompt_template',
+  ['code', 'locale', 'description_fr', 'description_ar', 'description_en', 'requires_sharia_approval'],
+  tplRows, 4)}
+-- ── prompt_version ───────────────────────────────────────────────────────────────────────────────
+-- ${verRows.length} baseline versions. Every row is seeded state = 'DRAFT' regardless of what its source file
+-- says: activation is a governance act (docs/05 §4), not a property of a file in a repository.
+--
+-- token_estimate is an approximation (chars/4, chars/2.5 for Arabic) used for context-budget
+-- planning. Over-estimating is the safe direction; the runtime replaces it with a real count.
+--
+-- Not persisted here, because prompt_version has no columns for them: model_role, output_schema,
+-- max_tokens, temperature and latency_budget_ms. The prompt → model-role binding is seeded by V902
+-- into assistant_config as 'prompt.model_routing' so that it is editable at runtime like every other
+-- tunable rather than frozen into a migration.
+${insert('prompt_version',
+  ['id', 'code', 'locale', 'version_no', 'body', 'variables', 'protected_clauses',
+   'requires_sharia_approval', 'state', 'change_note_fr', 'change_note_ar', 'change_note_en',
+   'canary_percent', 'token_estimate', 'version', 'created_by'],
+  verRows, 2)}
+-- ── the prompt → model-role binding, for V902 to persist ─────────────────────────────────────────
+${Object.entries(routing).map(([c, v]) => `--   ${c.padEnd(20)} ${v.modelRole.padEnd(15)} locales=${v.locales.join('+')}${v.outputSchema ? `  output=${v.outputSchema}` : ''}${v.maxTokens ? `  max_tokens=${v.maxTokens}` : ''}`).join('\n')}
+--
+-- ── invariants a reviewer can re-run ─────────────────────────────────────────────────────────────
+-- SELECT count(*) FROM prompt_template;                                   → ${tplRows.length}
+-- SELECT count(*) FROM prompt_version;                                    → ${verRows.length}
+-- SELECT count(*) FROM prompt_version WHERE state <> 'DRAFT';             → 0
+-- SELECT count(*) FROM prompt_version WHERE requires_sharia_approval;     → ${blocks.filter((b) => b.meta.requires_sharia_approval).length}
+-- SELECT count(DISTINCT code) FROM prompt_version;                        → ${CODES.length}   (every prompt_code enum value)
+`;
+
+  return migration('V901__seed_prompts.sql', 'the prompt library baseline', [
+    `specs/prompts/${PROMPT_FILES.join(', specs/prompts/')}`,
+    'specs/prompts/utility.prompts.md   (6 prompts: INTENT_CLASSIFIER, QUERY_REWRITE, SYSTEM_RERANKER, ANSWER_CONTRACT, SUMMARIZER, EVAL_JUDGE)',
+    'specs/db/schema.sql                (prompt_code, locale_code and model_role enums)',
+    'specs/prompts/README.md            (the front-matter contract this importer implements)',
+  ], [
+    'Seeded DRAFT. specs/config/README: first boot creates DRAFT rows, a human reviews, then ACTIVE.',
+    'A prompt file cannot grant itself ACTIVE, so the source `state:` value is ignored on purpose.',
+    '',
+    'The generator validates rather than transcribes: every prompt_code enum value must have a file,',
+    'every declared locale and model_role must exist in its enum, and the front-matter',
+    'protected_clauses list of each file must equal the ⟦PROTECTED:…⟧ markers in its body. Two',
+    'statements of one fact that disagree would let the Prompt Studio enforce a clause the prompt',
+    'does not contain, or drop one it does.',
+    '',
+    'KNOWN GAP, recorded rather than papered over: guardrail.sharia.judge.md sets',
+    'requires_sharia_approval: true but declares no protected_clauses and marks none inline. It is',
+    'the most doctrinally sensitive prompt in the system — its rubric decides what gets blocked — so',
+    'an administrator can currently rewrite the ladder without tripping the protected-clause guard.',
+    'Adding clauses to it is a content decision for the Sharia officer, not for a generator.',
+  ], body);
+}
+
 // ─────────────────────────────────────────────────────────────────────────────────────────────────
 //  CLI
 // ─────────────────────────────────────────────────────────────────────────────────────────────────
 
-const BUILDERS = { V900: ['V900__seed_glossary.sql', buildV900], V903: ['V903__seed_dialect.sql', buildV903] };
+const BUILDERS = {
+  V900: ['V900__seed_glossary.sql', buildV900],
+  V901: ['V901__seed_prompts.sql', buildV901],
+  V903: ['V903__seed_dialect.sql', buildV903],
+};
 
 function main() {
   const args = process.argv.slice(2);
