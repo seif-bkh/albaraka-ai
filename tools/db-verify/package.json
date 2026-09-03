@@ -1,0 +1,17 @@
+{
+  "name": "@albaraka-ai/db-verify",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Executes the reference DDL and its behavioural guarantee tests against a throwaway PostgreSQL cluster",
+  "scripts": {
+    "verify": "node verify-schema.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "embedded-postgres": "^18.4.0-beta.17",
+    "pg": "^8.13.1"
+  }
+}
