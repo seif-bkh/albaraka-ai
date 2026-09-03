@@ -1,0 +1,18 @@
+{
+  "name": "@albaraka-ai/prompt-lint",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Structural and governance linter for specs/prompts/ — protected clauses, variable contracts, locale parity, refusal-template rules",
+  "scripts": {
+    "lint": "node lint.mjs",
+    "self-test": "node self-test.mjs",
+    "verify": "node lint.mjs && node self-test.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "js-yaml": "^4.1.0"
+  }
+}
