@@ -71,28 +71,6 @@
   "webAuthnPolicyCreateTimeout": 0,
   "webAuthnPolicyAvoidSameAuthenticatorRegister": true,
   "adminPermissionsEnabled": false,
-  "clientProfiles": {
-    "profiles": [
-      {
-        "name": "pkce-s256",
-        "description": "Force S256 code challenge method.",
-        "executors": [
-          {
-            "executor": "pkce",
-            "configuration": {
-              "attribute.name": "pkce.code.challenge.method",
-              "pkce.code.challenge.method": "S256"
-            }
-          }
-        ]
-      },
-      {
-        "name": "token-exchange-off",
-        "description": "No executor: the profile exists so the policy above has something to attach to. Token exchange is disabled realm-wide by never granting the `token-exchange` scope.",
-        "executors": []
-      }
-    ]
-  },
   "roles": {
     "realm": [
       {
@@ -971,41 +949,5 @@
       ]
     }
   ],
-  "organizationsEnabled": false,
-  "clientPolicies": {
-    "policies": [
-      {
-        "name": "pkce-s256-for-all-public-clients",
-        "description": "Every public client must present a PKCE code challenge hashed with S256. Plain is refused.",
-        "enabled": true,
-        "conditions": [
-          {
-            "condition": "client-scopes",
-            "configuration": {
-              "scope": "pkce-enforced"
-            }
-          }
-        ],
-        "profiles": [
-          "pkce-s256"
-        ]
-      },
-      {
-        "name": "token-exchange-disabled",
-        "description": "Standard token exchange stays off: it is a recurring CVE surface and no use case needs it (docs/07 §2.3).",
-        "enabled": true,
-        "conditions": [
-          {
-            "condition": "client-scopes",
-            "configuration": {
-              "scope": "token-exchange-denied"
-            }
-          }
-        ],
-        "profiles": [
-          "token-exchange-off"
-        ]
-      }
-    ]
-  }
+  "organizationsEnabled": false
 }
