@@ -1,0 +1,49 @@
+# ── secrets & local config ────────────────────────────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+secrets/
+application-local.yaml
+application-local.properties
+
+# ── build outputs ─────────────────────────────────────────────────────────────────────────────
+target/
+build/
+dist/
+out/
+coverage/
+*.tsbuildinfo
+.angular/
+
+# ── dependencies ──────────────────────────────────────────────────────────────────────────────
+node_modules/
+
+# ── tooling caches & throwaway clusters ───────────────────────────────────────────────────────
+.pgdata/
+.cache/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+venv/
+.venv/
+
+# ── logs & data ───────────────────────────────────────────────────────────────────────────────
+*.log
+logs/
+tmp/
+*.sqlite
+*.db
+
+# ── IDE / OS ──────────────────────────────────────────────────────────────────────────────────
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
+
+# ── generated artefacts (regenerated in CI) ───────────────────────────────────────────────────
+libs/shared-contracts/src/generated/
+server/*/target/generated-sources/
