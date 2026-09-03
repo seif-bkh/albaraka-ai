@@ -151,6 +151,49 @@ accountability" pattern.
 | Model provenance | Only provider-hosted models from the approved list; no arbitrary `model_id` from a request parameter (an admin could otherwise point the app at an unknown model) |
 | Log hygiene | Provider request/response logs store the **redacted** payload; a scrubber removes PII patterns before logging; logs never contain full prompts for `CONFIDENTIAL` contexts |
 
+### 6.1 Guardrail policy register
+
+Every member of the `guardrail_policy_code` enum, with the decision it takes when it fires. This table
+is the source of truth for the rows seeded by `specs/db/seed/V902__seed_policies.sql`; `params` is
+resolved from the `application.yaml` path named in the last column at generation time, so the seeded
+policy and the configured thresholds cannot disagree.
+
+Which refusal a hit produces is not a free choice: it is fixed by `emitted_by` in
+[`specs/prompts/templates.refusals.yaml`](../specs/prompts/templates.refusals.yaml).
+
+| Code | Scope | Severity | On hit | Tier | Emits | Catches | `params` from |
+|---|---|---|---|---|---|---|---|
+| `INJECTION` | INPUT | CRITICAL | BLOCK | T3_HIGH | REF-01 | Direct prompt injection, jailbreaks, attempts to extract the system prompt | `albaraka.guardrails.input.prompt-guard` |
+| `PROHIBITED_TOPICS` | INPUT | CRITICAL | BLOCK | T3_HIGH | REF-02 | A request for a riba-based product, a prohibited sector, maysir or gharar | `albaraka.guardrails.output.forbidden-renderings` |
+| `NO_FATWA` | BOTH | CRITICAL | BLOCK | T3_HIGH | REF-03 | The answer rules on permissibility, implies a ruling, or concedes a religious premise | `albaraka.guardrails.output.sharia-judge` |
+| `PII_EGRESS` | BOTH | CRITICAL | BLOCK | T3_HIGH | REF-04 | Personal data entering an utterance, or leaving in a provider payload | `albaraka.egress.pii` |
+| `NUMERIC_CLAIMS` | OUTPUT | CRITICAL | BLOCK | T3_HIGH | REF-05 | A fee, rate, margin, duration or threshold not present verbatim in a cited source | `albaraka.guardrails.output.numeric-claims` |
+| `OUTPUT_TOXICITY` | OUTPUT | HIGH | BLOCK | T2_MEDIUM | REF-01 | Abusive, hateful, sectarian or violent model output | `albaraka.guardrails.input.llama-guard` |
+| `HALLUCINATED_ENTITIES` | OUTPUT | HIGH | BLOCK | T2_MEDIUM | REF-05 | A product, agency, document or citation marker that does not exist in the served context | `albaraka.guardrails.output.citation-integrity` |
+| `LANGUAGE_CONSISTENCY` | OUTPUT | MEDIUM | WARN | T1_LOW | — (event only) | An answer whose language is not the question's language | `albaraka.guardrails.output.language-consistency` |
+| `RATE_LIMIT` | INPUT | MEDIUM | BLOCK | T1_LOW | 429 `RATE_LIMIT.EXCEEDED` | Volume abuse: per-IP, per-device and per-principal buckets | `albaraka.ratelimit` |
+| `MAX_TURNS` | INPUT | LOW | BLOCK | T1_LOW | REF-01 | Conversation-length abuse and scripted probing | `albaraka.seed.generation` |
+
+Three of these are worth stating explicitly, because the obvious choice is wrong:
+
+* **`LANGUAGE_CONSISTENCY` warns rather than blocks.** A wrong-language answer is a quality defect, not
+  a dangerous one: the content is still grounded and still compliant, and refusing it would replace a
+  mediocre answer with no answer. The deterministic detector warns and writes a `guardrail_event`; the
+  Sharia judge's language dimension is the layer that blocks, and it does so with the answer in front
+  of it rather than with a classifier's confidence score.
+* **`RATE_LIMIT` emits an HTTP 429, not a refusal template.** A refusal is a conversational answer and
+  would be cached, embedded and counted as an answer; a rate-limit hit is a transport condition with a
+  `Retry-After` header (docs/08 §error table).
+* **`NUMERIC_CLAIMS` is CRITICAL and blocks.** This is the guard behind the one metric the evaluation
+  suite treats as unconditionally blocking (docs/11): a wrong fee is a misrepresentation to a customer,
+  and "roughly right" is not a defence. Its technical refusal variant is REF-05, because an unsourced
+  number is answered by admitting the source does not contain it.
+
+`decision_on_hit` is editable at runtime by SHARIA_OFFICER, COMPLIANCE and ADMIN
+(§3 authorization matrix) — with one exception enforced in code: lowering a CRITICAL policy from BLOCK
+to WARN or LOG is a T3 change requiring the two-eyes quorum of docs/05 §4, and is written to
+`audit_event` whether or not it is approved.
+
 ## 7. Data protection & Tunisian regulatory mapping
 
 ### 7.1 Applicable texts
