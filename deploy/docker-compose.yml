@@ -86,6 +86,7 @@ services:
       - /bin/bash
       - -ec
       - |
+        mkdir -p /opt/keycloak/data/import
         sed -e 's|$${FRONTOFFICE_URL}|'"$${FRONTOFFICE_URL:-http://localhost:8082}"'|g' \
             -e 's|$${BACKOFFICE_URL}|'"$${BACKOFFICE_URL:-http://localhost:8082/admin}"'|g' \
             -e 's|$${BANK_PUBLIC_URL}|'"$${BANK_PUBLIC_URL:-http://localhost:8082}"'|g' \

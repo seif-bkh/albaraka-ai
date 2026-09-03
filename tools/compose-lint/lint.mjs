@@ -183,6 +183,7 @@ for (const f of ['application.yaml', 'application-dev.yaml', 'application-uat.ya
     const entry = JSON.stringify(c.entrypoint || c.command || []);
     if (!entry.includes('--import-realm')) err('[K02] keycloak must start with --import-realm (specs/keycloak/README)');
     if (!entry.includes('realm-template.json')) err('[K02] the realm template must be mounted and substituted before import');
+    if (!entry.includes('mkdir -p /opt/keycloak/data/import')) err('[K02] the entrypoint must mkdir -p /opt/keycloak/data/import before sed — the Keycloak 26 image does not ship that directory, so the redirect fails and the container crash-loops');
     for (const ph of ['FRONTOFFICE_URL', 'BACKOFFICE_URL', 'BANK_PUBLIC_URL', 'WIDGET_REDIRECT_URI']) {
       // in compose YAML the shell sees "$${VAR}" because "$$" escapes interpolation; the raw
       // file therefore contains '$$' + '{' + VAR + '}'
