@@ -1,0 +1,14 @@
+{
+  "name": "@albaraka-ai/realm-lint",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Validates the Keycloak realm against the DB enums, the governance role table and the authentication hardening rules",
+  "scripts": {
+    "lint": "node lint.mjs",
+    "self-test": "node self-test.mjs",
+    "verify": "node lint.mjs && node self-test.mjs"
+  },
+  "engines": { "node": ">=20" },
+  "dependencies": {}
+}
