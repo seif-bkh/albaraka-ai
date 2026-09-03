@@ -29,8 +29,7 @@
   "appliesTo": {
     "indexSide": [
       "chunk.normalized_text",
-      "chunk.tsv",
-      "document_version.normalized_text"
+      "chunk.tsv"
     ],
     "querySide": [
       "query_expansion",
@@ -43,15 +42,16 @@
       "message.content",
       "answer_markdown"
     ],
-    "displayTextNeverModified": true
+    "displayTextNeverModified": true,
+    "$storage": "Normalised text is stored on `chunk` only. `document_version` keeps `body_text` exactly as uploaded and reviewed — there is no normalised column there, and adding one would put a second, rewritable copy of approved content in the database."
   },
   "stageOrder": [
     "arabizi_transliterate",
     "language_detect",
     "unicode",
     "fold",
-    "stem",
     "dialect_map",
+    "stem",
     "glossary_expand",
     "tokenise"
   ],
@@ -275,7 +275,14 @@
       "inputOnly": true,
       "longestMatchFirst": true,
       "wordBoundaries": true,
-      "onNoMatch": "PASS_THROUGH"
+      "onNoMatch": "PASS_THROUGH",
+      "keysAreFolded": true,
+      "runsBefore": "stem",
+      "$order": [
+        "Keys are compared after the fold stage, so أ/إ/آ and ة/ه variation in user input still matches.",
+        "An entry whose source and target fold to the same string is rejected by i18n-lint D17: the fold",
+        "has already done the work, so the entry is unreachable coverage that only looks like coverage."
+      ]
     },
     "glossary_expand": {
       "$comment": "Synonym expansion from term_glossary, not a hand-maintained list.",
@@ -491,5 +498,19 @@
       "resolution": "specs/db/schema.sql — it is executable and empirically verified. `arabic_word` does not exist (PostgreSQL 18.4: ERROR token type \"arabic_word\" does not exist) and Arabic needs no special token type in a UTF-8 database, because it classifies as `word`.",
       "action": "docs/03 §8 to be aligned in the documentation consistency pass; the G4 assertions in specs/db/tests/schema_test.sql are the permanent guard"
     }
+  ],
+  "stageOrderRationale": [
+    "fold precedes dialect_map so that a user's أ/إ/آ and ة/ه variants meet the map's keys, which are",
+    "compared in folded form (dialect_map.keysAreFolded).",
+    "",
+    "dialect_map precedes stem, and this ordering is load-bearing. A key the stemmer would alter can",
+    "never be matched, and — worse — can land on a DIFFERENT key. Measured against the affix lists of",
+    "docs/03 §8: معلومات stems to معلوم, which is itself an entry (fee → رسم), so 'information' would",
+    "be rewritten as 'fee'. الجاب stems to جاب (he brought), so 'the ATM' would become 'he brought'.",
+    "إجراءات، عمليات، متأخرات، مدخرات، نفقات and the definite forms اليوم، الليل، البنك، البارح all lose",
+    "an affix and become unreachable. None of this errors; it just quietly stops working.",
+    "",
+    "arabizi_transliterate precedes language_detect (see its own $comment) and therefore precedes",
+    "dialect_map, which can only match Arabic script."
   ]
 }

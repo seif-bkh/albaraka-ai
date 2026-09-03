@@ -59,7 +59,9 @@
     "seedTarget": 350,
     "seedTargetSource": "docs/06 §7 — '~350 seed mappings'",
     "seedTargetCounts": "mappings only; sharedVocabulary entries are not mappings and do not count",
-    "growth": "backoffice proposes mappings from unanswered or mis-retrieved Derja queries; source=MINED, status=REJECTED until reviewed"
+    "growth": "backoffice proposes mappings from unanswered or mis-retrieved Derja queries; source=MINED, status=REJECTED until reviewed",
+    "appliesWhen": "the message is detected as Tunisian Derja, not MSA. Several Derja forms are also valid MSA words with a different meaning (نعمل/تعمل/عملت = do/make in Derja, work in MSA), so the map is gated on detection rather than applied to every Arabic query. Detection is imperfect, which is why entries that are valid MSA with a conflicting sense are pruned outright — see prunedEntries — rather than gated.",
+    "confidenceSemantics": "For a plain entry, the probability that the mapping is correct wherever the form appears. For an entry with contextRequired, the probability conditional on contextWhen holding — which is why such an entry may carry 0.90 but never 1.00."
   },
   "arabizi": {
     "$comment": [
@@ -119,12 +121,13 @@
     {
       "derjaAr": "آش",
       "derjaLatin": "ech",
-      "msa": "ما",
+      "msa": "ماذا",
       "glossEn": "what (short form)",
       "confidence": 0.9,
       "category": "interrogative",
       "source": "SEED",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "note": "Targeted at ماذا rather than ما: ما is itself a mapping source (negation) and a valid MSA interrogative, so آش → ما → لا would have rewritten 'what' into 'not' in a single pass."
     },
     {
       "derjaAr": "قداش",
@@ -273,16 +276,6 @@
       "glossEn": "I ask",
       "confidence": 0.95,
       "category": "interrogative",
-      "source": "SEED",
-      "status": "ACTIVE"
-    },
-    {
-      "derjaAr": "ما",
-      "derjaLatin": "ma",
-      "msa": "لا",
-      "glossEn": "not",
-      "confidence": 0.95,
-      "category": "negation",
       "source": "SEED",
       "status": "ACTIVE"
     },
@@ -543,16 +536,6 @@
       "status": "ACTIVE"
     },
     {
-      "derjaAr": "يعمل",
-      "derjaLatin": "ya3mel",
-      "msa": "يفعل",
-      "glossEn": "he does",
-      "confidence": 0.95,
-      "category": "verb",
-      "source": "SEED",
-      "status": "ACTIVE"
-    },
-    {
       "derjaAr": "عملت",
       "derjaLatin": "3melt",
       "msa": "فعلت",
@@ -587,16 +570,6 @@
       "derjaLatin": "yemchi",
       "msa": "يذهب",
       "glossEn": "he goes",
-      "confidence": 0.98,
-      "category": "verb",
-      "source": "SEED",
-      "status": "ACTIVE"
-    },
-    {
-      "derjaAr": "جيت",
-      "derjaLatin": "jit",
-      "msa": "جئت",
-      "glossEn": "I came",
       "confidence": 0.98,
       "category": "verb",
       "source": "SEED",
@@ -780,16 +753,6 @@
       "derjaLatin": "yrja3",
       "msa": "يعود",
       "glossEn": "he returns",
-      "confidence": 0.95,
-      "category": "verb",
-      "source": "SEED",
-      "status": "ACTIVE"
-    },
-    {
-      "derjaAr": "بدا",
-      "derjaLatin": "bda",
-      "msa": "بدأ",
-      "glossEn": "he began",
       "confidence": 0.95,
       "category": "verb",
       "source": "SEED",
@@ -1410,17 +1373,6 @@
       "status": "ACTIVE"
     },
     {
-      "derjaAr": "كرى",
-      "derjaLatin": "kra",
-      "msa": "استأجر",
-      "glossEn": "he rented",
-      "confidence": 0.95,
-      "category": "verb",
-      "note": "Domain-relevant: Ijara financing conversations start here.",
-      "source": "SEED",
-      "status": "ACTIVE"
-    },
-    {
       "derjaAr": "نكري",
       "derjaLatin": "nekri",
       "msa": "أستأجر",
@@ -1513,12 +1465,13 @@
     {
       "derjaAr": "تولد",
       "derjaLatin": "twelled",
-      "msa": "ولد",
-      "glossEn": "he was born",
+      "msa": "تمت ولادته",
+      "glossEn": "he/she was born",
       "confidence": 0.9,
       "category": "verb",
       "source": "SEED",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "note": "Targeted at تمت ولادته rather than ولد: ولد is a mapping source (→ ابن), so the chain would have turned 'was born' into 'son'."
     },
     {
       "derjaAr": "فلوس",
@@ -1588,7 +1541,8 @@
       "confidence": 0.95,
       "category": "noun",
       "source": "SEED",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "note": "docs/06 §7 shows `دار/منزل` → `عقار` for property contexts. The general sense (→ منزل) is mapped here; the property sense is left to the glossary, because a blind دار → عقار would rewrite every everyday question about home."
     },
     {
       "derjaAr": "دار السكنى",
@@ -1981,16 +1935,6 @@
       "status": "ACTIVE"
     },
     {
-      "derjaAr": "أنترنت",
-      "derjaLatin": "internet",
-      "msa": "إنترنت",
-      "glossEn": "internet",
-      "confidence": 0.95,
-      "category": "noun",
-      "source": "SEED",
-      "status": "ACTIVE"
-    },
-    {
       "derjaAr": "جوال",
       "derjaLatin": "jawwal",
       "msa": "هاتف محمول",
@@ -2088,16 +2032,6 @@
       "confidence": 0.85,
       "category": "noun",
       "note": "Agricultural speech; relevant to seasonal financing.",
-      "source": "SEED",
-      "status": "ACTIVE"
-    },
-    {
-      "derjaAr": "باعث",
-      "derjaLatin": "ba3eth",
-      "msa": "باعث مشروع",
-      "glossEn": "entrepreneur",
-      "confidence": 0.85,
-      "category": "noun",
       "source": "SEED",
       "status": "ACTIVE"
     },
@@ -2504,16 +2438,6 @@
       "status": "ACTIVE"
     },
     {
-      "derjaAr": "فايدة",
-      "derjaLatin": "fayda",
-      "msa": "فائدة",
-      "glossEn": "interest (spelling variant)",
-      "confidence": 0.85,
-      "category": "finance",
-      "source": "SEED",
-      "status": "ACTIVE"
-    },
-    {
       "derjaAr": "ترفيع",
       "derjaLatin": "tarfi3",
       "msa": "زيادة",
@@ -2682,16 +2606,6 @@
       "msa": "رأس المال",
       "glossEn": "capital",
       "confidence": 0.98,
-      "category": "finance",
-      "source": "SEED",
-      "status": "ACTIVE"
-    },
-    {
-      "derjaAr": "راس مال",
-      "derjaLatin": "ras mal",
-      "msa": "رأس المال",
-      "glossEn": "capital (spelling variant)",
-      "confidence": 0.9,
       "category": "finance",
       "source": "SEED",
       "status": "ACTIVE"
@@ -2902,16 +2816,6 @@
       "msa": "خارجي",
       "glossEn": "external / foreign",
       "confidence": 0.85,
-      "category": "adjective",
-      "source": "SEED",
-      "status": "ACTIVE"
-    },
-    {
-      "derjaAr": "مية",
-      "derjaLatin": "miya",
-      "msa": "مئة",
-      "glossEn": "one hundred",
-      "confidence": 0.95,
       "category": "adjective",
       "source": "SEED",
       "status": "ACTIVE"
@@ -3856,16 +3760,6 @@
       "msa": "واحد",
       "glossEn": "one",
       "confidence": 0.9,
-      "category": "numeral",
-      "source": "SEED",
-      "status": "ACTIVE"
-    },
-    {
-      "derjaAr": "دقايق",
-      "derjaLatin": "de9aye9",
-      "msa": "دقائق",
-      "glossEn": "minutes",
-      "confidence": 0.95,
       "category": "numeral",
       "source": "SEED",
       "status": "ACTIVE"
@@ -6801,6 +6695,49 @@
       "note": "NOT MAPPED: عام is already valid MSA for both 'year' and 'general', so there is nothing to normalise. Mapping it to سنة would rewrite القطاع العام into nonsense — a homograph whose two senses are both frequent belongs to the intent layer, not to a blind string map.",
       "source": "SEED",
       "status": "ACTIVE"
+    },
+    {
+      "derjaAr": "منزل",
+      "derjaLatin": "manzel",
+      "msa": "منزل",
+      "glossEn": "house",
+      "confidence": 0.98,
+      "category": "noun",
+      "note": "Present because docs/06 §7 documents the pair `دار/منزل` → `عقار`: منزل is the MSA form, so it is shared vocabulary rather than something to map. Listed here so the documented example resolves and the mining screen does not propose it.",
+      "source": "SEED",
+      "status": "ACTIVE"
+    }
+  ],
+  "prunedEntries": [
+    {
+      "derjaAr": "ما",
+      "wasMappedTo": "لا",
+      "reason": "ما is valid MSA — the negation particle and the interrogative — and the Derja negative is the circumfix ما…ش, never ما alone. Mapping it rewrote MSA queries as well as Derja ones: 'ما هو التمويل' became 'لا هو التمويل'. The Derja negatives that are safe to map are the ones MSA does not use: مانيش، مش، موش، and the circumfixed forms ما فماش / ما نعرفش / ما نجمش."
+    },
+    {
+      "derjaAr": "يعمل",
+      "wasMappedTo": "يفعل",
+      "reason": "Two problems. It was the second hop of a chain (يخدم → يعمل → يفعل), and يعمل is valid MSA meaning 'he works', so mapping it corrupted MSA queries about work. The Derja 'does/makes' sense is kept where the source is not also MSA: نعمل، تعمل، عملت."
+    },
+    {
+      "derjaAr": "باعث",
+      "wasMappedTo": "باعث مشروع",
+      "reason": "باعث مشروع is already an entry, and longest-match-first resolves it; the shorter form only created a chain (باعث → باعث مشروع → صاحب مشروع)."
+    },
+    {
+      "derjaAr": "جيت · بدا · أنترنت · فايدة · مية · دقايق",
+      "wasMappedTo": "جئت · بدأ · إنترنت · فائدة · مئة · دقائق",
+      "reason": "Each pair is already unified by the fold stage of normalization.json, so the entry could never change anything: جيت/جئت both fold to جيت; بدا/بدأ both fold to بدا; أنترنت/إنترنت both fold to انترنت; فايدة/فائدة both fold to فايده; مية/مئة both fold to ميه; دقايق/دقائق both fold to دقايق. Keeping them would report coverage the pipeline does not have. The fold runs before the dialect map precisely so that these variants meet without an entry per spelling."
+    },
+    {
+      "derjaAr": "كرى",
+      "wasMappedTo": "استأجر",
+      "reason": "Collides with the noun كري (→ إيجار) once the fold stage runs: both fold to كري, and keys are compared folded, so only one entry could ever match. The noun sense is kept because it is the one that appears in customer questions about rent and Ijara; the verb sense is recoverable from the same lexeme by the retriever."
+    },
+    {
+      "derjaAr": "راس مال",
+      "wasMappedTo": "رأس المال",
+      "reason": "A second spelling of رأس مال with an identical target. Harmless in effect but unreachable in practice — the fold stage makes the two keys the same string, so one of them could never match. One entry per folded key."
     }
   ]
 }

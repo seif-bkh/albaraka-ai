@@ -353,12 +353,27 @@ Pipeline (Java, `assistant-knowledge`):
 |---|---|---|
 | Unicode | NFKC, lowercase | NFKC, strip **tashkīl** (U+064B–U+0652), strip tatweel (U+0640) |
 | Folding | `unaccent` (accents removed for FTS only; display text untouched) | Alef variants `أ إ آ ٱ` → `ا`؛ `ة` → `ه`؛ `ى` → `ي`؛ `ؤ` → `و`؛ `ئ` → `ي` |
+| Dialect | — | Derja → MSA mapping table (`نحب`→`أريد`, `باش`→`من أجل`, `شنية`→`ما هي`, `برشة`→`كثيرا`, `فلوس`→`أموال`) — 366 seed mappings in `specs/i18n/derja-msa.json` |
 | Stemming | Porter (light) | **Light stemmer** (Tashaphyne-style): strip prefixes `ال و ف ب ك ل س` and suffixes `ات ون ين ان ها هم هن ية` (one strip per side, min root length 3) |
-| Dialect | — | Derja → MSA mapping table (`نحب`→`أريد`, `باش`→`من أجل`, `شنية`→`ما هي`, `برشة`→`كثيرا`, `فلوس`→`أموال`) — 377 seed mappings in `specs/i18n/derja-msa.json` |
 | Synonyms | glossary expansion (`credit`→`financement`, `car loan`→`mourabaha vehicule`) | glossary expansion (`قرض`→`تمويل`, `سيارة`→`عربة/مركبة`) |
 
-The **display** text is never modified — normalisation feeds only `normalized_text`, `tsv` and the
-query-side expansion, so answers quote documents exactly as approved.
+Two ordering constraints in that table are load-bearing rather than stylistic, and both are asserted
+by `tools/i18n-lint`:
+
+* **Dialect mapping runs before stemming.** A key the stemmer would alter can never be matched, and
+  can land on a *different* key: `معلومات` stems to `معلوم`, which is itself an entry (fee → رسم), so
+  "information" would be rewritten as "fee"; `الجاب` stems to `جاب` (he brought), so "the ATM" would
+  become "he brought". `إجراءات`, `عمليات`, `متأخرات` and the definite forms `اليوم`, `الليل`, `البنك`
+  all lose an affix and become unreachable. Nothing errors — the mapping simply stops happening.
+* **Folding runs before dialect mapping**, and map keys are compared in folded form, so a user's
+  `أ`/`إ`/`آ` and `ة`/`ه` variants still meet the table. The consequence is that an entry whose source
+  and target fold to the same string is dead weight and is rejected: `جيت`/`جئت`, `بدا`/`بدأ`,
+  `أنترنت`/`إنترنت`, `فايدة`/`فائدة`, `مية`/`مئة` and `دقايق`/`دقائق` are all already unified by the
+  fold, and six such entries were removed from the seed for exactly that reason.
+
+The **display** text is never modified — normalisation feeds only `chunk.normalized_text`, `chunk.tsv`
+and the query-side expansion, so answers quote documents exactly as approved. `document_version`
+stores `body_text` only; there is no normalised copy of approved content anywhere in the database.
 
 ## 9. Migration & re-embedding strategy
 
