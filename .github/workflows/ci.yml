@@ -18,15 +18,23 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "21"
           cache: maven
       - name: Compile Spring Boot modular monolith (same command as Dockerfile.server)
-        run: mvn -B -q -pl assistant-boot -am package -DskipTests
+        run: |
+          mvn -B -pl assistant-boot -am package -DskipTests 2>&1 | tee /tmp/server-build.log
+          exit ${PIPESTATUS[0]}
         working-directory: server
+      - name: Upload server build log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: server-build-log
+          path: /tmp/server-build.log
 
   # ─────────────────────────────────────────────────────────────────────────────────────────────
   #  rag-assistant — pip install + the 8-case golden gate
@@ -38,15 +46,21 @@ jobs:
       run:
         working-directory: rag-assistant
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
           cache: pip
-      - name: Install package
-        run: pip install -e .
+      - name: Install package (dev extras — pytest + httpx)
+        run: pip install -e '.[dev]' 2>&1 | tee /tmp/rag-pip.log && test ${PIPESTATUS[0]} -eq 0
       - name: Golden gate (mock mode, no keys)
-        run: python -m pytest -q
+        run: python -m pytest -q 2>&1 | tee /tmp/rag-pytest.log && test ${PIPESTATUS[0]} -eq 0
+      - name: Upload rag logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rag-build-log
+          path: /tmp/rag-*.log
 
   # ─────────────────────────────────────────────────────────────────────────────────────────────
   #  web — Angular 22: shared-ui + both production bundles (backoffice under /admin/)
@@ -58,16 +72,24 @@ jobs:
       run:
         working-directory: apps
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: "22"
           cache: npm
           cache-dependency-path: apps/package-lock.json
-      - run: npm ci --no-audit --no-fund
-      - run: npm run build:ui
-      - run: npx ng build frontoffice-web --configuration production
-      - run: npx ng build backoffice-web --configuration production --base-href /admin/ --deploy-url /admin/
+      - name: Build shared-ui + frontoffice + backoffice
+        run: |
+          npm ci --no-audit --no-fund 2>&1 | tee /tmp/web-npm.log
+          npm run build:ui 2>&1 | tee -a /tmp/web-build.log
+          npx ng build frontoffice-web --configuration production 2>&1 | tee -a /tmp/web-build.log
+          npx ng build backoffice-web --configuration production --base-href /admin/ --deploy-url /admin/ 2>&1 | tee -a /tmp/web-build.log
+      - name: Upload web logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-build-log
+          path: /tmp/web-*.log
 
   # ─────────────────────────────────────────────────────────────────────────────────────────────
   #  gates — spec linters with mutation self-tests
@@ -76,29 +98,37 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: "22"
       - name: compose-lint + self-test
         run: |
           cd tools/compose-lint && npm ci --no-audit --no-fund
-          node lint.mjs && node self-test.mjs
+          node lint.mjs && node self-test.mjs 2>&1 | tee /tmp/gates-compose.log
       - name: config-lint + self-test
         run: |
           cd tools/config-lint && npm ci --no-audit --no-fund
-          node lint.mjs && node self-test.mjs
+          node lint.mjs && node self-test.mjs 2>&1 | tee /tmp/gates-config.log
       - name: seed-gen staleness check
-        run: node tools/seed-gen/generate.mjs --check
+        run: |
+          cd tools/seed-gen && npm ci --no-audit --no-fund
+          cd /home/runner/work/albaraka-ai/albaraka-ai && node tools/seed-gen/generate.mjs --check 2>&1 | tee /tmp/gates-seedgen.log
       - name: realm-lint + self-test
         run: |
           cd tools/realm-lint && npm ci --no-audit --no-fund
-          node lint.mjs && node self-test.mjs
+          node lint.mjs && node self-test.mjs 2>&1 | tee /tmp/gates-realm.log
+      - name: Upload gates logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gates-log
+          path: /tmp/gates-*.log
 
   # ─────────────────────────────────────────────────────────────────────────────────────────────
   #  devstack — real end-to-end: builds every image and boots the compose stack, then probes
-  #  Spring + RAG health. On failure the step dumps the full service logs (the iteration loop
-  #  reads these via `gh run view --log-failed`).
+  #  Spring + RAG health. Logs are tee'd and uploaded so the iteration loop can read them even
+  #  when GitHub's log service is unavailable.
   # ─────────────────────────────────────────────────────────────────────────────────────────────
   devstack:
     runs-on: ubuntu-latest
@@ -110,7 +140,7 @@ jobs:
       RAG_PROVIDER_MODE: mock
       RAG_VECTOR_BACKEND: mock
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Bootstrap .env for CI
         run: |
           sed "s/^POSTGRES_PASSWORD=.*/POSTGRES_PASSWORD=$POSTGRES_PASSWORD/
@@ -118,7 +148,9 @@ jobs:
                s/^MINIO_ROOT_PASSWORD=.*/MINIO_ROOT_PASSWORD=$MINIO_ROOT_PASSWORD/" .env.example > .env
           grep -E "^(POSTGRES_PASSWORD|KC_BOOTSTRAP_ADMIN_PASSWORD|MINIO_ROOT_PASSWORD)=" .env
       - name: Build all images
-        run: docker compose --env-file .env -f deploy/docker-compose.yml --profile app build
+        run: |
+          docker compose --env-file .env -f deploy/docker-compose.yml --profile app build 2>&1 | tee /tmp/devstack-build.log
+          exit ${PIPESTATUS[0]}
       - name: Boot the application
         run: docker compose --env-file .env -f deploy/docker-compose.yml --profile app up -d --no-build
       - name: Wait for Spring liveness (max 9 min)
@@ -148,6 +180,14 @@ jobs:
       - name: Show containers
         if: always()
         run: docker compose --env-file .env -f deploy/docker-compose.yml --profile app ps
-      - name: Dump service logs on failure
-        if: failure()
-        run: docker compose --env-file .env -f deploy/docker-compose.yml --profile app logs --tail=200
+      - name: Dump service logs (always — for the iteration loop)
+        if: always()
+        run: |
+          docker compose --env-file .env -f deploy/docker-compose.yml --profile app logs --tail=300 > /tmp/devstack-logs.txt 2>&1 || true
+          cat /tmp/devstack-logs.txt
+      - name: Upload devstack logs (always)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: devstack-logs
+          path: /tmp/devstack-*
