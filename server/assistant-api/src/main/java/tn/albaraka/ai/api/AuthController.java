@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.core.ParameterizedTypeReference;
 import reactor.core.publisher.Mono;
 import tn.albaraka.ai.shared.config.AlbarakaProperties;
 import tn.albaraka.ai.shared.error.ApiException;
@@ -53,7 +54,7 @@ public class AuthController {
                         .with("password", body.password())
                         .with("scope", "openid"))
                 .retrieve()
-                .bodyToMono(Map.class)
+                .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
                 .flatMap(res -> {
                     String token = String.valueOf(res.get("access_token"));
                     if (token == null || token.isBlank() || "null".equals(token)) {

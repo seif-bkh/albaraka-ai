@@ -41,7 +41,7 @@ public class RagClient {
     public Mono<Map<String, Object>> health() {
         return web.get().uri("/v1/rag/health")
                 .header("X-RAG-Contract", String.valueOf(cfg.contract()))
-                .retrieve().bodyToMono(Map.class);
+                .retrieve().bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {});
     }
 
     public Flux<RagEvent> streamChat(RagChatRequest request) {
