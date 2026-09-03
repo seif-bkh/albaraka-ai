@@ -287,6 +287,7 @@ for (const f of ['application.yaml', 'application-dev.yaml', 'application-uat.ya
     if (!renv.includes('RAG_GOOGLE_API_KEY')) err('[E07] rag-assistant must receive RAG_GOOGLE_API_KEY (${GOOGLE_API_KEY:-} in dev — empty means mock)');
     const rhealth = JSON.stringify(rag.healthcheck || {});
     if (!rhealth.includes('/v1/rag/health')) err('[E07] rag-assistant needs a healthcheck on /v1/rag/health');
+    if (!JSON.stringify(rag.ports || []).includes('8000:8000')) err('[E07] rag-assistant must publish 8000:8000 — CI and docs/12 probe http://localhost:8000/v1/rag/health from the host; without the mapping the probe always times out while the container is healthy');
     if (rag.depends_on?.postgres?.condition !== 'service_healthy') err('[E07] rag-assistant must wait for postgres service_healthy');
   }
   ok.push(`environment: ${usedInCompose.length} vars declared in .env.example, all required config placeholders provided, no literal secret`);

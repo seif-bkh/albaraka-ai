@@ -174,6 +174,8 @@ services:
       context: ..
       dockerfile: deploy/docker/Dockerfile.rag-assistant
     image: albaraka-ai/rag-assistant:dev
+    ports:
+      - "8000:8000"                    # host probe: curl http://localhost:8000/v1/rag/health (CI wait + docs/12 §4)
     environment:
       RAG_SERVICE_TOKEN: ${RAG_SERVICE_TOKEN:?set RAG_SERVICE_TOKEN in .env}
       RAG_PROVIDER_MODE: ${RAG_PROVIDER_MODE:-mock}

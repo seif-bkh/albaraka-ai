@@ -87,6 +87,7 @@ const MUTATIONS = [
   // ── E — environment contract ────────────────────────────────────────────────────────────────
   { id: 'M19 a provider key is handed to the server (ADR-009)', run: (c) => { svc(c, 'server').environment.GROQ_API_KEY = '${GROQ_API_KEY:-}'; }, expect: '[E08] server.GROQ_API_KEY' },
   { id: 'M19b the rag service loses its provider key wiring', run: (c) => { delete svc(c, 'rag-assistant').environment.RAG_GROQ_API_KEY; }, expect: '[E07] rag-assistant must receive RAG_GROQ_API_KEY' },
+  { id: 'M19c the rag health port is not published to the host', run: (c) => { delete svc(c, 'rag-assistant').ports; }, expect: '[E07] rag-assistant must publish 8000:8000' },
   { id: 'M-import-dir keycloak does not create the import directory',
     run: (c) => { svc(c, 'keycloak').entrypoint[2] = svc(c, 'keycloak').entrypoint[2].replace('mkdir -p /opt/keycloak/data/import\n', ''); },
     expect: '[K02] the entrypoint must mkdir' },
