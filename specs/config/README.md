@@ -141,7 +141,7 @@ Groq serves no embeddings endpoint, so `spring.ai.openai.embedding.enabled` is `
 
 * `tools/config-lint` — the checks, and the mutation self-test that proves they can fire
 * `docs/04-rag-pipeline.md` §18 — the authoritative tunable sheet
-* `docs/07-security-compliance.md` §5 — egress, PII and classification policy
+* `docs/07-security-iam-compliance.md` §5 — egress, PII and classification policy
 * `docs/12-deployment-observability.md` — Vault, topology and the release bundle
 * `specs/db/schema.sql` — the column defaults the seed must match
 * `specs/db/seed/` — the V900–V902 content migrations (glossary, prompts, policies)
