@@ -598,7 +598,7 @@
       "notBefore": 0,
       "attributes": {
         "access.token.lifespan": "900",
-        "client.session.idle.timeout": "3600",
+        "client.session.idle.timeout": "1800",
         "use.refresh.tokens": "false",
         "tls.client.certificate.bound.access.tokens": "false",
         "client.introspection.response.allow.jwt.claim.enabled": "false"
