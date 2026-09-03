@@ -1,0 +1,14 @@
+{
+  "name": "@albaraka-ai/compose-lint",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Validates deploy/docker-compose.yml against docs/12 §2.2, the pinned versions of docs/02 §3 / ADR-008, the UTF8 requirement of docs/03 §8 and the .env / specs/config environment contract",
+  "scripts": {
+    "lint": "node lint.mjs",
+    "self-test": "node self-test.mjs",
+    "verify": "node lint.mjs && node self-test.mjs"
+  },
+  "engines": { "node": ">=20" },
+  "dependencies": { "js-yaml": "^4.1.0" }
+}

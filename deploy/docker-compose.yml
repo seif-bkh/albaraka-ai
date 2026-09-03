@@ -1,0 +1,273 @@
+# ══════════════════════════════════════════════════════════════════════════════════════════════
+#  docker-compose.yml — local / dev topology (target state, docs/12 §2.2)
+# ══════════════════════════════════════════════════════════════════════════════════════════════
+#
+#  WHAT IS FROZEN HERE
+#  ───────────────────
+#  The data plane (postgres, redis, keycloak, minio) is fully runnable today:
+#
+#      cp .env.example .env          # fill the two provider keys + bootstrap passwords
+#      docker compose up -d          # data plane only
+#
+#  The application containers (server, frontoffice-web, backoffice-web, nginx) are behind the
+#  `app` compose profile and carry build contexts that land in Phase 1 (deploy/docker/* and
+#  deploy/nginx/*). Their image choices, environment wiring, ports and links are fixed HERE — a
+#  Phase 1 change to one of them is a change to a reviewed contract, not a free choice:
+#
+#      docker compose --profile app up --build
+#
+#  CONSTRAINTS THAT ARE NOT OBVIOUS
+#  ────────────────────────────────
+#  * postgres is initialised with `--encoding=UTF8 --locale=C.UTF-8`. docs/03 §8 and the
+#    `albaraka_fts` text-search configuration require it: on SQL_ASCII the default parser
+#    classifies every non-ASCII token (i.e. ALL of our Arabic corpus) as "word" and the
+#    tri-lingual index silently stops working. Re-initialising a cluster typed SQL_ASCII is not
+#    a config change, it is a re-import.
+#  * pgvector needs `shared_preload_libraries=vector` — the pgvector image does NOT enable it by
+#    default; without it `CREATE EXTENSION vector` works but HNSW index creation fails at runtime.
+#  * Keycloak 26 uses KC_BOOTSTRAP_ADMIN_USERNAME / KC_BOOTSTRAP_ADMIN_PASSWORD; the old
+#    KEYCLOAK_ADMIN / KEYCLOAK_ADMIN_PASSWORD pair is deprecated.
+#  * the realm file is imported after the ${…} placeholders are substituted (envsubst is not in
+#    the Keycloak image, so the substitution is done with sed before kc.sh start --import-realm).
+#    Import runs on first boot when the database is empty; a later realm change is a manual
+#    kcadm import (specs/keycloak/README).
+#  * the server resolves JWK material through the compose network while trusting tokens issued at
+#    http://localhost:8080 (the browser-facing Keycloak URL). This is why issuer-uri and
+#    jwk-set-uri are split — see the environment block below.
+#  * no `latest` tag anywhere; every image is immutable, matching docs/12 §3 (tags immutable).
+# ══════════════════════════════════════════════════════════════════════════════════════════════
+
+name: albaraka-ai
+
+services:
+  # ── data plane ───────────────────────────────────────────────────────────────────────────────
+  postgres:
+    image: pgvector/pgvector:0.8.1-pg17
+    environment:
+      POSTGRES_DB: albaraka_ai
+      POSTGRES_USER: albaraka
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      # docs/03 §8: the cluster encoding must be UTF8 — on SQL_ASCII the Arabic FTS silently dies.
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C.UTF-8"
+    command:
+      - postgres
+      - -c
+      - shared_preload_libraries=vector
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./postgres/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U albaraka -d albaraka_ai"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 10s
+    restart: unless-stopped
+
+  redis:
+    image: redis:7.4-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.6.3
+    # envsubst is not in the image; sed substitutes the five realm placeholders before import.
+    # Two subtleties, both easy to break silently:
+    #  * the SEARCH pattern is single-quoted — bash must NOT expand ${FRONTOFFICE_URL} or sed has
+    #    nothing left to replace (the file contains the literal placeholder);
+    #  * the REPLACEMENT is double-quoted so bash expands the CONTAINER value, therefore the four
+    #    variables are passed in `environment:` below — compose interpolation alone would only
+    #    ever use the `:-default` fallback (compose does not re-inject into the container).
+    entrypoint:
+      - /bin/bash
+      - -ec
+      - |
+        sed -e 's|$${FRONTOFFICE_URL}|'"$${FRONTOFFICE_URL:-http://localhost:4200}"'|g' \
+            -e 's|$${BACKOFFICE_URL}|'"$${BACKOFFICE_URL:-http://localhost:4300}"'|g' \
+            -e 's|$${BANK_PUBLIC_URL}|'"$${BANK_PUBLIC_URL:-http://localhost:8082}"'|g' \
+            -e 's|$${WIDGET_REDIRECT_URI}|'"$${WIDGET_REDIRECT_URI:-http://localhost:8082/assistant/callback}"'|g' \
+            /tmp/realm-template.json > /opt/keycloak/data/import/albaraka-realm.json
+        exec /opt/keycloak/bin/kc.sh start-dev --import-realm
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KC_BOOTSTRAP_ADMIN_USERNAME:-admin}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KC_BOOTSTRAP_ADMIN_PASSWORD:?set KC_BOOTSTRAP_ADMIN_PASSWORD in .env}
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+      KC_DB_USERNAME: albaraka
+      KC_DB_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      # tokens must be issued with the browser-visible issuer so the API can validate them
+      KC_HOSTNAME: localhost
+      KC_HOSTNAME_PORT: 8080
+      KC_HEALTH_ENABLED: "true"
+      KC_METRICS_ENABLED: "true"
+      KC_LOG_LEVEL: INFO
+      # realm placeholders — the sed replacement above expands these container values
+      FRONTOFFICE_URL: ${FRONTOFFICE_URL:-http://localhost:4200}
+      BACKOFFICE_URL: ${BACKOFFICE_URL:-http://localhost:4300}
+      BANK_PUBLIC_URL: ${BANK_PUBLIC_URL:-http://localhost:8082}
+      WIDGET_REDIRECT_URI: ${WIDGET_REDIRECT_URI:-http://localhost:8082/assistant/callback}
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./specs/keycloak/albaraka-realm.json:/tmp/realm-template.json:ro
+      - keycloakdata:/opt/keycloak/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/8080; printf 'GET /realms/albaraka/.well-known/openid-configuration HTTP/1.0\r\n\r\n' >&3; grep -q 'issuer' <&3"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+    restart: unless-stopped
+
+  minio:
+    image: quay.io/minio/minio:RELEASE.2025-03-12T18-04-18Z
+    command: ["server", "--console-address", ":9001", "/data"]
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?set MINIO_ROOT_PASSWORD in .env}
+      MINIO_UPDATE: "off"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - miniodata:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:9000/minio/health/live"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 10s
+    restart: unless-stopped
+
+  minio-init:
+    image: quay.io/minio/mc:RELEASE.2025-03-12T17-29-24Z
+    entrypoint:
+      - /bin/sh
+      - -ec
+      - |
+        until mc alias set local "http://minio:9000" "$${MINIO_ROOT_USER}" "$${MINIO_ROOT_PASSWORD}"; do sleep 1; done
+        mc mb --ignore-existing local/albaraka-ai-originals
+        mc mb --ignore-existing local/albaraka-ai-artifacts
+        # versioning is ON because originals are the evidence base; object lock stays OFF locally
+        # (single-node MinIO cannot enforce COMPLIANCE retention — application-dev.yaml §storage)
+        mc version enable local/albaraka-ai-originals
+        mc version enable local/albaraka-ai-artifacts
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?set MINIO_ROOT_PASSWORD in .env}
+    depends_on:
+      minio:
+        condition: service_healthy
+    restart: "no"
+
+  # ── application plane (Phase 1 build contexts; frozen contract for those builds) ──────────────
+  server:
+    profiles: [app]
+    build:
+      context: ..
+      dockerfile: deploy/docker/Dockerfile.server
+    image: albaraka-ai/server:dev
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      SERVER_PORT: "8081"
+      DATABASE_URL: jdbc:postgresql://postgres:5432/albaraka_ai
+      DATABASE_USER: albaraka
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+      # tokens are issued at the browser-visible URL; JWK material is fetched inside the network
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://localhost:8080/realms/albaraka
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI: http://keycloak:8080/realms/albaraka/protocol/openid-connect/certs
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
+      GROQ_BASE_URL: ${GROQ_BASE_URL:-https://api.groq.com}
+      GOOGLE_API_KEY: ${GOOGLE_API_KEY:-}
+      PROVIDER_MODE: ${PROVIDER_MODE:-}
+      ALBARAKA_DAILY_BUDGET_USD: ${ALBARAKA_DAILY_BUDGET_USD:-5.00}
+      WORKER_ENABLED: "true"
+      SEED_MODE: IF_EMPTY
+      STORAGE_PROVIDER: minio
+      STORAGE_ENDPOINT: http://minio:9000
+      STORAGE_ACCESS_KEY: ${MINIO_ROOT_USER:-minioadmin}
+      STORAGE_SECRET_KEY: ${MINIO_ROOT_PASSWORD:?set MINIO_ROOT_PASSWORD in .env}
+    ports:
+      - "8081:8081"
+    volumes:
+      # flyway seed locations + i18n spec paths are filesystem-relative in application.yaml
+      - ../specs:/app/specs:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/8081; printf 'GET /actuator/health/liveness HTTP/1.0\r\n\r\n' >&3; grep -q 'UP' <&3"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 60s
+    restart: unless-stopped
+
+  frontoffice-web:
+    profiles: [app]
+    build:
+      context: ..
+      dockerfile: deploy/docker/Dockerfile.frontoffice-web
+    image: albaraka-ai/frontoffice-web:dev
+    depends_on:
+      server:
+        condition: service_healthy
+    restart: unless-stopped
+
+  backoffice-web:
+    profiles: [app]
+    build:
+      context: ..
+      dockerfile: deploy/docker/Dockerfile.backoffice-web
+    image: albaraka-ai/backoffice-web:dev
+    depends_on:
+      server:
+        condition: service_healthy
+    restart: unless-stopped
+
+  nginx:
+    profiles: [app]
+    image: nginx:1.28-alpine
+    ports:
+      - "8082:80"
+    volumes:
+      # the edge config is Phase 1 (deploy/nginx/nginx.conf); CORS/CSP/rate-limit rules per docs/12 §2.1
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      server:
+        condition: service_healthy
+      frontoffice-web:
+        condition: service_started
+      backoffice-web:
+        condition: service_started
+      keycloak:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  redisdata:
+  keycloakdata:
+  miniodata:
