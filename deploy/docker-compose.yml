@@ -135,9 +135,9 @@ services:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?set MINIO_ROOT_PASSWORD in .env}
       MINIO_UPDATE: "off"
-    ports:
-      - "9000:9000"
-      - "9001:9001"
+    # no host ports: every consumer (minio-init, server, rag-assistant) reaches MinIO over the
+    # compose network at http://minio:9000; publishing 9000/9001 is the classic developer-host
+    # failure (port already in use by a local daemon or another stack) with zero functional gain
     volumes:
       - miniodata:/data
     healthcheck:

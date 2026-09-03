@@ -118,6 +118,7 @@ const MUTATIONS = [
   // ── R / N ───────────────────────────────────────────────────────────────────────────────────
   { id: 'M25 redis loses appendonly', run: (c) => { svc(c, 'redis').command = ['redis-server']; }, expect: '[R01] redis must run with --appendonly yes' },
   { id: 'M26 the nginx edge port leaves the documented dev origin', run: (c) => { svc(c, 'nginx').ports = ['8083:80']; }, expect: '[N01] nginx must publish 8082:80' },
+  { id: 'M34 minio republishes host ports (developer-host conflict class)', run: (c) => { svc(c, 'minio').ports = ['9000:9000']; }, expect: '[I07] minio must not publish host ports' },
 
   // ── authority-drift mutations: the same linter must follow the documents ─────────────────────
   { id: 'M27 docs/02 bumps pgvector to 0.9.0', run: () => {}, expect: '[I02]', file: 'doc02',

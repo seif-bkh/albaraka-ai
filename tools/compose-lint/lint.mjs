@@ -132,6 +132,9 @@ for (const f of ['application.yaml', 'application-dev.yaml', 'application-uat.ya
     const img = svc(s)?.image || '';
     if (!/^quay\.io\/minio\/(minio|mc):RELEASE\./.test(img)) err(`[I05] ${s}: image must be a pinned MinIO RELEASE tag, got "${img}"`);
   }
+  if (JSON.stringify(svc('minio')?.ports || []).length > 2) {
+    err('[I07] minio must not publish host ports — every consumer (minio-init, server, rag-assistant) reaches it at http://minio:9000 over the compose network; a published port is the classic developer-host failure (port already in use by a local daemon or another stack) with zero functional benefit');
+  }
   for (const s of ['server', 'rag-assistant', 'frontoffice-web', 'backoffice-web']) {
     const c = svc(s);
     if (!c) continue;

@@ -88,7 +88,7 @@ flowchart TB
 | `postgres` | `pgvector/pgvector:0.8.1-pg17` | 5432 | UTF8, vector preload, init scripts; Flyway schema + seeds |
 | `redis` | `redis:7-alpine` | — | cache, rate-limit, locks |
 | `keycloak` | `quay.io/keycloak/keycloak:26.6.3` | 8080 | realm import (sed-substituted), MFA structural, 5 demo users |
-| `minio` | `quay.io/minio/minio` (pinned RELEASE) | 9000/9001 | document originals, versioned buckets |
+| `minio` | `quay.io/minio/minio` (pinned RELEASE) | — (internal only) | document originals, versioned buckets; no host port — `minio-init`, `server` and `rag-assistant` reach it at `http://minio:9000` over the compose network, and publishing 9000/9001 is the classic developer-host failure (port already in use) |
 | `rag-assistant` | `deploy/docker/Dockerfile.rag-assistant` | 8000 (internal) | FastAPI + LangChain; `RAG_PROVIDER_MODE=mock` default |
 | `server` | `deploy/docker/Dockerfile.server` (Maven multi-stage) | 8081 | Spring Boot 4.1; Flyway + demo seeds |
 | `frontoffice-web` | `deploy/docker/Dockerfile.frontoffice-web` | — | Angular bundle via nginx (edge only) |
