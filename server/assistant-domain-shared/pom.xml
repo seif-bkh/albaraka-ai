@@ -4,4 +4,9 @@
   <parent><groupId>tn.albaraka.ai</groupId><artifactId>assistant-parent</artifactId><version>0.1.0-SNAPSHOT</version></parent>
   <artifactId>assistant-domain-shared</artifactId>
   <name>assistant-domain-shared</name>
+  <dependencies>
+    <!-- @ConfigurationProperties + HttpStatus (ApiException) — no servlet stack pulled in -->
+    <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot</artifactId></dependency>
+    <dependency><groupId>org.springframework</groupId><artifactId>spring-web</artifactId></dependency>
+  </dependencies>
 </project>
