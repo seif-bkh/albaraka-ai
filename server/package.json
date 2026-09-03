@@ -1,0 +1,22 @@
+{
+  "name": "@albaraka-ai/server",
+  "version": "0.9.0",
+  "private": true,
+  "type": "module",
+  "description": "Al-Mouchir executable backend — Node parity implementation of the documented stack (contracts in specs/openapi.yaml + specs/asyncapi.yaml; storage = the real specs/db/schema.sql on embedded PostgreSQL)",
+  "scripts": {
+    "dev": "node src/index.js",
+    "start": "node src/index.js",
+    "db:init": "node scripts/db-bootstrap.mjs",
+    "eval": "node scripts/eval-golden.mjs"
+  },
+  "engines": { "node": ">=22" },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "embedded-postgres": "^18.4.0-beta.17",
+    "express": "^5.1.0",
+    "jose": "^5.9.6",
+    "lru-cache": "^11.0.2",
+    "pg": "^8.13.1"
+  }
+}
