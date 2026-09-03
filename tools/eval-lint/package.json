@@ -1,0 +1,13 @@
+{
+  "name": "@albaraka-ai/eval-lint",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Validates the seed corpus manifest, the golden set and the red-team suite against the DB enums, the retrieval gate and the composition targets",
+  "scripts": {
+    "lint": "node lint.mjs",
+    "verify": "node lint.mjs && node self-test.mjs"
+  },
+  "engines": { "node": ">=20" },
+  "dependencies": { "js-yaml": "^4.1.0" }
+}
