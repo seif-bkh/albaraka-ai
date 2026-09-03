@@ -1,0 +1,124 @@
+<div class="page" [attr.dir]="dir()">
+  <header class="topbar">
+    <div class="wrap topbar-inner">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">✦</span>
+        <div>
+          <div class="brand-name">{{ t().brand }} <span class="brand-latin">· {{ t().brandSub }}</span></div>
+          <div class="brand-bank">{{ t().bank }}</div>
+        </div>
+      </div>
+      <nav class="langs" aria-label="Langue">
+        @for (l of LOCALES; track l) {
+          <button class="lang" [class.active]="locale() === l" (click)="setLocale(l)">
+            {{ l === 'fr-FR' ? 'FR' : l === 'ar-TN' ? 'ع' : 'EN' }}
+          </button>
+        }
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="wrap hero-inner">
+      <h1>{{ t().heroTitle }}</h1>
+      <p>{{ t().heroSub }}</p>
+      <div class="hero-chips">
+        @for (s of suggested(); track s) {
+          <button class="chip hero-chip" (click)="ask(s)">{{ s }}</button>
+        }
+      </div>
+    </div>
+  </section>
+
+  <main class="wrap">
+    <section class="card chat-card fade">
+      <div class="chat-head">
+        <div>
+          <strong>{{ t().brandSub }}</strong>
+          <span class="online"><span class="dot"></span>{{ connected() ? t().online : t().offline }}</span>
+        </div>
+        @if (demoKb()) { <span class="badge badge-gold">{{ t().demo }}</span> }
+      </div>
+
+      <div class="messages" #scroll>
+        @if (!msgs().length) {
+          <div class="empty">
+            <div class="empty-mark">✦</div>
+            <p>{{ t().heroSub }}</p>
+          </div>
+        }
+        @for (m of msgs(); track $index) {
+          <div class="row" [class.user]="m.role === 'user'">
+            <div class="bubble" [class.refusal]="m.kind === 'refusal'" [class.err]="m.kind === 'error'">
+              @if (m.role === 'assistant' && m.kind === 'answer') {
+                <div class="markdown" [innerHTML]="mdToHtml(m.text)"></div>
+              } @else if (m.role === 'assistant') {
+                <div class="markdown" [innerHTML]="mdToHtml(m.text)"></div>
+              } @else {
+                <span>{{ m.text }}</span>
+              }
+
+              @if (m.kind === 'refusal' && m.refusalCode) {
+                <div class="refusal-meta">
+                  <span class="badge badge-gold">{{ m.refusalCode }}</span>
+                  @if (m.fatwaRequestRef) { <span class="badge badge-teal">fatwa: {{ m.fatwaRequestRef }}</span> }
+                </div>
+                @if (m.sources?.length) {
+                  <details class="mini-sources">
+                    <summary>{{ t().sources }}</summary>
+                    <ul>
+                      @for (s of m.sources; track s.documentId) {
+                        <li>{{ s.title }}</li>
+                      }
+                    </ul>
+                  </details>
+                }
+              }
+
+              @if (m.citations?.length) {
+                <details class="mini-sources">
+                  <summary>{{ t().sources }}</summary>
+                  <ul>
+                    @for (c of m.citations; track c.chunkId) {
+                      <li><a [href]="c.url" target="_blank">{{ c.documentTitle }}</a><span class="src-score">{{ (c.score * 100).toFixed(0) }}%</span></li>
+                    }
+                  </ul>
+                </details>
+                @if (m.messageId) {
+                  <div class="rate">
+                    <button class="btn btn-ghost btn-sm" (click)="rate(m.messageId, 'UP')">👍 {{ t().feedbackUp }}</button>
+                    <button class="btn btn-ghost btn-sm" (click)="rate(m.messageId, 'DOWN')">👎 {{ t().feedbackDown }}</button>
+                  </div>
+                }
+              }
+            </div>
+          </div>
+        }
+        @if (busy()) {
+          <div class="row ai">
+            <div class="bubble typing">
+              @if (statusLabel()) { <span class="status-label">{{ statusLabel() }}</span> }
+              <span class="spinner"></span>
+            </div>
+          </div>
+        }
+      </div>
+
+      <form class="askbar" (submit)="ask(); $event.preventDefault()">
+        <textarea class="input ask-input" rows="1" [placeholder]="t().ask"
+                  [(ngModel)]="input" name="q" (keydown.enter)="ask(); $event.preventDefault()"
+                  [disabled]="busy()"></textarea>
+        <button class="btn btn-primary" type="submit" [disabled]="busy() || !input().trim()">
+          {{ t().send }}
+        </button>
+      </form>
+      <div class="disclaimer">{{ t().disclaimers }} — Demo: {{ t().demo }}.</div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <span>© 2026 {{ t().bank }} · Filiale d’Al Baraka Group B.S.C (c)</span>
+    </div>
+  </footer>
+</div>

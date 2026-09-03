@@ -1,0 +1,247 @@
+<!-- Login -->
+@if (!user()) {
+  <div class="login-page">
+    <div class="login-card card fade">
+      <div class="login-brand">
+        <span class="brand-mark">✦</span>
+        <div>
+          <div class="brand-name">المشير · Al-Mouchir</div>
+          <div class="brand-bank">Administration — Al Baraka Bank Tunisia</div>
+        </div>
+      </div>
+      <form (submit)="doLogin(); $event.preventDefault()">
+        <input class="input" type="email" [(ngModel)]="email" name="email" placeholder="admin@albaraka.tn" autocomplete="username" />
+        <input class="input" type="password" [(ngModel)]="password" name="password" placeholder="Mot de passe" autocomplete="current-password" />
+        @if (error()) { <div class="login-err">{{ error() }}</div> }
+        <button class="btn btn-primary" type="submit" [disabled]="!email() || !password()">Se connecter</button>
+      </form>
+      <p class="login-hint">Dev : admin@albaraka.tn / Admin#123</p>
+    </div>
+  </div>
+} @else {
+  <div class="shell">
+    <aside class="side">
+      <div class="side-brand">
+        <span class="brand-mark">✦</span>
+        <div>
+          <div class="brand-name">المشير</div>
+          <div class="brand-bank">Back-office</div>
+        </div>
+      </div>
+      <nav>
+        @for (t of tabs; track t.id) {
+          <button class="nav" [class.active]="tab() === t.id" (click)="switchTab(t.id)">{{ t.label }}</button>
+        }
+      </nav>
+      <div class="side-user">
+        <div class="user-mail">{{ user()?.email }}</div>
+        <div class="chips">
+          @for (r of user()?.roles; track r) { <span class="chip chip-admin">{{ r }}</span> }
+        </div>
+        <button class="btn btn-ghost btn-sm" (click)="doLogout()">Déconnexion</button>
+      </div>
+    </aside>
+
+    <main class="content">
+      @if (error()) { <div class="banner err" (click)="error.set('')">{{ error() }} — cliquer pour fermer</div> }
+
+      <!-- DASHBOARD -->
+      @if (tab() === 'dashboard' && dash()) {
+        <div class="grid">
+          <div class="stat card"><span class="stat-num">{{ dash().documents }}</span><span class="stat-lbl">Documents</span></div>
+          <div class="stat card"><span class="stat-num">{{ dash().searchableChunks }}</span><span class="stat-lbl">Chunks recherchables</span></div>
+          <div class="stat card"><span class="stat-num">{{ dash().reviewsOpen }}</span><span class="stat-lbl">Revues ouvertes</span></div>
+          <div class="stat card"><span class="stat-num">{{ dash().answers }}</span><span class="stat-lbl">Réponses</span></div>
+          <div class="stat card"><span class="stat-num">{{ dash().tokensOutK }}</span><span class="stat-lbl">Tok. sortants (k)</span></div>
+          <div class="stat card"><span class="stat-num">{{ dash().spendTodayUsd }}</span><span class="stat-lbl">$ aujourd'hui / {{ dash().budgetUsd }}</span></div>
+        </div>
+        <div class="card pad">
+          <h3>Résultats de vérification de la chaîne d’audit</h3>
+          @if (verify()) {
+            <p>Événements vérifiés : <strong>{{ verify().events_checked }}</strong> — Hash tête : <code>{{ verify().head_hash || '—' }}</code></p>
+            @if (verify().first_broken_seq) { <p class="err">Chaîne cassée à la séquence {{ verify().first_broken_seq }}</p> }
+            @else { <span class="badge badge-green">Chaîne intacte</span> }
+          }
+        </div>
+      }
+
+      <!-- DOCUMENTS -->
+      @if (tab() === 'documents') {
+        <div class="row-head">
+          <h2>Bibliothèque</h2>
+          <button class="btn btn-primary" (click)="showCreate.set(true)">+ Nouveau document</button>
+        </div>
+        <div class="card table-card">
+          <table class="table">
+            <thead><tr><th>Titre</th><th>Collection</th><th>Cycle</th><th>Risque</th><th>Actions</th></tr></thead>
+            <tbody>
+              @for (d of docs(); track d.id) {
+                <tr>
+                  <td><strong>{{ d.titleFr }}</strong><div class="sub">{{ d.titleAr || '' }}</div></td>
+                  <td>{{ d.collectionCode || 'PRODUCTS' }}</td>
+                  <td>
+                    @switch (d.lifecycleState) {
+                      @case ('PUBLISHED') { <span class="badge badge-green">PUBLISHED</span> }
+                      @case ('SHARIA_APPROVED') { <span class="badge badge-teal">APPROVED</span> }
+                      @case ('IN_REVIEW') { <span class="badge badge-gold">REVIEW</span> }
+                      @default { <span class="badge badge-gray">{{ d.lifecycleState }}</span> }
+                    }
+                  </td>
+                  <td>{{ d.riskTier || '—' }}</td>
+                  <td class="actions">
+                    @if (d.lifecycleState === 'DRAFT') { <button class="btn btn-ghost btn-sm" (click)="submit(d.id)">Soumettre</button> }
+                    @if (d.lifecycleState === 'SHARIA_APPROVED') { <button class="btn btn-gold btn-sm" (click)="publish(d.id)">Publier</button> }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+
+      <!-- REVIEWS -->
+      @if (tab() === 'reviews') {
+        <h2>Revues Sharia</h2>
+        <div class="card table-card">
+          <table class="table">
+            <thead><tr><th>Ref</th><th>Sujet</th><th>Risque</th><th>État</th><th>Tâches</th><th>Action</th></tr></thead>
+            <tbody>
+              @for (r of reviews(); track r.id) {
+                <tr>
+                  <td><code>{{ r.ref }}</code></td>
+                  <td>{{ r.subjectLabel }}</td>
+                  <td>{{ r.riskTier }}</td>
+                  <td><span class="badge badge-gold">{{ r.state }}</span></td>
+                  <td>
+                    @for (t of r.tasks; track t.id) {
+                      <span class="chip">{{ t.assigneeRole }}: {{ t.decision || 'en attente' }}</span>
+                    }
+                  </td>
+                  <td class="actions">
+                    @if (hasPending(r)) {
+                      <button class="btn btn-primary btn-sm" (click)="decide(r.id, 'APPROVE')">Approuver</button>
+                      <button class="btn btn-ghost btn-sm" (click)="decide(r.id, 'REQUEST_CHANGES')">Changements</button>
+                    } @else { <span class="badge badge-green">CLOSED</span> }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+
+      <!-- MODELS -->
+      @if (tab() === 'models') {
+        <h2>Modèles & paramètres</h2>
+        @if (models()) {
+          <div class="card pad">
+            <p>Appels aujourd’hui : <strong>{{ models().callsToday }}</strong> — dépensé : <strong>{{ models().spendTodayUsd }}</strong> $ (budget quotidien 5 $)</p>
+          </div>
+          <div class="card table-card mt">
+            <table class="table">
+              <thead><tr><th>Code</th><th>Fournisseur</th><th>Modèle</th><th>État</th><th>Temp.</th><th>Max tokens</th><th>Budget $/j</th></tr></thead>
+              <tbody>
+                @for (m of models().items; track m.id) {
+                  <tr>
+                    <td><code>{{ m.code }}</code></td>
+                    <td>{{ m.provider }}</td>
+                    <td>{{ m.model_id }}</td>
+                    <td>@if (m.enabled) { <span class="badge badge-green">{{ m.state }}</span> } @else { <span class="badge badge-gray">disabled</span> }</td>
+                    <td>{{ m.temperature }}</td><td>{{ m.max_tokens }}</td><td>{{ m.daily_budget_usd }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+        <h2 class="mt">Prompts ({{ prompts().length }})</h2>
+        <div class="card table-card">
+          <table class="table">
+            <thead><tr><th>Clé</th><th>Version</th><th>Locale</th><th>Active</th></tr></thead>
+            <tbody>
+              @for (p of prompts(); track p.id) {
+                <tr>
+                  <td><code>{{ p.promptKey }}</code></td>
+                  <td>{{ p.version }}</td>
+                  <td>{{ p.locale }}</td>
+                  <td>@if (p.isActive) { <span class="badge badge-green">active</span> } @else { <span class="badge badge-gray">—</span> }</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+
+      <!-- AUDIT -->
+      @if (tab() === 'audit') {
+        <div class="row-head">
+          <h2>Journal d’audit</h2>
+          <button class="btn btn-ghost" (click)="load()">Actualiser</button>
+        </div>
+        <div class="card pad">
+          <h3>Vérification</h3>
+          @if (verify()) {
+            <p>Événements : <strong>{{ verify().events_checked }}</strong> — tête : <code>{{ verify().head_hash || '—' }}</code></p>
+          }
+        </div>
+        <div class="card table-card">
+          <table class="table">
+            <thead><tr><th>Seq</th><th>Horodatage</th><th>Acteur</th><th>Action</th><th>Sujet</th><th>Hash</th></tr></thead>
+            <tbody>
+              @for (e of audit(); track e.seq) {
+                <tr>
+                  <td>{{ e.seq }}</td>
+                  <td>{{ e.createdAt }}</td>
+                  <td>{{ e.actor }}</td>
+                  <td><span class="chip">{{ e.action }}</span></td>
+                  <td>{{ e.subjectType }} {{ e.subjectId }}</td>
+                  <td><code class="hash">{{ hashOf(e) }}</code></td>
+                </tr>
+              } @empty {
+                <tr><td colspan="6" class="empty">Aucun événement — la chaîne d’audit est vide.</td></tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <h2 class="mt">Feedback utilisateurs ({{ feedback().length }})</h2>
+        <div class="card table-card">
+          <table class="table">
+            <thead><tr><th>Message</th><th>Note</th><th>Commentaire</th></tr></thead>
+            <tbody>
+              @for (f of feedback(); track f.id) {
+                <tr><td><code>{{ f.messageId }}</code></td><td><span class="badge badge-green">{{ f.rating }}</span></td><td>{{ f.comment || '—' }}</td></tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </main>
+  </div>
+}
+
+<!-- Create modal -->
+@if (showCreate()) {
+  <div class="modal" (click)="showCreate.set(false)">
+    <div class="modal-card card" (click)="$event.stopPropagation()">
+      <h3>Nouveau document</h3>
+      <input class="input" [(ngModel)]="form().titleFr" name="tfr" placeholder="Titre FR *" />
+      <input class="input" [(ngModel)]="form().titleAr" name="tar" placeholder="Titre AR" />
+      <input class="input" [(ngModel)]="form().titleEn" name="ten" placeholder="Titre EN" />
+      <textarea class="input" [(ngModel)]="form().bodyFr" name="bfr" placeholder="Contenu FR *"></textarea>
+      <textarea class="input" [(ngModel)]="form().bodyAr" name="bar" placeholder="Contenu AR"></textarea>
+      <textarea class="input" [(ngModel)]="form().bodyEn" name="ben" placeholder="Contenu EN"></textarea>
+      <select class="input" [(ngModel)]="form().riskTier" name="risk">
+        <option value="T1_LOW">T1 — Low</option><option value="T2_MEDIUM">T2 — Medium</option><option value="T3_HIGH">T3 — High</option>
+      </select>
+      @if (createMsg()) {
+        <p [class.err]="!createMsg()?.ok" [class.ok]="createMsg()?.ok">{{ createMsg()?.text }}</p>
+      }
+      <div class="modal-actions">
+        <button class="btn btn-ghost" (click)="showCreate.set(false)">Annuler</button>
+        <button class="btn btn-primary" (click)="create()" [disabled]="createBusy() || !form().titleFr || !form().bodyFr">
+          {{ createBusy() ? '…' : 'Créer' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
