@@ -34,7 +34,13 @@
 | **Effort** | ~12 person-days (done) |
 | **Exit risk** | Open questions in doc 00 §9 unanswered → Phase 1 proceeds on infrastructure only |
 
-### Phase 1 — Foundations (3 weeks)
+### Phase 1 — Foundations (3 weeks) 🔶 *executing — Node parity + Angular workspace delivered*
+
+*Delivered in the runtime tree: `server/` (Express + embedded PostgreSQL executing
+`schema.sql` verbatim + Flyway seeds), `albaraka-web/` Angular 22 workspace
+(`frontoffice-web`, `backoffice-web`, `shared-ui`), dev auth (HS256 dev users +
+role gate; Keycloak realm remains the production IdP), `/assistant/config`, mocked
+SSE endpoint, one-command dev via `Makefile`.*
 
 | | |
 |---|---|
@@ -44,7 +50,14 @@
 | **Acceptance** | (1) `make dev && make server && make web` works from a clean clone; (2) a user logs into the backoffice with MFA and sees a role-gated dashboard; (3) the frontoffice switches FR ↔ AR ↔ EN with correct RTL and no reload; (4) a mock answer streams over SSE and renders with bidi isolation; (5) ArchUnit and the contract check run in CI; (6) coverage ≥ 60 % on the scaffolded modules |
 | **Team** | 1 tech lead, 1 backend, 1 frontend, 0.5 DevOps |
 
-### Phase 2 — RAG core (4 weeks)
+### Phase 2 — RAG core (4 weeks) 🔶 *executing — retrieval + guardrails + SSE delivered*
+
+*Delivered: hybrid retrieval over the real DB (`chunk.searchable` gate, FTS OR +
+trigram + Arabic diacritic/variant folding via `arabicPatterns`), deterministic
+`local-mock` provider adapters (real Groq/Google adapters when keys are present),
+SSE `accepted→status→sources→token*→answer|refusal→done`, citation + refusal
+contracts (REF-01/03/04/05), `retrieval_trace`/`llm_call_log` persistence,
+8-case golden eval gate (`server/scripts/eval-golden.mjs`).*
 
 | | |
 |---|---|
@@ -55,7 +68,13 @@
 | **Dependencies** | Phase 1; the bank's seed documents (≥ 50 documents across products, tariffs, procedures); the two API keys with paid-tier quotas |
 | **Team** | 1 tech lead, 2 backend (1 RAG-focused), 1 frontend, 0.5 DevOps |
 
-### Phase 3 — Governance & backoffice (4 weeks)
+### Phase 3 — Governance & backoffice (4 weeks) 🔶 *executing — core workflow delivered*
+
+*Delivered: document library + lifecycle state machine + publish transaction,
+Sharia review board with two-eyes enforcement (self-approval → 422
+`GOVERNANCE.SELF_APPROVAL`), hash-chained `audit_event` + verifier
+(`GET /admin/audit/verify`), prompts/model/retrieval-config views, budget
+dashboard, feedback triage, backoffice UI on :4201.*
 
 | | |
 |---|---|
@@ -65,7 +84,14 @@
 | **Acceptance** | (1) a KB change cannot be published without the tier-appropriate approvals — verified by an automated test attempting self-approval and T3 without quorum; (2) a Sharia officer can review, approve and publish a bilingual document end to end in < 5 minutes; (3) an AI engineer can change a prompt, preview it against 20 real queries, canary it at 10 % and roll back in one click; (4) the retrieval lab explains why a chunk was not selected; (5) the audit trail for any published document lists every actor and decision; (6) the evidence pack exports and its hash chain verifies |
 | **Team** | 1 tech lead, 2 backend, 2 frontend, 0.5 QA |
 
-### Phase 4 — Quality, guardrails & safety (3 weeks)
+### Phase 4 — Quality, guardrails & safety (3 weeks) 🔶 *executing — core guardrails + eval gate delivered*
+
+*Delivered: input guardrails (REF-01 injection, REF-04 PII regex), Sharia intent
+classification + REF-03 fatwa routing (creates `fatwa_request`), REF-05 honest
+refusal with three closest approved sources, grounding/verification stage,
+marksdown sanitiser in the UI, golden eval gate in the repo (8/8 green on
+FR/AR/EN answers + REF cases). Rate limiting + moderation models remain on the
+production provider path.*
 
 | | |
 |---|---|
@@ -75,7 +101,12 @@
 | **Acceptance** | (1) all release-gate thresholds of doc 11 §4 met on the 400-case set; (2) red team: 100 % of CRITICAL/HIGH blocked, including indirect injection via a poisoned document; (3) PII-leak count = 0 across the whole suite; (4) judge agrees with humans ≥ 85 % on the calibration set; (5) load test passes (50 concurrent, 200 msg/min, P95 < 3 s); (6) a deliberately broken prompt is blocked by the gate and auto-rolled-back in canary |
 | **Team** | 1 tech lead, 2 backend, 1 frontend, 1 QA/RAG evaluator, 0.5 security |
 
-### Phase 5 — Scale, integration & go-live (3 weeks)
+### Phase 5 — Scale, integration & go-live (3 weeks) 🔶 *executing — runnable single-node deployment delivered*
+
+*Delivered: one-command local run (`make dev` + `make web` + `make admin`),
+health endpoints (`/actuator/health/*`), budget guard with degradation ladder,
+`deploy/` topology + runbooks + lint gates from Phase 0. K8s/HA/observability
+targets remain (no Docker/Java in this sandbox).*
 
 | | |
 |---|---|

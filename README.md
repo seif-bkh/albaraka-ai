@@ -17,14 +17,36 @@ behaviour does not require a deployment.
 
 ## Current state
 
-> **Phase 0 — Architecture & Specification (this deliverable).**
-> This repository currently contains the complete design: architecture, data model, API contract,
-> RAG pipeline, Sharia-governance workflow, i18n/RTL strategy, security & Tunisian regulatory
-> mapping, evaluation framework, deployment topology and a phased delivery plan — plus the
-> machine-readable artifacts that Phase 1 will build against (`specs/`).
+> **All phases in execution (2026-09-03).** The repository now contains the full design
+> (Phase 0, unchanged as the contract) **and** the runtime implementation:
 >
-> Application code (`server/`, `apps/`) is intentionally **not** present yet. The roadmap in
-> [`docs/13-roadmap-delivery-plan.md`](docs/13-roadmap-delivery-plan.md) defines the build order.
+> * `server/` — Node 22 parity backend on Express + **embedded PostgreSQL** (the real
+>   `specs/db/schema.sql` executed verbatim, Flyway seeds V900–V903, trilingual demo KB),
+>   RAG pipeline with guardrails REF-01/03/04/05, SSE chat per `specs/openapi.yaml` §3.1,
+>   Sharia governance with two-eyes + hash-chained audit.
+> * `albaraka-web/` — Angular 22 workspace: **frontoffice-web** (public chat, FR/AR/EN with
+>   RTL, Al Baraka-inspired green/gold UI) and **backoffice-web** (admin console: documents,
+>   Sharia review board, prompts, retrieval config, models, audit chain, feedback).
+> * Root `Makefile` with real targets (`make dev`, `make web`, `make admin`, `make eval`…).
+> * Golden evaluation gate `server/scripts/eval-golden.mjs` — **8/8 green**.
+>
+> The Spring Boot / Java 21 topology, `apps/`, `libs/`, Keycloak MFA and Docker deployment
+> remain the documented **production target** (§ docs/02 §1.b); this sandbox has no JVM or
+> Docker, so the Node parity backend is the executable implementation of the same contracts.
+
+### Quickstart
+
+```bash
+make dev          # backend :8080 (starts embedded PostgreSQL on :55433, seeds demo KB)
+make web          # front-office :4200  → preview the assistant chat
+make admin        # back-office  :4201  → admin@albaraka.tn / Admin#123
+make eval         # 8-case golden gate
+```
+
+Demo users: `admin@albaraka.tn/Admin#123`, `sharia@albaraka.tn/Sharia#123`,
+`reviewer@albaraka.tn/Review#123`, `compliance@albaraka.tn/Compliance#123`,
+`agent@albaraka.tn/Agent#123`. Providers run in `local-mock` by default; set
+`GROQ_API_KEY`/`GOOGLE_API_KEY` to use the real models.
 
 ## Document map
 

@@ -47,6 +47,7 @@ export const api = {
   prompts: () => req<any>('/api/v1/admin/prompts'),
   models: () => req<any>('/api/v1/admin/models'),
   retrievalConfig: () => req<any>('/api/v1/admin/retrieval-config'),
+  activateRetrieval: (id: string) => req<any>(`/api/v1/admin/retrieval-config/${id}/activate`, { method: 'POST' }),
   audit: () => req<any>('/api/v1/admin/audit'),
   auditVerify: () => req<any>('/api/v1/admin/audit/verify'),
   feedback: () => req<any>('/api/v1/admin/feedback'),

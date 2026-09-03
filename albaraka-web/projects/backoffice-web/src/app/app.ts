@@ -28,6 +28,8 @@ export class App {
   models = signal<any>(null);
   audit = signal<any>(null);
   verify = signal<any>(null);
+  retrieval = signal<any[]>([]);
+  retrievalMsg = signal('');
   feedback = signal<any[]>([]);
 
   showCreate = signal(false);
@@ -69,6 +71,7 @@ export class App {
       this.models.set({ items: (md.items || []).map((x: any) => ({ ...x, chatModel: x.model_id })), spendTodayUsd: md.spendTodayUsd, callsToday: md.callsToday });
       this.audit.set((au.items || au).map((x: any) => ({ ...x, createdAt: x.occurred_at, subjectType: x.subject_type, subjectId: x.subject_id, eventHash: x.hash })));
       this.feedback.set((fb.items || fb).map((x: any) => ({ ...x, messageId: x.message_id })));
+      this.retrieval.set((await api.retrievalConfig()).items || []);
       this.verify.set(await api.auditVerify());
     } catch (e: any) { this.error.set(e.message || 'load failed'); }
     this.loading.set(false);
@@ -94,6 +97,10 @@ export class App {
   async publish(id: string) {
     try { await api.publish(id); await this.load(); }
     catch (e: any) { alert(e.message); }
+  }
+  async activateRetrieval(id: string) {
+    try { await api.activateRetrieval(id); this.retrievalMsg.set('Config activée ✓'); await this.load(); }
+    catch (e: any) { this.retrievalMsg.set(e.message); }
   }
   async decide(id: string, decision: string) {
     const comments = decision === 'APPROVE' ? 'Validé en console' : '';

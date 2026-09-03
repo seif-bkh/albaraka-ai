@@ -154,6 +154,24 @@
             </table>
           </div>
         }
+        <h2 class="mt">Rétrieval config</h2>
+        @if (retrievalMsg()) { <p class="ok">{{ retrievalMsg() }}</p> }
+        <div class="card table-card">
+          <table class="table">
+            <thead><tr><th>Version</th><th>Canal</th><th>État</th><th>top_k dense</th><th>top_k FTS</th><th>rrf_k</th><th>Embedding</th><th></th></tr></thead>
+            <tbody>
+              @for (c of retrieval(); track c.id) {
+                <tr>
+                  <td>v{{ c.version_no }}</td>
+                  <td>{{ c.channel }}</td>
+                  <td>@if (c.state === 'ACTIVE') { <span class="badge badge-green">ACTIVE</span> } @else { <span class="badge badge-gray">{{ c.state }}</span> }</td>
+                  <td>{{ c.top_k_dense }}</td><td>{{ c.top_k_fts }}</td><td>{{ c.rrf_k }}</td><td>{{ c.embedding_variant }}</td>
+                  <td>@if (c.state !== 'ACTIVE') { <button class="btn btn-gold btn-sm" (click)="activateRetrieval(c.id)">Activer</button> }</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
         <h2 class="mt">Prompts ({{ prompts().length }})</h2>
         <div class="card table-card">
           <table class="table">
