@@ -1,0 +1,495 @@
+{
+  "$comment": [
+    "Machine-readable specification of the text normalisation pipeline of docs/03-data-model.md §8,",
+    "implemented in assistant-knowledge (index side) and assistant-rag (query side).",
+    "",
+    "THE ONE INVARIANT: normalisation never touches display text. It feeds chunk.normalized_text,",
+    "chunk.tsv and query-side expansion only, so an answer always quotes a document exactly as its",
+    "reviewer approved it. A normalised string that reaches a customer is a defect, not a feature.",
+    "",
+    "This file is the single source for both sides. Index and query must run the SAME pipeline in the",
+    "SAME order or retrieval silently degrades: a term folded on one side and not the other simply",
+    "never matches, and the failure looks like a recall problem rather than a bug.",
+    "",
+    "tools/i18n-lint checks this file against docs/03 §8, against the albaraka_fts text-search",
+    "configuration in specs/db/schema.sql, and against derja-msa.json."
+  ],
+  "specVersion": 1,
+  "sources": [
+    "docs/03-data-model.md §8 (pipeline table, albaraka_fts configuration)",
+    "docs/06-i18n-trilingual-rtl.md §7 (Derja and arabizi policy)",
+    "docs/04-rag-pipeline.md §4 (query transform)"
+  ],
+  "implements": "assistant-knowledge/TextNormalizer · assistant-rag/QueryNormalizer",
+  "locales": [
+    "fr-FR",
+    "ar-TN",
+    "en-GB"
+  ],
+  "appliesTo": {
+    "indexSide": [
+      "chunk.normalized_text",
+      "chunk.tsv",
+      "document_version.normalized_text"
+    ],
+    "querySide": [
+      "query_expansion",
+      "fts_query",
+      "trgm_query"
+    ],
+    "neverAppliedTo": [
+      "chunk.body_text",
+      "chunk_translation.body_text",
+      "message.content",
+      "answer_markdown"
+    ],
+    "displayTextNeverModified": true
+  },
+  "stageOrder": [
+    "arabizi_transliterate",
+    "language_detect",
+    "unicode",
+    "fold",
+    "stem",
+    "dialect_map",
+    "glossary_expand",
+    "tokenise"
+  ],
+  "stages": {
+    "arabizi_transliterate": {
+      "$comment": [
+        "Runs BEFORE language detection. Latin-script Tunisian Derja with digit substitutions",
+        "(9addéch, bch, flous) is otherwise detected as French and routed to the wrong prompt,",
+        "the wrong glossary and the wrong answer language. This is the single highest-impact",
+        "ordering decision in the pipeline."
+      ],
+      "enabled": true,
+      "inputScripts": [
+        "latin"
+      ],
+      "outputScript": "arabic",
+      "runsBefore": "language_detect",
+      "digitSubstitutions": {
+        "2": "ء",
+        "3": "ع",
+        "4": "خ",
+        "5": "خ",
+        "6": "ط",
+        "7": "ح",
+        "8": "غ",
+        "9": "ق",
+        "9'": "ڨ"
+      },
+      "digitSubstitutionNotes": [
+        "3 = ع and 7 = ح are near-universal across the Maghreb; 9 = ق is standard in Tunisia.",
+        "5 and 4 both appear for خ depending on the writer; 5 is far more common in Tunisia.",
+        "9' (9 followed by an apostrophe) marks ڨ, the Tunisian pronunciation of ق in words like",
+        "ڨال / ڨدام. The apostrophe must be consumed with the digit or the residue becomes a hamza.",
+        "2 = ء (hamza) and 8 = غ, 6 = ط are less frequent and lower confidence."
+      ],
+      "latinToArabic": {
+        "$comment": "Explicit digraphs that a character-by-character transliteration cannot infer.",
+        "ch": "ش",
+        "kh": "خ",
+        "gh": "غ",
+        "dh": "ذ",
+        "th": "ث",
+        "sh": "ش",
+        "aa": "ا",
+        "ou": "و",
+        "oo": "و",
+        "ei": "ي",
+        "ai": "ي",
+        "é": "ي",
+        "è": "ي",
+        "q": "ق",
+        "g": "ڨ",
+        "j": "ج",
+        "y": "ي",
+        "w": "و",
+        "z": "ز",
+        "s": "س",
+        "t": "ت",
+        "d": "د",
+        "f": "ف",
+        "b": "ب",
+        "m": "م",
+        "n": "ن",
+        "h": "ه",
+        "l": "ل",
+        "k": "ك",
+        "r": "ر",
+        "a": "ا",
+        "e": "ي",
+        "i": "ي",
+        "o": "و",
+        "u": "و"
+      },
+      "onFailure": "PASS_THROUGH_UNTRANSLITERATED",
+      "fallbackBehaviour": "An untransliterable token is left as-is and still reaches FTS; a crash here would drop the whole question."
+    },
+    "language_detect": {
+      "$comment": "Answer language = question language (docs/06 §2). Detection is per message, never per conversation.",
+      "enabled": true,
+      "detector": "fasttext",
+      "minConfidence": 0.8,
+      "candidates": [
+        "fr",
+        "ar",
+        "en"
+      ],
+      "onLowConfidence": "USE_PREVIOUS_TURN_ELSE_DEFAULT",
+      "defaultLocale": "fr-FR",
+      "arabiziConsideredArabic": true,
+      "perMessageNotPerConversation": true
+    },
+    "unicode": {
+      "form": "NFKC",
+      "fr_en": {
+        "lowercase": true,
+        "stripRanges": []
+      },
+      "ar": {
+        "lowercase": false,
+        "stripRanges": [
+          {
+            "name": "tashkīl (harakāt and tanwīn)",
+            "from": "U+064B",
+            "to": "U+0652"
+          },
+          {
+            "name": "tatweel / kashida",
+            "from": "U+0640",
+            "to": "U+0640"
+          },
+          {
+            "name": "Arabic number sign",
+            "from": "U+0600",
+            "to": "U+0605"
+          },
+          {
+            "name": "qur'anic annotation marks",
+            "from": "U+06D6",
+            "to": "U+06ED"
+          }
+        ],
+        "$comment": [
+          "Stripping tashkīl is not cosmetic: the same word written with and without vowels must",
+          "produce the same index token, and KB authors are inconsistent about vowelisation.",
+          "Tatweel is used for visual justification in Arabic documents and carries no meaning.",
+          "Quranic annotation marks appear in copied religious text and would fragment every token."
+        ]
+      },
+      "requiresServerEncoding": "UTF8",
+      "$encoding": [
+        "The database cluster must be UTF8. On SQL_ASCII the default text-search parser classifies every",
+        "non-ASCII token as `blank` — Arabic included — so to_tsvector returns nothing and the FTS channel",
+        "is dead for the language the Sharia corpus is written in. It fails silently: recall just looks",
+        "mediocre. Asserted by G4h in specs/db/tests/schema_test.sql."
+      ]
+    },
+    "fold": {
+      "fr_en": {
+        "unaccent": true,
+        "$comment": "Accents removed for FTS only — 'crédit' and 'credit' must match. Display text keeps its accents."
+      },
+      "ar": {
+        "charMap": {
+          "أ": "ا",
+          "إ": "ا",
+          "آ": "ا",
+          "ٱ": "ا",
+          "ى": "ي",
+          "ئ": "ي",
+          "ؤ": "و",
+          "ة": "ه",
+          "ڨ": "ق",
+          "پ": "ب",
+          "چ": "ج",
+          "ژ": "ز",
+          "گ": "ك"
+        },
+        "$comment": [
+          "Alef variants أ إ آ ٱ → ا, yā' ى → ي, hamza-on-waw/ya ؤ ئ → و ي, tā' marbūṭa ة → ه:",
+          "the five folds listed in docs/03 §8.",
+          "",
+          "ڨ → ق is added deliberately and is NOT in the docs/03 table. Tunisian Arabic realises ق as",
+          "ڨ in everyday speech (ڨال, ڨدام, قرطاس/ڨرطاس), and KB text quoted from speech carries both",
+          "spellings. Without this fold, a Derja question and an MSA document about the same thing",
+          "never meet. It is applied on the index side as well as the query side, so nothing is lost.",
+          "پ چ ژ گ are Persian/Ottoman letters that appear in copied text and are folded to their",
+          "nearest Arabic equivalents rather than dropped."
+        ]
+      }
+    },
+    "stem": {
+      "fr_en": {
+        "algorithm": "porter-light",
+        "minStemLength": 3
+      },
+      "ar": {
+        "algorithm": "tashaphyne-light",
+        "stripPrefixes": [
+          "ال",
+          "و",
+          "ف",
+          "ب",
+          "ك",
+          "ل",
+          "س"
+        ],
+        "stripSuffixes": [
+          "ات",
+          "ون",
+          "ين",
+          "ان",
+          "ها",
+          "هم",
+          "هن",
+          "ية"
+        ],
+        "minRootLength": 3,
+        "maxStripPerSide": 1,
+        "orderMatters": true,
+        "$comment": [
+          "Prefixes and suffixes are the seven + eight listed in docs/03 §8. The document lists ات",
+          "twice in its suffix set; the duplicate is removed here rather than carried forward, since",
+          "applying the same suffix strip twice would over-stem (معاملات → معام → ?).",
+          "",
+          "maxStripPerSide = 1 is load-bearing. A light stemmer that strips greedily and repeatedly",
+          "collapses distinct words onto the same root and destroys precision — the failure mode is",
+          "silent, because recall looks fine while every query returns everything.",
+          "",
+          "minRootLength = 3 protects the large class of triliteral Arabic roots: stripping below",
+          "three characters leaves a fragment that matches nothing usefully."
+        ]
+      }
+    },
+    "dialect_map": {
+      "$comment": "Derja → MSA, applied to the query only. Answers are always MSA (docs/06 §7).",
+      "enabled": true,
+      "mapFile": "derja-msa.json",
+      "direction": "DERJA_TO_MSA",
+      "appliesTo": "query",
+      "neverAppliesTo": "answer",
+      "inputOnly": true,
+      "longestMatchFirst": true,
+      "wordBoundaries": true,
+      "onNoMatch": "PASS_THROUGH"
+    },
+    "glossary_expand": {
+      "$comment": "Synonym expansion from term_glossary, not a hand-maintained list.",
+      "enabled": true,
+      "source": "term_glossary",
+      "statusFilter": "ACTIVE",
+      "fields": [
+        "synonyms_fr",
+        "synonyms_ar",
+        "synonyms_en"
+      ],
+      "maxExpansionsPerQuery": 6,
+      "examples": {
+        "fr": {
+          "credit": "financement",
+          "car loan": "mourabaha vehicule"
+        },
+        "ar": {
+          "قرض": "تمويل",
+          "سيارة": "عربة/مركبة"
+        }
+      },
+      "$commentExpansion": [
+        "Expansion is capped. An uncapped glossary expansion turns a specific question into a",
+        "bag-of-synonyms and the top-k fills with near-duplicates of the same concept."
+      ]
+    },
+    "tokenise": {
+      "enabled": true,
+      "removePunctuation": true,
+      "collapseWhitespace": true,
+      "minTokenLength": 2,
+      "maxTokenLength": 64,
+      "keepDigits": true,
+      "keepCurrencySymbols": false,
+      "$comment": "Digits are kept: tariff and rate questions are numeric (TARIFF_FEES is the strictest intent)."
+    }
+  },
+  "postgresTextSearch": {
+    "$comment": [
+      "Mirrors the albaraka_fts configuration in specs/db/schema.sql, which is the executable truth.",
+      "tools/i18n-lint derives the expected mappings from schema.sql and fails if this block drifts.",
+      "",
+      "Two corrections to what docs/03 §8 shows, both established empirically against PostgreSQL 18.4:",
+      "",
+      "1. There is no `arabic_word` token type. The default parser emits 23 token types and arabic_word",
+      "   is not among them; `ALTER TEXT SEARCH CONFIGURATION … ADD MAPPING FOR arabic_word` fails with",
+      "   ERROR: token type \"arabic_word\" does not exist. In a UTF-8 database Arabic text is classified",
+      "   as `word`, which is already mapped WITH unaccent, simple — unaccent is a no-op on Arabic and",
+      "   `simple` preserves the token, so Arabic indexes correctly without any special token type.",
+      "   The docs/03 snippet describes an intent, not something that can be executed.",
+      "",
+      "2. Every token type the parser can emit must be mapped or its tokens are discarded in silence.",
+      "   `uint` (a bare integer) was originally unmapped while `int` and `float` were mapped, so every",
+      "   plain integer in the corpus was absent from the index — tariff minimums and maximums, the years",
+      "   identifying loi n° 2016-48 and circulaire 2021-05, article numbers, quantities. `1500` alone",
+      "   indexed to an empty tsvector. This is invisible in a smoke test and appears only as poor recall",
+      "   on TARIFF_FEES, whose numeric grounding is a blocking metric at 100 % (docs/11 §3). Fixed in",
+      "   schema.sql and locked by the G4 assertions."
+    ],
+    "configurationName": "albaraka_fts",
+    "parser": "default",
+    "requiresServerEncoding": "UTF8",
+    "mappings": [
+      {
+        "tokenTypes": [
+          "asciiword",
+          "word",
+          "numword",
+          "asciihword",
+          "hword"
+        ],
+        "dictionaries": [
+          "unaccent",
+          "simple"
+        ],
+        "note": "`word` is what Arabic text classifies as in a UTF-8 database"
+      },
+      {
+        "tokenTypes": [
+          "numhword",
+          "hword_part",
+          "hword_asciipart",
+          "hword_numpart"
+        ],
+        "dictionaries": [
+          "unaccent",
+          "simple"
+        ],
+        "note": "hyphenated words and their parts"
+      },
+      {
+        "tokenTypes": [
+          "uint",
+          "int",
+          "float",
+          "sfloat"
+        ],
+        "dictionaries": [
+          "simple"
+        ],
+        "note": "uint = a bare integer (150, 1500, 2016); int only arises where a hyphen was read as a minus sign (-48). Omitting uint is what deleted every integer from the index."
+      },
+      {
+        "tokenTypes": [
+          "email",
+          "url",
+          "url_path",
+          "host",
+          "file",
+          "version"
+        ],
+        "dictionaries": [
+          "simple"
+        ],
+        "note": "identifiers and version numbers (1.2.3)"
+      }
+    ],
+    "intentionallyUnmapped": {
+      "blank": "whitespace",
+      "tag": "markup: indexing '<td>' is pure noise in a corpus of normalised plain text",
+      "entity": "character references such as '&amp;' would index as 'amp'",
+      "protocol": "'http'/'https' — the URL itself is already indexed by url and host"
+    },
+    "knownLimitation": {
+      "issue": "the parser reads the hyphen in '2016-48' as a minus sign, so the article number indexes as '-48' and a query for '48' does not match it",
+      "resolution": "splitting hyphenated numbers is the application normaliser's job, not the text-search configuration's",
+      "assertedBy": "G4e in specs/db/tests/schema_test.sql — fails loudly if the behaviour changes"
+    },
+    "arabicStemmingInDatabase": false,
+    "arabicStemmingInApplication": true,
+    "stemmerIsLoadBearing": "G4g proves Postgres will not match مضاربة against بالمضاربة; without the application-side light stemmer a query for a root form misses every document that writes it with a prefix"
+  },
+  "formatting": {
+    "$comment": "Display-side rules from docs/06 §5. Not part of normalisation; kept here so the locale contract is in one machine-readable place.",
+    "currency": {
+      "code": "TND",
+      "decimals": 3,
+      "symbolByLocale": {
+        "fr-FR": "DT",
+        "ar-TN": "د.ت",
+        "en-GB": "TND"
+      },
+      "positionByLocale": {
+        "fr-FR": "after",
+        "ar-TN": "after",
+        "en-GB": "before"
+      },
+      "groupingByLocale": {
+        "fr-FR": "narrow-nbsp",
+        "ar-TN": "comma",
+        "en-GB": "comma"
+      },
+      "decimalSeparatorByLocale": {
+        "fr-FR": "comma",
+        "ar-TN": "comma",
+        "en-GB": "full-stop"
+      },
+      "$comment": [
+        "Three decimals are mandatory: Tunisian dinars divide into 1000 millimes and bank tariffs are",
+        "quoted in millimes (0.500 %, 3.000 DT). Rendering 2 decimals silently rounds a price."
+      ]
+    },
+    "numbers": {
+      "arabicNumerals": "western-arabic-0123",
+      "neverUseEasternArabicNumerals": true,
+      "$comment": "٠١٢٣٤٥٦٧٨٩ are never emitted: they break numeric grounding checks and screen readers in this stack."
+    },
+    "dates": {
+      "fr-FR": "dd/MM/yyyy",
+      "ar-TN": "dd/MM/yyyy",
+      "en-GB": "dd/MM/yyyy",
+      "calendar": "gregorian",
+      "hijriCompanion": "optional",
+      "$comment": "A Hijri date, where shown, accompanies a Gregorian one and never replaces it: contract deadlines are Gregorian."
+    },
+    "bidi": {
+      "documentDirectionByLocale": {
+        "fr-FR": "ltr",
+        "ar-TN": "rtl",
+        "en-GB": "ltr"
+      },
+      "isolateMixedDirectionRuns": true,
+      "isolationCharacters": [
+        "U+2066",
+        "U+2069"
+      ],
+      "$comment": [
+        "Every mixed-direction run (a French product name inside an Arabic sentence, a figure, a",
+        "reference like [S3]) is wrapped in LRI…PDI. Without isolation a trailing parenthesis or a",
+        "citation marker jumps to the opposite end of the line and the sentence reads as corrupted."
+      ]
+    }
+  },
+  "knownDocumentDivergences": [
+    {
+      "topic": "MSA target for Derja باش",
+      "docs03": "لـ",
+      "docs06": "من أجل",
+      "resolution": "docs/06 §7 — it is the i18n authority and its mapping is the more precise one. باش marks purpose ('so that', 'in order to'); لـ is a bare preposition that also translates لـ and loses the purposive sense.",
+      "action": "derja-msa.json uses من أجل; docs/03 §8 to be aligned in the documentation consistency pass."
+    },
+    {
+      "topic": "duplicate suffix in the Arabic stemmer list",
+      "docs03": "ات ون ين ان ات ها هم هن ية",
+      "resolution": "ات appears twice; the duplicate is dropped here. Stemming is a set operation, not a sequence, and applying the same strip twice over-stems.",
+      "action": "stageOrder and stem.ar.stripSuffixes carry it once."
+    },
+    {
+      "topic": "the albaraka_fts DDL snippet in docs/03 §8 cannot execute",
+      "docs03": "ADD MAPPING FOR asciiword, word, numword WITH unaccent, simple; + ADD MAPPING FOR arabic_word WITH simple;",
+      "schema": "four ADD MAPPING statements covering 19 of the 23 default-parser token types; no arabic_word",
+      "resolution": "specs/db/schema.sql — it is executable and empirically verified. `arabic_word` does not exist (PostgreSQL 18.4: ERROR token type \"arabic_word\" does not exist) and Arabic needs no special token type in a UTF-8 database, because it classifies as `word`.",
+      "action": "docs/03 §8 to be aligned in the documentation consistency pass; the G4 assertions in specs/db/tests/schema_test.sql are the permanent guard"
+    }
+  ]
+}
