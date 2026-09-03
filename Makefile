@@ -7,7 +7,7 @@ COMPOSE = docker compose --env-file .env -f deploy/docker-compose.yml --profile 
 
 # ── your host: the deliverable ────────────────────────────────────────────────────────────────
 up:            ## build + start the full application (mock providers by default)
-	cp -n .env.example .env 2>/dev/null || true
+	bash tools/env-sync.sh
 	$(COMPOSE) up -d --build
 	@echo
 	@echo "  frontoffice  http://localhost:8082"

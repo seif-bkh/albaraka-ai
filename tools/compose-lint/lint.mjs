@@ -29,6 +29,7 @@ const root = join(here, '..', '..');
 const COMPOSE_PATH = process.env.COMPOSE_FILE || join(root, 'deploy', 'docker-compose.yml');
 const ENV_EXAMPLE = process.env.ENV_EXAMPLE || join(root, '.env.example');
 const CONFIG_DIR = process.env.CONFIG_DIR || join(root, 'specs', 'config');
+const MAKEFILE_FILE = process.env.MAKEFILE_FILE || join(root, 'Makefile');
 const DOC02 = process.env.DOC02_FILE || join(root, 'docs', '02-repository-layout.md');
 const DOC03 = process.env.DOC03_FILE || join(root, 'docs', '03-data-model.md');
 const DOC12 = process.env.DOC12_FILE || join(root, 'docs', '12-deployment-observability.md');
@@ -217,6 +218,25 @@ for (const f of ['application.yaml', 'application-dev.yaml', 'application-uat.ya
   const usedInCompose = envVars(composeText);
   for (const v of usedInCompose) if (!declared.has(v)) err(`[E01] compose uses \${${v}} but ${'.env.example'} does not declare it`);
   if (!declared.size) err('[E01] .env.example declares no variables');
+
+  // every variable compose demands with ${VAR:?} must ship a non-empty dev value in
+  // .env.example — the KEYCLOAK_BRIDGE_CLIENT_SECRET regression: it is required in compose and
+  // declared in .env.example, but an .env created earlier never gains it, so `make up` aborts
+  // at interpolation before the first container starts
+  const demanded = new Set([...composeText.matchAll(/\$\{([A-Z_][A-Z0-9_]*):\?/g)].map((m) => m[1]));
+  const exampleVals = new Map([...envExample.matchAll(/^([A-Z_][A-Z0-9_]*)=(.*)$/gm)].map((m) => [m[1], m[2].trim()]));
+  for (const v of demanded) {
+    if (!exampleVals.has(v) || exampleVals.get(v) === '') {
+      err('[E09] compose requires ${' + v + '} (${VAR:?}) but ' + '.env.example' + ' ships no non-empty dev value — a fresh `make up` aborts at interpolation');
+    }
+  }
+
+  // `make up` must merge new/empty keys into an existing .env (additive sync, never a
+  // blind overwrite): `cp -n` only helps the first run, so an older .env misses required
+  // vars added later — this is exactly the regression E09 guards
+  const makeText = read(MAKEFILE_FILE);
+  if (!makeText.includes('tools/env-sync.sh')) err('[E10] Makefile `up` must invoke tools/env-sync.sh — it merges newly required keys into an existing .env without overwriting user values');
+  if (makeText.includes('cp -n .env.example .env')) err('[E10] replace `cp -n .env.example .env` with tools/env-sync.sh — cp -n never updates an existing .env, so a stale .env misses new required vars and `make up` fails');
 
   const srv = svc('server');
   const env = srv ? (srv.environment || {}) : {};

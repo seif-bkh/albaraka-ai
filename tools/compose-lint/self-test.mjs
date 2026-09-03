@@ -27,12 +27,14 @@ const ADR008 = join(root, 'docs', 'adr', 'ADR-008-platform-versions.md');
 
 const readCompose = () => yaml.load(readFileSync(SRC, 'utf8'));
 
-function runLint(compose, { doc02, adr008 } = {}) {
+function runLint(compose, { doc02, adr008, envExample, makefile } = {}) {
   const dir = mkdtempSync(join(tmpdir(), 'compose-lint-'));
   const env = { ...process.env, COMPOSE_FILE: join(dir, 'docker-compose.yml') };
   writeFileSync(env.COMPOSE_FILE, yaml.dump(compose, { lineWidth: 120 }), 'utf8');
   if (doc02) { env.DOC02_FILE = join(dir, 'doc02.md'); writeFileSync(env.DOC02_FILE, doc02, 'utf8'); }
   if (adr008) { env.ADR008_FILE = join(dir, 'adr.md'); writeFileSync(env.ADR008_FILE, adr008, 'utf8'); }
+  if (envExample) { env.ENV_EXAMPLE = join(dir, 'env.example'); writeFileSync(env.ENV_EXAMPLE, envExample, 'utf8'); }
+  if (makefile) { env.MAKEFILE_FILE = join(dir, 'Makefile'); writeFileSync(env.MAKEFILE_FILE, makefile, 'utf8'); }
   let r;
   try {
     const out = execFileSync(process.execPath, [LINT], { env, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
@@ -49,6 +51,10 @@ const svc = (c, n) => { const s = c.services?.[n]; if (!s) throw new Error(`no s
 // authorities, mutated once each
 const doc02Src = () => readFileSync(DOC02, 'utf8');
 const adr008Src = () => readFileSync(ADR008, 'utf8');
+const ENV_EXAMPLE = join(root, '.env.example');
+const MAKEFILE = join(root, 'Makefile');
+const envExampleSrc = () => readFileSync(ENV_EXAMPLE, 'utf8');
+const makefileSrc = () => readFileSync(MAKEFILE, 'utf8');
 
 const MUTATIONS = [
   // ── G — services & profiles ─────────────────────────────────────────────────────────────────
@@ -125,6 +131,14 @@ const MUTATIONS = [
   }, expect: '[K02] $FRONTOFFICE_URL search pattern must be single-quoted' },
   { id: 'M30 a realm placeholder never reaches the keycloak container', run: (c) => { delete svc(c, 'keycloak').environment.FRONTOFFICE_URL; }, expect: '[K02] $FRONTOFFICE_URL must be in the keycloak environment' },
 
+  // ── .env bootstrap contract (the KEYCLOAK_BRIDGE_CLIENT_SECRET regression class) ───────────
+  { id: 'M31 a mandatory compose var has no non-empty value in .env.example', run: () => {}, expect: '[E09] compose requires ${POSTGRES_PASSWORD}', file: 'envExample',
+    prepare: () => envExampleSrc().replace('POSTGRES_PASSWORD=dev-postgres-change-me', 'POSTGRES_PASSWORD=') },
+  { id: 'M32 make up regresses to cp -n (existing .env never updated)', run: () => {}, expect: '[E10] replace `cp -n .env.example .env`', file: 'makefile',
+    prepare: () => makefileSrc().replace('bash tools/env-sync.sh', 'cp -n .env.example .env 2>/dev/null || true') },
+  { id: 'M33 make up no longer calls env-sync at all', run: () => {}, expect: '[E10] Makefile `up` must invoke tools/env-sync.sh', file: 'makefile',
+    prepare: () => makefileSrc().replace('\tbash tools/env-sync.sh\n', '') },
+
   // ── negative controls ───────────────────────────────────────────────────────────────────────
   { id: 'N1 a label is not a contract change', expectPass: true, run: (c) => { svc(c, 'redis').labels = { 'dev.notes': 'local cache' }; }, expect: null },
   { id: 'N2 a restart policy change is not checked', expectPass: true, run: (c) => { svc(c, 'minio-init').restart = 'unless-stopped'; }, expect: null },
@@ -148,13 +162,15 @@ for (const m of MUTATIONS) {
   const compose = readCompose();
   const doc02 = m.file === 'doc02' ? m.prepare() : undefined;
   const adr008 = m.file === 'adr008' ? m.prepare() : undefined;
+  const envExample = m.file === 'envExample' ? m.prepare() : undefined;
+  const makefile = m.file === 'makefile' ? m.prepare() : undefined;
   let applied = true;
   const before = JSON.stringify(compose);
   try { if (m.run) m.run(compose); } catch (e) { applied = false; broken++; console.log(`  BROKEN  ${m.id}\n          ${e.message}`); }
   if (m.file && !m.prepare) { applied = false; broken++; console.log(`  BROKEN  ${m.id}\n          authority mutation has no preparation`); }
   if (applied && !m.file && before === JSON.stringify(compose)) { applied = false; broken++; console.log(`  BROKEN  ${m.id}\n          mutation changed nothing — anchor drifted`); }
   if (applied) {
-    const { code, out } = runLint(compose, { doc02, adr008 });
+    const { code, out } = runLint(compose, { doc02, adr008, envExample, makefile });
     const good = m.expectPass ? code === 0 : (code !== 0 && out.includes(m.expect));
     if (good) console.log(`  ok      ${m.id}${m.expectPass ? '  (negative control)' : ''}`);
     else {
