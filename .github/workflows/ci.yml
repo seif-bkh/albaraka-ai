@@ -31,7 +31,9 @@ jobs:
         working-directory: server
       - name: Emit build log as annotations (API-readable)
         if: failure()
-        run: tail -n 200 /tmp/server-build.log | sed 's/^/::error file=server-build.log::/'
+        run: |
+          grep -inE "error|exception|cannot find|failed|build failure|exit code|fatal|missing|not found" /tmp/server-build.log \
+            | tail -n 40 | sed 's/^/::error file=server-build.log::/'
       - name: Upload server build log on failure
         if: failure()
         uses: actions/upload-artifact@v5
@@ -60,7 +62,9 @@ jobs:
         run: python -m pytest -q 2>&1 | tee /tmp/rag-pytest.log && test ${PIPESTATUS[0]} -eq 0
       - name: Emit rag logs as annotations (API-readable)
         if: failure()
-        run: tail -n 200 /tmp/rag-*.log | sed 's/^/::error file=rag.log::/'
+        run: |
+          grep -inE "error|exception|failed|assert|missing|not found|traceback" /tmp/rag-*.log \
+            | tail -n 40 | sed 's/^/::error file=rag.log::/'
       - name: Upload rag logs on failure
         if: failure()
         uses: actions/upload-artifact@v5
@@ -92,7 +96,9 @@ jobs:
           npx ng build backoffice-web --configuration production --base-href /admin/ --deploy-url /admin/ 2>&1 | tee -a /tmp/web-build.log
       - name: Emit web logs as annotations (API-readable)
         if: failure()
-        run: tail -n 200 /tmp/web-*.log | sed 's/^/::error file=web.log::/'
+        run: |
+          grep -inE "error|exception|failed|cannot find|fatal" /tmp/web-*.log \
+            | tail -n 40 | sed 's/^/::error file=web.log::/'
       - name: Upload web logs on failure
         if: failure()
         uses: actions/upload-artifact@v5
@@ -129,7 +135,9 @@ jobs:
           node lint.mjs && node self-test.mjs 2>&1 | tee /tmp/gates-realm.log
       - name: Emit gates logs as annotations (API-readable)
         if: failure()
-        run: tail -n 200 /tmp/gates-*.log | sed 's/^/::error file=gates.log::/'
+        run: |
+          grep -inE "error|exception|failed|missing|not found|MISSED|BROKEN|MODULE_NOT_FOUND" /tmp/gates-*.log \
+            | tail -n 40 | sed 's/^/::error file=gates.log::/'
       - name: Upload gates logs on failure
         if: failure()
         uses: actions/upload-artifact@v5
@@ -201,7 +209,7 @@ jobs:
         if: failure()
         run: |
           for f in /tmp/devstack-build.log /tmp/devstack-logs.txt; do
-            [ -f "$f" ] && tail -n 200 "$f" | sed 's/^/::error file=devstack.log::/'
+            [ -f "$f" ] && grep -inE "error|exception|failed|cannot find|fatal|exit code" "$f" | tail -n 30 | sed 's/^/::error file=devstack.log::/'
           done
       - name: Upload devstack logs (always)
         if: always()

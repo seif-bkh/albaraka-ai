@@ -63,7 +63,7 @@ public class ChatController {
                     switch (e) {
                         case RagEvent.Answer a -> {
                             UUID assistant = store.saveAnswer(c.conversationId(), c.ordinal() + 1, a,
-                                    "PRODUCT_QUESTION", write(c.citations(a)));
+                                    "PRODUCT_QUESTION", write(a.citations()));
                             store.saveLlmCall(assistant, "CHAT_PRIMARY", "MOCK", modelOf(a), 0, 0,
                                     a.latencyMs(), 0.0);
                         }
