@@ -1,0 +1,15 @@
+{
+  "name": "@albaraka-ai/seed-gen",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Generates the Flyway content migrations in specs/db/seed from their authored sources, and checks the committed SQL is not stale",
+  "scripts": {
+    "generate": "node generate.mjs",
+    "check": "node generate.mjs --check",
+    "verify": "node generate.mjs --check"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

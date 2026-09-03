@@ -5,7 +5,8 @@
   "type": "module",
   "description": "Executes the reference DDL and its behavioural guarantee tests against a throwaway PostgreSQL cluster",
   "scripts": {
-    "verify": "node verify-schema.mjs"
+    "verify": "node verify-schema.mjs",
+    "verify:seed": "node verify-schema.mjs ../../specs/db/schema.sql ../../specs/db/seed/V900__seed_glossary.sql ../../specs/db/seed/V903__seed_dialect.sql ../../specs/db/tests/seed_test.sql"
   },
   "engines": {
     "node": ">=20"
