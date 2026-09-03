@@ -85,16 +85,19 @@ flowchart TB
 
 | Service | Image/build | Port (host) | Notes |
 |---|---|---|---|
-| `postgres` | `pgvector/pgvector:pg17` | 5433 | init scripts + Flyway schema/seeds |
+| `postgres` | `pgvector/pgvector:0.8.1-pg17` | 5432 | UTF8, vector preload, init scripts; Flyway schema + seeds |
 | `redis` | `redis:7-alpine` | — | cache, rate-limit, locks |
-| `keycloak` | `quay.io/keycloak/keycloak:26.2` | 8081 | realm import, MFA structural |
-| `minio` | `quay.io/minio/minio` (pinned) | 9000/9001 | document originals (optional profile) |
-| `rag-assistant` | `rag-assistant.Dockerfile` | 8000 (internal) | FastAPI + LangChain; `RAG_PROVIDER_MODE=mock` default |
-| `server` | `server.Dockerfile` (Maven multi-stage) | 8080 | Spring Boot; Flyway + demos |
-| `web` | `web.Dockerfile` (Angular build → nginx) | 3000 | serves both SPAs + proxies `/api` |
+| `keycloak` | `quay.io/keycloak/keycloak:26.6.3` | 8080 | realm import (sed-substituted), MFA structural, 5 demo users |
+| `minio` | `quay.io/minio/minio` (pinned RELEASE) | 9000/9001 | document originals, versioned buckets |
+| `rag-assistant` | `deploy/docker/Dockerfile.rag-assistant` | 8000 (internal) | FastAPI + LangChain; `RAG_PROVIDER_MODE=mock` default |
+| `server` | `deploy/docker/Dockerfile.server` (Maven multi-stage) | 8081 | Spring Boot 4.1; Flyway + demo seeds |
+| `frontoffice-web` | `deploy/docker/Dockerfile.frontoffice-web` | — | Angular bundle via nginx (edge only) |
+| `backoffice-web` | `deploy/docker/Dockerfile.backoffice-web` | — | admin bundle via nginx (edge only) |
+| `nginx` | `nginx:1.28-alpine` + `deploy/nginx/nginx.conf` | 8082 | one origin: `/` → frontoffice, `/admin` → backoffice, `/api` → server, SSE unbuffered |
 
 `RAG_PROVIDER_MODE=mock` + empty `GROQ_API_KEY`/`GOOGLE_API_KEY` gives a fully working demo
-without any paid API. Set the keys and `mode=live` to use real models.
+without any paid API. Set the keys and `RAG_PROVIDER_MODE=live` to use real models. The
+`rag-assistant` container is the only service that can reach providers (ADR-009).
 
 ## 3. Images & build
 

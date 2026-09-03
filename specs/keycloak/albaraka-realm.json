@@ -551,7 +551,7 @@
       "bearerOnly": false,
       "standardFlowEnabled": true,
       "implicitFlowEnabled": false,
-      "directAccessGrantsEnabled": false,
+      "directAccessGrantsEnabled": true,
       "serviceAccountsEnabled": false,
       "frontchannelLogout": true,
       "fullScopeAllowed": true,
@@ -566,7 +566,7 @@
       ],
       "notBefore": 0,
       "attributes": {
-        "pkce.code.challenge.method": "S256",
+        "pkce.code.challenge.method": "",
         "post.logout.redirect.uris": "+",
         "access.token.lifespan": "600",
         "client.session.idle.timeout": "1800",
@@ -882,5 +882,95 @@
   "identityProviders": [],
   "identityProviderMappers": [],
   "components": {},
-  "localizationTexts": {}
+  "localizationTexts": {},
+  "users": [
+    {
+      "username": "admin@albaraka.tn",
+      "email": "admin@albaraka.tn",
+      "enabled": true,
+      "firstName": "Amina",
+      "lastName": "Abidi",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Admin#123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "platform-admin",
+        "kb-editor",
+        "ai-engineer"
+      ]
+    },
+    {
+      "username": "sharia@albaraka.tn",
+      "email": "sharia@albaraka.tn",
+      "enabled": true,
+      "firstName": "Ridha",
+      "lastName": "Ben Salah",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Sharia#123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "sharia-officer"
+      ]
+    },
+    {
+      "username": "compliance@albaraka.tn",
+      "email": "compliance@albaraka.tn",
+      "enabled": true,
+      "firstName": "Leila",
+      "lastName": "Gharbi",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Compliance#123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "compliance"
+      ]
+    },
+    {
+      "username": "reviewer@albaraka.tn",
+      "email": "reviewer@albaraka.tn",
+      "enabled": true,
+      "firstName": "Amine",
+      "lastName": "Trabelsi",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Review#123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "analyst",
+        "kb-editor"
+      ]
+    },
+    {
+      "username": "agent@albaraka.tn",
+      "email": "agent@albaraka.tn",
+      "enabled": true,
+      "firstName": "Sana",
+      "lastName": "Mansouri",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Agent#123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "branch-agent"
+      ]
+    }
+  ]
 }

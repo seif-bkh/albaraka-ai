@@ -1,40 +1,39 @@
 # ══════════════════════════════════════════════════════════════════════════════════════════════
-#  docker-compose.yml — local / dev topology (target state, docs/12 §2.2)
+#  docker-compose.yml — local / dev topology (docs/12 §2.2, ADR-008, ADR-009)
 # ══════════════════════════════════════════════════════════════════════════════════════════════
 #
-#  WHAT IS FROZEN HERE
-#  ───────────────────
-#  The data plane (postgres, redis, keycloak, minio) is fully runnable today:
+#  RUN THE WHOLE APPLICATION FROM YOUR HOST:
 #
-#      cp .env.example .env          # fill the two provider keys + bootstrap passwords
-#      docker compose up -d          # data plane only
+#      cp .env.example .env
+#      docker compose --profile app up -d --build
 #
-#  The application containers (server, frontoffice-web, backoffice-web, nginx) are behind the
-#  `app` compose profile and carry build contexts that land in Phase 1 (deploy/docker/* and
-#  deploy/nginx/*). Their image choices, environment wiring, ports and links are fixed HERE — a
-#  Phase 1 change to one of them is a change to a reviewed contract, not a free choice:
+#      → frontoffice  http://localhost:8082          (Al-Mouchir chat)
+#      → backoffice   http://localhost:8082/admin    (Sharia review / KB / audit)
+#      → API          http://localhost:8080/actuator/health/liveness
+#      → RAG          http://localhost:8000/v1/rag/health
+#      → Keycloak     http://localhost:8080          (realm albaraka, KC_BOOTSTRAP_ADMIN_*)
 #
-#      docker compose --profile app up --build
+#  Provider keys are OPTIONAL: RAG_PROVIDER_MODE=mock (default) runs the whole demo
+#  deterministically with zero external calls. Set GROQ_API_KEY + GOOGLE_API_KEY and
+#  RAG_PROVIDER_MODE=live to use real models.
 #
 #  CONSTRAINTS THAT ARE NOT OBVIOUS
 #  ────────────────────────────────
 #  * postgres is initialised with `--encoding=UTF8 --locale=C.UTF-8`. docs/03 §8 and the
 #    `albaraka_fts` text-search configuration require it: on SQL_ASCII the default parser
 #    classifies every non-ASCII token (i.e. ALL of our Arabic corpus) as "word" and the
-#    tri-lingual index silently stops working. Re-initialising a cluster typed SQL_ASCII is not
-#    a config change, it is a re-import.
+#    tri-lingual index silently stops working.
 #  * pgvector needs `shared_preload_libraries=vector` — the pgvector image does NOT enable it by
 #    default; without it `CREATE EXTENSION vector` works but HNSW index creation fails at runtime.
 #  * Keycloak 26 uses KC_BOOTSTRAP_ADMIN_USERNAME / KC_BOOTSTRAP_ADMIN_PASSWORD; the old
-#    KEYCLOAK_ADMIN / KEYCLOAK_ADMIN_PASSWORD pair is deprecated.
+#    KEYCLOAK_ADMIN pair is deprecated.
 #  * the realm file is imported after the ${…} placeholders are substituted (envsubst is not in
 #    the Keycloak image, so the substitution is done with sed before kc.sh start --import-realm).
-#    Import runs on first boot when the database is empty; a later realm change is a manual
-#    kcadm import (specs/keycloak/README).
 #  * the server resolves JWK material through the compose network while trusting tokens issued at
-#    http://localhost:8080 (the browser-facing Keycloak URL). This is why issuer-uri and
-#    jwk-set-uri are split — see the environment block below.
-#  * no `latest` tag anywhere; every image is immutable, matching docs/12 §3 (tags immutable).
+#    http://localhost:8080 (the browser-facing Keycloak URL). issuer-uri / jwk-set-uri stay split.
+#  * rag-assistant is the ONLY process holding provider keys (ADR-009 single egress point); the
+#    server only ever talks to it over the internal contract (docs/08 §8) with RAG_SERVICE_TOKEN.
+#  * no `latest` tag anywhere; every image is immutable, matching docs/12 §3.
 # ══════════════════════════════════════════════════════════════════════════════════════════════
 
 name: albaraka-ai
@@ -83,18 +82,12 @@ services:
   keycloak:
     image: quay.io/keycloak/keycloak:26.6.3
     # envsubst is not in the image; sed substitutes the five realm placeholders before import.
-    # Two subtleties, both easy to break silently:
-    #  * the SEARCH pattern is single-quoted — bash must NOT expand ${FRONTOFFICE_URL} or sed has
-    #    nothing left to replace (the file contains the literal placeholder);
-    #  * the REPLACEMENT is double-quoted so bash expands the CONTAINER value, therefore the four
-    #    variables are passed in `environment:` below — compose interpolation alone would only
-    #    ever use the `:-default` fallback (compose does not re-inject into the container).
     entrypoint:
       - /bin/bash
       - -ec
       - |
-        sed -e 's|$${FRONTOFFICE_URL}|'"$${FRONTOFFICE_URL:-http://localhost:4200}"'|g' \
-            -e 's|$${BACKOFFICE_URL}|'"$${BACKOFFICE_URL:-http://localhost:4300}"'|g' \
+        sed -e 's|$${FRONTOFFICE_URL}|'"$${FRONTOFFICE_URL:-http://localhost:8082}"'|g' \
+            -e 's|$${BACKOFFICE_URL}|'"$${BACKOFFICE_URL:-http://localhost:8082/admin}"'|g' \
             -e 's|$${BANK_PUBLIC_URL}|'"$${BANK_PUBLIC_URL:-http://localhost:8082}"'|g' \
             -e 's|$${WIDGET_REDIRECT_URI}|'"$${WIDGET_REDIRECT_URI:-http://localhost:8082/assistant/callback}"'|g' \
             /tmp/realm-template.json > /opt/keycloak/data/import/albaraka-realm.json
@@ -112,9 +105,8 @@ services:
       KC_HEALTH_ENABLED: "true"
       KC_METRICS_ENABLED: "true"
       KC_LOG_LEVEL: INFO
-      # realm placeholders — the sed replacement above expands these container values
-      FRONTOFFICE_URL: ${FRONTOFFICE_URL:-http://localhost:4200}
-      BACKOFFICE_URL: ${BACKOFFICE_URL:-http://localhost:4300}
+      FRONTOFFICE_URL: ${FRONTOFFICE_URL:-http://localhost:8082}
+      BACKOFFICE_URL: ${BACKOFFICE_URL:-http://localhost:8082/admin}
       BANK_PUBLIC_URL: ${BANK_PUBLIC_URL:-http://localhost:8082}
       WIDGET_REDIRECT_URI: ${WIDGET_REDIRECT_URI:-http://localhost:8082/assistant/callback}
     ports:
@@ -162,8 +154,6 @@ services:
         until mc alias set local "http://minio:9000" "$${MINIO_ROOT_USER}" "$${MINIO_ROOT_PASSWORD}"; do sleep 1; done
         mc mb --ignore-existing local/albaraka-ai-originals
         mc mb --ignore-existing local/albaraka-ai-artifacts
-        # versioning is ON because originals are the evidence base; object lock stays OFF locally
-        # (single-node MinIO cannot enforce COMPLIANCE retention — application-dev.yaml §storage)
         mc version enable local/albaraka-ai-originals
         mc version enable local/albaraka-ai-artifacts
     environment:
@@ -174,7 +164,36 @@ services:
         condition: service_healthy
     restart: "no"
 
-  # ── application plane (Phase 1 build contexts; frozen contract for those builds) ──────────────
+  # ── application plane (docker compose --profile app up --build) ──────────────────────────────
+  rag-assistant:
+    profiles: [app]
+    build:
+      context: ..
+      dockerfile: deploy/docker/Dockerfile.rag-assistant
+    image: albaraka-ai/rag-assistant:dev
+    environment:
+      RAG_SERVICE_TOKEN: ${RAG_SERVICE_TOKEN:?set RAG_SERVICE_TOKEN in .env}
+      RAG_PROVIDER_MODE: ${RAG_PROVIDER_MODE:-mock}
+      RAG_VECTOR_BACKEND: ${RAG_VECTOR_BACKEND:-mock}
+      RAG_DATABASE_URL: postgresql://albaraka:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}@postgres:5432/albaraka_ai
+      RAG_GROQ_API_KEY: ${GROQ_API_KEY:-}
+      RAG_GOOGLE_API_KEY: ${GOOGLE_API_KEY:-}
+      RAG_CHAT_MODEL: ${RAG_CHAT_MODEL:-llama-3.3-70b-versatile}
+      RAG_RERANKER_MODEL: ${RAG_RERANKER_MODEL:-llama-3.1-8b-instant}
+      RAG_EMBED_MODEL: ${RAG_EMBED_MODEL:-gemini-embedding-001}
+      RAG_DAILY_BUDGET_USD: ${ALBARAKA_DAILY_BUDGET_USD:-5.00}
+      RAG_ROLE: api
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request;urllib.request.urlopen('http://127.0.0.1:8000/v1/rag/health',timeout=3)\""]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 20s
+    restart: unless-stopped
+
   server:
     profiles: [app]
     build:
@@ -183,7 +202,7 @@ services:
     image: albaraka-ai/server:dev
     environment:
       SPRING_PROFILES_ACTIVE: dev
-      SERVER_PORT: "8081"
+      SERVER_PORT: "8080"
       DATABASE_URL: jdbc:postgresql://postgres:5432/albaraka_ai
       DATABASE_USER: albaraka
       DATABASE_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
@@ -192,21 +211,22 @@ services:
       # tokens are issued at the browser-visible URL; JWK material is fetched inside the network
       SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://localhost:8080/realms/albaraka
       SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI: http://keycloak:8080/realms/albaraka/protocol/openid-connect/certs
-      GROQ_API_KEY: ${GROQ_API_KEY:-}
-      GROQ_BASE_URL: ${GROQ_BASE_URL:-https://api.groq.com}
-      GOOGLE_API_KEY: ${GOOGLE_API_KEY:-}
-      PROVIDER_MODE: ${PROVIDER_MODE:-}
+      # internal RAG contract (ADR-009 / docs/08 §8). The server holds NO provider keys —
+      # GROQ/GOOGLE credentials are env of the rag-assistant service only.
+      RAG_BASE_URL: http://rag-assistant:8000
+      RAG_SERVICE_TOKEN: ${RAG_SERVICE_TOKEN:?set RAG_SERVICE_TOKEN in .env}
+      RAG_CONTRACT: "1"
+      RAG_PROVIDER_MODE: ${RAG_PROVIDER_MODE:-mock}
+      RAG_VECTOR_BACKEND: ${RAG_VECTOR_BACKEND:-mock}
       ALBARAKA_DAILY_BUDGET_USD: ${ALBARAKA_DAILY_BUDGET_USD:-5.00}
-      WORKER_ENABLED: "true"
       SEED_MODE: IF_EMPTY
       STORAGE_PROVIDER: minio
       STORAGE_ENDPOINT: http://minio:9000
       STORAGE_ACCESS_KEY: ${MINIO_ROOT_USER:-minioadmin}
       STORAGE_SECRET_KEY: ${MINIO_ROOT_PASSWORD:?set MINIO_ROOT_PASSWORD in .env}
     ports:
-      - "8081:8081"
+      - "8081:8080"
     volumes:
-      # flyway seed locations + i18n spec paths are filesystem-relative in application.yaml
       - ../specs:/app/specs:ro
     depends_on:
       postgres:
@@ -217,8 +237,10 @@ services:
         condition: service_healthy
       minio:
         condition: service_healthy
+      rag-assistant:
+        condition: service_healthy
     healthcheck:
-      test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/8081; printf 'GET /actuator/health/liveness HTTP/1.0\r\n\r\n' >&3; grep -q 'UP' <&3"]
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/8080; printf 'GET /actuator/health/liveness HTTP/1.0\r\n\r\n' >&3; grep -q 'UP' <&3"]
       interval: 10s
       timeout: 5s
       retries: 30
@@ -253,7 +275,6 @@ services:
     ports:
       - "8082:80"
     volumes:
-      # the edge config is Phase 1 (deploy/nginx/nginx.conf); CORS/CSP/rate-limit rules per docs/12 §2.1
       - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
     depends_on:
       server:
