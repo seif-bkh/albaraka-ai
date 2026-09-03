@@ -1,0 +1,442 @@
+# ══════════════════════════════════════════════════════════════════════════════════════════════
+#  Refusal templates — REF-01 … REF-06, trilingual (fr-FR / ar-TN / en-GB)
+# ══════════════════════════════════════════════════════════════════════════════════════════════
+#
+#  Source of truth for the `message_bundle` rows seeded by V902__seed_policies.sql.
+#
+#  Key mapping (message_bundle.message_key):
+#      refusal.{CODE}.title                 → short heading shown above the body
+#      refusal.{CODE}.body                  → main text, markdown allowed (paragraphs + bold only)
+#      refusal.{CODE}.cta                   → primary action label (null = no action offered)
+#      refusal.{CODE}.body.{VARIANT}        → variant body, overrides `body` when the variant applies
+#      refusal.{CODE}.followup.{n}          → suggested-question chips rendered under the refusal
+#
+#  Variants in use:
+#      technical     REF-05 only — the answer existed but could not be verified/served (guardrail
+#                    judge unavailable, provider failure after retry, numeric validator killed the
+#                    whole answer). Never blames the user, never reveals internals.
+#      agent         audience = AGENT or INTERNAL — may name internal systems and next steps that
+#                    must not be shown to customers.
+#
+#  Placeholders resolved by the server (never by a model):
+#      {{assistant_name}} {{bank_name}} {{alternative_block}} {{documentation_block}}
+#      {{referral_cta}} {{handoff_cta}} {{top_sources}} {{handoff_channel}} {{committee_name}}
+#      {{retry_after}}
+#
+#  Rules these strings must respect (enforced in review, docs/06 §7 and docs/10 §4):
+#   R1  No template may state or imply a religious ruling.
+#   R2  No template may name a conventional interest-based product, a rate, or another bank.
+#   R3  No template may disclose that a guardrail, classifier, filter or "instruction" exists.
+#       REF-01 in particular must read as an ordinary scope statement, never as an accusation.
+#   R4  No template may blame the user, apologise more than once, or use legalese.
+#   R5  Body ≤ 60 words. Title ≤ 8 words. A refusal is read, not studied.
+#   R6  Every template offers a next step. A dead end is a defect.
+#   R7  Arabic copy is written natively (MSA, RTL, bank register) — never machine-translated from
+#       the French, and never a transliteration of it.
+#   R8  `answer_lang` = the language of the user's question, not the conversation locale. A French
+#       question in an ar-TN-locale session receives the fr-FR template.
+# ══════════════════════════════════════════════════════════════════════════════════════════════
+
+version: 1
+state: DRAFT
+requires_sharia_approval: true   # REF-02 and REF-03 carry the bank's doctrinal posture
+owner: SHARIA_OFFICER
+storage:
+  table: message_bundle
+  seeded_by: specs/db/seed/V902__seed_policies.sql
+  also_referenced_by:
+    - guardrail_policy.refusal_template   # which template a policy emits on BLOCK
+    - message.refusal_code                # what was actually served
+    - assistant_config.refusal_templates  # feature-flagged overrides per channel/audience
+
+templates:
+
+  # ──────────────────────────────────────────────────────────────────────────────────────────────
+  - code: REF-01
+    name: SAFETY_BLOCK
+    emitted_by:
+      - "guardrail stage 3 (input): INJECTION, ABUSE, sectarian/theological content, illegal activity"
+      - "guardrail stage 10 (output): SHARIA_POSTURE at CRITICAL with no recoverable redaction"
+    triggers_incident: true
+    log: guardrail_event + audit_event (immutable)
+    audience_default: CUSTOMER
+    cta_action: null          # no referral: an attack must not be rewarded with a human channel
+    followup_policy: NONE     # no suggested chips — a dead end is intentional here
+    locales:
+      fr-FR:
+        title: "Je ne peux pas traiter cette demande"
+        body: >-
+          Je suis {{assistant_name}}, l'assistant de {{bank_name}}. Je réponds aux questions sur nos
+          produits et services de finance participative, nos procédures et nos tarifs. Cette demande
+          sort de ce cadre, je ne peux donc pas y répondre. Posez-moi une question sur la banque et
+          je vous aiderai volontiers.
+        cta: null
+      ar-TN:
+        title: "لا يمكنني تلبية هذا الطلب"
+        body: >-
+          أنا {{assistant_name}}، المساعد الافتراضي لـ{{bank_name}}. أختصّ بالإجابة عن أسئلتكم حول
+          منتجاتنا وخدماتنا في المالية التشاركية، وإجراءاتنا، وتعريفتنا البنكية. وهذا الطلب يخرج عن
+          ذلك الإطار، لذا لا يمكنني الإجابة عنه. اطرحوا عليّ سؤالا يتعلّق بالبنك وسأكون سعيدا
+          بمساعدتكم.
+        cta: null
+      en-GB:
+        title: "I can't help with that request"
+        body: >-
+          I'm {{assistant_name}}, the assistant for {{bank_name}}. I answer questions about our
+          participatory finance products and services, our procedures and our tariffs. This request
+          falls outside that scope, so I'm not able to answer it. Ask me something about the bank and
+          I'll be glad to help.
+        cta: null
+
+  # ──────────────────────────────────────────────────────────────────────────────────────────────
+  - code: REF-02
+    name: PROHIBITED_SUBJECT
+    emitted_by:
+      - "guardrail stage 3 (input): PROHIBITED_TOPICS (riba-based product, haram sector, maysir, gharar)"
+      - "guardrail stage 10 (output): CONVENTIONAL_PRODUCT"
+    triggers_incident: false   # a legitimate customer asking for a conventional loan is not an incident
+    log: guardrail_event
+    audience_default: CUSTOMER
+    cta_action: ALTERNATIVE_OR_CONTACT
+    followup_policy: PRODUCT_CATALOGUE
+    locales:
+      fr-FR:
+        title: "Ce type d'opération n'est pas proposé"
+        body: >-
+          {{bank_name}} exerce selon les normes bancaires islamiques et ne propose pas d'opération
+          fondée sur l'intérêt. {{alternative_block}} Si vous me décrivez votre projet — achat d'un
+          véhicule, d'un logement, équipement professionnel — je peux vous présenter le financement
+          participatif qui y correspond.
+        cta: "Voir nos financements"
+      ar-TN:
+        title: "هذا النوع من العمليات غير متوفّر"
+        body: >-
+          يزاول {{bank_name}} نشاطه وفقا للمعايير المصرفية الإسلامية، ولا يقدّم عمليات قائمة على
+          الفائدة. {{alternative_block}} وإن وصفتم لي مشروعكم — اقتناء سيّارة، أو مسكن، أو تجهيزات
+          مهنية — أمكنني أن أعرض عليكم التمويل التشاركي الموافق له.
+        cta: "اطّلعوا على تمويلاتنا"
+      en-GB:
+        title: "We don't offer that type of operation"
+        body: >-
+          {{bank_name}} operates in accordance with Islamic banking standards and does not offer
+          interest-based operations. {{alternative_block}} If you describe your project — a vehicle, a
+          home, business equipment — I can show you the participatory financing that corresponds to
+          it.
+        cta: "See our financing options"
+
+  # ──────────────────────────────────────────────────────────────────────────────────────────────
+  #  The most consequential template in the system. It is the user-facing expression of the
+  #  no-fatwa clause and the entry point of the fatwa_request → knowledge-base loop (docs/05 §4).
+  - code: REF-03
+    name: NO_FATWA
+    emitted_by:
+      - "intent classifier: RELIGIOUS_RULING_REQUEST (before any retrieval or generation)"
+      - "guardrail stage 10 (output): RULING_ISSUED, RULING_IMPLIED, CONCESSION_TO_PREMISE, UNSOURCED_RELIGIOUS_CONTENT"
+      - "system prompt: no_answer_reason = RELIGIOUS_RULING"
+    triggers_incident: false
+    log: guardrail_event + fatwa_request row (status NEW, tier from sharia_policy)
+    audience_default: CUSTOMER
+    cta_action: SHARIA_REFERRAL
+    followup_policy: NONE       # the user asked a doctrinal question; chips must not steer them
+    locales:
+      fr-FR:
+        title: "Je ne peux pas prononcer d'avis religieux"
+        body: >-
+          Votre question appelle un avis religieux. Or je ne suis pas habilité à en prononcer : je
+          rapporte ce que disent les documents approuvés de {{bank_name}}, et la conformité de nos
+          opérations est contrôlée par le {{committee_name}}. {{documentation_block}} Je peux
+          transmettre votre question au Comité : un membre vous répondra.
+        cta: "{{referral_cta}}"
+      ar-TN:
+        title: "لا يمكنني إصدار رأي شرعي"
+        body: >-
+          سؤالكم يتطلّب رأيا شرعيا، ولست مخوّلا بإصداره. فمهمّتي أن أنقل ما تنصّ عليه وثائق
+          {{bank_name}} المعتمدة، ويتولّى {{committee_name}} مراقبة مطابقة عمليات البنك.
+          {{documentation_block}} ويمكنني إحالة سؤالكم إلى اللجنة ليجيبكم أحد أعضائها.
+        cta: "{{referral_cta}}"
+      en-GB:
+        title: "I can't issue a religious ruling"
+        body: >-
+          Your question calls for a religious ruling, and I'm not authorised to give one. I report
+          what the approved documentation of {{bank_name}} states, and the conformity of our
+          operations is overseen by the {{committee_name}}. {{documentation_block}} I can forward
+          your question to the Committee and a member will answer you.
+        cta: "{{referral_cta}}"
+    referral:
+      creates: fatwa_request
+      sla_days_by_tier: { T1_LOW: 1, T2_MEDIUM: 5, T3_HIGH: 10 }
+      requires_user_consent: true      # explicit opt-in click, never silent forwarding
+      consent_key: consent.REF-03.referral
+      on_accept:
+        - insert fatwa_request (status NEW, source CONVERSATION, correlation_id)
+        - notify Sharia officer queue (v_review_queue)
+        - message_key notification.REF-03.referral_created
+      on_decline:
+        - no row created; guardrail_event retained
+        - message_key notification.REF-03.referral_declined
+
+  # ──────────────────────────────────────────────────────────────────────────────────────────────
+  - code: REF-04
+    name: PERSONAL_DATA_OR_ACCOUNT_ACCESS
+    emitted_by:
+      - "intent classifier: ACCOUNT_STATUS (v1 has no core-banking integration)"
+      - "guardrail stage 3 (input): PII_EGRESS — utterance is mostly personal data"
+      - "system prompt: no_answer_reason = PERSONAL_DATA"
+    triggers_incident: false
+    log: guardrail_event (PII class recorded, value NEVER recorded — see docs/07 §5)
+    audience_default: CUSTOMER
+    cta_action: AUTHENTICATED_CHANNEL
+    followup_policy: NONE
+    short_circuit: true   # never sent to an LLM provider: blocked at stage 3, before generation
+    locales:
+      fr-FR:
+        title: "Je n'ai pas accès à vos comptes"
+        body: >-
+          Je ne suis pas connecté à vos comptes : je ne peux consulter ni solde, ni relevé, ni état
+          d'un dossier. Pour cela, contactez {{handoff_channel}}. Merci aussi de ne pas communiquer
+          ici de numéro de compte, de carte, de pièce d'identité ou de code personnel : cette
+          conversation n'est pas un canal sécurisé pour ces informations.
+        cta: "{{handoff_cta}}"
+      ar-TN:
+        title: "لا أملك نفاذا إلى حساباتكم"
+        body: >-
+          لست متّصلا بحساباتكم، فلا يمكنني الاطّلاع على أي رصيد أو كشف عمليات أو حالة أي ملف.
+          ولقضاء هذا الشأن، يرجى الاتصال بـ{{handoff_channel}}. ونرجو منكم أيضا ألاّ تدلوا هنا برقم
+          حساب أو بطاقة أو بطاقة تعريف أو رمز سرّي: فهذه المحادثة ليست قناة مأمونة لمثل هذه
+          المعطيات.
+        cta: "{{handoff_cta}}"
+      en-GB:
+        title: "I don't have access to your accounts"
+        body: >-
+          I'm not connected to your accounts: I can't view a balance, a statement or the status of an
+          application. For that, please contact {{handoff_channel}}. Please also don't share an
+          account number, card number, ID number or personal code here — this conversation is not a
+          secure channel for that information.
+        cta: "{{handoff_cta}}"
+
+  # ──────────────────────────────────────────────────────────────────────────────────────────────
+  - code: REF-05
+    name: HONEST_IGNORANCE
+    emitted_by:
+      - "retrieval: no candidate above relevance threshold τ"
+      - "system prompt: no_answer = true, reason NOT_IN_KB | OUTDATED | AMBIGUOUS"
+      - "guardrail stage 10: answer suppressed after one failed regeneration"
+      - "technical variant: GUARD_JUDGE_UNAVAILABLE, PROVIDER_FAILURE, NUMERIC_VALIDATOR_KILLED_ANSWER"
+    triggers_incident: false
+    log: guardrail_event + coverage_gap row (this is how the knowledge base learns what is missing)
+    audience_default: CUSTOMER
+    cta_action: HANDOFF
+    followup_policy: RELATED_QUESTIONS
+    locales:
+      fr-FR:
+        title: "Je n'ai pas de réponse fiable"
+        body: >-
+          Cette information ne figure pas dans les documents approuvés auxquels j'ai accès, et je
+          préfère vous le dire plutôt que vous répondre approximativement. {{top_sources}} Un
+          conseiller peut vous répondre précisément : {{handoff_cta}}.
+        cta: "{{handoff_cta}}"
+      ar-TN:
+        title: "ليست لديّ إجابة موثوقة أقدّمها لكم"
+        body: >-
+          هذه المعلومة غير واردة في الوثائق المعتمدة التي أتاحت لي الاطّلاع عليها، وقد آثرت أن أصارحكم
+          بذلك على أن أجيبكم إجابة تقريبية. {{top_sources}} ويمكن لأحد مستشارينا أن يجيبكم إجابة
+          دقيقة: {{handoff_cta}}.
+        cta: "{{handoff_cta}}"
+      en-GB:
+        title: "I don't have a reliable answer for you"
+        body: >-
+          That information isn't in the approved documentation I have access to, and I'd rather tell
+          you so than give you an approximate answer. {{top_sources}} An advisor can give you a
+          precise answer: {{handoff_cta}}.
+        cta: "{{handoff_cta}}"
+      # ── technical variant ──────────────────────────────────────────────────────────────────────
+    variants:
+      technical:
+        reason_codes: [GUARD_JUDGE_UNAVAILABLE, PROVIDER_FAILURE, NUMERIC_VALIDATOR_KILLED_ANSWER,
+                       MALFORMED_RESPONSE, CONTEXT_ASSEMBLY_FAILURE]
+        note: >-
+          The system had something to say and could not stand behind it. The copy must not say
+          "technical error" (R3: no disclosure of internals) and must not imply the answer is
+          forbidden — only that it is not verified.
+        locales:
+          fr-FR:
+            title: "Je préfère ne pas vous répondre"
+            body: >-
+              Je n'ai pas pu vérifier complètement la réponse à votre question, et je préfère ne rien
+              vous dire plutôt que vous donner une information dont je ne suis pas certain. Merci de
+              réessayer dans {{retry_after}}, ou de vous adresser à {{handoff_channel}}.
+            cta: "{{handoff_cta}}"
+          ar-TN:
+            title: "أُؤثر ألاّ أجيبكم"
+            body: >-
+              لم أتمكّن من التحقّق الكامل من الجواب عن سؤالكم، وقد آثرت ألاّ أقول شيئا على أن أوافيكم
+              بمعلومة لست متيقّنا منها. ونرجو منكم إعادة المحاولة بعد {{retry_after}}، أو التوجّه إلى
+              {{handoff_channel}}.
+            cta: "{{handoff_cta}}"
+          en-GB:
+            title: "I'd rather not answer"
+            body: >-
+              I couldn't fully verify the answer to your question, and I'd rather say nothing than
+              give you information I'm not certain of. Please try again in {{retry_after}}, or contact
+              {{handoff_channel}}.
+            cta: "{{handoff_cta}}"
+      agent:
+        audience: [AGENT, INTERNAL]
+        note: May name the failing stage — the agent desk needs it and R3 does not apply internally.
+        locales:
+          fr-FR:
+            title: "Réponse non servie — vérification incomplète"
+            body: >-
+              Étape en échec : {{failed_stage}}. Le client a reçu le message REF-05 standard. Le fil
+              de la conversation et le paquet de preuves sont disponibles dans le backoffice sous la
+              référence {{correlation_id}}.
+            cta: "Ouvrir le replay"
+          ar-TN:
+            title: "لم يُقدَّم الجواب — التحقّق غير مكتمل"
+            body: >-
+              المرحلة التي أخفقت: {{failed_stage}}. وقد وصل الحريف رسالة REF-05 المعتادة. ويمكنكم
+              الاطّلاع على مجرى المحادثة وملفّ الأدلة في مكتب الضبط بالاستناد إلى المرجع
+              {{correlation_id}}.
+            cta: "افتح إعادة التشغيل"
+          en-GB:
+            title: "Answer not served — verification incomplete"
+            body: >-
+              Failed stage: {{failed_stage}}. The customer received the standard REF-05 message. The
+              conversation trace and the evidence pack are available in the backoffice under reference
+              {{correlation_id}}.
+            cta: "Open replay"
+
+  # ──────────────────────────────────────────────────────────────────────────────────────────────
+  - code: REF-06
+    name: OUT_OF_SCOPE
+    emitted_by:
+      - "intent classifier: OUT_OF_SCOPE (news, sport, politics, homework, other banks)"
+      - "system prompt: no_answer_reason = OUT_OF_SCOPE"
+      - "guardrail stage 3: financial advice, competitor comparison"
+    triggers_incident: false
+    log: guardrail_event (no coverage_gap — this is not a knowledge-base hole)
+    audience_default: CUSTOMER
+    cta_action: REDIRECT
+    followup_policy: PRODUCT_CATALOGUE
+    locales:
+      fr-FR:
+        title: "Ce n'est pas mon domaine"
+        body: >-
+          Cette question ne concerne pas les produits et services de {{bank_name}}, et je ne suis pas
+          en mesure d'y répondre — notamment s'agissant d'autres établissements ou de conseils
+          d'investissement. En revanche, je peux vous renseigner sur nos financements participatifs,
+          nos comptes, nos procédures et nos tarifs.
+        cta: "Que puis-je vous expliquer ?"
+      ar-TN:
+        title: "هذا ليس من اختصاصي"
+        body: >-
+          لا يتعلّق هذا السؤال بمنتجات {{bank_name}} وخدماتها، ولست قادرا على الإجابة عنه، ولا سيّما
+          إذا كان يخصّ مؤسّسات أخرى أو نصائح في الاستثمار. ويمكنني في المقابل أن أفيدكم بمعلومات عن
+          تمويلاتنا التشاركية، وحساباتنا، وإجراءاتنا، وتعريفتنا البنكية.
+        cta: "عمّ تريدون أن أشرح لكم؟"
+      en-GB:
+        title: "That's outside my remit"
+        body: >-
+          That question isn't about the products and services of {{bank_name}}, and I'm not able to
+          answer it — in particular where it concerns other institutions or investment advice. I can,
+          though, tell you about our participatory financing, our accounts, our procedures and our
+          tariffs.
+        cta: "What can I explain for you?"
+
+# ══════════════════════════════════════════════════════════════════════════════════════════════
+#  Follow-up chip pools referenced by followup_policy. Rendered under the refusal, localised,
+#  and never personalised (no data from the conversation is injected into a chip).
+# ══════════════════════════════════════════════════════════════════════════════════════════════
+followup_pools:
+  PRODUCT_CATALOGUE:
+    fr-FR:
+      - "Comment fonctionne la Mourabaha ?"
+      - "Quels financements proposez-vous aux professionnels ?"
+      - "Quelles pièces pour un dossier de financement ?"
+    ar-TN:
+      - "كيف تعمل المرابحة؟"
+      - "ما التمويلات التي تقترحونها على أصحاب المهن؟"
+      - "ما الوثائق المطلوبة لتكوين ملف تمويل؟"
+    en-GB:
+      - "How does Murabaha work?"
+      - "What financing do you offer to businesses?"
+      - "Which documents does a financing application need?"
+  RELATED_QUESTIONS:
+    note: >-
+      Not a static pool. Filled at runtime with the titles of the top-3 retrieved sources that scored
+      below τ, rendered as questions. If retrieval returned nothing at all, the pool is empty and no
+      chips are shown — a REF-05 with no chips is correct, a REF-05 with invented chips is a defect.
+  NONE: []
+
+# ══════════════════════════════════════════════════════════════════════════════════════════════
+#  Disclaimer fragments appended by the SERVER after the refusal body (never generated, never
+#  part of the model output). Which fragments apply is a function of (code, intent, audience,
+#  channel) and is configured in assistant_config — see specs/db/seed/V902__seed_policies.sql.
+# ══════════════════════════════════════════════════════════════════════════════════════════════
+disclaimers:
+  DISC-SHARIA-NO-FATWA:
+    applies_to: [REF-03]
+    fr-FR: >-
+      Seul le {{committee_name}} est habilité à se prononcer sur la conformité d'une opération aux
+      normes bancaires islamiques.
+    ar-TN: >-
+      وحده {{committee_name}} مخوّل بالبتّ في مطابقة العملية للمعايير المصرفية الإسلامية.
+    en-GB: >-
+      Only the {{committee_name}} is authorised to rule on the conformity of an operation with
+      Islamic banking standards.
+  DISC-NO-FINANCIAL-ADVICE:
+    applies_to: [REF-02, REF-06]
+    fr-FR: >-
+      Les informations fournies sont d'ordre général et ne constituent ni un conseil en investissement
+      ni un engagement contractuel.
+    ar-TN: >-
+      المعلومات المقدَّمة ذات طابع عام، ولا تُعدّ نصيحة في الاستثمار ولا تعهّدا تعاقديا.
+    en-GB: >-
+      The information provided is general in nature and constitutes neither investment advice nor a
+      contractual commitment.
+  DISC-TARIFF-VALIDITY:
+    applies_to: [REF-05]
+    condition: intent == TARIFF_FEES
+    fr-FR: >-
+      Les conditions tarifaires sont susceptibles d'évoluer ; la tarification en vigueur est celle
+      affichée en agence à la date de signature.
+    ar-TN: >-
+      يمكن أن تتطوّر الشروط التعريفية، والتعريفة النافذة هي المعتمدة بالفرع بتاريخ الإمضاء.
+    en-GB: >-
+      Tariff conditions may change; the applicable tariff is the one displayed at the branch on the
+      date of signature.
+  DISC-PII:
+    applies_to: [REF-04]
+    fr-FR: >-
+      Ne communiquez aucune donnée personnelle dans cette conversation.
+    ar-TN: >-
+      نرجو ألاّ تدلوا بأي معطى شخصي في هذه المحادثة.
+    en-GB: >-
+      Please do not share any personal data in this conversation.
+
+# ══════════════════════════════════════════════════════════════════════════════════════════════
+#  Acceptance tests — run in CI against the rendered strings (tools/refusal-lint, Phase 1).
+# ══════════════════════════════════════════════════════════════════════════════════════════════
+tests:
+  - id: RT-REF-01
+    assert: no template body contains a religious verdict word
+    lexicon_source: guardrail_policy.PROHIBITED_TOPICS.lexicon + term_glossary.forbidden_renderings
+  - id: RT-REF-02
+    assert: no template body contains an interest-based product term or a numeric rate
+  - id: RT-REF-03
+    assert: no template body mentions a guardrail, filter, instruction, classifier, model or prompt
+  - id: RT-REF-04
+    assert: every template has all three locales, and none is empty
+  - id: RT-REF-05
+    assert: body ≤ 60 words and title ≤ 8 words in every locale (Arabic counted by whitespace tokens)
+  - id: RT-REF-06
+    assert: every template offers a next step (cta, handoff_channel or referral) except REF-01
+  - id: RT-REF-07
+    assert: all placeholders used in a locale exist in the declared placeholder list
+  - id: RT-REF-08
+    assert: ar-TN strings contain no Latin letters outside placeholders and proper nouns
+  - id: RT-REF-09
+    assert: no template apologises more than once (regex on excuse/اعتذار/sorry family)
+  - id: RT-REF-10
+    assert: the ar-TN copy differs structurally from a literal translation of fr-FR
+    method: human review by a native reviewer, recorded on prompt_version.reviewed_by
