@@ -422,28 +422,42 @@ disclaimers:
       Please do not share any personal data in this conversation.
 
 # ══════════════════════════════════════════════════════════════════════════════════════════════
-#  Acceptance tests — run in CI against the rendered strings (tools/refusal-lint, Phase 1).
+#  Acceptance tests. RT-REF-01…RT-REF-09 are enforced TODAY by tools/prompt-lint group F against
+#  these strings, and again by seed_test.sql G7 against the rows V902 seeds from them — so a template
+#  that passes review and a database that disagrees with it are both caught. RT-REF-10 is human review
+#  by design and is recorded on prompt_version.reviewed_by, not asserted by a machine.
+#  No separate tools/refusal-lint is planned: it would be a second copy of the same rules.
 # ══════════════════════════════════════════════════════════════════════════════════════════════
 tests:
   - id: RT-REF-01
+    enforced_by: prompt-lint R1 · seed_test G7d
     assert: no template body contains a religious verdict word
     lexicon_source: guardrail_policy.PROHIBITED_TOPICS.lexicon + term_glossary.forbidden_renderings
   - id: RT-REF-02
+    enforced_by: prompt-lint R2 (negation-aware)
     assert: no template body contains an interest-based product term or a numeric rate
   - id: RT-REF-03
+    enforced_by: prompt-lint R3 · variants exempt only when they declare an internal audience
     assert: no template body mentions a guardrail, filter, instruction, classifier, model or prompt
   - id: RT-REF-04
+    enforced_by: prompt-lint R4 · seed_test G7d
     assert: every template has all three locales, and none is empty
   - id: RT-REF-05
+    enforced_by: prompt-lint R5
     assert: body ≤ 60 words and title ≤ 8 words in every locale (Arabic counted by whitespace tokens)
   - id: RT-REF-06
+    enforced_by: prompt-lint R6 · seed_test G7f
     assert: every template offers a next step (cta, handoff_channel or referral) except REF-01
   - id: RT-REF-07
+    enforced_by: prompt-lint placeholder declaration, both directions · seed_test G7e
     assert: all placeholders used in a locale exist in the declared placeholder list
   - id: RT-REF-08
+    enforced_by: prompt-lint R8
     assert: ar-TN strings contain no Latin letters outside placeholders and proper nouns
   - id: RT-REF-09
+    enforced_by: prompt-lint R9
     assert: no template apologises more than once (regex on excuse/اعتذار/sorry family)
   - id: RT-REF-10
+    enforced_by: human review, recorded on prompt_version.reviewed_by
     assert: the ar-TN copy differs structurally from a literal translation of fr-FR
     method: human review by a native reviewer, recorded on prompt_version.reviewed_by

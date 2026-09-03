@@ -17,8 +17,10 @@
  *      silently stops enforcing a rule.
  *   E. No prompt body outside the refusal templates leaks a religious verdict, an interest-based
  *      product term or a numeric figure that is not a placeholder.
- *   F. templates.refusals.yaml passes its own acceptance tests (R1–R8, word caps, placeholder
- *      declaration, Arabic-script purity, "every refusal offers a next step").
+ *   F. templates.refusals.yaml passes its own acceptance tests RT-REF-01…RT-REF-09 (R1–R8, word
+ *      caps, placeholder declaration in both directions, Arabic-script purity, "every refusal offers
+ *      a next step", and at most one apology). RT-REF-10 is human review by design and is recorded on
+ *      prompt_version.reviewed_by, not asserted here.
  *   G. utility.prompts.md declares every prompt_code the DB enum knows about, minus
  *      SYSTEM_ASSISTANT (own files) and GUARDRAIL_JUDGE (own file).
  *
@@ -86,6 +88,18 @@ const ALLOWED_NUMBER_CONTEXT = /(0\.\d+|1\.0|220|400|1536|τ|k=60|λ|top_n|max_w
 const NEGATION =
   /(jamais|ne\s|pas\b|aucun|ni\b|n'|sans\b|interdit|prohibé|never|\bnot\b|\bno\b|don't|doesn't|cannot|must not|do not|is not|are not|لا |ليس|ولا |دون |بدون |ممنوع|غير مسموح|أبدا)/i;
 const negated = (line) => NEGATION.test(line);
+
+/**
+ * R9 — "no template apologises more than once" (rule R4 of templates.refusals.yaml, acceptance test
+ * RT-REF-09). A refusal that apologises twice reads as a system that knows it failed; one apology is
+ * polite, none is a scope statement, which is what R3 asks for. Counted across title, body and cta of
+ * one locale, because a customer reads them as one message.
+ * Built fresh per call: a /g regex carries lastIndex between .test() calls and would skip matches.
+ */
+const APOLOGY_SOURCE =
+  'excuse|d[ée]sol[ée]|pardon|navr[ée]|regrette|sorry|apologis|apologiz|apolog|forgive|regret' +
+  '|اعتذار|نعتذر|أعتذر|آسف|نأسف|عذرا|المعذرة|سامحنا';
+const apologies = (text) => (String(text || '').match(new RegExp(APOLOGY_SOURCE, 'gi')) || []).length;
 
 // ─────────────────────────────────────────────────────────────────────────────────────────────
 //  helpers
@@ -348,6 +362,9 @@ ok.push(`all ${KNOWN_CODES.length} prompt_code enum values are specified`);
           // R3 — no disclosure of internals
           const internals = /guardrail|classifier|prompt|instruction|modèle|\bmodel\b|filter|filtre|نموذج|تصنيف|تعليمات/i;
           if (internals.test(l.body) || internals.test(l.title)) err(`${file}: R3 ${t.code} ${L} discloses system internals`);
+          // R9 — at most one apology across the whole message
+          const aps = apologies(l.title) + apologies(l.body) + apologies(l.cta);
+          if (aps > 1) err(`${file}: R9 ${t.code} ${L} apologises ${aps} times — one is polite, two reads as a system that knows it failed`);
         }
         // R6 — every refusal offers a next step (REF-01 is a deliberate dead end)
         if (t.code !== 'REF-01') {
@@ -367,6 +384,8 @@ ok.push(`all ${KNOWN_CODES.length} prompt_code enum values are specified`);
               const internals = /guardrail|classifier|prompt|instruction|modèle|\bmodel\b|filter|filtre/i;
               if (internals.test(l.body)) err(`${file}: R3 ${t.code}.${vn} ${L} is customer-facing but discloses internals`);
             }
+            const aps = apologies(l.title) + apologies(l.body) + apologies(l.cta);
+            if (aps > 1) err(`${file}: R9 ${t.code}.${vn} ${L} apologises ${aps} times`);
           }
         }
       }
@@ -381,7 +400,7 @@ ok.push(`all ${KNOWN_CODES.length} prompt_code enum values are specified`);
         for (const L of LOCALES) if (!p[L] || p[L].length < 3) err(`${file}: followup pool ${k} must offer ≥3 chips in ${L}`);
       }
       if (doc.requires_sharia_approval !== true) err(`${file}: refusal templates must require Sharia approval`);
-      ok.push(`${file}: 6 templates × 3 locales + variants, ${Object.keys(doc.disclaimers || {}).length} disclaimers, R1–R8 verified`);
+      ok.push(`${file}: 6 templates × 3 locales + variants, ${Object.keys(doc.disclaimers || {}).length} disclaimers, R1–R9 verified`);
     }
   }
 }

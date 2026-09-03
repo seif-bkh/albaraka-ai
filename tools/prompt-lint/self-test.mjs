@@ -253,6 +253,29 @@ const MUTATIONS = [
     run: (d) => mutateYaml(d, REFUSALS, (doc) => { doc.requires_sharia_approval = false; }),
     expect: 'refusal templates must require Sharia approval',
   },
+  {
+    id: 'M34 R9 — a refusal apologises twice',
+    run: (d) => mutateYaml(d, REFUSALS, (doc) => {
+      const t = tmpl(doc, 'REF-05').locales['fr-FR'];
+      t.body = 'Je suis désolé, je n\'ai pas pu vérifier la réponse. Veuillez m\'excuser, réessayez plus tard.';
+    }),
+    expect: 'R9 REF-05 fr-FR apologises',
+  },
+  {
+    id: 'M35 R9 — a customer-facing variant apologises twice',
+    run: (d) => mutateYaml(d, REFUSALS, (doc) => {
+      const v = tmpl(doc, 'REF-05').variants.technical;
+      v.locales['fr-FR'].title = 'Désolé — pardon';
+    }),
+    expect: 'R9 REF-05.technical fr-FR apologises',
+  },
+  {
+    id: 'M36 R9 negative control — exactly one apology is permitted',
+    run: (d) => mutateYaml(d, REFUSALS, (doc) => {
+      tmpl(doc, 'REF-05').locales['fr-FR'].cta = 'Nous sommes désolés — contactez un conseiller';
+    }),
+    silent: true,
+  },
 ];
 
 // ── run ──────────────────────────────────────────────────────────────────────────────────────────
@@ -279,6 +302,14 @@ for (const m of MUTATIONS) {
   try { m.run(dir); } catch (e) { applied = false; broken++; console.log(`  BROKEN  ${m.id}\n          mutation could not be applied: ${e.message}`); }
   if (applied) {
     const { code, out } = runLint(dir);
+    // A negative control asserts the linter stays quiet: a rule that fires on compliant copy will be
+    // disabled wholesale the first time it blocks a legitimate edit.
+    if (m.silent) {
+      if (code === 0) console.log(`  ok      ${m.id}`);
+      else { failures++; console.log(`  MISSED  ${m.id}\n          expected silence, got:\n        ${out.split('\n').filter((l) => l.includes('ERROR')).map((l) => l.trim()).join('\n        ')}`); }
+      rmSync(dir, { recursive: true, force: true });
+      continue;
+    }
     const detected = code !== 0 && out.includes(m.expect);
     if (detected) {
       console.log(`  ok      ${m.id}`);
