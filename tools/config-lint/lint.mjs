@@ -214,7 +214,7 @@ const seedGeneration = seed.generation || {};
 function checkStructure() {
   // Paths, not top-level keys: the seed block is nested under `albaraka`, and a check written
   // against top-level names would not see it.
-  const required = ['spring.datasource', 'spring.flyway', 'spring.ai.openai', 'server.port',
+  const required = ['spring.datasource', 'spring.flyway', 'albaraka.rag', 'server.port',
     'management.endpoints', 'albaraka.env', 'albaraka.egress', 'albaraka.pipeline',
     'albaraka.guardrails', 'albaraka.kill-switch', 'albaraka.feature-flags',
     'albaraka.seed.mode', 'albaraka.seed.models', 'albaraka.seed.retrieval'];
@@ -607,7 +607,7 @@ function checkConsistency() {
   mustAgree('albaraka.retention.conversation-anonymise-after-months', 24, 'C06', 'the 24-month anonymisation mandate (docs/07 §7)');
   mustAgree('albaraka.retention.audit-event-retain-years', 10, 'C06', 'audit events are retained 10 years');
   mustAgree('albaraka.egress.pii.mode', 'TOKENIZE', 'C07', 'PII is tokenised reversibly, not dropped — the answer must name the customer');
-  mustAgree('spring.ai.openai.embedding.enabled', false, 'C10', 'Groq has no embeddings endpoint');
+  if (!get(docs.base || {}, 'albaraka.rag.provider-mode')) err('C10 application.yaml: albaraka.rag.provider-mode must be declared (env-driven, mock default) — ADR-009 moves provider wiring to rag-assistant');
   mustAgree('albaraka.assistant.default-locale', 'fr-FR', 'C11', 'the default locale is French (docs/06)');
 
   // C01 kill-switch modes

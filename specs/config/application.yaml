@@ -72,27 +72,9 @@ spring:
           issuer-uri: ${KEYCLOAK_URL:http://localhost:8080}/realms/albaraka
           audiences: albaraka-assistant-api
           jwk-set-uri: ${KEYCLOAK_URL:http://localhost:8080}/realms/albaraka/protocol/openid-connect/certs
-  ai:
-    # Groq is consumed through the OpenAI-compatible starter (ADR-002 decision 1). GroqChatOptionsSanitizer
-    # strips parameters Groq rejects or ignores before the call leaves assistant-infra.
-    openai:
-      base-url: ${GROQ_BASE_URL:https://api.groq.com}
-      api-key: ${GROQ_API_KEY}
-      chat:
-        completions-path: /openai/v1/chat/completions
-        options:
-          model: llama-3.3-70b-versatile
-          temperature: 0.2
-      embedding:
-        enabled: false                  # Groq serves no embeddings — never enable this
-    google:
-      genai:
-        api-key: ${GOOGLE_API_KEY}
-        embedding:
-          text:
-            model: gemini-embedding-001
-            output-dimensionality: 1536
-            task-type: RETRIEVAL_DOCUMENT
+  # No spring-ai starter here (ADR-009): model access, provider credentials and the egress PII
+  # gate live in the Python rag-assistant service. The Spring API talks ONLY to that service —
+  # albaraka.rag below is its contract (docs/08 §8).
 
 server:
   port: ${SERVER_PORT:8081}
@@ -160,6 +142,27 @@ management:
 albaraka:
   env: ${ALBARAKA_ENV:dev}
 
+  # ── keycloak integration (token bridge + resource server issuer from env) ─────────────────────
+  keycloak:
+    token-url: ${ALBARAKA_KEYCLOAK_TOKEN_URL:http://keycloak:8080/realms/albaraka/protocol/openid-connect/token}
+    backoffice-client-id: ${ALBARAKA_KEYCLOAK_BACKOFFICE_CLIENT_ID:albaraka-backoffice-web}
+
+  # ── CORS: dev origins are the compose edge + the local ng serves ─────────────────────────────
+  cors:
+    # dev origins: the compose edge (8082) + the two local angular dev servers
+    allowed-origins: [http://localhost:8082, http://localhost:4200, http://localhost:4201]
+
+  # ── internal RAG service (ADR-009) ────────────────────────────────────────────────────────────
+  # The Spring API is the only caller of rag-assistant; rag-assistant is the only process that can
+  # reach a model provider. Contract: docs/08 §8. The compose dev value for base-url is
+  # http://rag-assistant:8000 (in-network).
+  rag:
+    base-url: ${RAG_BASE_URL:http://rag-assistant:8000}
+    service-token: ${RAG_SERVICE_TOKEN}
+    contract: ${RAG_CONTRACT:1}
+    provider-mode: ${RAG_PROVIDER_MODE:mock}
+    vector-backend: ${RAG_VECTOR_BACKEND:mock}
+
   assistant:
     name: "Al-Mouchir"
     name-ar: "المشير"
@@ -205,18 +208,16 @@ albaraka:
       enabled: false
       fixtures-dir: ""
     groq:
-      base-url: ${GROQ_BASE_URL:https://api.groq.com}
-      api-key: ${GROQ_API_KEY}
+      # Credentials and base-url are env of the rag-assistant service (ADR-009); the Spring
+      # container never holds a provider key. This block documents the client profile used to
+      # seed model_config rows (provider code + model ids are below, in albaraka.seed.models).
       connect-timeout-ms: 2000
       read-timeout-ms: 30000
-      # A second, independently pooled client for the guard models: a saturated guard path must not
-      # be caused by, and must not cause, saturation of the answering path (docs/02 note).
       guard:
         connect-timeout-ms: 1000
         read-timeout-ms: 2000
         max-connections: 64
     google:
-      api-key: ${GOOGLE_API_KEY}
       connect-timeout-ms: 2000
       read-timeout-ms: 10000
       embedding-batch-size: 100

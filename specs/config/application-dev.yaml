@@ -17,11 +17,8 @@ spring:
     # specs/db/seed carries V900–V903 (glossary, prompts, policies, dialect map). Kept on the classpath path in
     # dev so a fresh container is usable without a separate bootstrap step.
     locations: classpath:db/migration,filesystem:specs/db/seed
-  ai:
-    openai:
-      # Set GROQ_API_KEY to a real key, or set PROVIDER_MODE=MOCK to run the whole pipeline against
-      # canned responses. MOCK is the only provider mode allowed to appear in a committed file.
-      base-url: ${GROQ_BASE_URL:https://api.groq.com}
+  # No spring-ai starter (ADR-009): set RAG_PROVIDER_MODE=live + GROQ_API_KEY/GOOGLE_API_KEY in
+  # the rag-assistant service's environment; mock is the committed default (no keys required).
 
 server:
   port: 8081

@@ -85,7 +85,8 @@ const MUTATIONS = [
   { id: 'M18 keycloak pointed at its own database', run: (c) => { svc(c, 'keycloak').environment.KC_DB_URL = 'jdbc:postgresql://postgres:5432/albaraka_ai'; }, expect: '[K03] KC_DB_URL must point at the postgres service keycloak database' },
 
   // ── E — environment contract ────────────────────────────────────────────────────────────────
-  { id: 'M19 the provider key is never handed to the server', run: (c) => { delete svc(c, 'server').environment.GROQ_API_KEY; }, expect: '[E02] required config placeholder ${GROQ_API_KEY}' },
+  { id: 'M19 a provider key is handed to the server (ADR-009)', run: (c) => { svc(c, 'server').environment.GROQ_API_KEY = '${GROQ_API_KEY:-}'; }, expect: '[E08] server.GROQ_API_KEY' },
+  { id: 'M19b the rag service loses its provider key wiring', run: (c) => { delete svc(c, 'rag-assistant').environment.RAG_GROQ_API_KEY; }, expect: '[E07] rag-assistant must receive RAG_GROQ_API_KEY' },
   { id: 'M20 a literal storage secret committed in the compose file', run: (c) => { svc(c, 'server').environment.STORAGE_SECRET_KEY = 'hunter2'; }, expect: '[E02] ${STORAGE_SECRET_KEY} is secret-shaped' },
   { id: 'M21 a variable from nowhere', run: (c) => { svc(c, 'server').environment.SPRING_DATASOURCE_HIKARI_POOL_SIZE = '${UNDECLARED_VAR}'; }, expect: '[E01] compose uses ${UNDECLARED_VAR}' },
   { id: 'M22 the issuer/jwk split collapses', run: (c) => {

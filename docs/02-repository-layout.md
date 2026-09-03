@@ -50,9 +50,10 @@ albaraka-ai/
 │   └── node-parity/                         ← previous Node backend (reference only)
 ├── deploy/
 │   ├── docker-compose.yml  README.md        (full app: pgvector, redis, keycloak, minio,
-│   │                                         server, rag-assistant, web)
-│   ├── docker/server.Dockerfile  docker/rag-assistant.Dockerfile  docker/web.Dockerfile
-│   ├── docker/nginx.conf  docker/keycloak-theme/
+│   │                                         server, rag-assistant, both SPAs, nginx)
+│   ├── docker/Dockerfile.server  Dockerfile.rag-assistant  Dockerfile.frontoffice-web
+│   │    Dockerfile.backoffice-web
+│   ├── nginx/nginx.conf  (edge: / · /admin · /api SSE)  keycloak-theme/
 │   ├── postgres/init/  (01-extensions.sql · 10-keycloak-db.sql)
 │   ├── runbooks/                            (13 runbooks — updated for the two services)
 │   └── k8s/  (manifests/Helm — Phase 5 target)
@@ -127,8 +128,8 @@ Key starters in the server (model adapters intentionally absent — ADR-009):
 requires-python = ">=3.11"
 dependencies = [
   "fastapi>=0.115", "uvicorn[standard]>=0.30",
-  "langchain>=1.0", "langchain-core>=1.0", "langchain-postgres>=0.1",
-  "langchain-groq>=0.3", "langchain-google-genai>=2.0",
+  "langchain>=1.0", "langchain-core>=1.0", "langchain-postgres>=0.0.17",
+  "langchain-groq>=0.3", "langchain-google-genai>=2.0,<2.5",
   "pgvector>=0.3", "psycopg[binary]>=3.2", "sqlalchemy>=2.0",
   "pydantic>=2.9", "pydantic-settings>=2.5", "numpy>=2.0", "redis>=5"
 ]

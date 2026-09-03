@@ -32,12 +32,7 @@ spring:
         jwt:
           issuer-uri: ${KEYCLOAK_URL}/realms/albaraka
           audiences: albaraka-assistant-api
-  ai:
-    openai:
-      base-url: ${GROQ_BASE_URL:https://api.groq.com}
-    google:
-      genai:
-        api-key: ${GOOGLE_API_KEY}
+  # No spring-ai starter (ADR-009): provider wiring is the rag-assistant service's environment.
 
 server:
   port: 8081

@@ -57,9 +57,9 @@ const KC_FLOOR = (adr008.match(/Keycloak\s*\|\s*\*\*≥ ([0-9.]+)\*\*/) || [])[1
 const REDIS_MAJOR = (adr008.match(/Redis\s*\|\s*\*\*(\d)\.x\*\*/) || [])[1];
 const PG_MAJOR = (adr008.match(/PostgreSQL\s*\|\s*\*\*(\d+)\*\*/) || [])[1];
 const UTF8_REQUIRED = /cluster encoding must be \*\*UTF8\*\*/.test(doc03);
-const REQUIRED_SERVICES = ['postgres', 'redis', 'keycloak', 'minio', 'server', 'frontoffice-web', 'backoffice-web', 'nginx'];
+const REQUIRED_SERVICES = ['postgres', 'redis', 'keycloak', 'minio', 'server', 'rag-assistant', 'frontoffice-web', 'backoffice-web', 'nginx'];
 const ALLOWED_SERVICES = [...REQUIRED_SERVICES, 'minio-init'];
-const APP_SERVICES = ['server', 'frontoffice-web', 'backoffice-web', 'nginx'];
+const APP_SERVICES = ['server', 'rag-assistant', 'frontoffice-web', 'backoffice-web', 'nginx'];
 
 // config placeholders: required (no :default) vs optional
 const cfgPlaceholders = { required: new Set(), optional: new Set() };
@@ -131,7 +131,7 @@ for (const f of ['application.yaml', 'application-dev.yaml', 'application-uat.ya
     const img = svc(s)?.image || '';
     if (!/^quay\.io\/minio\/(minio|mc):RELEASE\./.test(img)) err(`[I05] ${s}: image must be a pinned MinIO RELEASE tag, got "${img}"`);
   }
-  for (const s of ['server', 'frontoffice-web', 'backoffice-web']) {
+  for (const s of ['server', 'rag-assistant', 'frontoffice-web', 'backoffice-web']) {
     const c = svc(s);
     if (!c) continue;
     if (c.image !== `albaraka-ai/${s}:dev`) err(`[I06] ${s}: image must be "albaraka-ai/${s}:dev", got "${c.image}"`);
@@ -255,6 +255,30 @@ for (const f of ['application.yaml', 'application-dev.yaml', 'application-uat.ya
     if (!vols.includes('../specs:/app/specs:ro')) err('[E05] server must mount ../specs:/app/specs:ro — Flyway seeds and the i18n spec files are filesystem paths in application.yaml');
     if (!vols.includes('/app/specs:ro')) err('[E05] server specs mount must be read-only');
     if (srv.depends_on?.postgres?.condition !== 'service_healthy') err('[E05] server must wait for postgres service_healthy (Flyway runs at boot)');
+  }
+  // ADR-009: internal RAG contract wiring
+  if (srv) {
+    for (const [k, v] of Object.entries(env)) {
+      if (/^(GROQ_|GOOGLE_|ONPREM_)/.test(k)) {
+        err(`[E08] server.${k}: provider credentials must NOT be handed to the Spring container — rag-assistant is the only egress (ADR-009). Move this variable to the rag-assistant service.`);
+      }
+    }
+
+    if (!String(env.RAG_BASE_URL || '').includes('http://rag-assistant:8000')) err('[E06] server must set RAG_BASE_URL=http://rag-assistant:8000 (the only egress to providers is rag-assistant — ADR-009)');
+    if (!String(env.RAG_SERVICE_TOKEN || '').startsWith('${')) err('[E06] RAG_SERVICE_TOKEN must come from .env, not a literal');
+    if (String(env.RAG_CONTRACT || '') !== '1') err('[E06] RAG_CONTRACT must be 1 (docs/08 §8 contract negotiation)');
+    if (srv.depends_on?.['rag-assistant']?.condition !== 'service_healthy') err('[E06] server must wait for rag-assistant service_healthy');
+  }
+  const rag = svc('rag-assistant');
+  if (rag) {
+    const renv = JSON.stringify(rag.environment || {});
+    if (!renv.includes('RAG_SERVICE_TOKEN')) err('[E07] rag-assistant must receive RAG_SERVICE_TOKEN');
+    if (!renv.includes('RAG_PROVIDER_MODE')) err('[E07] rag-assistant must declare RAG_PROVIDER_MODE (mock default)');
+    if (!renv.includes('RAG_GROQ_API_KEY')) err('[E07] rag-assistant must receive RAG_GROQ_API_KEY (${GROQ_API_KEY:-} in dev — empty means mock)');
+    if (!renv.includes('RAG_GOOGLE_API_KEY')) err('[E07] rag-assistant must receive RAG_GOOGLE_API_KEY (${GOOGLE_API_KEY:-} in dev — empty means mock)');
+    const rhealth = JSON.stringify(rag.healthcheck || {});
+    if (!rhealth.includes('/v1/rag/health')) err('[E07] rag-assistant needs a healthcheck on /v1/rag/health');
+    if (rag.depends_on?.postgres?.condition !== 'service_healthy') err('[E07] rag-assistant must wait for postgres service_healthy');
   }
   ok.push(`environment: ${usedInCompose.length} vars declared in .env.example, all required config placeholders provided, no literal secret`);
 }

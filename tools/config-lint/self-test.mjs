@@ -222,7 +222,7 @@ mut('C06b', 'prod shortens the audit trail to 5 years', (d) => setPath(d.prod, '
 mut('C07', 'prod redacts PII instead of tokenising it', (d) => setPath(d.prod, 'albaraka.egress.pii.mode', 'REDACT'), 'C07');
 mut('C08', 'prod caches answers without the knowledge epoch', (d) => setPath(d.prod, 'albaraka.pipeline.semantic-cache.key-includes-kb-epoch', false), 'C08');
 mut('C09', 'prod lets the model write its own disclaimer', (d) => setPath(d.prod, 'albaraka.guardrails.disclaimers.appended-by', 'MODEL'), 'C09');
-mut('C10', 'the Groq embedding starter is switched on', (d) => setPath(d.base, 'spring.ai.openai.embedding.enabled', true), 'C10');
+mut('C10', 'the RAG provider-mode declaration disappears (ADR-009)', (d) => setPath(d.base, 'albaraka.rag.provider-mode', undefined), 'C10');
 mut('C11', 'the default locale becomes English', (d) => setPath(d.base, 'albaraka.assistant.default-locale', 'en-GB'), 'C11');
 mut('C12a', 'the egress allowlist omits the Groq host a role needs', (d) => { d.base.albaraka.egress.allowlist = ['generativelanguage.googleapis.com']; return d; }, 'C12');
 mut('C12b', 'prod allows egress to localhost', (d) => setPath(d.prod, 'albaraka.egress.allowlist', ['api.groq.com', 'localhost:11434']), 'C12');
