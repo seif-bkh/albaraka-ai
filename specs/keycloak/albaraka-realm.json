@@ -71,43 +71,6 @@
   "webAuthnPolicyCreateTimeout": 0,
   "webAuthnPolicyAvoidSameAuthenticatorRegister": true,
   "adminPermissionsEnabled": false,
-  "organizationEnabled": false,
-  "clientPoliciesPolicies": {
-    "policies": [
-      {
-        "name": "pkce-s256-for-all-public-clients",
-        "description": "Every public client must present a PKCE code challenge hashed with S256. Plain is refused.",
-        "enabled": true,
-        "conditions": [
-          {
-            "condition": "client-scopes",
-            "configuration": {
-              "scope": "pkce-enforced"
-            }
-          }
-        ],
-        "profiles": [
-          "pkce-s256"
-        ]
-      },
-      {
-        "name": "token-exchange-disabled",
-        "description": "Standard token exchange stays off: it is a recurring CVE surface and no use case needs it (docs/07 §2.3).",
-        "enabled": true,
-        "conditions": [
-          {
-            "condition": "client-scopes",
-            "configuration": {
-              "scope": "token-exchange-denied"
-            }
-          }
-        ],
-        "profiles": [
-          "token-exchange-off"
-        ]
-      }
-    ]
-  },
   "clientProfiles": {
     "profiles": [
       {
@@ -1007,5 +970,42 @@
         "branch-agent"
       ]
     }
-  ]
+  ],
+  "organizationsEnabled": false,
+  "clientPolicies": {
+    "policies": [
+      {
+        "name": "pkce-s256-for-all-public-clients",
+        "description": "Every public client must present a PKCE code challenge hashed with S256. Plain is refused.",
+        "enabled": true,
+        "conditions": [
+          {
+            "condition": "client-scopes",
+            "configuration": {
+              "scope": "pkce-enforced"
+            }
+          }
+        ],
+        "profiles": [
+          "pkce-s256"
+        ]
+      },
+      {
+        "name": "token-exchange-disabled",
+        "description": "Standard token exchange stays off: it is a recurring CVE surface and no use case needs it (docs/07 §2.3).",
+        "enabled": true,
+        "conditions": [
+          {
+            "condition": "client-scopes",
+            "configuration": {
+              "scope": "token-exchange-denied"
+            }
+          }
+        ],
+        "profiles": [
+          "token-exchange-off"
+        ]
+      }
+    ]
+  }
 }
