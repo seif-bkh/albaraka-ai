@@ -47,15 +47,32 @@ const ok = [];
 const err = (m) => errors.push(m);
 const warn = (m) => warns.push(m);
 
-// ── enums, mirrored from specs/db/schema.sql ─────────────────────────────────────────────────────
-const LOCALE = ['fr-FR', 'ar-TN', 'en-GB'];
-const INTENT = ['PRODUCT_QUESTION', 'PRODUCT_COMPARISON', 'SHARIA_CONCEPT', 'RELIGIOUS_RULING_REQUEST',
-  'PROCEDURE', 'TARIFF_FEES', 'BRANCH_LOCATOR', 'DIGITAL_CHANNEL', 'ACCOUNT_STATUS', 'COMPLAINT',
-  'SMALL_TALK', 'OUT_OF_SCOPE', 'ABUSE', 'ADVERSARIAL'];
-const REFUSAL = ['REF-01', 'REF-02', 'REF-03', 'REF-04', 'REF-05', 'REF-06'];
-const CLASSIFICATION = ['PUBLIC', 'AGENT', 'INTERNAL', 'CONFIDENTIAL'];
+// ── enums ────────────────────────────────────────────────────────────────────────────────────────
+// The five domains below are read from specs/db/schema.sql rather than copied here. A copied enum is
+// a stale enum: this file once listed `AGENT` as a classification, a value the database has never
+// had, while omitting `RESTRICTED`, which it does — so a manifest row that would insert cleanly was
+// rejected and a row that would fail at insert time was waved through. Deriving the list makes that
+// class of drift impossible.
+const SCHEMA = join(root, 'specs', 'db', 'schema.sql');
+
+function dbEnum(typeName) {
+  if (!existsSync(SCHEMA)) { err(`cannot read ${SCHEMA} — needed for the ${typeName} domain`); return []; }
+  const sql = readFileSync(SCHEMA, 'utf8');
+  const m = sql.match(new RegExp(`CREATE TYPE\\s+${typeName}\\s+AS\\s+ENUM\\s*\\(([\\s\\S]*?)\\);`));
+  if (!m) { err(`schema.sql declares no enum ${typeName}`); return []; }
+  return [...m[1].matchAll(/'([^']+)'/g)].map((x) => x[1]);
+}
+
+const LOCALE = dbEnum('locale_code');
+const INTENT = dbEnum('intent_code');
+const REFUSAL = dbEnum('refusal_code');
+const CLASSIFICATION = dbEnum('classification');
+const TIER = dbEnum('risk_tier');
+
+// Corpus conventions, not database enums: the manifest's `state` and `documentType` describe the
+// lifecycle of an evaluation fixture (QUARANTINED and EMERGENCY_WITHDRAWN are review outcomes from
+// docs/05 §5, and no column stores them), so they are declared here.
 const STATE = ['DRAFT', 'IN_REVIEW', 'PUBLISHED', 'RETIRED', 'QUARANTINED', 'EMERGENCY_WITHDRAWN'];
-const TIER = ['T1_LOW', 'T2_MEDIUM', 'T3_HIGH'];
 const DOC_TYPE = ['PRODUCT_SHEET', 'TARIFF', 'DIRECTORY', 'GUIDE', 'GLOSSARY', 'PROCEDURE', 'LEGAL', 'POLICY'];
 
 /**
