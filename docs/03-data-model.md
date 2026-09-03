@@ -310,10 +310,42 @@ result with a `simple`-based custom configuration:
 ```sql
 CREATE TEXT SEARCH CONFIGURATION albaraka_fts (PARSER = default);
 ALTER  TEXT SEARCH CONFIGURATION albaraka_fts
-       ADD MAPPING FOR asciiword, word, numword WITH unaccent, simple;
+       ADD MAPPING FOR asciiword, word, numword, asciihword, hword WITH unaccent, simple;
 ALTER  TEXT SEARCH CONFIGURATION albaraka_fts
-       ADD MAPPING FOR arabic_word WITH simple;   -- pre-normalised + light-stemmed in app
+       ADD MAPPING FOR numhword, hword_part, hword_asciipart, hword_numpart WITH unaccent, simple;
+ALTER  TEXT SEARCH CONFIGURATION albaraka_fts
+       ADD MAPPING FOR uint, int, float, sfloat WITH simple;
+ALTER  TEXT SEARCH CONFIGURATION albaraka_fts
+       ADD MAPPING FOR email, url, url_path, host, file, version WITH simple;
+-- deliberately unmapped: blank, tag, entity, protocol
 ```
+
+Two properties of this configuration are easy to get wrong and fail silently, so both are asserted
+by the `G4` group in `specs/db/tests/schema_test.sql` (run by `tools/db-verify`):
+
+* **There is no `arabic_word` token type.** The default parser emits 23 token types and that is not
+  one of them — `ADD MAPPING FOR arabic_word` fails with `token type "arabic_word" does not exist`.
+  It is also unnecessary: in a UTF-8 database Arabic text classifies as `word`, which is mapped
+  `WITH unaccent, simple`. `unaccent` is a no-op on Arabic and `simple` preserves the token, so
+  Arabic indexes correctly with no special handling. (Arabic is pre-normalised and light-stemmed in
+  the application, as the table below describes.)
+* **Every token type the parser can emit must be mapped, or its tokens are discarded without a
+  warning.** A bare integer is `uint`; `int` only arises where a hyphen was read as a minus sign.
+  Mapping `int` and `float` while omitting `uint` removed every plain integer from the index —
+  tariff minimums and maximums, the years identifying loi n° 2016-48 and circulaire 2021-05, article
+  numbers, quantities. `1500` on its own indexed to an empty tsvector, and `loi n° 2016-48 du 11 mai
+  2016` indexed as `'-48' 'du' 'loi' 'mai' 'n°'`. Nothing errors; it appears only as poor recall on
+  `TARIFF_FEES`, the intent whose numeric grounding is a blocking metric at 100 % (doc 11 §3).
+
+The cluster encoding must be **UTF8**. On `SQL_ASCII` the parser classifies every non-ASCII token as
+`blank` — all Arabic included — and the index holds nothing for the language most of the Sharia
+corpus is written in. `G4h` asserts the encoding so the cause is named rather than inferred from a
+failing Arabic test.
+
+One limitation is kept as an explicit decision: the parser reads the hyphen in `2016-48` as a minus
+sign, so the article number indexes as `-48` and a query for `48` does not match it. Splitting
+hyphenated numbers belongs to the application normaliser (`specs/i18n/normalization.json`), not to
+the text-search configuration. `G4e` fails loudly if that behaviour ever changes.
 
 Pipeline (Java, `assistant-knowledge`):
 
@@ -321,8 +353,8 @@ Pipeline (Java, `assistant-knowledge`):
 |---|---|---|
 | Unicode | NFKC, lowercase | NFKC, strip **tashkīl** (U+064B–U+0652), strip tatweel (U+0640) |
 | Folding | `unaccent` (accents removed for FTS only; display text untouched) | Alef variants `أ إ آ ٱ` → `ا`؛ `ة` → `ه`؛ `ى` → `ي`؛ `ؤ` → `و`؛ `ئ` → `ي` |
-| Stemming | Porter (light) | **Light stemmer** (Tashaphyne-style): strip prefixes `ال و ف ب ك ل س` and suffixes `ات ون ين ان ات ها هم هن ية` |
-| Dialect | — | Derja → MSA mapping table (`نحب`→`أريد`, `باش`→`لـ`, `شنية`→`ما هي`, `برشة`→`كثير`, `فلوس`→`أموال`) |
+| Stemming | Porter (light) | **Light stemmer** (Tashaphyne-style): strip prefixes `ال و ف ب ك ل س` and suffixes `ات ون ين ان ها هم هن ية` (one strip per side, min root length 3) |
+| Dialect | — | Derja → MSA mapping table (`نحب`→`أريد`, `باش`→`من أجل`, `شنية`→`ما هي`, `برشة`→`كثيرا`, `فلوس`→`أموال`) — 377 seed mappings in `specs/i18n/derja-msa.json` |
 | Synonyms | glossary expansion (`credit`→`financement`, `car loan`→`mourabaha vehicule`) | glossary expansion (`قرض`→`تمويل`, `سيارة`→`عربة/مركبة`) |
 
 The **display** text is never modified — normalisation feeds only `normalized_text`, `tsv` and the
