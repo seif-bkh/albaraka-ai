@@ -1,0 +1,27 @@
+# server — Spring Boot 4.1 / Java 21 (ADR-009) — build on the host or CI
+# build: docker build -f deploy/docker/Dockerfile.server -t albaraka-ai/server:dev .
+FROM maven:3.9-eclipse-temurin-21 AS build
+WORKDIR /build
+COPY server/pom.xml server/mvnw server/mvnw.cmd ./
+COPY server/.mvn ./.mvn
+COPY server/assistant-domain-shared ./assistant-domain-shared
+COPY server/assistant-identity ./assistant-identity
+COPY server/assistant-audit ./assistant-audit
+COPY server/assistant-knowledge ./assistant-knowledge
+COPY server/assistant-ingestion ./assistant-ingestion
+COPY server/assistant-governance ./assistant-governance
+COPY server/assistant-analytics ./assistant-analytics
+COPY server/assistant-rag-client ./assistant-rag-client
+COPY server/assistant-api ./assistant-api
+COPY server/assistant-boot ./assistant-boot
+RUN ./mvnw -B -q -pl assistant-boot -am package -DskipTests
+
+FROM eclipse-temurin:21-jre
+RUN useradd -m -u 10001 app
+WORKDIR /app
+COPY --from=build /build/assistant-boot/target/assistant-boot-*.jar app.jar
+USER app
+EXPOSE 8080
+HEALTHCHECK --interval=15s --timeout=5s --start-period=60s --retries=10 \
+  CMD ["sh", "-c", "exec 3<>/dev/tcp/127.0.0.1/8080; printf 'GET /actuator/health/liveness HTTP/1.0\r\n\r\n' >&3; grep -q UP <&3"]
+ENTRYPOINT ["java", "-jar", "app.jar"]

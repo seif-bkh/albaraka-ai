@@ -1,40 +1,48 @@
-.PHONY: dev web admin eval seed verify-db spike lint-ui lint-all
+# ══════════════════════════════════════════════════════════════════════════════════════════════
+#  Al-Mouchir — run the whole application from your host (docs/12 §2.2, ADR-009)
+# ══════════════════════════════════════════════════════════════════════════════════════════════
+COMPOSE = docker compose --profile app
 
-# Backend dev server (Express + embedded PostgreSQL on :8080)
-dev:
-	cd server && npm run dev
+.PHONY: up down logs ps dev web admin eval rag-test verify-db spike build lint-all seed-gen-check
 
-# Front-office (public chat) :4200 — proxies /api to :8080
-web:
-	cd albaraka-web && npm run serve:fo
+# ── your host: the deliverable ────────────────────────────────────────────────────────────────
+up:            ## build + start the full application (mock providers by default)
+	cp -n .env.example .env 2>/dev/null || true
+	$(COMPOSE) up -d --build
+	@echo
+	@echo "  frontoffice  http://localhost:8082"
+	@echo "  backoffice   http://localhost:8082/admin"
+	@echo "  API health   http://localhost:8081/actuator/health/liveness"
+	@echo "  RAG health   http://localhost:8000/v1/rag/health"
+	@echo "  Keycloak     http://localhost:8080  (remember .env KC_BOOTSTRAP_ADMIN_*)"
 
-# Back-office (admin console) :4201 — proxies /api to :8080
-admin:
-	cd albaraka-web && npm run serve:bo
+down:          ## stop the application (volumes kept)
+	$(COMPOSE) down
 
-# Golden evaluation gate against the running backend
-eval:
-	cd server && npm run eval
+logs:          ## tail all service logs
+	$(COMPOSE) logs -f --tail=100
 
-# Re-initialise the embedded database (schema + seeds + demo KB)
-seed:
-	cd server && npm run db:init
+ps:            ## service status
+	$(COMPOSE) ps
 
-# db-verify: schema + schema_test.sql against a throwaway PostgreSQL
-verify-db:
+# ── checks (CI parity) ────────────────────────────────────────────────────────────────────────
+rag-test:      ## Python golden gate (mock mode — no keys, no Docker)
+	cd rag-assistant && python3 -m pytest -q
+
+eval:          ## alias of rag-test (the 8-case golden gate lives in rag-assistant/tests)
+	$(MAKE) rag-test
+
+verify-db:     ## schema.sql + schema_test.sql against a throwaway PostgreSQL
 	cd tools/db-verify && npm run verify
 
-# provider smoke tests (mock; real keys when present in .env)
-spike:
+spike:         ## provider smoke tests (mock; real keys when present in .env)
 	cd tools/spike && npm test
 
-# frontend/backend build + eval smoke
-build:
-	cd albaraka-web && npm run build:ui && npm run build:frontoffice && npm run build:backoffice
-	cd server && node --check src/index.js && node --check src/pipeline.js
+build:         ## build the 3 Docker images without starting
+	$(COMPOSE) build
 
-# all specification gates (CI parity)
 lint-all: verify-db seed-gen-check prompt-lint eval-lint realm-lint config-lint i18n-lint asyncapi-lint compose-lint
+	@echo "lint-all: all specification gates green"
 
 seed-gen-check:
 	node tools/seed-gen/generate.mjs --check
