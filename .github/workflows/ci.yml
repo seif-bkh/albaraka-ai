@@ -173,8 +173,16 @@ jobs:
           exit ${PIPESTATUS[0]}
       - name: Boot the application
         run: |
+          set -o pipefail
           docker compose --env-file .env -f deploy/docker-compose.yml --profile app up -d --no-build 2>&1 | tee /tmp/devstack-boot.log
-          exit ${PIPESTATUS[0]}
+          rc=${PIPESTATUS[0]}
+          if [ "$rc" -ne 0 ]; then
+            echo "── compose up failed; keycloak log ──" | tee -a /tmp/devstack-boot.log
+            docker compose --env-file .env -f deploy/docker-compose.yml --profile app logs keycloak --tail=60 2>&1 | tee -a /tmp/devstack-boot.log
+            echo "── ps -a ──" | tee -a /tmp/devstack-boot.log
+            docker compose --env-file .env -f deploy/docker-compose.yml --profile app ps -a 2>&1 | tee -a /tmp/devstack-boot.log
+          fi
+          exit $rc
       - name: Wait for Spring liveness (max 9 min)
         run: |
           for i in $(seq 1 54); do
