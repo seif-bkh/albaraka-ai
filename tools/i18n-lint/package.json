@@ -1,0 +1,12 @@
+{
+  "name": "@albaraka-ai/i18n-lint",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Validates specs/i18n against docs/03 §8, docs/06 §7, the albaraka_fts DDL, derja_msa_map and specs/config",
+  "scripts": {
+    "lint": "node lint.mjs",
+    "verify": "node lint.mjs && node self-test.mjs"
+  },
+  "engines": { "node": ">=20" }
+}
