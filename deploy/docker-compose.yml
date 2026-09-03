@@ -114,7 +114,7 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - ./specs/keycloak/albaraka-realm.json:/tmp/realm-template.json:ro
+      - ../specs/keycloak/albaraka-realm.json:/tmp/realm-template.json:ro
       - keycloakdata:/opt/keycloak/data
     depends_on:
       postgres:

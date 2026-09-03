@@ -87,6 +87,9 @@ const MUTATIONS = [
   // ── E — environment contract ────────────────────────────────────────────────────────────────
   { id: 'M19 a provider key is handed to the server (ADR-009)', run: (c) => { svc(c, 'server').environment.GROQ_API_KEY = '${GROQ_API_KEY:-}'; }, expect: '[E08] server.GROQ_API_KEY' },
   { id: 'M19b the rag service loses its provider key wiring', run: (c) => { delete svc(c, 'rag-assistant').environment.RAG_GROQ_API_KEY; }, expect: '[E07] rag-assistant must receive RAG_GROQ_API_KEY' },
+  { id: 'M-realm-mount the realm template resolves inside deploy/ (directory mount)',
+    run: (c) => { svc(c, 'keycloak').volumes = ['- ./specs/keycloak/albaraka-realm.json:/tmp/realm-template.json:ro']; },
+    expect: '[K01] keycloak must mount' },
   { id: 'M20 a literal storage secret committed in the compose file', run: (c) => { svc(c, 'server').environment.STORAGE_SECRET_KEY = 'hunter2'; }, expect: '[E02] ${STORAGE_SECRET_KEY} is secret-shaped' },
   { id: 'M21 a variable from nowhere', run: (c) => { svc(c, 'server').environment.SPRING_DATASOURCE_HIKARI_POOL_SIZE = '${UNDECLARED_VAR}'; }, expect: '[E01] compose uses ${UNDECLARED_VAR}' },
   { id: 'M22 the issuer/jwk split collapses', run: (c) => {
