@@ -1,7 +1,7 @@
 # ══════════════════════════════════════════════════════════════════════════════════════════════
 #  Al-Mouchir — run the whole application from your host (docs/12 §2.2, ADR-009)
 # ══════════════════════════════════════════════════════════════════════════════════════════════
-COMPOSE = docker compose -f deploy/docker-compose.yml --profile app
+COMPOSE = docker compose --env-file .env -f deploy/docker-compose.yml --profile app
 
 .PHONY: up down logs ps dev web admin eval rag-test verify-db spike build lint-all seed-gen-check
 
