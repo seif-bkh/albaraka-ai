@@ -171,6 +171,10 @@ for (const f of ['application.yaml', 'application-dev.yaml', 'application-uat.ya
 {
   const c = svc('keycloak');
   if (c) {
+    const cvols = JSON.stringify(c.volumes || []);
+    if (!cvols.includes('../specs/keycloak/albaraka-realm.json:/tmp/realm-template.json:ro')) {
+      err('[K01] keycloak must mount ../specs/keycloak/albaraka-realm.json:/tmp/realm-template.json:ro — compose resolves relative paths against deploy/, so ./specs/… points at a directory and the sed import fails');
+    }
     const env = JSON.stringify(c.environment || {});
     if (env.includes('KEYCLOAK_ADMIN')) err('[K01] KEYCLOAK_ADMIN / KEYCLOAK_ADMIN_PASSWORD are deprecated — use KC_BOOTSTRAP_ADMIN_USERNAME / KC_BOOTSTRAP_ADMIN_PASSWORD');
     if (!env.includes('KC_BOOTSTRAP_ADMIN_USERNAME')) err('[K01] KC_BOOTSTRAP_ADMIN_USERNAME missing');
