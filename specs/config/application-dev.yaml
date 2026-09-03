@@ -14,7 +14,7 @@ spring:
       maximum-pool-size: 8
       minimum-idle: 2
   flyway:
-    # specs/db/seed carries V900–V902 (glossary, prompts, policies). Kept on the classpath path in
+    # specs/db/seed carries V900–V903 (glossary, prompts, policies, dialect map). Kept on the classpath path in
     # dev so a fresh container is usable without a separate bootstrap step.
     locations: classpath:db/migration,filesystem:specs/db/seed
   ai:

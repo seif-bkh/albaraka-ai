@@ -28,8 +28,8 @@
  *
  * NOT seeded here, deliberately: model_config and retrieval_config belong to
  * `SeedOnEmptyDatabaseRunner`, which reads `albaraka.seed` from application.yaml on an empty
- * database (specs/config/README §"The seed block"). Two writers for one row is two truths, so V902
- * must not touch those tables — `tools/seed-lint` fails the build if it does.
+ * database (specs/config/README §"The seed block"). Two writers for one row is two truths, so no
+ * migration may touch those tables — audit() below fails the build if one does.
  *
  * Deterministic output: every surrogate key is a UUIDv5 of the row's natural key under a fixed
  * project namespace, so regeneration is byte-identical and the same row has the same id in dev, UAT
@@ -37,7 +37,7 @@
  * between runs; created_at is left to the column DEFAULT.
  */
 import { createHash } from 'node:crypto';
-import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
@@ -923,6 +923,43 @@ ${insert('assistant_config',
   ], body);
 }
 
+
+// ─────────────────────────────────────────────────────────────────────────────────────────────────
+//  Audit — invariants over the generated files themselves
+// ─────────────────────────────────────────────────────────────────────────────────────────────────
+
+/** Tables owned by SeedOnEmptyDatabaseRunner (specs/config/README §"The seed block"). A migration
+ *  that writes them creates a second truth for one row, and which one wins depends on deploy order. */
+const RUNNER_OWNED = ['model_config', 'retrieval_config'];
+
+function audit(files) {
+  const problems = [];
+  const schema = read('specs/db/schema.sql');
+  const tables = new Set([...schema.matchAll(/CREATE TABLE (\w+) \(/g)].map((m) => m[1]));
+
+  for (const [name, text] of files) {
+    if (!text.includes(`SET search_path TO ${SCHEMA}, public;`)) {
+      problems.push(`${name} does not set search_path to ${SCHEMA} — it would insert into public, where these tables do not exist`);
+    }
+    const targets = [...text.matchAll(/INSERT INTO (\w+)/g)].map((m) => m[1]);
+    for (const t of new Set(targets)) {
+      if (RUNNER_OWNED.includes(t)) problems.push(`${name} inserts into ${t}, which is owned by SeedOnEmptyDatabaseRunner`);
+      if (!tables.has(t)) problems.push(`${name} inserts into ${t}, which schema.sql does not create`);
+    }
+    if (!targets.length) problems.push(`${name} contains no INSERT — an empty migration is a mistake, not a no-op`);
+  }
+  // No handwritten strays: everything in specs/db/seed must be generated, or the staleness check has
+  // a blind spot the size of whatever file nobody regenerates.
+  if (existsSync(OUT)) {
+    for (const f of readdirSync(OUT).filter((x) => x.endsWith('.sql'))) {
+      if (!Object.values(BUILDERS).some(([file]) => file === f)) {
+        problems.push(`specs/db/seed/${f} is not produced by any builder — either generate it or delete it, because --check cannot tell whether it is stale`);
+      }
+    }
+  }
+  return problems;
+}
+
 // ─────────────────────────────────────────────────────────────────────────────────────────────────
 //  CLI
 // ─────────────────────────────────────────────────────────────────────────────────────────────────
@@ -942,12 +979,16 @@ function main() {
 
   let stale = 0;
   mkdirSync(OUT, { recursive: true });
+  const generated = [];
   for (const [id, [file, build]] of Object.entries(BUILDERS)) {
     if (only && only !== id) continue;
     let text;
     try { text = build(); }
     catch (e) { console.error(`\n  ✗ ${e.message.startsWith(`${id}:`) ? e.message : `${id}: ${e.message}`}\n`); process.exit(2); }
     const path = join(OUT, file);
+    // In check mode audit what is on disk, because that is what ships; otherwise audit what we are
+    // about to write.
+    generated.push([file, check && existsSync(path) ? readFileSync(path, 'utf8') : text]);
     if (!check) {
       writeFileSync(path, text);
       const rows = (text.match(/^\s{2}\(/gm) || []).length;
@@ -959,13 +1000,26 @@ function main() {
     if (have !== text) {
       stale++;
       const a = have.split('\n'); const b = text.split('\n');
-      const firstDiff = b.findIndex((l, i) => a[i] !== l);
+      // Scan the longer of the two: a hand-appended line makes the committed file longer, and
+      // indexing the shorter array would report nothing at all.
+      const len = Math.max(a.length, b.length);
+      let firstDiff = -1;
+      for (let i = 0; i < len; i++) { if ((a[i] ?? undefined) !== (b[i] ?? undefined)) { firstDiff = i; break; } }
       console.error(`  ✗ ${file} is STALE — source changed, SQL did not`);
-      console.error(`      first difference at line ${firstDiff + 1}:`);
-      console.error(`        committed: ${JSON.stringify((a[firstDiff] ?? '').slice(0, 100))}`);
-      console.error(`        generated: ${JSON.stringify(b[firstDiff].slice(0, 100))}`);
+      if (firstDiff < 0) {
+        console.error(`      files differ only in trailing whitespace or line endings`);
+      } else {
+        console.error(`      first difference at line ${firstDiff + 1} of ${len}:`);
+        console.error(`        committed: ${JSON.stringify((a[firstDiff] ?? '(absent)').slice(0, 100))}`);
+        console.error(`        generated: ${JSON.stringify((b[firstDiff] ?? '(absent)').slice(0, 100))}`);
+      }
     } else console.log(`  ok  ${file.padEnd(30)} matches its sources`);
   }
+  const problems = audit(generated);
+  for (const p of problems) console.error(`  ✗ ${p}`);
+  if (problems.length) { console.error(`\n  ${problems.length} audit problem(s) in the generated migrations.\n`); process.exit(1); }
+  if (!check) console.log(`  audit clean — search_path targets ${SCHEMA}, no migration writes a runner-owned table, every target exists in schema.sql`);
+
   if (check && stale) {
     console.error(`\n  ${stale} generated migration(s) out of date. Run: node tools/seed-gen/generate.mjs\n`);
     process.exit(1);
