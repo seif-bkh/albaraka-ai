@@ -34,8 +34,9 @@ spring:
       enabled: true                     # Java 21 virtual threads; the pipeline is I/O-bound
   jackson:
     default-property-inclusion: non_null
-    serialization:
-      write-dates-as-timestamps: false
+    # Jackson 3 (Boot 4) no longer accepts the kebab-case feature name; and since
+    # Jackson 3 the default is already WRITE_DATES_AS_TIMESTAMPS = false, so the
+    # property is intentionally omitted (binding it aborts startup).
   datasource:
     url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/albaraka_ai}
     username: ${DATABASE_USER:albaraka}
