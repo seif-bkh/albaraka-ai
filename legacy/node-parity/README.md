@@ -54,3 +54,8 @@ the bank's approved corpus replaces it through the ingestion/backoffice flow.
 `accepted → status* → sources (before first token) → token* → answer|refusal|error → done (last)`.
 30 s idle timeout not applicable in demo mode (streams complete in ~2 s); `Last-Event-ID` is not
 supported (docs/08), idempotency via `Idempotency-Key` replay is a Phase 2 refinement.
+
+> **Status (2026-09-03):** superseded by [ADR-009](../../docs/adr/ADR-009-python-rag-service.md) —
+> the runtime stack is now Spring Boot + `rag-assistant` (Python). This tree is kept as a
+> working reference implementation of the same contracts (SSE grammar, governance rules,
+> golden gate) and is NOT part of `docker compose`.
