@@ -34,13 +34,37 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto;    -- gen_random_uuid(), digest() for t
 -- light stemming and Derja→MSA mapping happen in the application (assistant-knowledge) and the
 -- result is indexed here with a simple, dependency-free configuration.
 -- Display text is never modified — see docs/03-data-model.md §8.
+--
+-- EVERY token type the default parser can emit must be mapped, or its tokens are discarded in
+-- silence. `uint` is the one that matters most: Postgres classifies a bare integer as `uint`, and
+-- reserves `int` for a leading sign — which only appears where a hyphen was read as a minus. An
+-- earlier revision of this file mapped `int` and `float` but not `uint`, so every plain integer in
+-- the corpus was dropped from the index: tariff minimums and maximums ("minimum 150 DT maximum
+-- 1500 DT"), the numbers that identify the legal corpus ("loi n° 2016-48", "circulaire 2021-05"),
+-- article numbers, years and quantities. Nothing errors, nothing warns; it surfaces only as poor
+-- recall on TARIFF_FEES — the one intent whose numeric grounding is a blocking metric at 100 %
+-- (docs/11 §3). Measured before the fix: "loi n° 2016-48 du 11 mai 2016" indexed as
+-- '-48' 'du' 'loi' 'mai' 'n°', with both occurrences of 2016 gone.
+--
+-- The G4 assertions in specs/db/tests/schema_test.sql fail if any of these mappings is removed and
+-- if a token type appears that is neither mapped nor declared intentionally unmapped.
+--
+-- Requires server_encoding = UTF8 (asserted by G4f). In a SQL_ASCII cluster the default parser
+-- classifies every non-ASCII token as `blank`, Arabic included, and the index holds no Arabic at
+-- all — again silently, and again only visible as recall.
+--
+-- Deliberately NOT mapped: `blank` (whitespace), `tag` (markup: indexing "<td>" is pure noise in a
+-- corpus of normalised plain text), `entity` (character references such as "&amp;" → "amp"),
+-- `protocol` ("http"/"https" — the URL itself is already indexed by `url` and `host`).
 CREATE TEXT SEARCH CONFIGURATION albaraka_fts (PARSER = default);
 ALTER  TEXT SEARCH CONFIGURATION albaraka_fts
        ADD MAPPING FOR asciiword, word, numword, asciihword, hword WITH unaccent, simple;
 ALTER  TEXT SEARCH CONFIGURATION albaraka_fts
-       ADD MAPPING FOR numhword, hword_part, hword_asciipart WITH unaccent, simple;
+       ADD MAPPING FOR numhword, hword_part, hword_asciipart, hword_numpart WITH unaccent, simple;
 ALTER  TEXT SEARCH CONFIGURATION albaraka_fts
-       ADD MAPPING FOR email, url, host, file, float, int WITH simple;
+       ADD MAPPING FOR uint, int, float, sfloat WITH simple;
+ALTER  TEXT SEARCH CONFIGURATION albaraka_fts
+       ADD MAPPING FOR email, url, url_path, host, file, version WITH simple;
 
 -- Retrieval sessions must keep k results despite metadata filters (pgvector 0.8).
 -- ALTER ROLE albaraka_app SET hnsw.iterative_scan = 'relaxed_order';

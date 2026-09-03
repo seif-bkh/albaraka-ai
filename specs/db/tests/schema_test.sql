@@ -6,6 +6,8 @@
 --    G1  chunk.searchable is the Sharia gate, maintained by trigger, and never true by accident
 --    G2  audit_event is append-only and hash-chained (tampering is detectable)
 --    G3  two-eyes: no self-approval, and a T3 subject needs the Sharia-officer + compliance quorum
+--    G4  albaraka_fts indexes every token class the corpus actually contains — integers, decimals,
+--        version numbers, URLs and Arabic — and runs on a UTF8 cluster
 --
 --  Run with ON_ERROR_STOP: any failed assertion aborts the script with a non-zero exit code.
 --    psql -v ON_ERROR_STOP=1 -f specs/db/schema.sql -f specs/db/tests/schema_test.sql
@@ -285,6 +287,105 @@ BEGIN
   EXCEPTION WHEN check_violation THEN
     RAISE NOTICE 'PASS C2: classification/audience combination rejected';
   END;
+END $$;
+
+-- ─────────────────────── full-text search coverage (G4) ───────────────────────
+-- An unmapped token type is not an error in PostgreSQL: its tokens are simply discarded. These
+-- assertions exist because that silence once cost the index every plain integer in the corpus —
+-- tariff minimums, the numbers identifying loi 2016-48 and circulaire 2021-05, years, quantities —
+-- while `int` and `float` were mapped and everything looked correct. See the comment above the
+-- albaraka_fts configuration in specs/db/schema.sql.
+
+-- G4a: no token type is left unmapped unless it is on the declared exclusion list.
+DO $$
+DECLARE unmapped text;
+BEGIN
+  SELECT string_agg(tt.alias, ', ' ORDER BY tt.alias) INTO unmapped
+    FROM ts_token_type('default') tt
+   WHERE tt.alias NOT IN ('blank','tag','entity','protocol')   -- intentional; see schema.sql
+     AND NOT EXISTS (SELECT 1 FROM pg_ts_config_map m
+                      WHERE m.mapcfg = 'albaraka_ai.albaraka_fts'::regconfig
+                        AND m.maptokentype = tt.tokid);
+  IF unmapped IS NOT NULL THEN
+    RAISE EXCEPTION 'TEST FAILED G4a: albaraka_fts leaves token type(s) unmapped: % — their tokens are discarded silently', unmapped;
+  END IF;
+  RAISE NOTICE 'PASS G4a: every default-parser token type is mapped or intentionally excluded';
+END $$;
+
+-- G4b: plain integers reach the index (the `uint` token type).
+DO $$
+DECLARE v tsvector;
+BEGIN
+  v := to_tsvector('albaraka_ai.albaraka_fts', 'Commission: minimum 150 DT, maximum 1500 DT');
+  IF NOT (v @@ to_tsquery('albaraka_ai.albaraka_fts', '150'))
+     OR NOT (v @@ to_tsquery('albaraka_ai.albaraka_fts', '1500')) THEN
+    RAISE EXCEPTION 'TEST FAILED G4b: plain integers are not indexed (%): the uint token type is unmapped', v::text;
+  END IF;
+  RAISE NOTICE 'PASS G4b: tariff minimums and maximums are searchable — %', v::text;
+END $$;
+
+-- G4c: decimals and version numbers reach the index.
+DO $$
+DECLARE v tsvector;
+BEGIN
+  v := to_tsvector('albaraka_ai.albaraka_fts', 'taux 0.500 % et 3.000 DT, spec version 1.2.3');
+  IF NOT (v @@ to_tsquery('albaraka_ai.albaraka_fts', '0.500'))
+     OR NOT (v @@ to_tsquery('albaraka_ai.albaraka_fts', '3.000'))
+     OR NOT (v @@ to_tsquery('albaraka_ai.albaraka_fts', '1.2.3')) THEN
+    RAISE EXCEPTION 'TEST FAILED G4c: a decimal or a version number is not indexed (%)', v::text;
+  END IF;
+  RAISE NOTICE 'PASS G4c: decimals and version numbers are searchable — %', v::text;
+END $$;
+
+-- G4d: the legal corpus is findable by its number.
+DO $$
+DECLARE v tsvector;
+BEGIN
+  v := to_tsvector('albaraka_ai.albaraka_fts', 'loi n° 2016-48 du 11 mai 2016, circulaire 2021-05');
+  IF NOT (v @@ to_tsquery('albaraka_ai.albaraka_fts', '2016'))
+     OR NOT (v @@ to_tsquery('albaraka_ai.albaraka_fts', '2021')) THEN
+    RAISE EXCEPTION 'TEST FAILED G4d: the years of the legal corpus are not indexed (%) — the two texts the Sharia governance rests on would be unsearchable by number', v::text;
+  END IF;
+  -- Documented limitation, asserted so that it stays a decision rather than a surprise: the parser
+  -- reads the hyphen in "2016-48" as a minus sign, so the article number indexes as '-48' and a
+  -- query for '48' does not match it. Splitting hyphenated numbers is the application normaliser's
+  -- job (specs/i18n/normalization.json), not the text-search configuration's.
+  IF v @@ to_tsquery('albaraka_ai.albaraka_fts', '48') THEN
+    RAISE EXCEPTION 'TEST FAILED G4e: ''48'' now matches "2016-48"; the hyphen-splitting contract of the application normaliser is no longer the only path to the article number';
+  END IF;
+  RAISE NOTICE 'PASS G4d: loi 2016-48 and circulaire 2021-05 are searchable by year';
+  RAISE NOTICE 'PASS G4e: "2016-48" indexes as 2016 and -48, so article numbers depend on the application normaliser splitting hyphens (documented, not accidental)';
+END $$;
+
+-- G4f: Arabic reaches the index.
+DO $$
+DECLARE v tsvector;
+BEGIN
+  v := to_tsvector('albaraka_ai.albaraka_fts', 'التمويل بالمضاربة نسبة المرابحة');
+  IF position('مضاربة' in v::text) = 0 OR position('المرابحة' in v::text) = 0 THEN
+    RAISE EXCEPTION 'TEST FAILED G4f: Arabic produced no usable lexemes (%) — check server_encoding and the mapping for the word token type', v::text;
+  END IF;
+  RAISE NOTICE 'PASS G4f: Arabic tokens are indexed — %', v::text;
+END $$;
+
+-- G4g: PostgreSQL will not stem Arabic, which is why the application stemmer exists.
+DO $$
+BEGIN
+  IF to_tsquery('albaraka_ai.albaraka_fts', 'مضاربة')
+     @@ to_tsvector('albaraka_ai.albaraka_fts', 'بالمضاربة') THEN
+    RAISE EXCEPTION 'TEST FAILED G4g: Postgres matched a prefixed Arabic form unaided — the light stemmer of docs/03 §8 would no longer be load-bearing and the retrieval design should be revisited';
+  END IF;
+  RAISE NOTICE 'PASS G4g: بالمضاربة does not match مضاربة — the application-side light stemmer is load-bearing, not an optimisation';
+END $$;
+
+-- G4h: the cluster encoding. In SQL_ASCII the parser classifies every non-ASCII token as `blank`,
+-- Arabic included, and G4f would fail — this assertion names the cause instead.
+DO $$
+BEGIN
+  IF current_setting('server_encoding') <> 'UTF8' THEN
+    RAISE EXCEPTION 'TEST FAILED G4h: server_encoding is %; the default parser discards every non-ASCII token as blank and no Arabic would be indexed', current_setting('server_encoding');
+  END IF;
+  RAISE NOTICE 'PASS G4h: server_encoding = UTF8, so Arabic classifies as `word` and not as `blank`';
 END $$;
 
 -- ───────────────────────────── views sanity ─────────────────────────────

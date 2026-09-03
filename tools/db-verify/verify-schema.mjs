@@ -14,6 +14,10 @@
 //
 //  Exit code is non-zero if any statement fails, so this runs as a CI gate.
 //
+//  The throwaway database is created with ENCODING 'UTF8' from template0. This is not cosmetic: on a
+//  SQL_ASCII cluster the default parser classifies every non-ASCII token as `blank`, so Arabic full-
+//  text search indexes nothing and the G4 assertions would test the harness instead of the schema.
+//
 //  NOTE ON pgvector: the embedded distribution ships the standard contrib modules (pg_trgm,
 //  unaccent, pgcrypto) but not pgvector, so `vector(1536)` / `halfvec(1536)` columns and the HNSW
 //  index are stubbed with `real[]` for this run. Everything else — enums, tables, partitions,
@@ -84,7 +88,12 @@ await pg.start();
 const admin = pg.getPgClient('postgres');
 await admin.connect();
 await admin.query('DROP DATABASE IF EXISTS albaraka_verify');
-await admin.query('CREATE DATABASE albaraka_verify');
+// The cluster is initialised with locale C, which makes the default encoding SQL_ASCII. On SQL_ASCII
+// the default text-search parser classifies every non-ASCII token as `blank`, Arabic included, so
+// to_tsvector returns nothing for it and the FTS assertions pass vacuously — or fail for a reason
+// that has nothing to do with the schema. Production is UTF8; so is this database.
+await admin.query(
+  `CREATE DATABASE albaraka_verify ENCODING 'UTF8' TEMPLATE template0 LC_COLLATE 'C' LC_CTYPE 'C'`);
 await admin.end();
 
 const db = pg.getPgClient('albaraka_verify');
