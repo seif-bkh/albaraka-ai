@@ -1,0 +1,14 @@
+{
+  "name": "@albaraka-ai/asyncapi-lint",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Validates specs/asyncapi.yaml (SSE turn grammar ordered by docs/08 §3.1, payload parity with specs/openapi.yaml, event catalog derived from docs/08 §6, payload grounding in specs/db/schema.sql)",
+  "scripts": {
+    "lint": "node lint.mjs",
+    "self-test": "node self-test.mjs",
+    "verify": "node lint.mjs && node self-test.mjs"
+  },
+  "engines": { "node": ">=20" },
+  "dependencies": { "js-yaml": "^4.1.0" }
+}

@@ -227,20 +227,25 @@ also-approved action).
 ## 6. Internal events (AsyncAPI)
 
 [`specs/asyncapi.yaml`](../specs/asyncapi.yaml) documents the in-process event bus (Spring
-`ApplicationEventPublisher`, outbox-backed so events survive a crash):
+`ApplicationEventPublisher`, outbox-backed so events survive a crash). This table is the authority:
+[`tools/asyncapi-lint`](../tools/asyncapi-lint) derives the event catalog, the emitters and the
+consumer groups from it and fails if the AsyncAPI file drifts — one event per row, consumers are
+group names that Phase 1 maps to `@EventListener` beans.
 
-| Event | Emitted when | Consumers |
-|---|---|---|
-| `document.version.submitted` | review requested | governance, notifications |
-| `review.decided` | a decision is recorded | knowledge (state), audit, notifications |
-| `content.published` | chunks became searchable | cache invalidation (`kb_epoch++`), analytics, eval scheduling |
-| `content.withdrawn` | emergency removal | cache flush, incident, notifications |
-| `guardrail.blocked` | any BLOCK decision | analytics, alerting, QA queue |
-| `feedback.received` | customer rating | QA queue, `SHARIA_CONCERN` → review task |
-| `fatwa.request.opened` | REF-03 issued | committee queue, SLA clock |
-| `prompt.activated` / `model.activated` / `config.activated` | any runtime change | eval gate, cache flush, audit |
-| `eval.completed` | an eval run finished | release pipeline (gate), notifications |
-| `budget.threshold.crossed` | 80 % / 100 % of daily budget | degradation, alerting |
+| Event | Emitted when | Emitted by | Consumers |
+|---|---|---|---|
+| `document.version.submitted` | review requested | `knowledge` | governance, notifications |
+| `review.decided` | a decision is recorded | `governance` | knowledge, audit, notifications |
+| `content.published` | chunks became searchable | `knowledge` | cache, analytics, eval |
+| `content.withdrawn` | emergency removal | `knowledge` | cache, incident, notifications |
+| `guardrail.blocked` | any BLOCK decision | `guardrails` | analytics, alerting, qa-queue |
+| `feedback.received` | customer rating | `analytics` | qa-queue, review-board |
+| `fatwa.request.opened` | REF-03 issued | `governance` | committee-queue, sla-clock |
+| `prompt.activated` | a prompt version activated (canary or 100 %) | `governance` | eval, cache, audit |
+| `model.activated` | a model config activated | `governance` | eval, cache, audit |
+| `config.activated` | retrieval config / guardrail policy / assistant config activated | `governance` | eval, cache, audit |
+| `eval.completed` | an eval run finished | `analytics` | release-pipeline, notifications |
+| `budget.threshold.crossed` | 80 % / 100 % of daily budget | `analytics` | degradation, alerting |
 
 ## 7. Rate limits
 

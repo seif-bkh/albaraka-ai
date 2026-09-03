@@ -1,0 +1,805 @@
+# ══════════════════════════════════════════════════════════════════════════════════════════════
+#  asyncapi.yaml — event contract (SSE stream + internal domain event bus)
+# ══════════════════════════════════════════════════════════════════════════════════════════════
+#
+#  This file documents the two asynchronous surfaces of Al-Mouchir:
+#
+#  1. EXTERNAL — the SSE turn-event grammar of
+#     POST /api/v1/assistant/conversations/{conversationId}/messages.
+#     Authority: docs/08-api-design.md §3.1 and specs/openapi.yaml (Sse* schemas).
+#     The chat UI (and the widget) renders from this stream; tools/asyncapi-lint asserts this file
+#     agrees with both authorities field by field, so the contract cannot drift.
+#
+#  2. INTERNAL — the in-process domain event bus (Spring ApplicationEventPublisher, outbox-backed
+#     so events survive a crash). Authority: docs/08-api-design.md §6. One channel per event,
+#     one `send` operation (the publishing module) and one `receive` operation (the consuming
+#     groups). Phase 1 generates the Spring event classes and @EventListener signatures from this
+#     file; any event not declared here is not allowed to be published or consumed.
+#
+#  Version: AsyncAPI 3.1.0 — the current release of the 3.x line (verified with @asyncapi/parser).
+#  The `replies` machinery added in 3.1 is unused by either surface; it stays out as a reviewed choice.
+#
+#  Conventions:
+#  * `x-event-type`   — the dotted wire/domain name (docs/08 §6 naming: `document.version.submitted`).
+#  * `x-table-ref`    — the schema.sql tables the payload is grounded in. tools/asyncapi-lint checks
+#    every non-derived payload property against their columns (camelCase → snake_case).
+#  * `x-derived`      — a payload property that is *computed* (e.g. kbEpoch, chunkCount), not a
+#    column. It must never be silent: a property that is neither a column nor marked derived is an
+#    error.
+#  * PII rule — internal events are *references*, not content: questions, comments, answers and
+#    customer contact data stay in the database, consumers re-read what they need. No payload may
+#    carry a text/content-bearing field.
+# ══════════════════════════════════════════════════════════════════════════════════════════════
+
+asyncapi: 3.1.0
+
+info:
+  title: Al-Mouchir — Event Contract (SSE turn stream + internal domain events)
+  version: 1.0.0
+  description: |
+    Normative event contract for the trilingual Sharia-compliant RAG assistant of Al Baraka Bank
+    Tunisia. Two surfaces:
+
+    * the **external chat stream** — Server-Sent Events returned by
+      `POST /api/v1/assistant/conversations/{conversationId}/messages` (docs/08 §3.1);
+    * the **internal domain event bus** — in-process `ApplicationEventPublisher` events, outbox
+      backed, by module (docs/08 §6).
+
+    Event names, consumers and emitters are derived from `docs/08-api-design.md`; the SSE payloads
+    mirror `specs/openapi.yaml`; payload properties are grounded in `specs/db/schema.sql`.
+    `tools/asyncapi-lint` enforces all three derivations on every commit.
+  license:
+    name: Proprietary — internal design documentation
+
+defaultContentType: application/json
+
+servers:
+  backend:
+    host: localhost:8080
+    protocol: http
+    description: Local development backend (deploy/docker-compose.yml). The internal event bus has
+      no network server — it lives inside the assistant-boot JVM; the `app.event.*` channels are
+      logical addresses held in one Spring context.
+
+channels:
+  # ───────────────────────────────────────────────────────────────────────────────────────────
+  # EXTERNAL — chat answer stream
+  # ───────────────────────────────────────────────────────────────────────────────────────────
+  chatStream:
+    address: /api/v1/assistant/conversations/{conversationId}/messages
+    description: |
+      `POST` returns `text/event-stream`. Frame grammar (docs/08 §3.1):
+
+        1. `accepted`              — message persisted (always first)
+        2. `status` *              — pipeline stage labels, localised
+        3. `sources`               — citations, ALWAYS before the first `token`
+        4. `token` *               — incremental answer deltas
+        5. exactly one of `answer` | `refusal` | `error`   — terminal, no further event after it
+        6. `done`                  — always last, with token counters
+
+      A client must treat an unterminated stream as `error` after a 30 s idle timeout.
+      `Last-Event-ID` resumption is NOT supported in v1: a reconnect re-issues the request with the
+      same `Idempotency-Key`, which returns the persisted answer instead of regenerating.
+      The request itself is the HTTP counterpart of this channel: JSON body, `Accept-Language`
+      header, `Idempotency-Key` and `X-Correlation-Id` required (docs/08 §2.1).
+    parameters:
+      conversationId:
+        description: Conversation UUID (UUIDv7). No personal data in URLs (docs/08 §1).
+    messages:
+      sendMessage: { $ref: '#/components/messages/SendMessageRequest' }
+      accepted: { $ref: '#/components/messages/SseAccepted' }
+      status: { $ref: '#/components/messages/SseStatus' }
+      sources: { $ref: '#/components/messages/SseSources' }
+      token: { $ref: '#/components/messages/SseToken' }
+      answer: { $ref: '#/components/messages/SseAnswer' }
+      refusal: { $ref: '#/components/messages/SseRefusal' }
+      error: { $ref: '#/components/messages/SseError' }
+      done: { $ref: '#/components/messages/SseDone' }
+    x-sse-sequence: [accepted, status, sources, token, 'TERMINAL', done]
+    x-sse-rules:
+      sources-before-first-token: true
+      terminal-exactly-one-of: [answer, refusal, error]
+      terminal-events-nothing-after: true
+      done-always-last: true
+      idle-timeout-ms: 30000
+      last-event-id-resume: false
+      duplicate-submit: same Idempotency-Key returns the persisted answer, no regeneration
+
+  # ───────────────────────────────────────────────────────────────────────────────────────────
+  # INTERNAL — domain event bus (one logical channel per event, docs/08 §6)
+  # ───────────────────────────────────────────────────────────────────────────────────────────
+  documentVersionSubmitted:
+    address: app.event.document.version.submitted
+    description: A document version was submitted for Sharia review.
+    messages:
+      event: { $ref: '#/components/messages/DocumentVersionSubmitted' }
+
+  reviewDecided:
+    address: app.event.review.decided
+    description: A Sharia review recorded a decision (approve / changes requested / reject / withdraw).
+    messages:
+      event: { $ref: '#/components/messages/ReviewDecided' }
+
+  contentPublished:
+    address: app.event.content.published
+    description: Chunks became searchable — a knowledge-base epoch turn.
+    messages:
+      event: { $ref: '#/components/messages/ContentPublished' }
+
+  contentWithdrawn:
+    address: app.event.content.withdrawn
+    description: Emergency removal — content is no longer reachable by retrieval.
+    messages:
+      event: { $ref: '#/components/messages/ContentWithdrawn' }
+
+  guardrailBlocked:
+    address: app.event.guardrail.blocked
+    description: Any BLOCK decision by a guardrail policy (input, output or ingestion stage).
+    messages:
+      event: { $ref: '#/components/messages/GuardrailBlocked' }
+
+  feedbackReceived:
+    address: app.event.feedback.received
+    description: A customer rated an answer.
+    messages:
+      event: { $ref: '#/components/messages/FeedbackReceived' }
+
+  fatwaRequestOpened:
+    address: app.event.fatwa.request.opened
+    description: A religious-ruling request was opened for the Sharia committee (REF-03 path).
+    messages:
+      event: { $ref: '#/components/messages/FatwaRequestOpened' }
+
+  promptActivated:
+    address: app.event.prompt.activated
+    description: A prompt version was activated (canary or 100 %).
+    messages:
+      event: { $ref: '#/components/messages/PromptActivated' }
+
+  modelActivated:
+    address: app.event.model.activated
+    description: A model config was activated.
+    messages:
+      event: { $ref: '#/components/messages/ModelActivated' }
+
+  configActivated:
+    address: app.event.config.activated
+    description: A retrieval config, guardrail policy or assistant-config entry was activated.
+    messages:
+      event: { $ref: '#/components/messages/ConfigActivated' }
+
+  evalCompleted:
+    address: app.event.eval.completed
+    description: An evaluation run finished with a gate result.
+    messages:
+      event: { $ref: '#/components/messages/EvalCompleted' }
+
+  budgetThresholdCrossed:
+    address: app.event.budget.threshold.crossed
+    description: A provider daily-budget threshold (80 % / 100 %) was crossed.
+    messages:
+      event: { $ref: '#/components/messages/BudgetThresholdCrossed' }
+
+operations:
+  # ── external: customer → backend ────────────────────────────────────────────────────────────
+  sendChatMessage:
+    action: send
+    summary: POST a message; the streamed answer comes back on the same channel
+    channel: { $ref: '#/channels/chatStream' }
+    messages:
+      - { $ref: '#/channels/chatStream/messages/sendMessage' }
+    x-http:
+      method: POST
+      contentType: application/json
+      requiredHeaders: [Accept-Language, Idempotency-Key, X-Correlation-Id]
+
+  # ── external: backend → customer (SSE) ──────────────────────────────────────────────────────
+  receiveAnswerStream:
+    action: receive
+    summary: The SSE turn-event stream, framing the answer to the submitted message
+    channel: { $ref: '#/channels/chatStream' }
+    messages:
+      - { $ref: '#/channels/chatStream/messages/accepted' }
+      - { $ref: '#/channels/chatStream/messages/status' }
+      - { $ref: '#/channels/chatStream/messages/sources' }
+      - { $ref: '#/channels/chatStream/messages/token' }
+      - { $ref: '#/channels/chatStream/messages/answer' }
+      - { $ref: '#/channels/chatStream/messages/refusal' }
+      - { $ref: '#/channels/chatStream/messages/error' }
+      - { $ref: '#/channels/chatStream/messages/done' }
+    x-http:
+      method: POST
+      contentType: text/event-stream
+      responseHeaders:
+        Cache-Control: no-store
+        X-Accel-Buffering: 'no'
+
+  # ── internal: publishing modules (docs/08 §6 emitter column) ────────────────────────────────
+  publishDocumentVersionSubmitted:
+    action: send
+    channel: { $ref: '#/channels/documentVersionSubmitted' }
+    messages: [{ $ref: '#/channels/documentVersionSubmitted/messages/event' }]
+    x-emitted-by: knowledge
+  publishReviewDecided:
+    action: send
+    channel: { $ref: '#/channels/reviewDecided' }
+    messages: [{ $ref: '#/channels/reviewDecided/messages/event' }]
+    x-emitted-by: governance
+  publishContentPublished:
+    action: send
+    channel: { $ref: '#/channels/contentPublished' }
+    messages: [{ $ref: '#/channels/contentPublished/messages/event' }]
+    x-emitted-by: knowledge
+  publishContentWithdrawn:
+    action: send
+    channel: { $ref: '#/channels/contentWithdrawn' }
+    messages: [{ $ref: '#/channels/contentWithdrawn/messages/event' }]
+    x-emitted-by: knowledge
+  publishGuardrailBlocked:
+    action: send
+    channel: { $ref: '#/channels/guardrailBlocked' }
+    messages: [{ $ref: '#/channels/guardrailBlocked/messages/event' }]
+    x-emitted-by: guardrails
+  publishFeedbackReceived:
+    action: send
+    channel: { $ref: '#/channels/feedbackReceived' }
+    messages: [{ $ref: '#/channels/feedbackReceived/messages/event' }]
+    x-emitted-by: analytics
+  publishFatwaRequestOpened:
+    action: send
+    channel: { $ref: '#/channels/fatwaRequestOpened' }
+    messages: [{ $ref: '#/channels/fatwaRequestOpened/messages/event' }]
+    x-emitted-by: governance
+  publishPromptActivated:
+    action: send
+    channel: { $ref: '#/channels/promptActivated' }
+    messages: [{ $ref: '#/channels/promptActivated/messages/event' }]
+    x-emitted-by: governance
+  publishModelActivated:
+    action: send
+    channel: { $ref: '#/channels/modelActivated' }
+    messages: [{ $ref: '#/channels/modelActivated/messages/event' }]
+    x-emitted-by: governance
+  publishConfigActivated:
+    action: send
+    channel: { $ref: '#/channels/configActivated' }
+    messages: [{ $ref: '#/channels/configActivated/messages/event' }]
+    x-emitted-by: governance
+  publishEvalCompleted:
+    action: send
+    channel: { $ref: '#/channels/evalCompleted' }
+    messages: [{ $ref: '#/channels/evalCompleted/messages/event' }]
+    x-emitted-by: analytics
+  publishBudgetThresholdCrossed:
+    action: send
+    channel: { $ref: '#/channels/budgetThresholdCrossed' }
+    messages: [{ $ref: '#/channels/budgetThresholdCrossed/messages/event' }]
+    x-emitted-by: analytics
+
+  # ── internal: consuming groups (docs/08 §6 consumer column) ─────────────────────────────────
+  onDocumentVersionSubmitted:
+    action: receive
+    channel: { $ref: '#/channels/documentVersionSubmitted' }
+    messages: [{ $ref: '#/channels/documentVersionSubmitted/messages/event' }]
+    x-consumers: [governance, notifications]
+  onReviewDecided:
+    action: receive
+    channel: { $ref: '#/channels/reviewDecided' }
+    messages: [{ $ref: '#/channels/reviewDecided/messages/event' }]
+    x-consumers: [knowledge, audit, notifications]
+  onContentPublished:
+    action: receive
+    channel: { $ref: '#/channels/contentPublished' }
+    messages: [{ $ref: '#/channels/contentPublished/messages/event' }]
+    x-consumers: [cache, analytics, eval]
+  onContentWithdrawn:
+    action: receive
+    channel: { $ref: '#/channels/contentWithdrawn' }
+    messages: [{ $ref: '#/channels/contentWithdrawn/messages/event' }]
+    x-consumers: [cache, incident, notifications]
+  onGuardrailBlocked:
+    action: receive
+    channel: { $ref: '#/channels/guardrailBlocked' }
+    messages: [{ $ref: '#/channels/guardrailBlocked/messages/event' }]
+    x-consumers: [analytics, alerting, qa-queue]
+  onFeedbackReceived:
+    action: receive
+    channel: { $ref: '#/channels/feedbackReceived' }
+    messages: [{ $ref: '#/channels/feedbackReceived/messages/event' }]
+    x-consumers: [qa-queue, review-board]
+  onFatwaRequestOpened:
+    action: receive
+    channel: { $ref: '#/channels/fatwaRequestOpened' }
+    messages: [{ $ref: '#/channels/fatwaRequestOpened/messages/event' }]
+    x-consumers: [committee-queue, sla-clock]
+  onPromptActivated:
+    action: receive
+    channel: { $ref: '#/channels/promptActivated' }
+    messages: [{ $ref: '#/channels/promptActivated/messages/event' }]
+    x-consumers: [eval, cache, audit]
+  onModelActivated:
+    action: receive
+    channel: { $ref: '#/channels/modelActivated' }
+    messages: [{ $ref: '#/channels/modelActivated/messages/event' }]
+    x-consumers: [eval, cache, audit]
+  onConfigActivated:
+    action: receive
+    channel: { $ref: '#/channels/configActivated' }
+    messages: [{ $ref: '#/channels/configActivated/messages/event' }]
+    x-consumers: [eval, cache, audit]
+  onEvalCompleted:
+    action: receive
+    channel: { $ref: '#/channels/evalCompleted' }
+    messages: [{ $ref: '#/channels/evalCompleted/messages/event' }]
+    x-consumers: [release-pipeline, notifications]
+  onBudgetThresholdCrossed:
+    action: receive
+    channel: { $ref: '#/channels/budgetThresholdCrossed' }
+    messages: [{ $ref: '#/channels/budgetThresholdCrossed/messages/event' }]
+    x-consumers: [degradation, alerting]
+
+components:
+  messages:
+    # ────────────────────────────── SSE (mirrors specs/openapi.yaml) ─────────────────────────
+    SendMessageRequest:
+      name: SendMessageRequest
+      summary: The message being sent (JSON body of the POST)
+      x-openapi-schema: SendMessageRequest
+      contentType: application/json
+      payload:
+        type: object
+        required: [text]
+        properties:
+          text: { type: string, minLength: 1, maxLength: 4000 }
+          locale:
+            type: string
+            enum: [fr-FR, ar-TN, en-GB]
+          clientId:
+            type: string
+            description: Client-side message id for optimistic rendering
+
+    SseAccepted:
+      name: accepted
+      summary: 'event: accepted — message persisted, always first'
+      x-event-name: accepted
+      x-openapi-schema: SseAccepted
+      payload: { $ref: '#/components/schemas/SseAcceptedPayload' }
+    SseStatus:
+      name: status
+      summary: 'event: status — pipeline stage label, localised'
+      x-event-name: status
+      x-openapi-schema: SseStatus
+      payload: { $ref: '#/components/schemas/SseStatusPayload' }
+    SseSources:
+      name: sources
+      summary: 'event: sources — citations, always before the first token'
+      x-event-name: sources
+      x-openapi-schema: SseSources
+      payload: { $ref: '#/components/schemas/SseSourcesPayload' }
+    SseToken:
+      name: token
+      summary: 'event: token — one or more incremental answer deltas'
+      x-event-name: token
+      x-openapi-schema: SseToken
+      payload: { $ref: '#/components/schemas/SseTokenPayload' }
+    SseAnswer:
+      name: answer
+      summary: 'event: answer — terminal event carrying the grounded answer'
+      x-event-name: answer
+      x-openapi-schema: SseAnswer
+      payload: { $ref: '#/components/schemas/SseAnswerPayload' }
+    SseRefusal:
+      name: refusal
+      summary: 'event: refusal — terminal event carrying a refusal template'
+      x-event-name: refusal
+      x-openapi-schema: SseRefusal
+      payload: { $ref: '#/components/schemas/SseRefusalPayload' }
+    SseError:
+      name: error
+      summary: 'event: error — terminal event carrying a provider/degradation error'
+      x-event-name: error
+      x-openapi-schema: SseError
+      payload: { $ref: '#/components/schemas/SseErrorPayload' }
+    SseDone:
+      name: done
+      summary: 'event: done — always last, with token counters'
+      x-event-name: done
+      x-openapi-schema: SseDone
+      payload: { $ref: '#/components/schemas/SseDonePayload' }
+
+    # ────────────────────────────── internal events (docs/08 §6) ─────────────────────────────
+    DocumentVersionSubmitted:
+      name: DocumentVersionSubmitted
+      x-event-type: document.version.submitted
+      x-table-ref: [document_version, sharia_review]
+      x-emitted-by: knowledge
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/EventEnvelope'
+          - $ref: '#/components/schemas/DocumentVersionSubmittedPayload'
+          - type: object
+            properties:
+              type: { const: document.version.submitted }
+    ReviewDecided:
+      name: ReviewDecided
+      x-event-type: review.decided
+      x-table-ref: [sharia_review, review_task]
+      x-emitted-by: governance
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/EventEnvelope'
+          - $ref: '#/components/schemas/ReviewDecidedPayload'
+          - type: object
+            properties:
+              type: { const: review.decided }
+    ContentPublished:
+      name: ContentPublished
+      x-event-type: content.published
+      x-table-ref: [document_version, chunk]
+      x-emitted-by: knowledge
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/EventEnvelope'
+          - $ref: '#/components/schemas/ContentPublishedPayload'
+          - type: object
+            properties:
+              type: { const: content.published }
+    ContentWithdrawn:
+      name: ContentWithdrawn
+      x-event-type: content.withdrawn
+      x-table-ref: [document_version, audit_event]
+      x-emitted-by: knowledge
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/EventEnvelope'
+          - $ref: '#/components/schemas/ContentWithdrawnPayload'
+          - type: object
+            properties:
+              type: { const: content.withdrawn }
+    GuardrailBlocked:
+      name: GuardrailBlocked
+      x-event-type: guardrail.blocked
+      x-table-ref: [guardrail_event]
+      x-emitted-by: guardrails
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/EventEnvelope'
+          - $ref: '#/components/schemas/GuardrailBlockedPayload'
+          - type: object
+            properties:
+              type: { const: guardrail.blocked }
+    FeedbackReceived:
+      name: FeedbackReceived
+      x-event-type: feedback.received
+      x-table-ref: [feedback]
+      x-emitted-by: analytics
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/EventEnvelope'
+          - $ref: '#/components/schemas/FeedbackReceivedPayload'
+          - type: object
+            properties:
+              type: { const: feedback.received }
+    FatwaRequestOpened:
+      name: FatwaRequestOpened
+      x-event-type: fatwa.request.opened
+      x-table-ref: [fatwa_request]
+      x-emitted-by: governance
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/EventEnvelope'
+          - $ref: '#/components/schemas/FatwaRequestOpenedPayload'
+          - type: object
+            properties:
+              type: { const: fatwa.request.opened }
+    PromptActivated:
+      name: PromptActivated
+      x-event-type: prompt.activated
+      x-table-ref: [prompt_version]
+      x-emitted-by: governance
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/EventEnvelope'
+          - $ref: '#/components/schemas/PromptActivatedPayload'
+          - type: object
+            properties:
+              type: { const: prompt.activated }
+    ModelActivated:
+      name: ModelActivated
+      x-event-type: model.activated
+      x-table-ref: [model_config]
+      x-emitted-by: governance
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/EventEnvelope'
+          - $ref: '#/components/schemas/ModelActivatedPayload'
+          - type: object
+            properties:
+              type: { const: model.activated }
+    ConfigActivated:
+      name: ConfigActivated
+      x-event-type: config.activated
+      x-table-ref: [retrieval_config, guardrail_policy, assistant_config, model_config]
+      x-emitted-by: governance
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/EventEnvelope'
+          - $ref: '#/components/schemas/ConfigActivatedPayload'
+          - type: object
+            properties:
+              type: { const: config.activated }
+    EvalCompleted:
+      name: EvalCompleted
+      x-event-type: eval.completed
+      x-table-ref: [eval_run]
+      x-emitted-by: analytics
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/EventEnvelope'
+          - $ref: '#/components/schemas/EvalCompletedPayload'
+          - type: object
+            properties:
+              type: { const: eval.completed }
+    BudgetThresholdCrossed:
+      name: BudgetThresholdCrossed
+      x-event-type: budget.threshold.crossed
+      x-table-ref: [token_usage_daily, model_config]
+      x-emitted-by: analytics
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/EventEnvelope'
+          - $ref: '#/components/schemas/BudgetThresholdCrossedPayload'
+          - type: object
+            properties:
+              type: { const: budget.threshold.crossed }
+
+  schemas:
+    # ── shared envelope ──────────────────────────────────────────────────────────────────────
+    EventEnvelope:
+      type: object
+      description: Common envelope for every internal event. `type` is constrained per event.
+      required: [eventId, type, occurredAt, sourceModule]
+      properties:
+        eventId:
+          type: string
+          format: uuid
+          description: Unique event id; the outbox primary key (survives restarts, no duplicates).
+        type:
+          type: string
+          description: Dotted event name — equals the message x-event-type and the docs/08 §6 name.
+        occurredAt:
+          type: string
+          format: date-time
+          description: Domain time, captured when the fact happened (not when the outbox flushed).
+        correlationId:
+          type: [string, 'null']
+          format: uuid
+          description: Request correlation id when the event is request-driven; null for sweeps.
+        actor:
+          type: [string, 'null']
+          description: Authenticated principal (Keycloak sub) for admin-driven events; null for
+            system/sweeper events. Never a display name or personal data.
+        sourceModule:
+          type: string
+          description: Maven module that published the event (docs/01 §3).
+
+    # ── SSE payloads (authority: specs/openapi.yaml Sse* schemas) ─────────────────────────────
+    SseAcceptedPayload:
+      type: object
+      required: [messageId, conversationId]
+      properties:
+        messageId: { type: string, format: uuid }
+        conversationId: { type: string, format: uuid }
+        locale: { type: string, enum: [fr-FR, ar-TN, en-GB] }
+        dir: { type: string, enum: [ltr, rtl] }
+    SseStatusPayload:
+      type: object
+      required: [stage]
+      properties:
+        stage:
+          type: string
+          enum: [SCREENING, RETRIEVING, RERANKING, GENERATING, VERIFYING]
+        label:
+          type: string
+          description: Localised stage label, resolved from message_bundle.
+    SseSourcesPayload:
+      type: object
+      properties:
+        citations:
+          type: array
+          description: Inline citations of the answer contract.
+          items:
+            type: object
+            properties:
+              id: { type: string, example: S1 }
+              chunkId: { type: string, format: uuid }
+              documentTitle: { type: string }
+              locale: { type: string, enum: [fr-FR, ar-TN, en-GB] }
+              url: { type: string, example: /api/v1/public/documents/…#S1 }
+              validUntil: { type: [string, 'null'], format: date }
+              score: { type: number }
+    SseTokenPayload:
+      type: object
+      required: [delta]
+      properties:
+        delta: { type: string }
+    SseAnswerPayload:
+      type: object
+      required: [messageId, answerMarkdown, language]
+      properties:
+        messageId: { type: string, format: uuid }
+        answerMarkdown: { type: string }
+        language: { type: string, enum: [fr-FR, ar-TN, en-GB] }
+        dir: { type: string, enum: [ltr, rtl] }
+        confidence: { type: number, minimum: 0, maximum: 1 }
+        usedSources: { type: array, items: { type: string } }
+        citations: { type: array, items: { type: object } }
+        caveats: { type: array, items: { type: string } }
+        disclaimers: { type: array, items: { type: string } }
+        needsHuman: { type: boolean }
+        cached: { type: boolean }
+        models:
+          type: object
+          properties:
+            chat: { type: string }
+            reranker: { type: string }
+            degradationStep: { type: integer }
+        latencyMs: { type: integer }
+        ttftMs: { type: integer }
+    SseRefusalPayload:
+      type: object
+      required: [messageId, refusalCode]
+      properties:
+        messageId: { type: string, format: uuid }
+        refusalCode:
+          type: string
+          enum: [REF-01, REF-02, REF-03, REF-04, REF-05, REF-06]
+        title: { type: string }
+        body: { type: string }
+        locale: { type: string, enum: [fr-FR, ar-TN, en-GB] }
+        sources: { type: array, items: { type: object } }
+        fatwaRequestRef: { type: [string, 'null'] }
+        handoffAvailable: { type: boolean }
+    SseErrorPayload:
+      type: object
+      required: [code]
+      properties:
+        code: { type: string }
+        retryAfterMs: { type: integer }
+        degradationStep: { type: integer, minimum: 1, maximum: 5 }
+    SseDonePayload:
+      type: object
+      required: [messageId, tokensIn, tokensOut]
+      properties:
+        messageId: { type: string, format: uuid }
+        tokensIn: { type: integer }
+        tokensOut: { type: integer }
+        latencyMs: { type: integer }
+
+    # ── internal event payloads (grounded in spec/db/schema.sql; x-derived = computed) ────────
+    DocumentVersionSubmittedPayload:
+      type: object
+      properties:
+        documentId: { type: string, format: uuid }
+        versionNo: { type: integer }
+        shariaReviewId: { type: string, format: uuid }
+        riskTier: { type: string, enum: [T1_LOW, T2_MEDIUM, T3_HIGH] }
+        submittedBy: { type: string }
+        submittedAt: { type: string, format: date-time }
+    ReviewDecidedPayload:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        subjectType: { type: string }
+        subjectId: { type: string, format: uuid }
+        state: { type: string, enum: [PENDING, IN_REVIEW, CHANGES_REQUESTED, APPROVED, REJECTED, WITHDRAWN] }
+        decision: { type: string, enum: [APPROVE, REQUEST_CHANGES, REJECT] }
+        decisionBy: { type: string }
+        decidedAt: { type: string, format: date-time }
+    ContentPublishedPayload:
+      type: object
+      properties:
+        documentId: { type: string, format: uuid }
+        versionNo: { type: integer }
+        chunkCount: { type: integer, x-derived: true }
+        kbEpoch: { type: integer, x-derived: true }
+        publishedBy: { type: string }
+        publishedAt: { type: string, format: date-time }
+    ContentWithdrawnPayload:
+      type: object
+      properties:
+        documentId: { type: string, format: uuid }
+        versionNo: { type: integer }
+        reason: { type: string }
+        withdrawnBy: { type: string, x-derived: true }
+        withdrawnAt: { type: string, format: date-time, x-derived: true }
+    GuardrailBlockedPayload:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        messageId: { type: [string, 'null'], format: uuid }
+        chunkId: { type: [string, 'null'], format: uuid }
+        policyCode: { type: string }
+        policyVersion: { type: integer }
+        decision: { type: string, enum: [BLOCK] }
+        severity: { type: string }
+        violationCode: { type: string }
+        refusalCode: { type: string }
+        stage: { type: string, enum: [INPUT, OUTPUT, INGESTION] }
+        createdAt: { type: string, format: date-time }
+    FeedbackReceivedPayload:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        messageId: { type: string, format: uuid }
+        rating:
+          type: string
+          enum: [UP, DOWN, SHARIA_CONCERN, FACTUAL_ERROR, WRONG_LANGUAGE, INCOMPLETE, OFFENSIVE]
+        status: { type: string }
+        hasComment: { type: boolean, x-derived: true }
+        reviewId: { type: [string, 'null'], format: uuid }
+        createdAt: { type: string, format: date-time }
+    FatwaRequestOpenedPayload:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        ref: { type: string, example: FR-2026-00123 }
+        origin: { type: string, enum: [CHAT, ADMIN, COMMITTEE] }
+        questionLocale: { type: string, enum: [fr-FR, ar-TN, en-GB] }
+        conversationId: { type: [string, 'null'], format: uuid }
+        slaDueAt: { type: [string, 'null'], format: date-time }
+        createdAt: { type: string, format: date-time }
+    PromptActivatedPayload:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        code: { type: string }
+        locale: { type: string, enum: [fr-FR, ar-TN, en-GB] }
+        versionNo: { type: integer }
+        canaryPercent: { type: integer, minimum: 0, maximum: 100 }
+        activatedBy: { type: string }
+        activatedAt: { type: string, format: date-time }
+        evalRunId: { type: [string, 'null'], format: uuid }
+    ModelActivatedPayload:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        code: { type: string }
+        provider: { type: string }
+        modelId: { type: string }
+        state: { type: string }
+        versionNo: { type: integer }
+        updatedAt: { type: string, format: date-time }
+    ConfigActivatedPayload:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        configType:
+          type: string
+          enum: [RETRIEVAL_CONFIG, GUARDRAIL_POLICY, ASSISTANT_CONFIG]
+          x-derived: true
+        code: { type: [string, 'null'] }
+        key: { type: [string, 'null'] }
+        versionNo: { type: [integer, 'null'] }
+        activatedBy: { type: string }
+        activatedAt: { type: string, format: date-time }
+    EvalCompletedPayload:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        scope: { type: string, enum: [PR_SUBSET, FULL, RED_TEAM_ONLY] }
+        gate: { type: string, enum: [PASS, FAIL] }
+        caseCount: { type: integer }
+        durationMs: { type: [integer, 'null'] }
+        costUsd: { type: number }
+        finishedAt: { type: [string, 'null'], format: date-time }
+    BudgetThresholdCrossedPayload:
+      type: object
+      properties:
+        day: { type: string, format: date }
+        provider: { type: string }
+        purpose: { type: string }
+        thresholdPercent: { type: integer, enum: [80, 100], x-derived: true }
+        remainingUsd: { type: number, x-derived: true }
+        dailyBudgetUsd: { type: number }
+        action: { type: string, enum: [DEGRADE, HARD_STOP], x-derived: true }
