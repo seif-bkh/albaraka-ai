@@ -1,75 +1,39 @@
-## run 33811075259 — keycloak
+## run 33811344168 — keycloak
 keycloak-1  | WARNING: Hostname v1 options [hostname-port] are still in use, please review your configuration
 keycloak-1  | Updating the configuration and installing your custom providers, if any. Please wait.
-keycloak-1  | 2026-09-03 22:03:47,174 INFO  [io.quarkus.deployment.QuarkusAugmentor] (main) Quarkus augmentation completed in 8673ms
+keycloak-1  | 2026-09-03 22:06:59,543 INFO  [io.quarkus.deployment.QuarkusAugmentor] (main) Quarkus augmentation completed in 8290ms
 keycloak-1  | WARNING: Hostname v1 options [hostname-port] are still in use, please review your configuration
 keycloak-1  | Running the server in development mode. DO NOT use this configuration in production.
-keycloak-1  | 2026-09-03 22:03:49,748 INFO  [org.keycloak.url.HostnameV2ProviderFactory] (main) If hostname is specified, hostname-strict is effectively ignored
-keycloak-1  | 2026-09-03 22:03:51,099 INFO  [org.infinispan.CONTAINER] (main) ISPN000974: Virtual threads support: enabled
-keycloak-1  | 2026-09-03 22:03:52,216 INFO  [org.hibernate.orm.jdbc.batch] (JPA Startup Thread) HHH100501: Automatic JDBC statement batching enabled (maximum batch size 32)
-keycloak-1  | 2026-09-03 22:03:53,414 INFO  [org.keycloak.quarkus.runtime.storage.database.liquibase.QuarkusJpaUpdaterProvider] (main) Initializing database schema. Using changelog META-INF/jpa-changelog-master.xml
-keycloak-1  | 2026-09-03 22:04:00,217 INFO  [org.infinispan.CONTAINER] (main) ISPN000556: Starting user marshaller 'org.infinispan.commons.marshall.ImmutableProtoStreamMarshaller'
-keycloak-1  | 2026-09-03 22:04:00,620 INFO  [org.keycloak.connections.infinispan.DefaultInfinispanConnectionProviderFactory] (main) Node name: node_313150, Site name: null
-keycloak-1  | 2026-09-03 22:04:00,769 INFO  [org.keycloak.quarkus.runtime.storage.database.jpa.DatabaseIndexChecker] (db-index-checker) Running database index checker
-keycloak-1  | 2026-09-03 22:04:00,787 INFO  [org.keycloak.models.workflow.WorkflowsEventListenerFactory] (main) Workflow runner task scheduled: next execution at 10:04, then every PT12H
-keycloak-1  | 2026-09-03 22:04:00,877 INFO  [org.keycloak.exportimport.dir.DirImportProvider] (main) Importing from directory /opt/keycloak/bin/../data/import
-keycloak-1  | 2026-09-03 22:04:00,910 INFO  [org.keycloak.services] (main) KC-SERVICES0050: Initializing master realm
-keycloak-1  | 2026-09-03 22:04:02,736 INFO  [org.keycloak.services] (main) KC-SERVICES0030: Full model import requested. Strategy: IGNORE_EXISTING
-keycloak-1  | 2026-09-03 22:04:02,896 INFO  [com.arjuna.ats.jbossatx] (main) ARJUNA032014: Stopping transaction recovery manager
-keycloak-1  | 2026-09-03 22:04:02,918 ERROR [org.keycloak.quarkus.runtime.cli.ExecutionExceptionHandler] (main) ERROR: Failed to start server in (development) mode
-keycloak-1  | 2026-09-03 22:04:02,918 ERROR [org.keycloak.quarkus.runtime.cli.ExecutionExceptionHandler] (main) ERROR: Failed to run import
-keycloak-1  | 2026-09-03 22:04:02,918 ERROR [org.keycloak.quarkus.runtime.cli.ExecutionExceptionHandler] (main) ERROR: Unrecognized field "parRequestUriLifespan" (class org.keycloak.representations.idm.RealmRepresentation), not marked as ignorable (150 known properties: "userFederationMappers", "rememberMe", "duplicateEmailsAllowed", "adminEventsDetailsEnabled", "users", "clientOfflineSessionMaxLifespan", "webAuthnPolicyRequireResidentKey", "webAuthnPolicyPasswordlessAvoidSameAuthenticatorRegister", "components", "otpPolicyType", "accessCodeLifespanUserAction", "id", "webAuthnPolicyAttestationConveyancePreference", "enabledEventTypes", "applications", "webAuthnPolicyPasswordlessSignatureAlgorithms", "eventsListeners", "ssoSessionMaxLifespanRememberMe", "defaultDefaultClientScopes", "webAuthnPolicyPasswordlessCreateTimeout", "clientOfflineSessionIdleTimeout", "notBefore", "publicKey", "smtpServer", "clientPolicies", "resetPasswordAllowed", "webAuthnPolicyAvoidSameAuthenticatorRegister", "accessTokenLifespanForImplicitFlow", "webAuthnPolicyPasswordlessUserVerificationRequirement", "verifiableCredentialsEnabled", "clientScopes", "internationalizationEnabled", "defaultRole", "accessTokenLifespan", "passwordCredentialGrantAllowed", "webAuthnPolicyPasswordlessPasskeysEnabled" [truncated])
-keycloak-1  |  at [Source: REDACTED (`StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION` disabled); line: 73, column: 30] (through reference chain: org.keycloak.representations.idm.RealmRepresentation["parRequestUriLifespan"])
-keycloak-1  | 2026-09-03 22:04:02,918 ERROR [org.keycloak.quarkus.runtime.cli.ExecutionExceptionHandler] (main) For more details run the same command passing the '--verbose' option. Also you can use '--help' to see the details about the usage of the particular command.
-keycloak-1  | WARNING: Hostname v1 options [hostname-port] are still in use, please review your configuration
-keycloak-1  | Running the server in development mode. DO NOT use this configuration in production.
-keycloak-1  | 2026-09-03 22:04:05,573 INFO  [org.keycloak.url.HostnameV2ProviderFactory] (main) If hostname is specified, hostname-strict is effectively ignored
-keycloak-1  | 2026-09-03 22:04:06,945 INFO  [org.infinispan.CONTAINER] (main) ISPN000974: Virtual threads support: enabled
-keycloak-1  | 2026-09-03 22:04:07,910 INFO  [org.hibernate.orm.jdbc.batch] (JPA Startup Thread) HHH100501: Automatic JDBC statement batching enabled (maximum batch size 32)
-keycloak-1  | 2026-09-03 22:04:08,129 INFO  [org.keycloak.quarkus.runtime.storage.database.jpa.DatabaseIndexChecker] (db-index-checker) Running database index checker
-keycloak-1  | 2026-09-03 22:04:09,281 INFO  [org.infinispan.CONTAINER] (main) ISPN000556: Starting user marshaller 'org.infinispan.commons.marshall.ImmutableProtoStreamMarshaller'
-keycloak-1  | 2026-09-03 22:04:09,707 INFO  [org.keycloak.connections.infinispan.DefaultInfinispanConnectionProviderFactory] (main) Node name: node_82756, Site name: null
-keycloak-1  | 2026-09-03 22:04:09,712 INFO  [org.keycloak.models.workflow.WorkflowsEventListenerFactory] (main) Workflow runner task scheduled: next execution at 10:04:09, then every PT12H
-keycloak-1  | 2026-09-03 22:04:09,777 INFO  [org.keycloak.exportimport.dir.DirImportProvider] (main) Importing from directory /opt/keycloak/bin/../data/import
-keycloak-1  | 2026-09-03 22:04:10,127 INFO  [org.keycloak.services] (main) KC-SERVICES0050: Initializing master realm
-keycloak-1  | 2026-09-03 22:04:11,563 INFO  [org.keycloak.services] (main) KC-SERVICES0030: Full model import requested. Strategy: IGNORE_EXISTING
-keycloak-1  | 2026-09-03 22:04:11,723 INFO  [com.arjuna.ats.jbossatx] (main) ARJUNA032014: Stopping transaction recovery manager
-keycloak-1  | 2026-09-03 22:04:11,751 ERROR [org.keycloak.quarkus.runtime.cli.ExecutionExceptionHandler] (main) ERROR: Failed to start server in (development) mode
-keycloak-1  | 2026-09-03 22:04:11,751 ERROR [org.keycloak.quarkus.runtime.cli.ExecutionExceptionHandler] (main) ERROR: Failed to run import
-keycloak-1  | 2026-09-03 22:04:11,751 ERROR [org.keycloak.quarkus.runtime.cli.ExecutionExceptionHandler] (main) ERROR: Unrecognized field "parRequestUriLifespan" (class org.keycloak.representations.idm.RealmRepresentation), not marked as ignorable (150 known properties: "userFederationMappers", "rememberMe", "duplicateEmailsAllowed", "adminEventsDetailsEnabled", "users", "clientOfflineSessionMaxLifespan", "webAuthnPolicyRequireResidentKey", "webAuthnPolicyPasswordlessAvoidSameAuthenticatorRegister", "components", "otpPolicyType", "accessCodeLifespanUserAction", "id", "webAuthnPolicyAttestationConveyancePreference", "enabledEventTypes", "applications", "webAuthnPolicyPasswordlessSignatureAlgorithms", "eventsListeners", "ssoSessionMaxLifespanRememberMe", "defaultDefaultClientScopes", "webAuthnPolicyPasswordlessCreateTimeout", "clientOfflineSessionIdleTimeout", "notBefore", "publicKey", "smtpServer", "clientPolicies", "resetPasswordAllowed", "webAuthnPolicyAvoidSameAuthenticatorRegister", "accessTokenLifespanForImplicitFlow", "webAuthnPolicyPasswordlessUserVerificationRequirement", "verifiableCredentialsEnabled", "clientScopes", "internationalizationEnabled", "defaultRole", "accessTokenLifespan", "passwordCredentialGrantAllowed", "webAuthnPolicyPasswordlessPasskeysEnabled" [truncated])
-keycloak-1  |  at [Source: REDACTED (`StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION` disabled); line: 73, column: 30] (through reference chain: org.keycloak.representations.idm.RealmRepresentation["parRequestUriLifespan"])
-keycloak-1  | 2026-09-03 22:04:11,751 ERROR [org.keycloak.quarkus.runtime.cli.ExecutionExceptionHandler] (main) For more details run the same command passing the '--verbose' option. Also you can use '--help' to see the details about the usage of the particular command.
-keycloak-1  | WARNING: Hostname v1 options [hostname-port] are still in use, please review your configuration
-keycloak-1  | Running the server in development mode. DO NOT use this configuration in production.
-keycloak-1  | 2026-09-03 22:04:14,700 INFO  [org.keycloak.url.HostnameV2ProviderFactory] (main) If hostname is specified, hostname-strict is effectively ignored
-keycloak-1  | 2026-09-03 22:04:16,075 INFO  [org.infinispan.CONTAINER] (main) ISPN000974: Virtual threads support: enabled
-keycloak-1  | 2026-09-03 22:04:17,146 INFO  [org.hibernate.orm.jdbc.batch] (JPA Startup Thread) HHH100501: Automatic JDBC statement batching enabled (maximum batch size 32)
-keycloak-1  | 2026-09-03 22:04:17,363 INFO  [org.keycloak.quarkus.runtime.storage.database.jpa.DatabaseIndexChecker] (db-index-checker) Running database index checker
-keycloak-1  | 2026-09-03 22:04:18,523 INFO  [org.infinispan.CONTAINER] (main) ISPN000556: Starting user marshaller 'org.infinispan.commons.marshall.ImmutableProtoStreamMarshaller'
-keycloak-1  | 2026-09-03 22:04:18,955 INFO  [org.keycloak.connections.infinispan.DefaultInfinispanConnectionProviderFactory] (main) Node name: node_858734, Site name: null
-keycloak-1  | 2026-09-03 22:04:18,960 INFO  [org.keycloak.models.workflow.WorkflowsEventListenerFactory] (main) Workflow runner task scheduled: next execution at 10:04:18, then every PT12H
-keycloak-1  | 2026-09-03 22:04:19,035 INFO  [org.keycloak.exportimport.dir.DirImportProvider] (main) Importing from directory /opt/keycloak/bin/../data/import
-keycloak-1  | 2026-09-03 22:04:19,419 INFO  [org.keycloak.services] (main) KC-SERVICES0050: Initializing master realm
-keycloak-1  | 2026-09-03 22:04:21,171 INFO  [org.keycloak.services] (main) KC-SERVICES0030: Full model import requested. Strategy: IGNORE_EXISTING
-keycloak-1  | 2026-09-03 22:04:21,379 INFO  [com.arjuna.ats.jbossatx] (main) ARJUNA032014: Stopping transaction recovery manager
-keycloak-1  | 2026-09-03 22:04:21,411 ERROR [org.keycloak.quarkus.runtime.cli.ExecutionExceptionHandler] (main) ERROR: Failed to start server in (development) mode
-keycloak-1  | 2026-09-03 22:04:21,411 ERROR [org.keycloak.quarkus.runtime.cli.ExecutionExceptionHandler] (main) ERROR: Failed to run import
-keycloak-1  | 2026-09-03 22:04:21,412 ERROR [org.keycloak.quarkus.runtime.cli.ExecutionExceptionHandler] (main) ERROR: Unrecognized field "parRequestUriLifespan" (class org.keycloak.representations.idm.RealmRepresentation), not marked as ignorable (150 known properties: "userFederationMappers", "rememberMe", "duplicateEmailsAllowed", "adminEventsDetailsEnabled", "users", "clientOfflineSessionMaxLifespan", "webAuthnPolicyRequireResidentKey", "webAuthnPolicyPasswordlessAvoidSameAuthenticatorRegister", "components", "otpPolicyType", "accessCodeLifespanUserAction", "id", "webAuthnPolicyAttestationConveyancePreference", "enabledEventTypes", "applications", "webAuthnPolicyPasswordlessSignatureAlgorithms", "eventsListeners", "ssoSessionMaxLifespanRememberMe", "defaultDefaultClientScopes", "webAuthnPolicyPasswordlessCreateTimeout", "clientOfflineSessionIdleTimeout", "notBefore", "publicKey", "smtpServer", "clientPolicies", "resetPasswordAllowed", "webAuthnPolicyAvoidSameAuthenticatorRegister", "accessTokenLifespanForImplicitFlow", "webAuthnPolicyPasswordlessUserVerificationRequirement", "verifiableCredentialsEnabled", "clientScopes", "internationalizationEnabled", "defaultRole", "accessTokenLifespan", "passwordCredentialGrantAllowed", "webAuthnPolicyPasswordlessPasskeysEnabled" [truncated])
-keycloak-1  |  at [Source: REDACTED (`StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION` disabled); line: 73, column: 30] (through reference chain: org.keycloak.representations.idm.RealmRepresentation["parRequestUriLifespan"])
-keycloak-1  | 2026-09-03 22:04:21,412 ERROR [org.keycloak.quarkus.runtime.cli.ExecutionExceptionHandler] (main) For more details run the same command passing the '--verbose' option. Also you can use '--help' to see the details about the usage of the particular command.
+keycloak-1  | 2026-09-03 22:07:01,385 INFO  [org.keycloak.url.HostnameV2ProviderFactory] (main) If hostname is specified, hostname-strict is effectively ignored
+keycloak-1  | 2026-09-03 22:07:03,366 INFO  [org.infinispan.CONTAINER] (main) ISPN000974: Virtual threads support: enabled
+keycloak-1  | 2026-09-03 22:07:04,402 INFO  [org.hibernate.orm.jdbc.batch] (JPA Startup Thread) HHH100501: Automatic JDBC statement batching enabled (maximum batch size 32)
+keycloak-1  | 2026-09-03 22:07:05,586 INFO  [org.keycloak.quarkus.runtime.storage.database.liquibase.QuarkusJpaUpdaterProvider] (main) Initializing database schema. Using changelog META-INF/jpa-changelog-master.xml
+keycloak-1  | 2026-09-03 22:07:11,794 INFO  [org.infinispan.CONTAINER] (main) ISPN000556: Starting user marshaller 'org.infinispan.commons.marshall.ImmutableProtoStreamMarshaller'
+keycloak-1  | 2026-09-03 22:07:12,149 INFO  [org.keycloak.connections.infinispan.DefaultInfinispanConnectionProviderFactory] (main) Node name: node_439765, Site name: null
+keycloak-1  | 2026-09-03 22:07:12,311 INFO  [org.keycloak.quarkus.runtime.storage.database.jpa.DatabaseIndexChecker] (db-index-checker) Running database index checker
+keycloak-1  | 2026-09-03 22:07:12,386 INFO  [org.keycloak.models.workflow.WorkflowsEventListenerFactory] (main) Workflow runner task scheduled: next execution at 10:07:12, then every PT12H
+keycloak-1  | 2026-09-03 22:07:12,418 INFO  [org.keycloak.exportimport.dir.DirImportProvider] (main) Importing from directory /opt/keycloak/bin/../data/import
+keycloak-1  | 2026-09-03 22:07:12,439 INFO  [org.keycloak.services] (main) KC-SERVICES0050: Initializing master realm
+keycloak-1  | 2026-09-03 22:07:13,997 INFO  [org.keycloak.services] (main) KC-SERVICES0030: Full model import requested. Strategy: IGNORE_EXISTING
+keycloak-1  | 2026-09-03 22:07:14,141 INFO  [com.arjuna.ats.jbossatx] (main) ARJUNA032014: Stopping transaction recovery manager
+keycloak-1  | 2026-09-03 22:07:14,165 ERROR [org.keycloak.quarkus.runtime.cli.ExecutionExceptionHandler] (main) ERROR: Failed to start server in (development) mode
+keycloak-1  | 2026-09-03 22:07:14,165 ERROR [org.keycloak.quarkus.runtime.cli.ExecutionExceptionHandler] (main) ERROR: Failed to run import
+keycloak-1  | 2026-09-03 22:07:14,166 ERROR [org.keycloak.quarkus.runtime.cli.ExecutionExceptionHandler] (main) ERROR: Unrecognized field "organizationEnabled" (class org.keycloak.representations.idm.RealmRepresentation), not marked as ignorable (150 known properties: "userFederationMappers", "rememberMe", "duplicateEmailsAllowed", "adminEventsDetailsEnabled", "users", "clientOfflineSessionMaxLifespan", "webAuthnPolicyRequireResidentKey", "webAuthnPolicyPasswordlessAvoidSameAuthenticatorRegister", "components", "otpPolicyType", "accessCodeLifespanUserAction", "id", "webAuthnPolicyAttestationConveyancePreference", "enabledEventTypes", "applications", "webAuthnPolicyPasswordlessSignatureAlgorithms", "eventsListeners", "ssoSessionMaxLifespanRememberMe", "defaultDefaultClientScopes", "webAuthnPolicyPasswordlessCreateTimeout", "clientOfflineSessionIdleTimeout", "notBefore", "publicKey", "smtpServer", "clientPolicies", "resetPasswordAllowed", "webAuthnPolicyAvoidSameAuthenticatorRegister", "accessTokenLifespanForImplicitFlow", "webAuthnPolicyPasswordlessUserVerificationRequirement", "verifiableCredentialsEnabled", "clientScopes", "internationalizationEnabled", "defaultRole", "accessTokenLifespan", "passwordCredentialGrantAllowed", "webAuthnPolicyPasswordlessPasskeysEnabled" [truncated])
+keycloak-1  |  at [Source: REDACTED (`StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION` disabled); line: 74, column: 31] (through reference chain: org.keycloak.representations.idm.RealmRepresentation["organizationEnabled"])
+keycloak-1  | 2026-09-03 22:07:14,166 ERROR [org.keycloak.quarkus.runtime.cli.ExecutionExceptionHandler] (main) For more details run the same command passing the '--verbose' option. Also you can use '--help' to see the details about the usage of the particular command.
 
 ## ps -a
 NAME                            IMAGE                                              COMMAND                  SERVICE           CREATED          STATUS                                     PORTS
-albaraka-ai-backoffice-web-1    albaraka-ai/backoffice-web:dev                     "/docker-entrypoint.…"   backoffice-web    52 seconds ago   Created                                    
-albaraka-ai-frontoffice-web-1   albaraka-ai/frontoffice-web:dev                    "/docker-entrypoint.…"   frontoffice-web   52 seconds ago   Created                                    
-albaraka-ai-keycloak-1          quay.io/keycloak/keycloak:26.6.3                   "/bin/bash -ec 'mkdi…"   keycloak          52 seconds ago   Up Less than a second (health: starting)   8443/tcp, 0.0.0.0:8080->8080/tcp, [::]:8080->8080/tcp, 9000/tcp
-albaraka-ai-minio-1             quay.io/minio/minio:RELEASE.2025-03-12T18-04-18Z   "/usr/bin/docker-ent…"   minio             52 seconds ago   Up 52 seconds (healthy)                    0.0.0.0:9000-9001->9000-9001/tcp, [::]:9000-9001->9000-9001/tcp
-albaraka-ai-minio-init-1        quay.io/minio/mc:RELEASE.2025-03-12T17-29-24Z      "/bin/sh -ec 'until …"   minio-init        52 seconds ago   Exited (0) 46 seconds ago                  
-albaraka-ai-nginx-1             nginx:1.28-alpine                                  "/docker-entrypoint.…"   nginx             52 seconds ago   Created                                    
-albaraka-ai-postgres-1          pgvector/pgvector:0.8.1-pg17                       "docker-entrypoint.s…"   postgres          52 seconds ago   Up 52 seconds (healthy)                    0.0.0.0:5432->5432/tcp, [::]:5432->5432/tcp
-albaraka-ai-rag-assistant-1     albaraka-ai/rag-assistant:dev                      "uvicorn rag_assista…"   rag-assistant     52 seconds ago   Up 46 seconds (healthy)                    8000/tcp
-albaraka-ai-redis-1             redis:7.4-alpine                                   "docker-entrypoint.s…"   redis             52 seconds ago   Up 52 seconds (healthy)                    0.0.0.0:6379->6379/tcp, [::]:6379->6379/tcp
-albaraka-ai-server-1            albaraka-ai/server:dev                             "java -jar app.jar"      server            52 seconds ago   Created                                    
+albaraka-ai-backoffice-web-1    albaraka-ai/backoffice-web:dev                     "/docker-entrypoint.…"   backoffice-web    31 seconds ago   Created                                    
+albaraka-ai-frontoffice-web-1   albaraka-ai/frontoffice-web:dev                    "/docker-entrypoint.…"   frontoffice-web   31 seconds ago   Created                                    
+albaraka-ai-keycloak-1          quay.io/keycloak/keycloak:26.6.3                   "/bin/bash -ec 'mkdi…"   keycloak          31 seconds ago   Up Less than a second (health: starting)   8443/tcp, 0.0.0.0:8080->8080/tcp, [::]:8080->8080/tcp, 9000/tcp
+albaraka-ai-minio-1             quay.io/minio/minio:RELEASE.2025-03-12T18-04-18Z   "/usr/bin/docker-ent…"   minio             31 seconds ago   Up 31 seconds (healthy)                    0.0.0.0:9000-9001->9000-9001/tcp, [::]:9000-9001->9000-9001/tcp
+albaraka-ai-minio-init-1        quay.io/minio/mc:RELEASE.2025-03-12T17-29-24Z      "/bin/sh -ec 'until …"   minio-init        31 seconds ago   Exited (0) 25 seconds ago                  
+albaraka-ai-nginx-1             nginx:1.28-alpine                                  "/docker-entrypoint.…"   nginx             31 seconds ago   Created                                    
+albaraka-ai-postgres-1          pgvector/pgvector:0.8.1-pg17                       "docker-entrypoint.s…"   postgres          31 seconds ago   Up 31 seconds (healthy)                    0.0.0.0:5432->5432/tcp, [::]:5432->5432/tcp
+albaraka-ai-rag-assistant-1     albaraka-ai/rag-assistant:dev                      "uvicorn rag_assista…"   rag-assistant     31 seconds ago   Up 25 seconds (healthy)                    8000/tcp
+albaraka-ai-redis-1             redis:7.4-alpine                                   "docker-entrypoint.s…"   redis             31 seconds ago   Up 31 seconds (healthy)                    0.0.0.0:6379->6379/tcp, [::]:6379->6379/tcp
+albaraka-ai-server-1            albaraka-ai/server:dev                             "java -jar app.jar"      server            31 seconds ago   Created                                    
 
 ## postgres
 postgres-1  | The files belonging to this database system will be owned by user "postgres".
@@ -89,19 +53,19 @@ postgres-1  | selecting default time zone ... Etc/UTC
 postgres-1  | creating configuration files ... ok
 postgres-1  | running bootstrap script ... ok
 postgres-1  | performing post-bootstrap initialization ... ok
-postgres-1  | syncing data to disk ... ok
 postgres-1  | initdb: warning: enabling "trust" authentication for local connections
-postgres-1  | 
 postgres-1  | initdb: hint: You can change this by editing pg_hba.conf or using the option -A, or --auth-local and --auth-host, the next time you run initdb.
+postgres-1  | syncing data to disk ... ok
+postgres-1  | 
 postgres-1  | 
 postgres-1  | Success. You can now start the database server using:
 postgres-1  | 
 postgres-1  |     pg_ctl -D /var/lib/postgresql/data -l logfile start
 postgres-1  | 
-postgres-1  | waiting for server to start....2026-09-03 22:03:31.324 UTC [48] LOG:  starting PostgreSQL 17.8 (Debian 17.8-1.pgdg12+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit
-postgres-1  | 2026-09-03 22:03:31.325 UTC [48] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
-postgres-1  | 2026-09-03 22:03:31.328 UTC [51] LOG:  database system was shut down at 2026-09-03 22:03:31 UTC
-postgres-1  | 2026-09-03 22:03:31.332 UTC [48] LOG:  database system is ready to accept connections
+postgres-1  | waiting for server to start....2026-09-03 22:06:44.209 UTC [48] LOG:  starting PostgreSQL 17.8 (Debian 17.8-1.pgdg12+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit
+postgres-1  | 2026-09-03 22:06:44.209 UTC [48] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+postgres-1  | 2026-09-03 22:06:44.212 UTC [51] LOG:  database system was shut down at 2026-09-03 22:06:44 UTC
+postgres-1  | 2026-09-03 22:06:44.216 UTC [48] LOG:  database system is ready to accept connections
 postgres-1  |  done
 postgres-1  | server started
 postgres-1  | CREATE DATABASE
@@ -111,25 +75,25 @@ postgres-1  | /usr/local/bin/docker-entrypoint.sh: running /docker-entrypoint-in
 postgres-1  | CREATE DATABASE
 postgres-1  | 
 postgres-1  | 
-postgres-1  | waiting for server to shut down...2026-09-03 22:03:31.580 UTC [48] LOG:  received fast shutdown request
-postgres-1  | .2026-09-03 22:03:31.580 UTC [48] LOG:  aborting any active transactions
-postgres-1  | 2026-09-03 22:03:31.585 UTC [48] LOG:  background worker "logical replication launcher" (PID 54) exited with exit code 1
-postgres-1  | 2026-09-03 22:03:31.585 UTC [49] LOG:  shutting down
-postgres-1  | 2026-09-03 22:03:31.585 UTC [49] LOG:  checkpoint starting: shutdown immediate
-postgres-1  | 2026-09-03 22:03:31.616 UTC [49] LOG:  checkpoint complete: wrote 1836 buffers (11.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.027 s, sync=0.003 s, total=0.032 s; sync files=597, longest=0.001 s, average=0.001 s; distance=8476 kB, estimate=8476 kB; lsn=0/1D2BED8, redo lsn=0/1D2BED8
-postgres-1  | 2026-09-03 22:03:31.626 UTC [48] LOG:  database system is shut down
+postgres-1  | 2026-09-03 22:06:44.455 UTC [48] LOG:  received fast shutdown request
+postgres-1  | waiting for server to shut down....2026-09-03 22:06:44.455 UTC [48] LOG:  aborting any active transactions
+postgres-1  | 2026-09-03 22:06:44.457 UTC [48] LOG:  background worker "logical replication launcher" (PID 54) exited with exit code 1
+postgres-1  | 2026-09-03 22:06:44.458 UTC [49] LOG:  shutting down
+postgres-1  | 2026-09-03 22:06:44.459 UTC [49] LOG:  checkpoint starting: shutdown immediate
+postgres-1  | 2026-09-03 22:06:44.487 UTC [49] LOG:  checkpoint complete: wrote 1836 buffers (11.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.024 s, sync=0.003 s, total=0.029 s; sync files=597, longest=0.002 s, average=0.001 s; distance=8476 kB, estimate=8476 kB; lsn=0/1D2BED8, redo lsn=0/1D2BED8
+postgres-1  | 2026-09-03 22:06:44.495 UTC [48] LOG:  database system is shut down
 postgres-1  |  done
 postgres-1  | server stopped
 postgres-1  | 
 postgres-1  | PostgreSQL init process complete; ready for start up.
 postgres-1  | 
-postgres-1  | 2026-09-03 22:03:31.706 UTC [1] LOG:  starting PostgreSQL 17.8 (Debian 17.8-1.pgdg12+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit
-postgres-1  | 2026-09-03 22:03:31.706 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
-postgres-1  | 2026-09-03 22:03:31.706 UTC [1] LOG:  listening on IPv6 address "::", port 5432
-postgres-1  | 2026-09-03 22:03:31.707 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
-postgres-1  | 2026-09-03 22:03:31.710 UTC [66] LOG:  database system was shut down at 2026-09-03 22:03:31 UTC
-postgres-1  | 2026-09-03 22:03:31.727 UTC [1] LOG:  database system is ready to accept connections
-postgres-1  | 2026-09-03 22:03:52.372 UTC [102] ERROR:  relation "migration_model" does not exist at character 25
-postgres-1  | 2026-09-03 22:03:52.372 UTC [102] STATEMENT:  SELECT ID, VERSION FROM MIGRATION_MODEL ORDER BY UPDATE_TIME DESC
-postgres-1  | 2026-09-03 22:03:53.362 UTC [104] ERROR:  relation "public.databasechangeloglock" does not exist at character 22
-postgres-1  | 2026-09-03 22:03:53.362 UTC [104] STATEMENT:  SELECT COUNT(*) FROM public.databasechangeloglock
+postgres-1  | 2026-09-03 22:06:44.579 UTC [1] LOG:  starting PostgreSQL 17.8 (Debian 17.8-1.pgdg12+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit
+postgres-1  | 2026-09-03 22:06:44.579 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+postgres-1  | 2026-09-03 22:06:44.579 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+postgres-1  | 2026-09-03 22:06:44.580 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+postgres-1  | 2026-09-03 22:06:44.583 UTC [66] LOG:  database system was shut down at 2026-09-03 22:06:44 UTC
+postgres-1  | 2026-09-03 22:06:44.597 UTC [1] LOG:  database system is ready to accept connections
+postgres-1  | 2026-09-03 22:07:04.546 UTC [94] ERROR:  relation "migration_model" does not exist at character 25
+postgres-1  | 2026-09-03 22:07:04.546 UTC [94] STATEMENT:  SELECT ID, VERSION FROM MIGRATION_MODEL ORDER BY UPDATE_TIME DESC
+postgres-1  | 2026-09-03 22:07:05.537 UTC [104] ERROR:  relation "public.databasechangeloglock" does not exist at character 22
+postgres-1  | 2026-09-03 22:07:05.537 UTC [104] STATEMENT:  SELECT COUNT(*) FROM public.databasechangeloglock
