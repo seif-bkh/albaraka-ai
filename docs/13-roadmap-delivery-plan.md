@@ -1,5 +1,13 @@
 # 13 — Roadmap & Delivery Plan
 
+> **Execution status — 2026-09-03:** all phases are being executed; this repo is the delivery.
+> Phase 0 artifacts (`docs/`, `specs/`, `deploy/`, `tools/spike/`) are complete and gated.
+> Phases 1–5 are being built and run in this repository — the live preview boots the full stack
+> (Node API + PostgreSQL via `embedded-postgres` + Angular 22 apps); the Spring Boot / Docker /
+> Keycloak stack documented in §2 remains the target production topology (this sandbox has
+> no Java/Maven/Docker egress, so the runnable implementation is the Node parity backend under
+> the same contracts). Checkmarks below are updated as phases reach their acceptance criteria.
+
 ## 1. Guiding principles
 
 1. **Governance before generation.** The Sharia gate, audit trail and two-eyes workflow land *with*
