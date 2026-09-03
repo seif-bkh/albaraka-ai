@@ -1,0 +1,12 @@
+{
+  "name": "@albaraka-ai/spike",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Provider & local-dependency smoke test: validates the two Phase 0 acceptance keys (Groq, Google) end-to-end without any build",
+  "scripts": {
+    "spike": "node spike.mjs",
+    "spike:local": "node spike.mjs --local"
+  },
+  "engines": { "node": ">=20" }
+}
