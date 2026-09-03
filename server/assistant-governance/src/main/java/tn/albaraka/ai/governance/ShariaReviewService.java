@@ -21,7 +21,7 @@ import java.util.UUID;
 public class ShariaReviewService {
 
     /** Approver roles per tier, matching the backoffice review UI and the Keycloak realm roles. */
-    private static final Map<String, List<String>> TASKS = Map.of(
+    private static final Map<String, List<String>> TASKS = map(
             RiskTier.T1_LOW.name(), List.of("sharia-officer"),
             RiskTier.T2_MEDIUM.name(), List.of("sharia-officer", "analyst"),
             RiskTier.T3_HIGH.name(), List.of("sharia-officer", "compliance"));
@@ -105,7 +105,7 @@ public class ShariaReviewService {
                 FROM albaraka_ai.sharia_review r
                 WHERE r.state IN ('PENDING','IN_REVIEW','CHANGES_REQUESTED')
                 ORDER BY r.due_at
-                """, (rs, i) -> Map.of(
+                """, (rs, i) -> map(
                 "id", rs.getObject("id", UUID.class).toString(),
                 "ref", rs.getString("ref"),
                 "subjectLabel", rs.getString("subject_label"),
@@ -118,6 +118,14 @@ public class ShariaReviewService {
 
     public boolean isApproved(UUID reviewId) {
         return count("SELECT count(*) FROM albaraka_ai.sharia_review WHERE id = ? AND state = 'APPROVED'", reviewId) == 1;
+    }
+
+
+    /** Null-tolerant map for response rows (Map.of rejects null values). */
+    static java.util.Map<String, Object> map(Object... kv) {
+        java.util.Map<String, Object> m = new java.util.LinkedHashMap<>();
+        for (int i = 0; i + 1 < kv.length; i += 2) m.put(String.valueOf(kv[i]), kv[i + 1]);
+        return m;
     }
 
     private long count(String sql, Object... args) {

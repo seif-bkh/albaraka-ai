@@ -1,6 +1,6 @@
 package tn.albaraka.ai.knowledge;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -100,7 +100,7 @@ public class KnowledgeService {
                 FROM albaraka_ai.document d
                 LEFT JOIN albaraka_ai.document_version v ON v.document_id = d.id
                 ORDER BY d.created_at DESC
-                """, (rs, i) -> Map.of(
+                """, (rs, i) -> map(
                 "id", rs.getObject("id", UUID.class).toString(),
                 "titleFr", nz(rs.getString("title_fr")),
                 "titleAr", nz(rs.getString("title_ar")),
@@ -118,7 +118,7 @@ public class KnowledgeService {
                 FROM albaraka_ai.document d
                 LEFT JOIN albaraka_ai.document_version v ON v.document_id = d.id AND v.state = 'PUBLISHED'
                 WHERE d.id = ?
-                """, (rs, i) -> Map.of(
+                """, (rs, i) -> map(
                 "id", rs.getObject("id", UUID.class).toString(),
                 "titleFr", nz(rs.getString("title_fr")),
                 "titleAr", nz(rs.getString("title_ar")),
@@ -133,8 +133,16 @@ public class KnowledgeService {
 
     public List<Map<String, Object>> listCollections() {
         return db.query("SELECT code, name_fr, name_ar, name_en FROM albaraka_ai.collection ORDER BY code",
-                (rs, i) -> Map.of("code", rs.getString("code"), "nameFr", nz(rs.getString("name_fr")),
+                (rs, i) -> map("code", rs.getString("code"), "nameFr", nz(rs.getString("name_fr")),
                         "nameAr", nz(rs.getString("name_ar")), "nameEn", nz(rs.getString("name_en"))));
+    }
+
+
+    /** Null-tolerant map for response rows (Map.of rejects null values). */
+    static java.util.Map<String, Object> map(Object... kv) {
+        java.util.Map<String, Object> m = new java.util.LinkedHashMap<>();
+        for (int i = 0; i + 1 < kv.length; i += 2) m.put(String.valueOf(kv[i]), kv[i + 1]);
+        return m;
     }
 
     private static String nz(String s) { return s == null ? "" : s; }

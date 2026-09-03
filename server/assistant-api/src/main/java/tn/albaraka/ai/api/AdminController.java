@@ -17,6 +17,8 @@ import tn.albaraka.ai.shared.RiskTier;
 import tn.albaraka.ai.shared.error.ApiException;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Objects;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -40,7 +42,7 @@ public class AdminController {
     @GetMapping("/me")
     public Map<String, Object> me(@AuthenticationPrincipal Jwt jwt) {
         Map<String, Object> realm = jwt.getClaimAsMap("realm_access");
-        return Map.of("subject", jwt.getSubject(),
+        return map("subject", jwt.getSubject(),
                 "email", jwt.getClaimAsString("email"),
                 "roles", realm != null && realm.get("roles") instanceof List<?> l
                         ? l.stream().map(String::valueOf).toList() : List.of());
@@ -84,7 +86,7 @@ public class AdminController {
                 body.bodyText() == null ? "" : body.bodyText(), lang, paragraphs, jwt.getSubject());
         audit.record(jwt.getSubject(), "document.version.created", "DOCUMENT_VERSION",
                 created.versionId().toString(), null);
-        return Map.of("id", created.id(), "versionId", created.versionId(), "chunks", created.chunkCount());
+        return map("id", created.id(), "versionId", created.versionId(), "chunks", created.chunkCount());
     }
 
     public record SubmitReviewRequest(String riskTier) {}
@@ -96,7 +98,7 @@ public class AdminController {
         RiskTier tier = RiskTier.valueOf(body == null || body.riskTier() == null ? "T2_MEDIUM" : body.riskTier());
         var created = reviews.submitDocumentVersion(versionId, labelOf(versionId), tier, jwt.getSubject());
         audit.record(jwt.getSubject(), "review.submitted", "SHARIA_REVIEW", created.reviewId().toString(), null);
-        return Map.of("id", created.reviewId(), "ref", created.ref(), "tasks", created.tasks());
+        return map("id", created.reviewId(), "ref", created.ref(), "tasks", created.tasks());
     }
 
     @PostMapping("/documents/{id}/publish")
@@ -111,7 +113,7 @@ public class AdminController {
         }
         knowledge.publish(versionId, reviewId, jwt.getSubject());
         audit.record(jwt.getSubject(), "document.published", "DOCUMENT_VERSION", versionId.toString(), null);
-        return Map.of("published", true, "versionId", versionId.toString());
+        return map("published", true, "versionId", versionId.toString());
     }
 
     // ── reviews ───────────────────────────────────────────────────────────────────────────────
@@ -138,7 +140,7 @@ public class AdminController {
             }
         }
         audit.record(jwt.getSubject(), "review.decided", "SHARIA_REVIEW", id.toString(), null);
-        return Map.of("state", next);
+        return map("state", next);
     }
 
     // ── configuration reads (Phase 3 editing) ─────────────────────────────────────────────────
@@ -147,7 +149,7 @@ public class AdminController {
         return db.query("""
                 SELECT id, code, locale, version_no, state, change_note_fr, activated_at
                 FROM albaraka_ai.prompt_version ORDER BY created_at DESC LIMIT 50""",
-                (rs, i) -> Map.of(
+                (rs, i) -> map(
                         "id", rs.getObject("id", UUID.class).toString(),
                         "code", rs.getString("code"),
                         "locale", nz(rs.getString("locale")),
@@ -162,7 +164,7 @@ public class AdminController {
         return db.query("""
                 SELECT id, code, provider, model_id, state, version_no, temperature, enabled
                 FROM albaraka_ai.model_config ORDER BY code, version_no""",
-                (rs, i) -> Map.of(
+                (rs, i) -> map(
                         "id", rs.getObject("id", UUID.class).toString(),
                         "code", rs.getString("code"),
                         "provider", rs.getString("provider"),
@@ -179,7 +181,7 @@ public class AdminController {
                 SELECT id, version_no, state, channel, top_k_dense, top_k_fts, rrF_k, rerank_enabled,
                        context_token_budget, created_at
                 FROM albaraka_ai.retrieval_config ORDER BY version_no DESC LIMIT 20""",
-                (rs, i) -> Map.of(
+                (rs, i) -> map(
                         "id", rs.getObject("id", UUID.class).toString(),
                         "versionNo", rs.getInt("version_no"),
                         "state", rs.getString("state"),
@@ -196,7 +198,7 @@ public class AdminController {
         int n = db.update("UPDATE albaraka_ai.retrieval_config SET state = 'ACTIVE' WHERE id = ?", id);
         if (n == 0) throw ApiException.notFound("RESOURCE.NOT_FOUND", "retrieval config not found");
         audit.record(jwt.getSubject(), "retrieval.config.activated", "RETRIEVAL_CONFIG", id.toString(), null);
-        return Map.of("activated", true, "id", id.toString());
+        return map("activated", true, "id", id.toString());
     }
 
     // ── audit ─────────────────────────────────────────────────────────────────────────────────
@@ -205,7 +207,7 @@ public class AdminController {
         return db.query("""
                 SELECT id, actor, actor_role, action, subject_type, subject_id, reason_code, prev_hash, hash, created_at
                 FROM albaraka_ai.audit_event ORDER BY created_at DESC LIMIT 100""",
-                (rs, i) -> Map.of(
+                (rs, i) -> map(
                         "id", rs.getObject("id", UUID.class).toString(),
                         "actor", nz(rs.getString("actor")),
                         "actorRole", nz(rs.getString("actor_role")),
@@ -222,9 +224,9 @@ public class AdminController {
         try {
             Boolean ok = db.queryForObject("SELECT albaraka_ai.fn_verify_audit_chain(now() - interval '90 days', now())",
                     Boolean.class);
-            return Map.of("valid", Boolean.TRUE.equals(ok), "window", "90d");
+            return map("valid", Boolean.TRUE.equals(ok), "window", "90d");
         } catch (Exception e) {
-            return Map.of("valid", false, "error", e.getMessage());
+            return map("valid", false, "error", e.getMessage());
         }
     }
 
@@ -234,7 +236,7 @@ public class AdminController {
         return db.query("""
                 SELECT id, rating, comment, status, created_at
                 FROM albaraka_ai.feedback ORDER BY created_at DESC LIMIT 50""",
-                (rs, i) -> Map.of(
+                (rs, i) -> map(
                         "id", rs.getObject("id", UUID.class).toString(),
                         "rating", rs.getString("rating"),
                         "comment", rs.getObject("comment") == null ? "" : rs.getString("comment"),
@@ -276,6 +278,14 @@ public class AdminController {
     private long count(String sql) {
         var rows = db.query(sql, (rs, i) -> rs.getLong(1));
         return rows.isEmpty() ? 0 : rows.getFirst();
+    }
+
+
+    /** Null-tolerant map for response rows (Map.of rejects null values). */
+    static java.util.Map<String, Object> map(Object... kv) {
+        java.util.Map<String, Object> m = new java.util.LinkedHashMap<>();
+        for (int i = 0; i + 1 < kv.length; i += 2) m.put(String.valueOf(kv[i]), kv[i + 1]);
+        return m;
     }
 
     private static String nz(String s) { return s == null ? "" : s; }
