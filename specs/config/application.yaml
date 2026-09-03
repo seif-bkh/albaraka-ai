@@ -116,7 +116,10 @@ management:
         liveness:
           include: livenessState
         readiness:
-          include: readinessState,db,redis
+          # Redis is not wired into the server runtime yet (no starter dependency), so
+          # requesting a 'redis' health contributor aborts startup in Boot 4. Kept to
+          # db + readinessState until the Redis-backed cache/ratelimit land.
+          include: readinessState,db
   health:
     db:
       enabled: true
