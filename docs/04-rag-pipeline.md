@@ -1,10 +1,13 @@
 # 04 — RAG Pipeline
 
-The pipeline is a fixed sequence of **eleven stages** orchestrated by `rag-core`. Every stage is
-independently configurable at runtime (`retrieval_config`, `model_config`, `guardrail_policy`),
-independently observable (one OTel span, one DB trace row) and independently bypassable in
+The pipeline is a fixed sequence of **eleven stages** implemented in `rag-assistant`
+(`rag_assistant` Python package — LangChain 1.x) and called by the Spring API over the internal
+RAG contract (`POST /v1/rag/chat`, docs/08 §8). Every stage is independently configurable at
+runtime (`retrieval_config`, `model_config`, `guardrail_policy`), independently observable (one
+OTel span, one DB trace row written by the Spring side) and independently bypassable in
 degradation — except stages 3 and 10 (guardrails), which can never be disabled, only relaxed to
-`WARN` by a COMPLIANCE-approved policy change.
+`WARN` by a COMPLIANCE-approved policy change. The **only** model-bound code in this repository
+lives here: the Java side performs orchestration, persistence and governance only (ADR-009).
 
 ## 1. Overview
 
@@ -26,21 +29,43 @@ flowchart TD
     F -->|no candidate ≥ τ| R2[REF-05 honest ignorance<br/>+ top-3 source links]
 ```
 
+## 1.1 LangChain implementation mapping (ADR-009)
+
+| Stage | LangChain / ecosystem component (rag_assistant) |
+|---|---|
+| 1 language + normalise | `langdetect`/`langid` + custom normaliser (doc 03 §8 table, Derja→MSA map) |
+| 2 intent | small classifier prompt (Groq) or lexicon router — result cached |
+| 3/10 guardrails | deterministic rules + prompt-based judge (`Prompt Guard 2` / `Llama Guard 4` when keys set) |
+| 4 query transform | `RunnableLambda` chain (rewrite + glossary expansion, glossary from DB via `langchain`-friendly dict) |
+| 5 hybrid retrieval | `langchain-postgres` **PGVectorStore** (official package, hybrid vector + BM25/tsvector, async `PGEngine`) + raw SQL trigram fallback; **mock backend** = deterministic cosine over in-memory chunk [fallback when `RAG_VECTOR_BACKEND=mock`] |
+| 6 fusion | RRF in Python (pure) |
+| 7 rerank | `llama-3.1-8b-instant` listwise prompt (Groq); cross-encoder in v2 |
+| 8 context assembly | token-budget helper, MMR dedupe, citation ids S1..S8 |
+| 9 generation | `ChatGroq` (or `chat_openai` for OpenAI-compatible) streaming with the answer-contract `ChatPromptTemplate`; deterministic `MockChatModel` when `RAG_PROVIDER_MODE=mock` |
+| 11 trace | frames streamed to Spring; Spring persists (Python never writes trace rows) |
+
+> Version pins (2026-09): `langchain >= 1.0`, `langchain-postgres >= 0.1` (PGVectorStore),
+> `langchain-groq`, `langchain-google-genai` (embedding), `pgvector >= 0.7`,
+> Python 3.11/3.12, FastAPI, uvicorn. See `rag-assistant/pyproject.toml`.
+
 ## 2. Stage 0 — Request envelope
 
-Every answer is produced inside an explicit context object; nothing is inferred implicitly.
+Every answer is produced inside an explicit context object; nothing is inferred implicitly. The
+envelope travels from the Spring API to `rag-assistant` as JSON (`POST /v1/rag/chat`, service
+token, `X-RAG-Contract: 1`); the Python side rebuilds the same context as a pydantic model:
 
-```java
-public record RagRequestContext(
-    UUID conversationId, UUID messageId,
-    String locale,           // fr-FR | ar-TN | en-GB  (negotiated, see doc 06)
-    Channel channel,         // WEB_APP | WIDGET | AGENT_DESK | API
-    Audience audience,       // PUBLIC | AGENT | INTERNAL  ← derived from the JWT, never from the client
-    Principal principal,     // authenticated user or anonymous device id
-    Classification maxClassification, // highest data class allowed into retrieval
-    RetrievalConfig retrievalConfig,  // resolved ACTIVE config for the channel
-    PromptVersion prompt, ModelConfig model, ExperimentArm arm
-) {}
+```python
+class RagRequestContext(BaseModel):
+    conversation_id: UUID
+    message_id: UUID
+    locale: str                        # fr-FR | ar-TN | en-GB (negotiated, doc 06)
+    channel: str                       # WEB_APP | WIDGET | AGENT_DESK | API
+    audience: str                      # PUBLIC | AGENT | INTERNAL ← from server-side JWT mapping
+    max_classification: str            # highest data class allowed into retrieval
+    retrieval_config: dict             # ACTIVE config resolved by the server
+    prompt: dict | None                # prompt version if server pins one (else DB default)
+    model: dict | None                 # model routing if server pins one
+    history: list[dict]                # last ≤ 6 messages (server-truncated, redacted)
 ```
 
 `audience` and `maxClassification` come from the **server-side** authority mapping — a client can
@@ -334,9 +359,9 @@ flowchart LR
     CH --> NO[Normalise<br/>script-specific, see doc 03 §8]
     NO --> TR[Translate/align<br/>FR↔AR↔EN renderings, LLM-assisted, human-verified]
     TR --> EM[Embed<br/>batched RETRIEVAL_DOCUMENT + title=heading_path]
-    EM --> ST[Store<br/>chunk + chunk_embedding + tsv, searchable=false]
-    ST --> RV[Sharia review workflow<br/>doc 05]
-    RV --> PUB[Publish<br/>searchable=true, kb_epoch++, cache flush]
+    EM --> ST[POST /v1/rag/ingest/complete → Spring persists<br/>chunk + embedding + tsv, published=false, sharia_approved=false]
+    ST --> RV[Sharia review workflow<br/>doc 05 — Spring only]
+    RV --> PUB[Publish — single Spring transaction<br/>searchable=true, kb_epoch++, cache flush]
 ```
 
 **Chunking policy** (per content type — configurable in the backoffice):
@@ -357,7 +382,10 @@ rows, because the vector carries provenance.
 
 Embedding batches of 100 texts, `taskType=RETRIEVAL_DOCUMENT`, `title=heading_path[-1]`,
 `outputDimensionality=1536`, exponential backoff on 429, and a job-level progress record so a partial
-failure resumes rather than restarts.
+failure resumes rather than restarts. The worker itself is the Python service (langchain loaders +
+`RecursiveCharacterTextSplitter` / heading-aware splitter); the Spring API owns the `ingestion_job`
+rows and the final write (`/v1/rag/ingest/complete`), so the Sharia flags only ever move inside a
+Spring transaction.
 
 ## 16. Cost & latency model (per answer, defaults)
 
@@ -380,10 +408,34 @@ come from `token_usage` + `model_pricing` in the analytics dashboard, and the **
 (`model_config.daily_budget_usd`) starts degrading to the fast model at 80 % and to the cache/retrieval-only
 ladder at 100 %.
 
-## 17. Orchestrator (pseudocode)
+## 17. Orchestrator (pseudocode — `rag_assistant/api/chat.py`)
 
-```java
-public AnswerFlow answer(RagRequestContext ctx, String userText) {
+```python
+async def answer(ctx: RagRequestContext, user_text: str) -> AsyncIterator[Frame]:
+    lang = language_service.detect_and_normalise(user_text, ctx.locale)
+    intent = intent_classifier.classify(lang.normalized, ctx)          # stage 2
+    guard = guardrails.pre_filter(user_text, lang, intent, ctx)        # stage 3
+    if guard.blocked: yield refusal_frame(guard.refusal_code); return
+
+    cached = await cache.semantic_lookup(lang.normalized, ctx)         # §14
+    if cached: yield answer_frame(cached.with_flag("CACHED")); return
+
+    queries = query_transformer.expand(lang, intent, ctx.history)     # stage 4
+    vectors = await embedding_client.embed_queries(queries)
+    raw = await hybrid_retriever.search(vectors, queries, ctx)        # stage 5
+    fused = rrf_fuser.fuse(raw, ctx.retrieval_config)                 # stage 6
+    if fused.best_score < ctx.retrieval_config["min_score"]:
+        yield refusal_frame_with_sources(REF_05, fused.top_sources(3)); return
+
+    ranked = await reranker.rerank(lang, intent, fused.top(40))       # stage 7
+    context = context_assembler.assemble(ranked, ctx, lang.answer_lang)  # stage 8
+    checked = guardrails.post_filter(generator.stream(context, …), context, intent, ctx)  # 9+10
+    if checked.failed:
+        checked = guardrails.post_filter(generator.stream(context.stricter, …), …)
+        if checked.failed: yield refusal_with_sources(REF_05, context.sources); return
+    trace = await trace_client.persist(ctx, queries, raw, fused, ranked, context, checked)
+    yield answer_frame(checked.answer, disclaimers.for_locale(lang.answer_lang, intent))
+```
     var lang   = languageService.detectAndNormalise(userText, ctx.locale());
     var intent = intentClassifier.classify(lang.normalized(), ctx);        // stage 2
     var guard  = guardrails.preFilter(userText, lang, intent, ctx);        // stage 3

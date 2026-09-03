@@ -35,7 +35,7 @@ hexagonal layering inside each module and machine-enforced boundaries.
    audiences, security policies and release cadences.
 6. **Extraction seams are pre-planned**, in the order they would actually be needed:
    (a) ingestion worker → separate deployment (profile change only);
-   (b) `rag-core` → a retrieval service if latency isolation is needed;
+   (b) `rag-core` → a retrieval service if latency isolation is needed; **done 2026-09-03 — extracted as the Python `rag-assistant` service, see ADR-009**;
    (c) `analytics` → a separate read model over a replica. Each seam is a module boundary already, so
    extraction is a wiring change, not a refactor.
 
@@ -62,7 +62,7 @@ reviewable by the Sharia auditor's technical adviser; extraction stays possible.
 | One deployable = correlated failure | HA with ≥ 2 pods, health probes, graceful drain of SSE streams, workers separated by profile, kill switch |
 | Scaling is coarse | HPA on the API pods; worker pods scale on queue depth; Postgres reads offloaded to a replica |
 | Slow build as modules grow | Maven parallel builds (`-T1C`), module-level test slicing, build cache |
-| Team growth beyond ~12 engineers | Revisit: extract the worker and `rag-core` first, per the pre-planned seams |
+| Team growth beyond ~12 engineers | Revisit: scale the `rag-assistant` service and the worker, per the pre-planned seams (ADR-009) |
 
 **Follow-ups**: add the ArchUnit rule set in Phase 1 (it is cheaper to start with the rules than to
 retrofit them); record a future ADR if any module is extracted.

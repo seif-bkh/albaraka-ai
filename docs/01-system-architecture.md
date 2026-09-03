@@ -35,25 +35,24 @@ no account data, no credentials.
 ```mermaid
 flowchart LR
     subgraph FE["Frontend tier (Angular 22)"]
-        FO[frontoffice-web<br/>SPA + embeddable widget]
-        BO[backoffice-web<br/>admin SPA]
-        SH[(shared-ui<br/>shared-contracts libs)]
+        FO[apps/frontoffice-web<br/>SPA + embeddable widget]
+        BO[apps/backoffice-web<br/>admin SPA]
+        SH[(libs/shared-ui<br/>design system + contracts)]
     end
     subgraph EDGE["Edge"]
         NG[Nginx / API gateway<br/>TLS · WAF · rate limit · CORS]
     end
-    subgraph APP["Application tier — one Spring Boot deployable"]
-        BOOT[assistant-boot<br/>composition root]
-        M1[assistant-api]
-        M2[rag-core]
-        M3[knowledge]
-        M4[ingestion]
-        M5[governance]
-        M6[guardrails]
-        M7[identity]
-        M8[analytics]
-        M9[audit]
-        M10[assistant-infra<br/>LLM/embedding/vector adapters]
+    subgraph APP["Application tier — two services (ADR-009)"]
+        BOOT[server · assistant-boot<br/>Spring Boot 4.1 composition root]
+        M1[assistant-api<br/>REST + SSE · orchestration]
+        M5[governance · two-eyes · audit]
+        M3[knowledge · lifecycle · publish]
+        M7[identity · Keycloak JWT]
+        M9[analytics · cost · feedback]
+        RI[rag-assistant<br/>FastAPI + LangChain 1.x]
+        RP[pipeline · retrieval · rerank · generation]
+        RG[guard classifier · egress PII gate]
+        RW[ingestion worker · chunk + embed]
     end
     subgraph DATA["Data tier"]
         PG[(PostgreSQL 17<br/>pgvector · FTS · audit)]
@@ -70,52 +69,72 @@ flowchart LR
     FO --> NG
     BO --> NG
     NG --> BOOT
-    BOOT --> M1 --> M2 --> M6
-    M1 --> M8
-    M2 --> M10
-    M3 --> M10
-    M4 --> M10
-    M5 --> M3
-    M10 --> PG
-    M10 --> GQ
-    M10 --> GG
-    M4 --> S3
+    BOOT --> M1 --> M5 --> M3
+    M1 --> M9
+    M1 --"POST /v1/rag/chat (SSE)"--> RI
+    M3 --"POST /v1/rag/ingest (job)"--> RI
+    RI --> RP --> RG
+    RW --> RP
+    RG --> GQ
+    RG --> GG
+    RP --> PG
+    RW --> PG
+    RW --> S3
+    M3 --> PG
+    M5 --> PG
+    M9 --> PG
     M1 --> RD
     M7 --> KC
     BOOT --> OTEL
-    M9 --> PG
+    RI --> OTEL
 ```
 
-**Deployment units**: 2 static SPA bundles (frontoffice, backoffice) + 1 Spring Boot jar + Postgres
-+ Redis + object storage + Keycloak. That is deliberately few moving parts. Ingestion runs as an
-**async worker inside the same deployable** (Spring `@Async` + a DB-backed job queue) with a
-profile to split it out later if volume requires it.
+**Deployment units**: 2 static SPA bundles + 1 Spring Boot jar + 1 Python service (Uvicorn)
++ Postgres(pgvector) + Redis + object storage + Keycloak. The Python service is the **only**
+container that talks to Groq/Google — one egress point, one place where the PII gate lives
+(§7.4). Ingestion is a DB-backed job queue consumed by the Python worker (`FOR UPDATE SKIP LOCKED`),
+triggered by the Spring API; profiles can split the worker out later.
 
 ## 3. Module boundaries (component view)
 
-Maven modules; each is a hexagonal slice (`api` / `application` / `domain` / `infrastructure`).
+### 3.0 Service split at a glance
+
+| Concern | Spring `server` | Python `rag-assistant` |
+|---|---|---|
+| Auth, RBAC, MFA | ✅ Keycloak resource server | — |
+| Conversations, messages, traces, cost | ✅ owns tables | — |
+| KB lifecycle, publication, Sharia two-eyes | ✅ owns the flags | reads only |
+| Audit hash chain | ✅ | — |
+| Hybrid retrieval (pgvector + FTS), rerank, generation | — | ✅ LangChain |
+| Provider calls, egress PII gate, guard classification | — | ✅ single choke point |
+| SSE to the browser | ✅ proxies | ✅ produces frames |
+
+### 3.1 Maven modules (Spring)
+
 Modules communicate through **published interfaces only** — enforced by
-[ArchUnit](https://www.archunit.org/) tests in CI (see §9).
+[ArchUnit](https://www.archunit.org/) tests in CI:
 
 | Module | Responsibility | Owns tables | Must NOT |
 |---|---|---|---|
-| `assistant-api` | REST controllers, SSE endpoints, request validation, DTO mapping | — | Contain business rules or SQL |
+| `assistant-api` | REST controllers, SSE orchestration (calls RAG service), DTO mapping | — | Contain business rules or SQL |
 | `assistant-identity` | JWT validation, claims→authorities mapping, tenant/locale resolution | `user_preference` | Talk to Keycloak admin API from request threads |
-| `rag-core` | Query understanding, retrieval orchestration, reranking, context assembly, grounded generation | `retrieval_config`, `retrieval_trace`, `retrieval_candidate` | Read documents directly (goes through `knowledge`) |
-| `knowledge` | Documents, versions, chunks, translations, glossary, collections, publication state | `document`, `document_version`, `chunk`, `chunk_translation`, `term_glossary`, `collection` | Call an LLM |
-| `ingestion` | Connectors, parsing, chunking, normalisation, translation, embedding jobs, re-indexing | `ingestion_job`, `embedding_job` | Be invoked synchronously from a user request |
+| `knowledge` | Documents, versions, chunks, translations, glossary, collections, publication state | `document`, `document_version`, `chunk`, `chunk_translation`, `term_glossary`, `collection` | Call a model |
+| `ingestion` | Intake API, job queue (files → `ingestion_job`/`embedding_job`), re-index orchestration | `ingestion_job`, `embedding_job` | Parse content or embed (Python does) |
 | `governance` | Sharia review workflow, approvals, two-eyes enforcement, fatwa-request routing | `review_task`, `sharia_review`, `fatwa_request` | Publish content itself (it flips state, `knowledge` reacts) |
-| `guardrails` | Input/output moderation, injection detection, prohibited-topic policy, PII redaction, refusal taxonomy | `guardrail_policy`, `guardrail_event` | Be bypassable — every call path passes through it |
 | `analytics` | Metrics aggregation, feedback, QA queues, cost/token accounting, dashboards API | `feedback`, `conversation_metric`, `token_usage`, `eval_run` | Mutate knowledge |
 | `audit` | Append-only hash-chained event log, export for regulators/committee | `audit_event` | Update or delete a row (DB trigger forbids it) |
-| `assistant-infra` | Adapters: Groq chat, Google embeddings, pgvector store, object storage, cache, mail | — | Contain domain concepts |
+| `rag-client` | HTTP client for the internal RAG contract, SSE stream-through, degradation ladder | — | Contain RAG logic |
 
-### 3.1 Why a modular monolith
+Model adapters (Groq chat, Google embeddings, vector store) are **not** Maven modules anymore —
+they live in `rag_assistant` (ADR-009).
 
-See [ADR-005](adr/ADR-005-modular-monolith.md). Short version: one team, one deployable, one
-transaction boundary for "publish chunk + index vector + write audit" — which is exactly the
-invariant the Sharia gate depends on. Splitting into services would turn that invariant into a
-distributed-transaction problem for no v1 benefit.
+### 3.2 Why a modular monolith + one small service
+
+See [ADR-005](adr/ADR-005-modular-monolith.md) and [ADR-009](adr/ADR-009-python-rag-service.md).
+The Spring application stays a **modular monolith** (one transaction boundary for
+"publish chunk + flip index flag + write audit"), and exactly one **model-bound** concern is
+extracted into the Python service. Splitting the governance invariant itself into services is
+still rejected: the Sharia gate stays inside one transaction.
 
 ## 4. Runtime flows
 
@@ -126,45 +145,40 @@ sequenceDiagram
     autonumber
     participant U as Customer (AR)
     participant FE as frontoffice-web
-    participant GW as Gateway
-    participant API as assistant-api
-    participant GU as guardrails
-    participant RAG as rag-core
+    participant NG as Nginx
+    participant API as server · assistant-api
+    participant RAG as rag-assistant · LangChain
     participant PG as Postgres/pgvector
     participant EMB as Google embeddings
     participant LLM as Groq (Llama 3.3 70B)
 
     U->>FE: «شنيا الفرق بين المرابحة والإجارة؟»
-    FE->>GW: POST /api/v1/assistant/conversations/{id}/messages (SSE)
-    GW->>API: JWT (optional for anonymous) + locale=ar-TN
-    API->>GU: preFilter(text)
-    GU->>LLM: prompt-guard-2-86m (injection) + llama-guard-4-12b (safety)
-    LLM-->>GU: safe
-    GU-->>API: PASS (+ normalised text)
-    API->>RAG: answer(query, context)
+    FE->>NG: POST /api/v1/assistant/conversations/{id}/messages (SSE)
+    NG->>API: JWT (optional for anonymous) + locale=ar-TN
+    API->>API: persist user message (FK idempotency) + pre-filter REF-01/04
+    API->>RAG: POST /v1/rag/chat — SSE, service token, X-RAG-Contract: 1
     RAG->>RAG: detect language → ar; classify intent → PRODUCT_COMPARISON
     RAG->>RAG: normalise Derja→MSA, strip diacritics, expand glossary synonyms
     RAG->>EMB: embed(query, taskType=RETRIEVAL_QUERY, dim=1536)
     EMB-->>RAG: vector
-    RAG->>PG: hybrid search — HNSW cosine + FTS tsquery + trigram, filtered by<br/>status=PUBLISHED AND sharia_approved AND audience IN (PUBLIC,AGENT)
+    RAG->>PG: hybrid search — HNSW cosine + FTS tsquery + trigram, filtered by<br/>published AND sharia_approved AND audience IN (PUBLIC,AGENT)
     PG-->>RAG: 40 candidates with scores
     RAG->>LLM: listwise rerank (llama-3.1-8b-instant, JSON output)
     LLM-->>RAG: ordered top-8
     RAG->>RAG: assemble context ≤ token budget, dedupe, attach citation ids [S1..S8]
+    RAG->>RAG: egress PII gate (redact payload → llm_call log entry)
     RAG->>LLM: chat completion, stream=true, structured answer contract
     LLM-->>RAG: tokens…
-    RAG->>GU: postFilter(answer, sources)
-    GU->>GU: grounding check · Sharia policy classifier · numeric-claim validator · PII scan
-    GU-->>RAG: PASS
-    RAG-->>API: answer + citations + confidence + disclaimer
-    API-->>FE: SSE events: token*, sources, done
+    RAG->>RAG: post-filter (grounding · Sharia policy · numeric validator) → REF-05 if failed
+    RAG-->>API: SSE frames: status*, sources, token*, answer|refusal|error, done
+    API->>PG: persist message, retrieval_trace, candidates, cost
+    API-->>FE: SSE frames forwarded 1:1 (same vocabulary)
     FE-->>U: RTL-rendered answer with clickable sources
-    API->>PG: persist conversation, message, retrieval_trace, token_usage
 ```
 
-**Latency budget** (P95): guard pre-filter 250 ms · embedding 200 ms · hybrid search 60 ms ·
-rerank 400 ms · first token 700 ms · full answer 2.5 s → **< 3 s perceived**. Cached questions
-(short-TTL semantic cache) skip embedding+retrieval and answer in < 800 ms.
+**Latency budget** (P95): internal hop ~3 ms · guard pre-filter 250 ms · embedding 200 ms ·
+hybrid search 60 ms · rerank 400 ms · first token 700 ms · full answer 2.5 s → **< 3 s perceived**.
+Cached questions (short-TTL semantic cache) skip embedding+retrieval and answer in < 800 ms.
 
 ### 4.2 Refusal / out-of-scope path
 
@@ -196,31 +210,32 @@ sequenceDiagram
     autonumber
     participant ED as KB editor
     participant BO as backoffice-web
-    participant API as admin-api
-    participant KN as knowledge
-    participant IN as ingestion
+    participant API as server · knowledge/ingestion
+    participant RW as rag-assistant · ingestion worker
     participant GG as Google embeddings
     participant SO as Sharia officer
     participant AU as audit
 
     ED->>BO: upload product sheet (PDF, FR)
     BO->>API: POST /admin/documents (multipart)
-    API->>KN: create document v1 (state=DRAFT)
-    KN->>IN: enqueue ingestion_job
-    IN->>IN: parse → clean → chunk (semantic, 400-700 tokens, 15% overlap)
-    IN->>IN: normalise + light-stem (AR/FR) → tsv tokens
-    IN->>GG: embed chunks (RETRIEVAL_DOCUMENT, title=heading)
-    GG-->>IN: vectors
-    IN->>GG: translate/align renderings AR + EN (LLM-assisted, human-verified)
-    IN->>KN: persist chunks + translations + vectors (not retrievable yet)
+    API->>API: create document v1 (state=DRAFT) + enqueue ingestion_job
+    RW->>API: poll ingestion_job (FOR UPDATE SKIP LOCKED)
+    API-->>RW: job payload
+    RW->>RW: parse → clean → chunk (semantic, 400-700 tokens, 15% overlap)
+    RW->>RW: normalise + light-stem (AR/FR) → tsv tokens
+    RW->>GG: embed chunks (RETRIEVAL_DOCUMENT, title=heading)
+    GG-->>RW: vectors
+    RW->>RW: translate/align renderings AR + EN (LLM-assisted, human-verified)
+    RW->>API: POST /v1/rag/ingest/complete — chunks + vectors (published=false, sharia_approved=false)
+    API->>API: persist chunks + translations + vectors (not retrievable yet)
     ED->>BO: submit for review
     BO->>API: POST /admin/reviews
     API->>SO: assign review_task (SLA 5 business days)
     SO->>BO: approve / request changes (per chunk possible)
     BO->>API: POST /admin/reviews/{id}/decision
-    API->>KN: state → SHARIA_APPROVED → PUBLISHED
+    API->>API: state → SHARIA_APPROVED → PUBLISHED (single transaction: flags + audit)
     API->>AU: audit_event (hash-chained, actor, before/after, decision reason)
-    Note over KN: chunks become visible to retrieval atomically<br/>(single transaction: state + index flag)
+    Note over API: chunks become visible to retrieval atomically<br/>(single transaction: state + index flag)
     API-->>BO: run evaluation gate on affected intents
 ```
 
@@ -242,14 +257,16 @@ flowchart LR
     H -->|red| J[Auto-rollback to v(n)<br/>incident recorded]
 ```
 
-## 5. Backend layering (package convention)
+## 5. Backend layering
+
+### 5.1 Java (each Maven module)
 
 ```
 tn.albaraka.ai.<module>
 ├── api            ← controllers, DTOs, mappers (inbound adapters)
 ├── application    ← use cases / services, transactions, ports
 ├── domain         ← entities, value objects, invariants (no Spring, no JPA)
-└── infrastructure ← JPA repositories, LLM clients, caches (outbound adapters)
+└── infrastructure ← JDBC repositories, HTTP clients, caches (outbound adapters)
 ```
 
 Rules enforced by ArchUnit:
@@ -257,31 +274,43 @@ Rules enforced by ArchUnit:
 * `api` never touches `infrastructure`.
 * No module imports another module's `infrastructure` or `domain` — only its `api` interfaces
   (exposed as `tn.albaraka.ai.<module>.spi`).
-* All outbound HTTP goes through `assistant-infra` clients (so egress logging, PII gate, retries,
-  circuit breakers and cost accounting are in exactly one place).
+* All outbound HTTP goes through `rag-client` (service token, retries, circuit breaker, budget
+  accounting in one place). The **only** outbound LLM/embedding traffic is in `rag-assistant`.
+
+### 5.2 Python (`rag_assistant` package)
+
+```
+rag_assistant/
+├── api            ← FastAPI routers (health, chat SSE, ingest, ingest/complete)
+├── pipeline       ← LangChain chain: normalise → hybrid retriever → rerank → prompt → generation
+├── retrieval      ← PGVectorStore + hybrid SQL (vector, tsvector, trigram), mock fallback
+├── guardrails     ← REF-01/03/04/05 classification, PII regex, egress gate, redaction
+├── providers      ← ChatGroq / GoogleEmbeddings / deterministic Mock* fallbacks
+└── config         ← pydantic-settings
+```
 
 ## 6. Frontend architecture
 
-Two Angular applications sharing two libraries:
+One Angular 22 workspace (`apps/`) with two applications and one shared library:
 
 ```
 apps/frontoffice-web   ← chat experience, widget entry point, public KB search
 apps/backoffice-web    ← admin console (lazy-loaded feature routes)
-libs/shared-ui         ← chat bubble, source card, locale switcher, RTL layout shell,
-                          accessible data table, approval stepper
-libs/shared-contracts  ← TypeScript types generated from specs/openapi.yaml (+ Api client)
+apps/shared-ui         ← chat bubble, source card, locale switcher, RTL layout shell,
+                          accessible data table, approval stepper + trilingual dictionary
 ```
 
 * **Standalone components only**, signal-based state, `OnPush`/zoneless (Angular 22 default).
 * **State**: signals + a thin store per feature; RxJS only for HTTP/SSE streams.
 * **SSE**: `fetch` + `ReadableStream` (native `EventSource` cannot POST) wrapped in a
   `ChatStreamService` exposing a signal of partial tokens.
-* **i18n**: runtime locale loading with `dir` switching through Angular CDK `BidiModule`
-  (see [`06-i18n-trilingual-rtl.md`](06-i18n-trilingual-rtl.md)).
-* **Auth**: `angular-auth-oidc-client`-style PKCE flow against Keycloak; frontoffice allows
-  anonymous use with an ephemeral device id, backoffice requires authentication + MFA.
-* **Design system**: Angular Material + Angular ARIA (stable in v22) with an Al Baraka theme
-  (green/gold palette, Arabic-first typography).
+* **i18n**: runtime locale loading with `dir` switching through the `shared-ui` dictionary and
+  `<html lang/dir>` (see [`06-i18n-trilingual-rtl.md`](06-i18n-trilingual-rtl.md)).
+* **Auth**: Keycloak OIDC PKCE (backoffice requires MFA). Frontoffice allows anonymous use with
+  an ephemeral device id; in the local demo profile, a dev login endpoint stands in for Keycloak
+  (see `server/README.md`).
+* **Design system**: custom Al Baraka theme (green/gold palette, Arabic-first typography) in
+  `shared-ui` — no Material dependency in the demo build.
 
 ## 7. Cross-cutting concerns
 
@@ -308,12 +337,16 @@ step 4/5 is an alert.
 * Ingestion jobs use `SELECT … FOR UPDATE SKIP LOCKED` on the job table (no external broker in v1).
 * Optimistic locking (`@Version`) on `document_version`, `prompt_version`, `retrieval_config`.
 
-### 7.4 Egress data-protection gate (single choke point)
-All outbound calls to Groq/Google pass `EgressGuard`:
+### 7.4 Egress data-protection gate (single choke point — lives in `rag-assistant`)
+
+The Python service is the **only** process that can reach Groq/Google, so the `EgressGuard`
+implemented there is the single choke point. The Spring side never sends provider-bound payloads
+(the internal contract only ever carries `PUBLIC`/`INTERNAL` content and a service token):
 1. PII detection (regex + NER for CIN, phone, RIB/IBAN, account numbers, email, address, name patterns).
-2. Redaction with reversible tokens (`⟦PII_1⟧`) kept only in server memory for the request duration.
+2. Redaction with reversible tokens (`⟦PII_1⟧`) kept only in service memory for the request duration.
 3. Payload size and content-class check (`PUBLIC` / `INTERNAL` only — never `CONFIDENTIAL`).
-4. Full request/response logging **with the redacted payload** to `llm_call_log` for cost & audit.
+4. Request/response logging **with the redacted payload** to `llm_call_log` (via Spring, which owns
+   the table) for cost & audit.
 5. Kill switch: a single config flag routes everything to the on-prem profile (§ ADR-002) or to
    the degradation ladder.
 

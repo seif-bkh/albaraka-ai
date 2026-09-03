@@ -83,13 +83,15 @@ flowchart LR
     end
     KC[Keycloak<br/>OIDC IdP]
     subgraph Backend["Spring Boot modular monolith"]
-        API[assistant-api<br/>REST + SSE]
-        RG[rag-core<br/>retrieve · rerank · assemble]
-        GR[guardrails<br/>in/out policy]
-        KN[knowledge<br/>documents · chunks]
-        IN[ingestion<br/>parse · chunk · translate · embed]
+        API[assistant-api<br/>REST + SSE orchestration]
+        KN[knowledge<br/>documents · chunks · publish]
         GV[governance<br/>sharia review workflow]
         AN[analytics + audit]
+    end
+    subgraph RAGSVC["rag-assistant · Python (ADR-009)"]
+        RG[LangChain pipeline<br/>retrieve · rerank · generate]
+        GR[guardrails + egress PII gate]
+        IN[ingestion worker<br/>parse · chunk · embed]
     end
     PG[(PostgreSQL 17<br/>pgvector + FTS + audit)]
     S3[(Object storage<br/>originals)]

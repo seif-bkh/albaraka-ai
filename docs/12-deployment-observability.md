@@ -41,8 +41,12 @@ flowchart TB
     NG --> FE2[backoffice-web<br/>static, 2 pods]
     NG --> API1[assistant-boot<br/>pod A]
     NG --> API2[assistant-boot<br/>pod B]
-    API1 --> WK[worker pool<br/>ingestion/embedding<br/>2 pods, same image,<br/>profile=worker]
-    API1 --> PG[(PostgreSQL 17<br/>primary + streaming replica<br/>pgvector 0.8.1)]
+    API1 --> RAG1[rag-assistant<br/>2 pods — the ONLY egress to Groq/Google]
+    API2 --> RAG2[rag-assistant<br/>pod B]
+    API1 --> WK[worker<br/>ingestion/embedding<br/>2 pods, rag-assistant image,<br/>profile=worker]
+    RAG1 --> PG[(PostgreSQL 17<br/>primary + streaming replica<br/>pgvector 0.8.1)]
+    RAG2 --> PG
+    API1 --> PG
     API2 --> PG
     WK --> PG
     API1 --> RD[(Redis<br/>cache · rate limit · pubsub)]
@@ -50,9 +54,12 @@ flowchart TB
     WK --> S3[(S3/MinIO<br/>originals · WORM audit head)]
     API1 --> KC[Keycloak<br/>2 pods, HA, JDBC-ping]
     KC --> KCPG[(Keycloak DB)]
-    API1 --> GQ[Groq]
+    RAG1 --> GQ[Groq]
+    RAG2 --> GQ
     WK --> GG[Google GenAI]
+    RAG1 --> GG
     API1 -.OTLP.-> COL[OTel collector]
+    RAG1 -.OTLP.-> COL
     COL --> TEMPO[Tempo traces]
     COL --> PROM[Prometheus]
     COL --> LOKI[Loki logs]
@@ -62,31 +69,46 @@ flowchart TB
     GRAF --> ALERT[Alertmanager → email/Teams/SMS]
 ```
 
-* Same image for `api` and `worker`, different Spring profiles (`--spring.profiles.active=prod,worker`)
-  — workers don't serve HTTP traffic and can be scaled independently.
+* **RAG egress is a single choke point**: `rag-assistant` pods are the only containers holding
+  `GROQ_API_KEY`/`GOOGLE_API_KEY`. The Spring API talks to them over the internal contract
+  (docs/08 §8) with a service token.
+* `api` (Spring) and `worker` (Python) are **different images** now; the Python image runs the
+  same package with `RAG_ROLE=worker` to consume `ingestion_job`.
 * PostgreSQL primary/replica: reads for analytics and admin lists go to the replica; retrieval reads
   stay on the primary for consistency with the `searchable` gate.
 * Keycloak runs in HA mode (`jdbc-ping` transport stack, default since 26.1) with persistent user
   sessions enabled.
 
-### 2.2 Development (docker-compose)
+### 2.2 Local run (docker-compose — what you get on your host)
 
-[`deploy/docker-compose.yml`](../deploy/docker-compose.yml): `postgres` (pgvector image), `redis`,
-`keycloak` (with the imported realm), `minio`, `server` (Spring Boot), `frontoffice-web`,
-`backoffice-web`, `nginx`. A `mock` profile boots the server without provider keys.
+[`deploy/docker-compose.yml`](../deploy/docker-compose.yml) runs the **full application**:
+
+| Service | Image/build | Port (host) | Notes |
+|---|---|---|---|
+| `postgres` | `pgvector/pgvector:pg17` | 5433 | init scripts + Flyway schema/seeds |
+| `redis` | `redis:7-alpine` | — | cache, rate-limit, locks |
+| `keycloak` | `quay.io/keycloak/keycloak:26.2` | 8081 | realm import, MFA structural |
+| `minio` | `quay.io/minio/minio` (pinned) | 9000/9001 | document originals (optional profile) |
+| `rag-assistant` | `rag-assistant.Dockerfile` | 8000 (internal) | FastAPI + LangChain; `RAG_PROVIDER_MODE=mock` default |
+| `server` | `server.Dockerfile` (Maven multi-stage) | 8080 | Spring Boot; Flyway + demos |
+| `web` | `web.Dockerfile` (Angular build → nginx) | 3000 | serves both SPAs + proxies `/api` |
+
+`RAG_PROVIDER_MODE=mock` + empty `GROQ_API_KEY`/`GOOGLE_API_KEY` gives a fully working demo
+without any paid API. Set the keys and `mode=live` to use real models.
 
 ## 3. Images & build
 
 | Aspect | Decision |
 |---|---|
-| Base image | `eclipse-temurin:21-jre` (or distroless `gcr.io/distroless/java21`) — non-root, no shell in prod |
-| Build | Multi-stage: Maven build in a `maven:3.9-eclipse-temurin-21` stage, layered jar extraction for cache-friendly layers |
-| Angular | `node:22-alpine` build → nginx:alpine static serve |
+| Server base image | `eclipse-temurin:21-jre` (or distroless `gcr.io/distroless/java21`) — non-root, no shell in prod |
+| Server build | Multi-stage: Maven build in a `maven:3.9-eclipse-temurin-21` stage, layered jar extraction for cache-friendly layers |
+| RAG base image | `python:3.12-slim`; deps via `pip` (lockfile) — non-root, `uvicorn --workers 2` |
+| Angular | `node:22-alpine` build → `nginx:alpine` static serve (both SPAs, `/api` proxy) |
 | SBOM | CycloneDX generated per build, stored as an artifact |
 | Signing | cosign keyless (or the bank's registry keys) |
 | Scanning | Trivy on every image; HIGH/CRITICAL blocks the push to `prod` registry |
 | Tags | immutable: `git-sha` + semantic version; `latest` only on `dev` |
-| Size targets | server ≤ 350 MB, web ≤ 40 MB |
+| Size targets | server ≤ 350 MB, web ≤ 40 MB, rag-assistant ≤ 900 MB (dev deps kept out) |
 
 ## 4. Configuration & secrets
 

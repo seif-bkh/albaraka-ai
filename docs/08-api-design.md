@@ -258,7 +258,58 @@ group names that Phase 1 maps to `@EventListener` beans.
 | Ingestion uploads | 20 files/hour per user, 10 MB each, 500 MB/day | `429` / `413` |
 | Provider budget | `model_config.daily_budget_usd` | degradation ladder, then `503 PROVIDER.BUDGET_EXHAUSTED` |
 
-## 8. Compatibility & deprecation policy
+## 8. Internal RAG contract (`server` ⇄ `rag-assistant`, ADR-009)
+
+Not public, not browser-visible. Documented here so both sides can be contract-tested in CI
+(`tools/compose-lint`-style gates + pytest fixtures). Versioned by header, not by path.
+
+### 8.1 Envelope
+
+| | |
+|---|---|
+| Base URL | `RAG_BASE_URL` (default `http://rag-assistant:8000`) |
+| Auth | `Authorization: Bearer <service token>` — HMAC-SHA256 of the body + timestamp, shared secret `RAG_SERVICE_TOKEN`, TTL 60 s |
+| Versioning | `X-RAG-Contract: 1` |
+| Correlation | `X-Correlation-Id` forwarded (same value as the public API) |
+
+### 8.2 Endpoints
+
+| Method/Path | Purpose | Request | Response |
+|---|---|---|---|
+| `GET /v1/rag/health` | liveness + backend mode (`mock`/`live`) + pgvector reachability | — | `{status, mode, vector_backend, model}` |
+| `POST /v1/rag/chat` | run the 11-stage pipeline, **SSE** | `RagRequestContext` + `{text, locale, …}` (docs/04 §2) | stream of frames below |
+| `POST /v1/rag/ingest` | validate/parse + chunk + embed a document job | `{ingestion_job_id, doc_id, version_id, source_ref, content}` | `{ok, chunks, state: RUNNING}` |
+| `POST /v1/rag/ingest/complete` | worker hands chunks (vectors included) back to Spring | `{job_id, chunks:[…]}` | Spring persists rows (`published=false, sharia_approved=false`) |
+
+### 8.3 SSE frame vocabulary (internal chat)
+
+Identical names to the public grammar (§3.1) so the Spring side can forward without
+re-marshalling; the Spring route adds only persistence:
+
+```
+event: accepted   {messageId, conversationId, locale, dir}
+event: status     {stage, label, locale}
+event: sources    {citations:[Citation]}
+event: token      {delta}
+event: answer     {messageId, answerMarkdown, language, dir, confidence, usedSources,
+                   citations:[Citation], caveats, disclaimers, needsHuman, cached,
+                   models:{chat, reranker, degradationStep}, latencyMs, ttftMs}
+event: refusal    {messageId, refusalCode, title, body, locale, sources:[Citation],
+                   fatwaRequestRef, handoffAvailable}
+event: error      {code, retryAfterMs, degradationStep}
+event: done       (terminal, always last)
+```
+
+### 8.4 Failure contract
+
+| Case | Python emits | Spring maps to |
+|---|---|---|
+| RAG service unreachable / timeout | — | degradation ladder step 3–5 (doc 01 §7.2) + `error` frame retryable |
+| Contract mismatch (`X-RAG-Contract` unknown) | HTTP 406 + `error` | `RAG.SERVICE_UNSUPPORTED` 502 |
+| Refusal REF-01/03/04/05 | `refusal` frame + `done` | forwarded unchanged; Spring persists `guardrail_event` |
+| Provider budget exhausted | `error{code: PROVIDER.BUDGET_EXHAUSTED}` | forwarded + admin alert |
+
+## 9. Compatibility & deprecation policy
 
 1. **Additive** changes (new optional field, new endpoint, new enum value) ship without a version bump;
    clients must ignore unknown fields (enforced by generated clients).
