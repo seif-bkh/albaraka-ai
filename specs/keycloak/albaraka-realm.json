@@ -1,0 +1,886 @@
+{
+  "realm": "albaraka",
+  "enabled": true,
+  "displayName": "Al Baraka Bank — Assistant Al-Mouchir",
+  "displayNameHtml": "<strong>Al Baraka Bank</strong> — Assistant Al-Mouchir",
+  "sslRequired": "external",
+  "registrationAllowed": false,
+  "registrationEmailAsUsername": false,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": false,
+  "editUsernameAllowed": false,
+  "rememberMe": false,
+  "verifyEmail": true,
+  "loginTheme": "albaraka",
+  "accountTheme": "keycloak",
+  "adminTheme": "keycloak",
+  "emailTheme": "albaraka",
+  "internationalizationEnabled": true,
+  "supportedLocales": [
+    "fr",
+    "ar",
+    "en"
+  ],
+  "defaultLocale": "fr",
+  "accessCodeLifespan": 60,
+  "accessCodeLifespanUserAction": 300,
+  "accessCodeLifespanLogin": 1800,
+  "actionTokenGeneratedByAdminLifespan": 43200,
+  "actionTokenGeneratedByUserLifespan": 300,
+  "accessTokenLifespan": 300,
+  "accessTokenLifespanForImplicitFlow": 900,
+  "ssoSessionIdleTimeout": 1800,
+  "ssoSessionMaxLifespan": 28800,
+  "ssoSessionIdleTimeoutRememberMe": 0,
+  "ssoSessionMaxLifespanRememberMe": 0,
+  "offlineSessionIdleTimeout": 2592000,
+  "offlineSessionMaxLifespanEnabled": false,
+  "clientSessionIdleTimeout": 0,
+  "clientSessionMaxLifespan": 0,
+  "clientOfflineSessionIdleTimeout": 0,
+  "clientOfflineSessionMaxLifespan": 0,
+  "revokeRefreshToken": true,
+  "refreshTokenMaxReuse": 1,
+  "defaultSignatureAlgorithm": "PS256",
+  "bruteForceProtected": true,
+  "permanentLockout": true,
+  "maxFailureWaitSeconds": 900,
+  "minimumQuickLoginWaitSeconds": 60,
+  "waitIncrementSeconds": 60,
+  "quickLoginCheckMilliSeconds": 1000,
+  "maxDeltaTimeSeconds": 43200,
+  "failureFactor": 10,
+  "otpPolicyType": "totp",
+  "otpPolicyAlgorithm": "HmacSHA256",
+  "otpPolicyInitialCounter": 0,
+  "otpPolicyDigits": 6,
+  "otpPolicyLookAheadWindow": 1,
+  "otpPolicyPeriod": 30,
+  "otpPolicyCodeReusable": false,
+  "webAuthnPolicyRpEntityName": "Al Baraka Bank",
+  "webAuthnPolicySignatureAlgorithms": [
+    "ES256",
+    "RS256"
+  ],
+  "webAuthnPolicyRpId": "",
+  "webAuthnPolicyAttestationConveyancePreference": "not specified",
+  "webAuthnPolicyAuthenticatorAttachment": "not specified",
+  "webAuthnPolicyRequireResidentKey": "not specified",
+  "webAuthnPolicyUserVerificationRequirement": "required",
+  "webAuthnPolicyCreateTimeout": 0,
+  "webAuthnPolicyAvoidSameAuthenticatorRegister": true,
+  "parRequestUriLifespan": 60,
+  "adminPermissionsEnabled": false,
+  "organizationEnabled": false,
+  "clientPoliciesPolicies": {
+    "policies": [
+      {
+        "name": "pkce-s256-for-all-public-clients",
+        "description": "Every public client must present a PKCE code challenge hashed with S256. Plain is refused.",
+        "enabled": true,
+        "conditions": [
+          {
+            "condition": "client-scopes",
+            "configuration": {
+              "scope": "pkce-enforced"
+            }
+          }
+        ],
+        "profiles": [
+          "pkce-s256"
+        ]
+      },
+      {
+        "name": "token-exchange-disabled",
+        "description": "Standard token exchange stays off: it is a recurring CVE surface and no use case needs it (docs/07 §2.3).",
+        "enabled": true,
+        "conditions": [
+          {
+            "condition": "client-scopes",
+            "configuration": {
+              "scope": "token-exchange-denied"
+            }
+          }
+        ],
+        "profiles": [
+          "token-exchange-off"
+        ]
+      }
+    ]
+  },
+  "clientProfiles": {
+    "profiles": [
+      {
+        "name": "pkce-s256",
+        "description": "Force S256 code challenge method.",
+        "executors": [
+          {
+            "executor": "pkce",
+            "configuration": {
+              "attribute.name": "pkce.code.challenge.method",
+              "pkce.code.challenge.method": "S256"
+            }
+          }
+        ]
+      },
+      {
+        "name": "token-exchange-off",
+        "description": "No executor: the profile exists so the policy above has something to attach to. Token exchange is disabled realm-wide by never granting the `token-exchange` scope.",
+        "executors": []
+      }
+    ]
+  },
+  "roles": {
+    "realm": [
+      {
+        "name": "customer",
+        "description": "Authenticated retail or corporate customer. Grants no backoffice access and PUBLIC-audience retrieval only. Assigned by default.",
+        "composite": false,
+        "clientRole": false,
+        "attributes": {
+          "audience": [
+            "PUBLIC"
+          ],
+          "maxClassification": [
+            "PUBLIC"
+          ],
+          "mfaRequired": [
+            "false"
+          ]
+        }
+      },
+      {
+        "name": "branch-agent",
+        "description": "Branch advisor. Sees AGENT-audience knowledge; may open an agent-desk session on behalf of a customer. MFA recommended.",
+        "composite": false,
+        "clientRole": false,
+        "attributes": {
+          "audience": [
+            "AGENT"
+          ],
+          "maxClassification": [
+            "INTERNAL"
+          ],
+          "mfaRequired": [
+            "false"
+          ]
+        }
+      },
+      {
+        "name": "kb-editor",
+        "description": "Submits knowledge-base content and microcopy. Cannot approve own submission (guarantee G3a in schema_test.sql). MFA recommended.",
+        "composite": false,
+        "clientRole": false,
+        "attributes": {
+          "audience": [
+            "INTERNAL"
+          ],
+          "maxClassification": [
+            "INTERNAL"
+          ],
+          "mfaRequired": [
+            "false"
+          ]
+        }
+      },
+      {
+        "name": "sharia-officer",
+        "description": "Member of the Islamic Banking Standards Compliance Committee. Sole authority to grant sharia_approved; required for every T3 review. MFA mandatory.",
+        "composite": false,
+        "clientRole": false,
+        "attributes": {
+          "audience": [
+            "INTERNAL"
+          ],
+          "maxClassification": [
+            "RESTRICTED"
+          ],
+          "mfaRequired": [
+            "true"
+          ]
+        }
+      },
+      {
+        "name": "sharia-auditor",
+        "description": "Independent Sharia audit function (BCT circular 2021-05 art. 58). Read-only on content, full read on audit_event and evidence packs. MFA mandatory.",
+        "composite": false,
+        "clientRole": false,
+        "attributes": {
+          "audience": [
+            "INTERNAL"
+          ],
+          "maxClassification": [
+            "RESTRICTED"
+          ],
+          "mfaRequired": [
+            "true"
+          ]
+        }
+      },
+      {
+        "name": "compliance",
+        "description": "Compliance officer. Approves T2/T3 reviews alongside the Sharia officer; owns prohibited-topic lexicons and kill-switch second approval. MFA mandatory.",
+        "composite": false,
+        "clientRole": false,
+        "attributes": {
+          "audience": [
+            "INTERNAL"
+          ],
+          "maxClassification": [
+            "INTERNAL"
+          ],
+          "mfaRequired": [
+            "true"
+          ]
+        }
+      },
+      {
+        "name": "ai-engineer",
+        "description": "Edits prompts, retrieval parameters, model routing and guardrail policies; runs evaluations. Cannot approve Sharia-sensitive content. MFA mandatory.",
+        "composite": false,
+        "clientRole": false,
+        "attributes": {
+          "audience": [
+            "INTERNAL"
+          ],
+          "maxClassification": [
+            "INTERNAL"
+          ],
+          "mfaRequired": [
+            "true"
+          ]
+        }
+      },
+      {
+        "name": "analyst",
+        "description": "Reads analytics, triages feedback, curates the golden set. No write access to prompts or knowledge. MFA mandatory.",
+        "composite": false,
+        "clientRole": false,
+        "attributes": {
+          "audience": [
+            "INTERNAL"
+          ],
+          "maxClassification": [
+            "INTERNAL"
+          ],
+          "mfaRequired": [
+            "true"
+          ]
+        }
+      },
+      {
+        "name": "platform-admin",
+        "description": "Operates the platform: releases, kill switch, configuration promotion. Second approver for kill-switch activation. MFA mandatory.",
+        "composite": false,
+        "clientRole": false,
+        "attributes": {
+          "audience": [
+            "INTERNAL"
+          ],
+          "maxClassification": [
+            "INTERNAL"
+          ],
+          "mfaRequired": [
+            "true"
+          ]
+        }
+      }
+    ],
+    "client": {
+      "albaraka-assistant-service": [
+        {
+          "name": "ingestion-worker",
+          "description": "Scoped service-account role: ingest, chunk, embed and submit for review. No approval right.",
+          "composite": false,
+          "clientRole": true,
+          "attributes": {}
+        },
+        {
+          "name": "eval-runner",
+          "description": "Scoped service-account role: start and read evaluation runs. No write access to knowledge or prompts.",
+          "composite": false,
+          "clientRole": true,
+          "attributes": {}
+        },
+        {
+          "name": "analytics-reader",
+          "description": "Scoped service-account role: read aggregated analytics and KPI views only.",
+          "composite": false,
+          "clientRole": true,
+          "attributes": {}
+        }
+      ]
+    }
+  },
+  "defaultRole": {
+    "name": "default-roles-albaraka",
+    "description": "Every authenticated user of the realm. Grants customer and nothing more; higher authorities come from group membership.",
+    "composite": true,
+    "composites": {
+      "realm": [
+        "customer"
+      ]
+    },
+    "clientRole": false,
+    "attributes": {}
+  },
+  "groups": [
+    {
+      "name": "direction-digitale",
+      "path": "/direction-digitale",
+      "subGroups": [],
+      "attributes": {
+        "audience": [
+          "INTERNAL"
+        ],
+        "maxClassification": [
+          "INTERNAL"
+        ],
+        "costCentre": [
+          "DD-01"
+        ]
+      },
+      "realmRoles": [
+        "kb-editor",
+        "ai-engineer",
+        "analyst",
+        "platform-admin"
+      ],
+      "clientRoles": {}
+    },
+    {
+      "name": "conformite",
+      "path": "/conformite",
+      "subGroups": [],
+      "attributes": {
+        "audience": [
+          "INTERNAL"
+        ],
+        "maxClassification": [
+          "INTERNAL"
+        ],
+        "costCentre": [
+          "CF-01"
+        ]
+      },
+      "realmRoles": [
+        "compliance",
+        "sharia-auditor"
+      ],
+      "clientRoles": {}
+    },
+    {
+      "name": "comite-charia",
+      "path": "/comite-charia",
+      "subGroups": [],
+      "attributes": {
+        "audience": [
+          "INTERNAL"
+        ],
+        "maxClassification": [
+          "RESTRICTED"
+        ],
+        "costCentre": [
+          "CC-01"
+        ],
+        "quorumT3": [
+          "true"
+        ]
+      },
+      "realmRoles": [
+        "sharia-officer"
+      ],
+      "clientRoles": {}
+    },
+    {
+      "name": "reseau-agences",
+      "path": "/reseau-agences",
+      "subGroups": [],
+      "attributes": {
+        "audience": [
+          "AGENT"
+        ],
+        "maxClassification": [
+          "INTERNAL"
+        ],
+        "costCentre": [
+          "RA-01"
+        ]
+      },
+      "realmRoles": [
+        "branch-agent"
+      ],
+      "clientRoles": {}
+    }
+  ],
+  "clients": [
+    {
+      "clientId": "albaraka-assistant-web",
+      "name": "Assistant Al-Mouchir — frontoffice web",
+      "description": "Customer chat application. Authorization Code + PKCE (S256), short-lived tokens, rotating refresh.",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "bearerOnly": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "frontchannelLogout": true,
+      "fullScopeAllowed": false,
+      "consentRequired": false,
+      "rootUrl": "${FRONTOFFICE_URL}",
+      "baseUrl": "/chat",
+      "redirectUris": [
+        "/chat/*",
+        "/silent-refresh.html"
+      ],
+      "webOrigins": [
+        "+"
+      ],
+      "notBefore": 0,
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "+",
+        "access.token.lifespan": "300",
+        "client.session.idle.timeout": "1800",
+        "client.session.max.lifespan": "28800",
+        "use.refresh.tokens": "true",
+        "tls.client.certificate.bound.access.tokens": "false",
+        "require.pushed.authorization.requests": "false"
+      },
+      "protocolMappers": [
+        {
+          "name": "aud-assistant-api",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "albaraka-assistant-api",
+            "id.token.claim": "false",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "false"
+          }
+        },
+        {
+          "name": "locale-claim",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "locale",
+            "claim.name": "locale",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true",
+            "jsonType.label": "String",
+            "aggregate.attrs": "false"
+          }
+        }
+      ],
+      "defaultClientScopes": [
+        "openid",
+        "profile",
+        "aud-assistant-api"
+      ],
+      "optionalClientScopes": [],
+      "authorizationServicesEnabled": false
+    },
+    {
+      "clientId": "albaraka-assistant-widget",
+      "name": "Assistant Al-Mouchir — embedded widget",
+      "description": "Widget embedded on the bank's public site. Runs anonymously with an ephemeral device_id (no Keycloak session); a customer may sign in to keep history.",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "bearerOnly": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "frontchannelLogout": true,
+      "fullScopeAllowed": false,
+      "consentRequired": false,
+      "rootUrl": "${BANK_PUBLIC_URL}",
+      "baseUrl": "/",
+      "redirectUris": [
+        "${WIDGET_REDIRECT_URI}"
+      ],
+      "webOrigins": [
+        "${BANK_PUBLIC_URL}"
+      ],
+      "notBefore": 0,
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "${BANK_PUBLIC_URL}",
+        "access.token.lifespan": "300",
+        "client.session.idle.timeout": "1800",
+        "use.refresh.tokens": "true",
+        "tls.client.certificate.bound.access.tokens": "false"
+      },
+      "protocolMappers": [
+        {
+          "name": "aud-assistant-api",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "albaraka-assistant-api",
+            "id.token.claim": "false",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "false"
+          }
+        }
+      ],
+      "defaultClientScopes": [
+        "openid",
+        "profile",
+        "aud-assistant-api"
+      ],
+      "optionalClientScopes": [],
+      "authorizationServicesEnabled": false
+    },
+    {
+      "clientId": "albaraka-backoffice-web",
+      "name": "Assistant Al-Mouchir — backoffice",
+      "description": "Administration console. Authorization Code + PKCE (S256) with MFA required on every login; longer refresh, shorter idle.",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "bearerOnly": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "frontchannelLogout": true,
+      "fullScopeAllowed": true,
+      "consentRequired": false,
+      "rootUrl": "${BACKOFFICE_URL}",
+      "baseUrl": "/",
+      "redirectUris": [
+        "/*"
+      ],
+      "webOrigins": [
+        "${BACKOFFICE_URL}"
+      ],
+      "notBefore": 0,
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "+",
+        "access.token.lifespan": "600",
+        "client.session.idle.timeout": "1800",
+        "client.session.max.lifespan": "28800",
+        "use.refresh.tokens": "true",
+        "tls.client.certificate.bound.access.tokens": "false",
+        "require.pushed.authorization.requests": "true"
+      },
+      "protocolMappers": [
+        {
+          "name": "aud-assistant-api",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "albaraka-assistant-api",
+            "id.token.claim": "false",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "false"
+          }
+        },
+        {
+          "name": "acr-loa",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-acr-mapper",
+          "consentRequired": false,
+          "config": {
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        }
+      ],
+      "defaultClientScopes": [
+        "openid",
+        "profile",
+        "email",
+        "roles",
+        "aud-assistant-api"
+      ],
+      "optionalClientScopes": [
+        "webauthn"
+      ],
+      "authenticationFlowBindingOverrides": {
+        "browser": "9c3f1f2a-6d1e-4b7a-9c05-a1ba4a1a0001"
+      },
+      "authorizationServicesEnabled": false
+    },
+    {
+      "clientId": "albaraka-assistant-service",
+      "name": "Assistant internal services",
+      "description": "Confidential client for background workers (ingestion, evaluation, analytics). Client credentials only; no browser flow. Secret provisioned from Vault at deploy time — never committed.",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "bearerOnly": false,
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "frontchannelLogout": false,
+      "fullScopeAllowed": false,
+      "consentRequired": false,
+      "clientAuthenticatorType": "client-secret",
+      "redirectUris": [],
+      "webOrigins": [],
+      "notBefore": 0,
+      "attributes": {
+        "access.token.lifespan": "900",
+        "client.session.idle.timeout": "3600",
+        "use.refresh.tokens": "false",
+        "tls.client.certificate.bound.access.tokens": "false",
+        "client.introspection.response.allow.jwt.claim.enabled": "false"
+      },
+      "protocolMappers": [
+        {
+          "name": "aud-assistant-api",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "albaraka-assistant-api",
+            "id.token.claim": "false",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "false"
+          }
+        }
+      ],
+      "defaultClientScopes": [
+        "openid",
+        "aud-assistant-api"
+      ],
+      "optionalClientScopes": [],
+      "authorizationServicesEnabled": false
+    },
+    {
+      "clientId": "albaraka-assistant-api",
+      "name": "Assistant backend (resource server)",
+      "description": "Resource server identity. Issues no tokens of its own; exists so that `aud` can be pinned to it by Spring Security.",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "bearerOnly": true,
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "frontchannelLogout": false,
+      "fullScopeAllowed": false,
+      "consentRequired": false,
+      "clientAuthenticatorType": "client-secret",
+      "redirectUris": [],
+      "webOrigins": [],
+      "notBefore": 0,
+      "attributes": {
+        "tls.client.certificate.bound.access.tokens": "false"
+      },
+      "protocolMappers": [],
+      "defaultClientScopes": [],
+      "optionalClientScopes": [],
+      "authorizationServicesEnabled": false
+    }
+  ],
+  "clientScopes": [
+    {
+      "name": "aud-assistant-api",
+      "description": "Groups the audience mapper so every token minted for this realm names the backend as audience.",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "false",
+        "display.on.consent.screen": "false",
+        "gui.order": "1"
+      },
+      "protocolMappers": []
+    },
+    {
+      "name": "pkce-enforced",
+      "description": "Selector scope used by the client policy that forces S256. Carries no claim.",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "false",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": []
+    },
+    {
+      "name": "token-exchange-denied",
+      "description": "Selector scope used by the client policy that keeps standard token exchange disabled. Carries no claim.",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "false",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": []
+    }
+  ],
+  "authenticationFlows": [
+    {
+      "id": "9c3f1f2a-6d1e-4b7a-9c05-a1ba4a1a0001",
+      "alias": "backoffice browser — MFA required",
+      "description": "Backoffice login: credentials then a mandatory second factor (TOTP or WebAuthn). A user without a second factor is forced to enrol; there is no skip.",
+      "providerId": "basic-flow",
+      "topLevel": true,
+      "builtIn": false,
+      "authenticationExecutions": [
+        {
+          "authenticator": "auth-cookie",
+          "authenticatorFlow": false,
+          "requirement": "ALTERNATIVE",
+          "priority": 10,
+          "autheticatorFlow": false,
+          "userSetupAllowed": false
+        },
+        {
+          "authenticator": "auth-username-password-form",
+          "authenticatorFlow": false,
+          "requirement": "REQUIRED",
+          "priority": 20,
+          "autheticatorFlow": false,
+          "userSetupAllowed": false
+        },
+        {
+          "authenticatorFlow": true,
+          "requirement": "REQUIRED",
+          "priority": 30,
+          "flowAlias": "backoffice mandatory second factor",
+          "autheticatorFlow": true,
+          "userSetupAllowed": false
+        }
+      ]
+    },
+    {
+      "id": "9c3f1f2a-6d1e-4b7a-9c05-a1ba4a1a0002",
+      "alias": "backoffice mandatory second factor",
+      "description": "TOTP or a WebAuthn passkey. Both ALTERNATIVE so either satisfies the REQUIRED subflow; no DISABLED and no CONDITIONAL escape hatch.",
+      "providerId": "basic-flow",
+      "topLevel": false,
+      "builtIn": false,
+      "authenticationExecutions": [
+        {
+          "authenticator": "auth-otp-form",
+          "authenticatorFlow": false,
+          "requirement": "ALTERNATIVE",
+          "priority": 10,
+          "autheticatorFlow": false,
+          "userSetupAllowed": false
+        },
+        {
+          "authenticator": "webauthn-authenticator",
+          "authenticatorFlow": false,
+          "requirement": "ALTERNATIVE",
+          "priority": 20,
+          "autheticatorFlow": false,
+          "userSetupAllowed": false
+        }
+      ]
+    }
+  ],
+  "requiredActions": [
+    {
+      "alias": "CONFIGURE_TOTP",
+      "name": "Configure OTP",
+      "providerId": "CONFIGURE_TOTP",
+      "enabled": true,
+      "defaultAction": false,
+      "priority": 10,
+      "config": {}
+    },
+    {
+      "alias": "webauthn-register",
+      "name": "Webauthn Register",
+      "providerId": "webauthn-register",
+      "enabled": true,
+      "defaultAction": false,
+      "priority": 20,
+      "config": {}
+    },
+    {
+      "alias": "VERIFY_EMAIL",
+      "name": "Verify Email",
+      "providerId": "VERIFY_EMAIL",
+      "enabled": true,
+      "defaultAction": true,
+      "priority": 30,
+      "config": {}
+    },
+    {
+      "alias": "UPDATE_PASSWORD",
+      "name": "Update Password",
+      "providerId": "UPDATE_PASSWORD",
+      "enabled": true,
+      "defaultAction": false,
+      "priority": 40,
+      "config": {}
+    },
+    {
+      "alias": "TERMS_AND_CONDITIONS",
+      "name": "Terms and Conditions",
+      "providerId": "TERMS_AND_CONDITIONS",
+      "enabled": false,
+      "defaultAction": false,
+      "priority": 50,
+      "config": {}
+    }
+  ],
+  "browserSecurityHeaders": {
+    "contentSecurityPolicyReportOnly": "",
+    "xContentTypeOptions": "nosniff",
+    "xRobotsTag": "none",
+    "xFrameOptions": "SAMEORIGIN",
+    "contentSecurityPolicy": "frame-src 'self' ${BANK_PUBLIC_URL}; frame-ancestors 'self' ${BANK_PUBLIC_URL}; object-src 'none';",
+    "xXSSProtection": "1; mode=block",
+    "strictTransportSecurity": "max-age=31536000; includeSubDomains"
+  },
+  "smtpServer": {},
+  "eventsEnabled": true,
+  "eventsListeners": [
+    "metrics-listener"
+  ],
+  "eventsExpiration": 7776000,
+  "enabledEventTypes": [
+    "LOGIN",
+    "LOGIN_ERROR",
+    "LOGOUT",
+    "CODE_TO_TOKEN",
+    "CODE_TO_TOKEN_ERROR",
+    "CLIENT_LOGIN",
+    "CLIENT_LOGIN_ERROR",
+    "REFRESH_TOKEN",
+    "REFRESH_TOKEN_ERROR",
+    "REGISTER",
+    "REGISTER_ERROR",
+    "FEDERATED_IDENTITY_LINK",
+    "IMPERSONATE",
+    "IMPERSONATE_ERROR",
+    "CUSTOM_REQUIRED_ACTION",
+    "UPDATE_PROFILE",
+    "UPDATE_PASSWORD",
+    "UPDATE_TOTP",
+    "VERIFY_EMAIL",
+    "RESET_PASSWORD",
+    "GRANT_CONSENT",
+    "REVOKE_GRANT",
+    "CLIENT_REGISTER",
+    "CLIENT_UPDATE",
+    "CLIENT_DELETE",
+    "PERMISSION_TOKEN",
+    "IDENTITY_PROVIDER_LOGIN",
+    "TOKEN_EXCHANGE"
+  ],
+  "adminEventsEnabled": true,
+  "adminEventsDetailsEnabled": true,
+  "identityProviders": [],
+  "identityProviderMappers": [],
+  "components": {},
+  "localizationTexts": {}
+}
