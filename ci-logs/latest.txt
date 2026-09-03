@@ -1,201 +1,50 @@
-## run 33811919971 — keycloak
+## run 33812201934 — keycloak
 keycloak-1  | WARNING: Hostname v1 options [hostname-port] are still in use, please review your configuration
 keycloak-1  | Updating the configuration and installing your custom providers, if any. Please wait.
-keycloak-1  | 2026-09-03 22:13:37,625 INFO  [io.quarkus.deployment.QuarkusAugmentor] (main) Quarkus augmentation completed in 7945ms
+keycloak-1  | 2026-09-03 22:17:42,471 INFO  [io.quarkus.deployment.QuarkusAugmentor] (main) Quarkus augmentation completed in 10539ms
 keycloak-1  | WARNING: Hostname v1 options [hostname-port] are still in use, please review your configuration
 keycloak-1  | Running the server in development mode. DO NOT use this configuration in production.
-keycloak-1  | 2026-09-03 22:13:39,274 INFO  [org.keycloak.url.HostnameV2ProviderFactory] (main) If hostname is specified, hostname-strict is effectively ignored
-keycloak-1  | 2026-09-03 22:13:40,869 INFO  [org.infinispan.CONTAINER] (main) ISPN000974: Virtual threads support: enabled
-keycloak-1  | 2026-09-03 22:13:41,828 INFO  [org.hibernate.orm.jdbc.batch] (JPA Startup Thread) HHH100501: Automatic JDBC statement batching enabled (maximum batch size 32)
-keycloak-1  | 2026-09-03 22:13:42,935 INFO  [org.keycloak.quarkus.runtime.storage.database.liquibase.QuarkusJpaUpdaterProvider] (main) Initializing database schema. Using changelog META-INF/jpa-changelog-master.xml
-keycloak-1  | 2026-09-03 22:13:49,536 INFO  [org.infinispan.CONTAINER] (main) ISPN000556: Starting user marshaller 'org.infinispan.commons.marshall.ImmutableProtoStreamMarshaller'
-keycloak-1  | 2026-09-03 22:13:49,894 INFO  [org.keycloak.connections.infinispan.DefaultInfinispanConnectionProviderFactory] (main) Node name: node_762665, Site name: null
-keycloak-1  | 2026-09-03 22:13:50,026 INFO  [org.keycloak.quarkus.runtime.storage.database.jpa.DatabaseIndexChecker] (db-index-checker) Running database index checker
-keycloak-1  | 2026-09-03 22:13:50,104 INFO  [org.keycloak.models.workflow.WorkflowsEventListenerFactory] (main) Workflow runner task scheduled: next execution at 10:13:50, then every PT12H
-keycloak-1  | 2026-09-03 22:13:50,123 INFO  [org.keycloak.exportimport.dir.DirImportProvider] (main) Importing from directory /opt/keycloak/bin/../data/import
-keycloak-1  | 2026-09-03 22:13:50,145 INFO  [org.keycloak.services] (main) KC-SERVICES0050: Initializing master realm
-keycloak-1  | 2026-09-03 22:13:51,510 INFO  [org.keycloak.services] (main) KC-SERVICES0030: Full model import requested. Strategy: IGNORE_EXISTING
-keycloak-1  | 2026-09-03 22:13:52,205 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:13:52,212 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'profile' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:13:52,324 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:13:52,330 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'profile' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:13:52,384 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'webauthn' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:13:52,389 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:13:52,394 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'profile' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:13:52,401 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'email' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:13:52,406 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'roles' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:13:52,471 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:13:53,914 WARN  [org.keycloak.services.clientpolicy.ClientPoliciesUtil] (main) no executor provider found. providerId = pkce
-keycloak-1  | 2026-09-03 22:13:53,915 WARN  [org.keycloak.services.clientpolicy.DefaultClientPolicyManager] (main) VALIDATE SERIALIZE PROFILES FAILED :: error = proposed client profile contains the executor, which does not have valid provider, or has invalid configuration., error detail = NA
-keycloak-1  | 2026-09-03 22:13:53,915 WARN  [org.keycloak.services.clientpolicy.DefaultClientPolicyManager] (main) VALIDATE SERIALIZE IMPORTED REALM PROFILES FAILED :: error = proposed client profile contains the executor, which does not have valid provider, or has invalid configuration., error detail = NA
-keycloak-1  | 2026-09-03 22:13:53,987 INFO  [com.arjuna.ats.jbossatx] (main) ARJUNA032014: Stopping transaction recovery manager
-keycloak-1  | 2026-09-03 22:13:54,008 ERROR [org.keycloak.quarkus.runtime.cli.ExecutionExceptionHandler] (main) ERROR: Failed to start server in (development) mode
-keycloak-1  | 2026-09-03 22:13:54,008 ERROR [org.keycloak.quarkus.runtime.cli.ExecutionExceptionHandler] (main) ERROR: Failed to update client profiles
-keycloak-1  | 2026-09-03 22:13:54,008 ERROR [org.keycloak.quarkus.runtime.cli.ExecutionExceptionHandler] (main) ERROR: proposed client profile contains the executor, which does not have valid provider, or has invalid configuration.
-keycloak-1  | 2026-09-03 22:13:54,008 ERROR [org.keycloak.quarkus.runtime.cli.ExecutionExceptionHandler] (main) For more details run the same command passing the '--verbose' option. Also you can use '--help' to see the details about the usage of the particular command.
-keycloak-1  | WARNING: Hostname v1 options [hostname-port] are still in use, please review your configuration
-keycloak-1  | Running the server in development mode. DO NOT use this configuration in production.
-keycloak-1  | 2026-09-03 22:13:56,051 INFO  [org.keycloak.url.HostnameV2ProviderFactory] (main) If hostname is specified, hostname-strict is effectively ignored
-keycloak-1  | 2026-09-03 22:13:57,789 INFO  [org.infinispan.CONTAINER] (main) ISPN000974: Virtual threads support: enabled
-keycloak-1  | 2026-09-03 22:13:58,659 INFO  [org.hibernate.orm.jdbc.batch] (JPA Startup Thread) HHH100501: Automatic JDBC statement batching enabled (maximum batch size 32)
-keycloak-1  | 2026-09-03 22:13:58,871 INFO  [org.keycloak.quarkus.runtime.storage.database.jpa.DatabaseIndexChecker] (db-index-checker) Running database index checker
-keycloak-1  | 2026-09-03 22:13:59,945 INFO  [org.infinispan.CONTAINER] (main) ISPN000556: Starting user marshaller 'org.infinispan.commons.marshall.ImmutableProtoStreamMarshaller'
-keycloak-1  | 2026-09-03 22:14:00,337 INFO  [org.keycloak.connections.infinispan.DefaultInfinispanConnectionProviderFactory] (main) Node name: node_159488, Site name: null
-keycloak-1  | 2026-09-03 22:14:00,342 INFO  [org.keycloak.models.workflow.WorkflowsEventListenerFactory] (main) Workflow runner task scheduled: next execution at 10:14, then every PT12H
-keycloak-1  | 2026-09-03 22:14:00,407 INFO  [org.keycloak.exportimport.dir.DirImportProvider] (main) Importing from directory /opt/keycloak/bin/../data/import
-keycloak-1  | 2026-09-03 22:14:00,748 INFO  [org.keycloak.services] (main) KC-SERVICES0050: Initializing master realm
-keycloak-1  | 2026-09-03 22:14:02,564 INFO  [org.keycloak.services] (main) KC-SERVICES0030: Full model import requested. Strategy: IGNORE_EXISTING
-keycloak-1  | 2026-09-03 22:14:03,260 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:14:03,265 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'profile' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:14:03,335 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:14:03,340 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'profile' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:14:03,384 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'webauthn' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:14:03,389 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:14:03,394 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'profile' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:14:03,398 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'email' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:14:03,403 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'roles' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:14:03,466 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:14:04,683 WARN  [org.keycloak.services.clientpolicy.ClientPoliciesUtil] (main) no executor provider found. providerId = pkce
-keycloak-1  | 2026-09-03 22:14:04,685 WARN  [org.keycloak.services.clientpolicy.DefaultClientPolicyManager] (main) VALIDATE SERIALIZE PROFILES FAILED :: error = proposed client profile contains the executor, which does not have valid provider, or has invalid configuration., error detail = NA
-keycloak-1  | 2026-09-03 22:14:04,685 WARN  [org.keycloak.services.clientpolicy.DefaultClientPolicyManager] (main) VALIDATE SERIALIZE IMPORTED REALM PROFILES FAILED :: error = proposed client profile contains the executor, which does not have valid provider, or has invalid configuration., error detail = NA
-keycloak-1  | 2026-09-03 22:14:04,760 INFO  [com.arjuna.ats.jbossatx] (main) ARJUNA032014: Stopping transaction recovery manager
-keycloak-1  | 2026-09-03 22:14:04,777 ERROR [org.keycloak.quarkus.runtime.cli.ExecutionExceptionHandler] (main) ERROR: Failed to start server in (development) mode
-keycloak-1  | 2026-09-03 22:14:04,777 ERROR [org.keycloak.quarkus.runtime.cli.ExecutionExceptionHandler] (main) ERROR: Failed to update client profiles
-keycloak-1  | 2026-09-03 22:14:04,777 ERROR [org.keycloak.quarkus.runtime.cli.ExecutionExceptionHandler] (main) ERROR: proposed client profile contains the executor, which does not have valid provider, or has invalid configuration.
-keycloak-1  | 2026-09-03 22:14:04,777 ERROR [org.keycloak.quarkus.runtime.cli.ExecutionExceptionHandler] (main) For more details run the same command passing the '--verbose' option. Also you can use '--help' to see the details about the usage of the particular command.
-keycloak-1  | WARNING: Hostname v1 options [hostname-port] are still in use, please review your configuration
-keycloak-1  | Running the server in development mode. DO NOT use this configuration in production.
-keycloak-1  | 2026-09-03 22:14:06,698 INFO  [org.keycloak.url.HostnameV2ProviderFactory] (main) If hostname is specified, hostname-strict is effectively ignored
-keycloak-1  | 2026-09-03 22:14:08,429 INFO  [org.infinispan.CONTAINER] (main) ISPN000974: Virtual threads support: enabled
-keycloak-1  | 2026-09-03 22:14:09,326 INFO  [org.hibernate.orm.jdbc.batch] (JPA Startup Thread) HHH100501: Automatic JDBC statement batching enabled (maximum batch size 32)
-keycloak-1  | 2026-09-03 22:14:09,542 INFO  [org.keycloak.quarkus.runtime.storage.database.jpa.DatabaseIndexChecker] (db-index-checker) Running database index checker
-keycloak-1  | 2026-09-03 22:14:10,567 INFO  [org.infinispan.CONTAINER] (main) ISPN000556: Starting user marshaller 'org.infinispan.commons.marshall.ImmutableProtoStreamMarshaller'
-keycloak-1  | 2026-09-03 22:14:10,907 INFO  [org.keycloak.connections.infinispan.DefaultInfinispanConnectionProviderFactory] (main) Node name: node_647083, Site name: null
-keycloak-1  | 2026-09-03 22:14:10,910 INFO  [org.keycloak.models.workflow.WorkflowsEventListenerFactory] (main) Workflow runner task scheduled: next execution at 10:14:10, then every PT12H
-keycloak-1  | 2026-09-03 22:14:10,972 INFO  [org.keycloak.exportimport.dir.DirImportProvider] (main) Importing from directory /opt/keycloak/bin/../data/import
-keycloak-1  | 2026-09-03 22:14:11,252 INFO  [org.keycloak.services] (main) KC-SERVICES0050: Initializing master realm
-keycloak-1  | 2026-09-03 22:14:12,782 INFO  [org.keycloak.services] (main) KC-SERVICES0030: Full model import requested. Strategy: IGNORE_EXISTING
-keycloak-1  | 2026-09-03 22:14:13,502 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:14:13,509 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'profile' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:14:13,604 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:14:13,610 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'profile' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:14:13,665 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'webauthn' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:14:13,671 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:14:13,676 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'profile' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:14:13,681 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'email' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:14:13,687 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'roles' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:14:13,732 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:14:14,969 WARN  [org.keycloak.services.clientpolicy.ClientPoliciesUtil] (main) no executor provider found. providerId = pkce
-keycloak-1  | 2026-09-03 22:14:14,970 WARN  [org.keycloak.services.clientpolicy.DefaultClientPolicyManager] (main) VALIDATE SERIALIZE PROFILES FAILED :: error = proposed client profile contains the executor, which does not have valid provider, or has invalid configuration., error detail = NA
-keycloak-1  | 2026-09-03 22:14:14,971 WARN  [org.keycloak.services.clientpolicy.DefaultClientPolicyManager] (main) VALIDATE SERIALIZE IMPORTED REALM PROFILES FAILED :: error = proposed client profile contains the executor, which does not have valid provider, or has invalid configuration., error detail = NA
-keycloak-1  | 2026-09-03 22:14:15,046 INFO  [com.arjuna.ats.jbossatx] (main) ARJUNA032014: Stopping transaction recovery manager
-keycloak-1  | 2026-09-03 22:14:15,068 ERROR [org.keycloak.quarkus.runtime.cli.ExecutionExceptionHandler] (main) ERROR: Failed to start server in (development) mode
-keycloak-1  | 2026-09-03 22:14:15,068 ERROR [org.keycloak.quarkus.runtime.cli.ExecutionExceptionHandler] (main) ERROR: Failed to update client profiles
-keycloak-1  | 2026-09-03 22:14:15,068 ERROR [org.keycloak.quarkus.runtime.cli.ExecutionExceptionHandler] (main) ERROR: proposed client profile contains the executor, which does not have valid provider, or has invalid configuration.
-keycloak-1  | 2026-09-03 22:14:15,068 ERROR [org.keycloak.quarkus.runtime.cli.ExecutionExceptionHandler] (main) For more details run the same command passing the '--verbose' option. Also you can use '--help' to see the details about the usage of the particular command.
-keycloak-1  | WARNING: Hostname v1 options [hostname-port] are still in use, please review your configuration
-keycloak-1  | Running the server in development mode. DO NOT use this configuration in production.
-keycloak-1  | 2026-09-03 22:14:17,071 INFO  [org.keycloak.url.HostnameV2ProviderFactory] (main) If hostname is specified, hostname-strict is effectively ignored
-keycloak-1  | 2026-09-03 22:14:18,831 INFO  [org.infinispan.CONTAINER] (main) ISPN000974: Virtual threads support: enabled
-keycloak-1  | 2026-09-03 22:14:19,728 INFO  [org.hibernate.orm.jdbc.batch] (JPA Startup Thread) HHH100501: Automatic JDBC statement batching enabled (maximum batch size 32)
-keycloak-1  | 2026-09-03 22:14:19,940 INFO  [org.keycloak.quarkus.runtime.storage.database.jpa.DatabaseIndexChecker] (db-index-checker) Running database index checker
-keycloak-1  | 2026-09-03 22:14:21,037 INFO  [org.infinispan.CONTAINER] (main) ISPN000556: Starting user marshaller 'org.infinispan.commons.marshall.ImmutableProtoStreamMarshaller'
-keycloak-1  | 2026-09-03 22:14:21,468 INFO  [org.keycloak.connections.infinispan.DefaultInfinispanConnectionProviderFactory] (main) Node name: node_365969, Site name: null
-keycloak-1  | 2026-09-03 22:14:21,472 INFO  [org.keycloak.models.workflow.WorkflowsEventListenerFactory] (main) Workflow runner task scheduled: next execution at 10:14:21, then every PT12H
-keycloak-1  | 2026-09-03 22:14:21,535 INFO  [org.keycloak.exportimport.dir.DirImportProvider] (main) Importing from directory /opt/keycloak/bin/../data/import
-keycloak-1  | 2026-09-03 22:14:21,851 INFO  [org.keycloak.services] (main) KC-SERVICES0050: Initializing master realm
-keycloak-1  | 2026-09-03 22:14:23,484 INFO  [org.keycloak.services] (main) KC-SERVICES0030: Full model import requested. Strategy: IGNORE_EXISTING
-keycloak-1  | 2026-09-03 22:14:24,282 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:14:24,289 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'profile' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:14:24,390 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:14:24,396 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'profile' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:14:24,458 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'webauthn' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:14:24,464 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:14:24,470 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'profile' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:14:24,476 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'email' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:14:24,482 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'roles' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:14:24,543 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:14:25,957 WARN  [org.keycloak.services.clientpolicy.ClientPoliciesUtil] (main) no executor provider found. providerId = pkce
-keycloak-1  | 2026-09-03 22:14:25,958 WARN  [org.keycloak.services.clientpolicy.DefaultClientPolicyManager] (main) VALIDATE SERIALIZE PROFILES FAILED :: error = proposed client profile contains the executor, which does not have valid provider, or has invalid configuration., error detail = NA
-keycloak-1  | 2026-09-03 22:14:25,959 WARN  [org.keycloak.services.clientpolicy.DefaultClientPolicyManager] (main) VALIDATE SERIALIZE IMPORTED REALM PROFILES FAILED :: error = proposed client profile contains the executor, which does not have valid provider, or has invalid configuration., error detail = NA
-keycloak-1  | 2026-09-03 22:14:26,031 INFO  [com.arjuna.ats.jbossatx] (main) ARJUNA032014: Stopping transaction recovery manager
-keycloak-1  | 2026-09-03 22:14:26,050 ERROR [org.keycloak.quarkus.runtime.cli.ExecutionExceptionHandler] (main) ERROR: Failed to start server in (development) mode
-keycloak-1  | 2026-09-03 22:14:26,050 ERROR [org.keycloak.quarkus.runtime.cli.ExecutionExceptionHandler] (main) ERROR: Failed to update client profiles
-keycloak-1  | 2026-09-03 22:14:26,050 ERROR [org.keycloak.quarkus.runtime.cli.ExecutionExceptionHandler] (main) ERROR: proposed client profile contains the executor, which does not have valid provider, or has invalid configuration.
-keycloak-1  | 2026-09-03 22:14:26,050 ERROR [org.keycloak.quarkus.runtime.cli.ExecutionExceptionHandler] (main) For more details run the same command passing the '--verbose' option. Also you can use '--help' to see the details about the usage of the particular command.
-keycloak-1  | WARNING: Hostname v1 options [hostname-port] are still in use, please review your configuration
-keycloak-1  | Running the server in development mode. DO NOT use this configuration in production.
-keycloak-1  | 2026-09-03 22:14:27,986 INFO  [org.keycloak.url.HostnameV2ProviderFactory] (main) If hostname is specified, hostname-strict is effectively ignored
-keycloak-1  | 2026-09-03 22:14:29,700 INFO  [org.infinispan.CONTAINER] (main) ISPN000974: Virtual threads support: enabled
-keycloak-1  | 2026-09-03 22:14:30,583 INFO  [org.hibernate.orm.jdbc.batch] (JPA Startup Thread) HHH100501: Automatic JDBC statement batching enabled (maximum batch size 32)
-keycloak-1  | 2026-09-03 22:14:30,783 INFO  [org.keycloak.quarkus.runtime.storage.database.jpa.DatabaseIndexChecker] (db-index-checker) Running database index checker
-keycloak-1  | 2026-09-03 22:14:31,871 INFO  [org.infinispan.CONTAINER] (main) ISPN000556: Starting user marshaller 'org.infinispan.commons.marshall.ImmutableProtoStreamMarshaller'
-keycloak-1  | 2026-09-03 22:14:32,256 INFO  [org.keycloak.connections.infinispan.DefaultInfinispanConnectionProviderFactory] (main) Node name: node_852118, Site name: null
-keycloak-1  | 2026-09-03 22:14:32,261 INFO  [org.keycloak.models.workflow.WorkflowsEventListenerFactory] (main) Workflow runner task scheduled: next execution at 10:14:32, then every PT12H
-keycloak-1  | 2026-09-03 22:14:32,340 INFO  [org.keycloak.exportimport.dir.DirImportProvider] (main) Importing from directory /opt/keycloak/bin/../data/import
-keycloak-1  | 2026-09-03 22:14:32,669 INFO  [org.keycloak.services] (main) KC-SERVICES0050: Initializing master realm
-keycloak-1  | 2026-09-03 22:14:34,065 INFO  [org.keycloak.services] (main) KC-SERVICES0030: Full model import requested. Strategy: IGNORE_EXISTING
-keycloak-1  | 2026-09-03 22:14:34,779 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:14:34,785 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'profile' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:14:34,879 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:14:34,885 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'profile' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:14:34,943 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'webauthn' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:14:34,949 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:14:34,954 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'profile' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:14:34,959 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'email' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:14:34,964 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'roles' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:14:35,019 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:14:36,322 WARN  [org.keycloak.services.clientpolicy.ClientPoliciesUtil] (main) no executor provider found. providerId = pkce
-keycloak-1  | 2026-09-03 22:14:36,324 WARN  [org.keycloak.services.clientpolicy.DefaultClientPolicyManager] (main) VALIDATE SERIALIZE PROFILES FAILED :: error = proposed client profile contains the executor, which does not have valid provider, or has invalid configuration., error detail = NA
-keycloak-1  | 2026-09-03 22:14:36,324 WARN  [org.keycloak.services.clientpolicy.DefaultClientPolicyManager] (main) VALIDATE SERIALIZE IMPORTED REALM PROFILES FAILED :: error = proposed client profile contains the executor, which does not have valid provider, or has invalid configuration., error detail = NA
-keycloak-1  | 2026-09-03 22:14:36,394 INFO  [com.arjuna.ats.jbossatx] (main) ARJUNA032014: Stopping transaction recovery manager
-keycloak-1  | 2026-09-03 22:14:36,417 ERROR [org.keycloak.quarkus.runtime.cli.ExecutionExceptionHandler] (main) ERROR: Failed to start server in (development) mode
-keycloak-1  | 2026-09-03 22:14:36,418 ERROR [org.keycloak.quarkus.runtime.cli.ExecutionExceptionHandler] (main) ERROR: Failed to update client profiles
-keycloak-1  | 2026-09-03 22:14:36,418 ERROR [org.keycloak.quarkus.runtime.cli.ExecutionExceptionHandler] (main) ERROR: proposed client profile contains the executor, which does not have valid provider, or has invalid configuration.
-keycloak-1  | 2026-09-03 22:14:36,418 ERROR [org.keycloak.quarkus.runtime.cli.ExecutionExceptionHandler] (main) For more details run the same command passing the '--verbose' option. Also you can use '--help' to see the details about the usage of the particular command.
-keycloak-1  | WARNING: Hostname v1 options [hostname-port] are still in use, please review your configuration
-keycloak-1  | Running the server in development mode. DO NOT use this configuration in production.
-keycloak-1  | 2026-09-03 22:14:38,435 INFO  [org.keycloak.url.HostnameV2ProviderFactory] (main) If hostname is specified, hostname-strict is effectively ignored
-keycloak-1  | 2026-09-03 22:14:39,971 INFO  [org.infinispan.CONTAINER] (main) ISPN000974: Virtual threads support: enabled
-keycloak-1  | 2026-09-03 22:14:40,850 INFO  [org.hibernate.orm.jdbc.batch] (JPA Startup Thread) HHH100501: Automatic JDBC statement batching enabled (maximum batch size 32)
-keycloak-1  | 2026-09-03 22:14:41,079 INFO  [org.keycloak.quarkus.runtime.storage.database.jpa.DatabaseIndexChecker] (db-index-checker) Running database index checker
-keycloak-1  | 2026-09-03 22:14:42,144 INFO  [org.infinispan.CONTAINER] (main) ISPN000556: Starting user marshaller 'org.infinispan.commons.marshall.ImmutableProtoStreamMarshaller'
-keycloak-1  | 2026-09-03 22:14:42,548 INFO  [org.keycloak.connections.infinispan.DefaultInfinispanConnectionProviderFactory] (main) Node name: node_297158, Site name: null
-keycloak-1  | 2026-09-03 22:14:42,553 INFO  [org.keycloak.models.workflow.WorkflowsEventListenerFactory] (main) Workflow runner task scheduled: next execution at 10:14:42, then every PT12H
-keycloak-1  | 2026-09-03 22:14:42,634 INFO  [org.keycloak.exportimport.dir.DirImportProvider] (main) Importing from directory /opt/keycloak/bin/../data/import
-keycloak-1  | 2026-09-03 22:14:42,979 INFO  [org.keycloak.services] (main) KC-SERVICES0050: Initializing master realm
-keycloak-1  | 2026-09-03 22:14:44,405 INFO  [org.keycloak.services] (main) KC-SERVICES0030: Full model import requested. Strategy: IGNORE_EXISTING
-keycloak-1  | 2026-09-03 22:14:45,006 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:14:45,013 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'profile' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:14:45,087 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:14:45,092 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'profile' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:14:45,135 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'webauthn' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:14:45,139 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:14:45,143 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'profile' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:14:45,146 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'email' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:14:45,150 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'roles' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:14:45,194 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
-keycloak-1  | 2026-09-03 22:14:46,602 WARN  [org.keycloak.services.clientpolicy.ClientPoliciesUtil] (main) no executor provider found. providerId = pkce
-keycloak-1  | 2026-09-03 22:14:46,604 WARN  [org.keycloak.services.clientpolicy.DefaultClientPolicyManager] (main) VALIDATE SERIALIZE PROFILES FAILED :: error = proposed client profile contains the executor, which does not have valid provider, or has invalid configuration., error detail = NA
-keycloak-1  | 2026-09-03 22:14:46,604 WARN  [org.keycloak.services.clientpolicy.DefaultClientPolicyManager] (main) VALIDATE SERIALIZE IMPORTED REALM PROFILES FAILED :: error = proposed client profile contains the executor, which does not have valid provider, or has invalid configuration., error detail = NA
-keycloak-1  | 2026-09-03 22:14:46,684 INFO  [com.arjuna.ats.jbossatx] (main) ARJUNA032014: Stopping transaction recovery manager
-keycloak-1  | 2026-09-03 22:14:46,704 ERROR [org.keycloak.quarkus.runtime.cli.ExecutionExceptionHandler] (main) ERROR: Failed to start server in (development) mode
-keycloak-1  | 2026-09-03 22:14:46,704 ERROR [org.keycloak.quarkus.runtime.cli.ExecutionExceptionHandler] (main) ERROR: Failed to update client profiles
-keycloak-1  | 2026-09-03 22:14:46,704 ERROR [org.keycloak.quarkus.runtime.cli.ExecutionExceptionHandler] (main) ERROR: proposed client profile contains the executor, which does not have valid provider, or has invalid configuration.
-keycloak-1  | 2026-09-03 22:14:46,704 ERROR [org.keycloak.quarkus.runtime.cli.ExecutionExceptionHandler] (main) For more details run the same command passing the '--verbose' option. Also you can use '--help' to see the details about the usage of the particular command.
+keycloak-1  | 2026-09-03 22:17:44,055 INFO  [org.keycloak.url.HostnameV2ProviderFactory] (main) If hostname is specified, hostname-strict is effectively ignored
+keycloak-1  | 2026-09-03 22:17:45,020 INFO  [org.infinispan.CONTAINER] (main) ISPN000974: Virtual threads support: enabled
+keycloak-1  | 2026-09-03 22:17:45,734 INFO  [org.hibernate.orm.jdbc.batch] (JPA Startup Thread) HHH100501: Automatic JDBC statement batching enabled (maximum batch size 32)
+keycloak-1  | 2026-09-03 22:17:46,562 INFO  [org.keycloak.quarkus.runtime.storage.database.liquibase.QuarkusJpaUpdaterProvider] (main) Initializing database schema. Using changelog META-INF/jpa-changelog-master.xml
+keycloak-1  | 2026-09-03 22:17:52,833 INFO  [org.infinispan.CONTAINER] (main) ISPN000556: Starting user marshaller 'org.infinispan.commons.marshall.ImmutableProtoStreamMarshaller'
+keycloak-1  | 2026-09-03 22:17:53,141 INFO  [org.keycloak.connections.infinispan.DefaultInfinispanConnectionProviderFactory] (main) Node name: node_65262, Site name: null
+keycloak-1  | 2026-09-03 22:17:53,312 INFO  [org.keycloak.quarkus.runtime.storage.database.jpa.DatabaseIndexChecker] (db-index-checker) Running database index checker
+keycloak-1  | 2026-09-03 22:17:53,343 INFO  [org.keycloak.models.workflow.WorkflowsEventListenerFactory] (main) Workflow runner task scheduled: next execution at 10:17:53, then every PT12H
+keycloak-1  | 2026-09-03 22:17:53,424 INFO  [org.keycloak.exportimport.dir.DirImportProvider] (main) Importing from directory /opt/keycloak/bin/../data/import
+keycloak-1  | 2026-09-03 22:17:53,458 INFO  [org.keycloak.services] (main) KC-SERVICES0050: Initializing master realm
+keycloak-1  | 2026-09-03 22:17:54,814 INFO  [org.keycloak.services] (main) KC-SERVICES0030: Full model import requested. Strategy: IGNORE_EXISTING
+keycloak-1  | 2026-09-03 22:17:55,316 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
+keycloak-1  | 2026-09-03 22:17:55,319 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'profile' doesn't exist. Ignoring
+keycloak-1  | 2026-09-03 22:17:55,390 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
+keycloak-1  | 2026-09-03 22:17:55,397 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'profile' doesn't exist. Ignoring
+keycloak-1  | 2026-09-03 22:17:55,433 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'webauthn' doesn't exist. Ignoring
+keycloak-1  | 2026-09-03 22:17:55,436 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
+keycloak-1  | 2026-09-03 22:17:55,440 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'profile' doesn't exist. Ignoring
+keycloak-1  | 2026-09-03 22:17:55,443 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'email' doesn't exist. Ignoring
+keycloak-1  | 2026-09-03 22:17:55,447 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'roles' doesn't exist. Ignoring
+keycloak-1  | 2026-09-03 22:17:55,482 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
+keycloak-1  | 2026-09-03 22:17:56,431 INFO  [org.keycloak.exportimport.util.ImportUtils] (main) Realm 'albaraka' imported
+keycloak-1  | 2026-09-03 22:17:56,436 INFO  [org.keycloak.services] (main) KC-SERVICES0032: Import finished successfully
+keycloak-1  | 2026-09-03 22:17:56,507 INFO  [org.keycloak.services] (main) KC-SERVICES0077: Created temporary admin user with username admin
+keycloak-1  | 2026-09-03 22:17:56,622 INFO  [org.keycloak.services.resources.KeycloakApplication] (main) Bootstrap completed in 10.785000 seconds
+keycloak-1  | 2026-09-03 22:17:56,698 INFO  [io.quarkus] (main) Keycloak 26.6.3 on JVM (powered by Quarkus 3.33.2) started in 14.120s. Listening on: http://0.0.0.0:8080. Management interface listening on http://0.0.0.0:9000.
+keycloak-1  | 2026-09-03 22:17:56,698 INFO  [io.quarkus] (main) Profile dev activated. 
+keycloak-1  | 2026-09-03 22:17:56,698 INFO  [io.quarkus] (main) Installed features: [agroal, cdi, hibernate-orm, jdbc-postgresql, keycloak, micrometer, narayana-jta, opentelemetry, reactive-routes, rest, rest-jackson, smallrye-context-propagation, smallrye-health, vertx]
 
 ## ps -a
-NAME                            IMAGE                                              COMMAND                  SERVICE           CREATED              STATUS                                     PORTS
-albaraka-ai-backoffice-web-1    albaraka-ai/backoffice-web:dev                     "/docker-entrypoint.…"   backoffice-web    About a minute ago   Created                                    
-albaraka-ai-frontoffice-web-1   albaraka-ai/frontoffice-web:dev                    "/docker-entrypoint.…"   frontoffice-web   About a minute ago   Created                                    
-albaraka-ai-keycloak-1          quay.io/keycloak/keycloak:26.6.3                   "/bin/bash -ec 'mkdi…"   keycloak          About a minute ago   Up Less than a second (health: starting)   8443/tcp, 0.0.0.0:8080->8080/tcp, [::]:8080->8080/tcp, 9000/tcp
-albaraka-ai-minio-1             quay.io/minio/minio:RELEASE.2025-03-12T18-04-18Z   "/usr/bin/docker-ent…"   minio             About a minute ago   Up About a minute (healthy)                0.0.0.0:9000-9001->9000-9001/tcp, [::]:9000-9001->9000-9001/tcp
-albaraka-ai-minio-init-1        quay.io/minio/mc:RELEASE.2025-03-12T17-29-24Z      "/bin/sh -ec 'until …"   minio-init        About a minute ago   Exited (0) About a minute ago              
-albaraka-ai-nginx-1             nginx:1.28-alpine                                  "/docker-entrypoint.…"   nginx             About a minute ago   Created                                    
-albaraka-ai-postgres-1          pgvector/pgvector:0.8.1-pg17                       "docker-entrypoint.s…"   postgres          About a minute ago   Up About a minute (healthy)                0.0.0.0:5432->5432/tcp, [::]:5432->5432/tcp
-albaraka-ai-rag-assistant-1     albaraka-ai/rag-assistant:dev                      "uvicorn rag_assista…"   rag-assistant     About a minute ago   Up About a minute (healthy)                8000/tcp
-albaraka-ai-redis-1             redis:7.4-alpine                                   "docker-entrypoint.s…"   redis             About a minute ago   Up About a minute (healthy)                0.0.0.0:6379->6379/tcp, [::]:6379->6379/tcp
-albaraka-ai-server-1            albaraka-ai/server:dev                             "java -jar app.jar"      server            About a minute ago   Created                                    
+NAME                            IMAGE                                              COMMAND                  SERVICE           CREATED          STATUS                                     PORTS
+albaraka-ai-backoffice-web-1    albaraka-ai/backoffice-web:dev                     "/docker-entrypoint.…"   backoffice-web    41 seconds ago   Created                                    
+albaraka-ai-frontoffice-web-1   albaraka-ai/frontoffice-web:dev                    "/docker-entrypoint.…"   frontoffice-web   41 seconds ago   Created                                    
+albaraka-ai-keycloak-1          quay.io/keycloak/keycloak:26.6.3                   "/bin/bash -ec 'mkdi…"   keycloak          42 seconds ago   Up 34 seconds (healthy)                    8443/tcp, 0.0.0.0:8080->8080/tcp, [::]:8080->8080/tcp, 9000/tcp
+albaraka-ai-minio-1             quay.io/minio/minio:RELEASE.2025-03-12T18-04-18Z   "/usr/bin/docker-ent…"   minio             42 seconds ago   Up 40 seconds (healthy)                    0.0.0.0:9000-9001->9000-9001/tcp, [::]:9000-9001->9000-9001/tcp
+albaraka-ai-minio-init-1        quay.io/minio/mc:RELEASE.2025-03-12T17-29-24Z      "/bin/sh -ec 'until …"   minio-init        42 seconds ago   Exited (0) 33 seconds ago                  
+albaraka-ai-nginx-1             nginx:1.28-alpine                                  "/docker-entrypoint.…"   nginx             40 seconds ago   Created                                    
+albaraka-ai-postgres-1          pgvector/pgvector:0.8.1-pg17                       "docker-entrypoint.s…"   postgres          42 seconds ago   Up 40 seconds (healthy)                    0.0.0.0:5432->5432/tcp, [::]:5432->5432/tcp
+albaraka-ai-rag-assistant-1     albaraka-ai/rag-assistant:dev                      "uvicorn rag_assista…"   rag-assistant     42 seconds ago   Up 34 seconds (healthy)                    8000/tcp
+albaraka-ai-redis-1             redis:7.4-alpine                                   "docker-entrypoint.s…"   redis             42 seconds ago   Up 40 seconds (healthy)                    0.0.0.0:6379->6379/tcp, [::]:6379->6379/tcp
+albaraka-ai-server-1            albaraka-ai/server:dev                             "java -jar app.jar"      server            41 seconds ago   Up Less than a second (health: starting)   0.0.0.0:8081->8080/tcp, [::]:8081->8080/tcp
 
 ## postgres
 postgres-1  | The files belonging to this database system will be owned by user "postgres".
@@ -215,19 +64,19 @@ postgres-1  | selecting default time zone ... Etc/UTC
 postgres-1  | creating configuration files ... ok
 postgres-1  | running bootstrap script ... ok
 postgres-1  | performing post-bootstrap initialization ... ok
-postgres-1  | syncing data to disk ... ok
 postgres-1  | initdb: warning: enabling "trust" authentication for local connections
-postgres-1  | 
 postgres-1  | initdb: hint: You can change this by editing pg_hba.conf or using the option -A, or --auth-local and --auth-host, the next time you run initdb.
+postgres-1  | syncing data to disk ... ok
+postgres-1  | 
 postgres-1  | 
 postgres-1  | Success. You can now start the database server using:
 postgres-1  | 
 postgres-1  |     pg_ctl -D /var/lib/postgresql/data -l logfile start
 postgres-1  | 
-postgres-1  | waiting for server to start....2026-09-03 22:13:22.681 UTC [48] LOG:  starting PostgreSQL 17.8 (Debian 17.8-1.pgdg12+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit
-postgres-1  | 2026-09-03 22:13:22.682 UTC [48] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
-postgres-1  | 2026-09-03 22:13:22.683 UTC [51] LOG:  database system was shut down at 2026-09-03 22:13:22 UTC
-postgres-1  | 2026-09-03 22:13:22.687 UTC [48] LOG:  database system is ready to accept connections
+postgres-1  | waiting for server to start....2026-09-03 22:17:25.704 UTC [48] LOG:  starting PostgreSQL 17.8 (Debian 17.8-1.pgdg12+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit
+postgres-1  | 2026-09-03 22:17:25.705 UTC [48] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+postgres-1  | 2026-09-03 22:17:25.775 UTC [51] LOG:  database system was shut down at 2026-09-03 22:17:24 UTC
+postgres-1  | 2026-09-03 22:17:25.784 UTC [48] LOG:  database system is ready to accept connections
 postgres-1  |  done
 postgres-1  | server started
 postgres-1  | CREATE DATABASE
@@ -237,25 +86,25 @@ postgres-1  | /usr/local/bin/docker-entrypoint.sh: running /docker-entrypoint-in
 postgres-1  | CREATE DATABASE
 postgres-1  | 
 postgres-1  | 
-postgres-1  | waiting for server to shut down...2026-09-03 22:13:22.893 UTC [48] LOG:  received fast shutdown request
-postgres-1  | .2026-09-03 22:13:22.894 UTC [48] LOG:  aborting any active transactions
-postgres-1  | 2026-09-03 22:13:22.896 UTC [48] LOG:  background worker "logical replication launcher" (PID 54) exited with exit code 1
-postgres-1  | 2026-09-03 22:13:22.897 UTC [49] LOG:  shutting down
-postgres-1  | 2026-09-03 22:13:22.897 UTC [49] LOG:  checkpoint starting: shutdown immediate
-postgres-1  | 2026-09-03 22:13:22.917 UTC [49] LOG:  checkpoint complete: wrote 1836 buffers (11.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.017 s, sync=0.002 s, total=0.020 s; sync files=597, longest=0.001 s, average=0.001 s; distance=8476 kB, estimate=8476 kB; lsn=0/1D2BED8, redo lsn=0/1D2BED8
-postgres-1  | 2026-09-03 22:13:22.921 UTC [48] LOG:  database system is shut down
+postgres-1  | waiting for server to shut down....2026-09-03 22:17:26.135 UTC [48] LOG:  received fast shutdown request
+postgres-1  | 2026-09-03 22:17:26.135 UTC [48] LOG:  aborting any active transactions
+postgres-1  | 2026-09-03 22:17:26.137 UTC [48] LOG:  background worker "logical replication launcher" (PID 54) exited with exit code 1
+postgres-1  | 2026-09-03 22:17:26.138 UTC [49] LOG:  shutting down
+postgres-1  | 2026-09-03 22:17:26.139 UTC [49] LOG:  checkpoint starting: shutdown immediate
+postgres-1  | 2026-09-03 22:17:26.581 UTC [49] LOG:  checkpoint complete: wrote 1836 buffers (11.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.309 s, sync=0.131 s, total=0.443 s; sync files=597, longest=0.038 s, average=0.001 s; distance=8476 kB, estimate=8476 kB; lsn=0/1D2BED8, redo lsn=0/1D2BED8
+postgres-1  | 2026-09-03 22:17:26.586 UTC [48] LOG:  database system is shut down
 postgres-1  |  done
 postgres-1  | server stopped
 postgres-1  | 
 postgres-1  | PostgreSQL init process complete; ready for start up.
 postgres-1  | 
-postgres-1  | 2026-09-03 22:13:23.012 UTC [1] LOG:  starting PostgreSQL 17.8 (Debian 17.8-1.pgdg12+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit
-postgres-1  | 2026-09-03 22:13:23.012 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
-postgres-1  | 2026-09-03 22:13:23.012 UTC [1] LOG:  listening on IPv6 address "::", port 5432
-postgres-1  | 2026-09-03 22:13:23.013 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
-postgres-1  | 2026-09-03 22:13:23.015 UTC [66] LOG:  database system was shut down at 2026-09-03 22:13:22 UTC
-postgres-1  | 2026-09-03 22:13:23.026 UTC [1] LOG:  database system is ready to accept connections
-postgres-1  | 2026-09-03 22:13:41.973 UTC [93] ERROR:  relation "migration_model" does not exist at character 25
-postgres-1  | 2026-09-03 22:13:41.973 UTC [93] STATEMENT:  SELECT ID, VERSION FROM MIGRATION_MODEL ORDER BY UPDATE_TIME DESC
-postgres-1  | 2026-09-03 22:13:42.890 UTC [102] ERROR:  relation "public.databasechangeloglock" does not exist at character 22
-postgres-1  | 2026-09-03 22:13:42.890 UTC [102] STATEMENT:  SELECT COUNT(*) FROM public.databasechangeloglock
+postgres-1  | 2026-09-03 22:17:26.671 UTC [1] LOG:  starting PostgreSQL 17.8 (Debian 17.8-1.pgdg12+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit
+postgres-1  | 2026-09-03 22:17:26.671 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+postgres-1  | 2026-09-03 22:17:26.671 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+postgres-1  | 2026-09-03 22:17:26.672 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+postgres-1  | 2026-09-03 22:17:26.704 UTC [66] LOG:  database system was shut down at 2026-09-03 22:17:26 UTC
+postgres-1  | 2026-09-03 22:17:26.789 UTC [1] LOG:  database system is ready to accept connections
+postgres-1  | 2026-09-03 22:17:45.859 UTC [102] ERROR:  relation "migration_model" does not exist at character 25
+postgres-1  | 2026-09-03 22:17:45.859 UTC [102] STATEMENT:  SELECT ID, VERSION FROM MIGRATION_MODEL ORDER BY UPDATE_TIME DESC
+postgres-1  | 2026-09-03 22:17:46.527 UTC [103] ERROR:  relation "public.databasechangeloglock" does not exist at character 22
+postgres-1  | 2026-09-03 22:17:46.527 UTC [103] STATEMENT:  SELECT COUNT(*) FROM public.databasechangeloglock
