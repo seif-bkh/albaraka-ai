@@ -1,0 +1,13 @@
+{
+  "name": "@albaraka-ai/config-lint",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Validates specs/config against docs/04 tunable ranges, the schema DEFAULTs, the DB enums and the production hardening posture",
+  "scripts": {
+    "lint": "node lint.mjs",
+    "verify": "node lint.mjs && node self-test.mjs"
+  },
+  "engines": { "node": ">=20" },
+  "dependencies": { "js-yaml": "^4.1.0" }
+}
