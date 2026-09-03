@@ -29,9 +29,12 @@ jobs:
           mvn -B -pl assistant-boot -am package -DskipTests 2>&1 | tee /tmp/server-build.log
           exit ${PIPESTATUS[0]}
         working-directory: server
+      - name: Emit build log as annotations (API-readable)
+        if: failure()
+        run: tail -n 200 /tmp/server-build.log | sed 's/^/::error file=server-build.log::/'
       - name: Upload server build log on failure
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: server-build-log
           path: /tmp/server-build.log
@@ -55,9 +58,12 @@ jobs:
         run: pip install -e '.[dev]' 2>&1 | tee /tmp/rag-pip.log && test ${PIPESTATUS[0]} -eq 0
       - name: Golden gate (mock mode, no keys)
         run: python -m pytest -q 2>&1 | tee /tmp/rag-pytest.log && test ${PIPESTATUS[0]} -eq 0
+      - name: Emit rag logs as annotations (API-readable)
+        if: failure()
+        run: tail -n 200 /tmp/rag-*.log | sed 's/^/::error file=rag.log::/'
       - name: Upload rag logs on failure
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: rag-build-log
           path: /tmp/rag-*.log
@@ -84,9 +90,12 @@ jobs:
           npm run build:ui 2>&1 | tee -a /tmp/web-build.log
           npx ng build frontoffice-web --configuration production 2>&1 | tee -a /tmp/web-build.log
           npx ng build backoffice-web --configuration production --base-href /admin/ --deploy-url /admin/ 2>&1 | tee -a /tmp/web-build.log
+      - name: Emit web logs as annotations (API-readable)
+        if: failure()
+        run: tail -n 200 /tmp/web-*.log | sed 's/^/::error file=web.log::/'
       - name: Upload web logs on failure
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: web-build-log
           path: /tmp/web-*.log
@@ -113,22 +122,25 @@ jobs:
       - name: seed-gen staleness check
         run: |
           cd tools/seed-gen && npm ci --no-audit --no-fund
-          cd /home/runner/work/albaraka-ai/albaraka-ai && node tools/seed-gen/generate.mjs --check 2>&1 | tee /tmp/gates-seedgen.log
+          cd "$GITHUB_WORKSPACE" && node tools/seed-gen/generate.mjs --check 2>&1 | tee /tmp/gates-seedgen.log
       - name: realm-lint + self-test
         run: |
           cd tools/realm-lint && npm ci --no-audit --no-fund
           node lint.mjs && node self-test.mjs 2>&1 | tee /tmp/gates-realm.log
+      - name: Emit gates logs as annotations (API-readable)
+        if: failure()
+        run: tail -n 200 /tmp/gates-*.log | sed 's/^/::error file=gates.log::/'
       - name: Upload gates logs on failure
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: gates-log
           path: /tmp/gates-*.log
 
   # ─────────────────────────────────────────────────────────────────────────────────────────────
   #  devstack — real end-to-end: builds every image and boots the compose stack, then probes
-  #  Spring + RAG health. Logs are tee'd and uploaded so the iteration loop can read them even
-  #  when GitHub's log service is unavailable.
+  #  Spring + RAG health. Logs are tee'd, emitted as annotations and uploaded so the iteration
+  #  loop can read them even when GitHub's log service is unavailable.
   # ─────────────────────────────────────────────────────────────────────────────────────────────
   devstack:
     runs-on: ubuntu-latest
@@ -185,9 +197,15 @@ jobs:
         run: |
           docker compose --env-file .env -f deploy/docker-compose.yml --profile app logs --tail=300 > /tmp/devstack-logs.txt 2>&1 || true
           cat /tmp/devstack-logs.txt
+      - name: Emit devstack logs as annotations (API-readable)
+        if: failure()
+        run: |
+          for f in /tmp/devstack-build.log /tmp/devstack-logs.txt; do
+            [ -f "$f" ] && tail -n 200 "$f" | sed 's/^/::error file=devstack.log::/'
+          done
       - name: Upload devstack logs (always)
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: devstack-logs
           path: /tmp/devstack-*

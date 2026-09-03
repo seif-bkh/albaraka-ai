@@ -21,7 +21,7 @@ import java.util.UUID;
 public class ShariaReviewService {
 
     /** Approver roles per tier, matching the backoffice review UI and the Keycloak realm roles. */
-    private static final Map<String, List<String>> TASKS = map(
+    private static final Map<String, List<String>> TASKS = Map.of(
             RiskTier.T1_LOW.name(), List.of("sharia-officer"),
             RiskTier.T2_MEDIUM.name(), List.of("sharia-officer", "analyst"),
             RiskTier.T3_HIGH.name(), List.of("sharia-officer", "compliance"));
