@@ -1,0 +1,160 @@
+# ══════════════════════════════════════════════════════════════════════════════════════════════
+#  application-uat.yaml — user acceptance / pre-production
+# ══════════════════════════════════════════════════════════════════════════════════════════════
+#  UAT is prod-shaped, not dev-shaped: same topology, same security posture, same redaction, same
+#  kill-switch discipline. It differs from prod in three ways only — synthetic data, full trace
+#  sampling, and a lower traffic ceiling. Anything that behaves differently in UAT than in prod is a
+#  defect in one of the two, and the point of this file is to make that visible.
+#
+#  Real Groq and Google keys are used here, against synthetic knowledge-base content: the release
+#  bundle gate (docs/12 §3) runs the golden set and the red-team suite in UAT before promotion.
+# ══════════════════════════════════════════════════════════════════════════════════════════════
+
+spring:
+  datasource:
+    url: ${DATABASE_URL}
+    hikari:
+      maximum-pool-size: 16
+      minimum-idle: 4
+  flyway:
+    locations: classpath:db/migration
+    validate-on-migrate: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${KEYCLOAK_URL}/realms/albaraka
+
+server:
+  port: 8081
+  forward-headers-strategy: framework    # TLS terminates at the edge; honour X-Forwarded-*
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  endpoint:
+    health:
+      show-details: when-authorized
+  otlp:
+    tracing:
+      sampling:
+        probability: 1.0                 # trace everything: UAT exists to be inspected
+
+albaraka:
+  env: uat
+
+  egress:
+    enforce: true
+    pii:
+      mode: TOKENIZE
+      reversible: true
+      fail-closed: true
+    classification-ceiling: INTERNAL
+    budget:
+      daily-usd: 25.00
+      per-answer-usd: 0.0150
+      alert-at-percent: 70
+      hard-stop: true
+
+  providers:
+    onprem:
+      enabled: false
+
+  pipeline:
+    streaming: true
+    sources-before-first-token: true
+    max-retries-generation: 1
+    semantic-cache:
+      enabled: true
+      ttl-seconds: 3600
+      key-includes-kb-epoch: true
+
+  guardrails:
+    output:
+      sharia-judge:
+        enabled: true
+        autonomy: false                  # every BLOCK goes to the human queue while the judge is
+                                         # still being calibrated against officer labels (κ ≥ 0.70)
+        retry-timeout-ms: 300
+        on-unavailable: REFUSE
+      numeric-claims:
+        enabled: true
+        strict-for-intents: [TARIFF_FEES]
+    input:
+      pii:
+        short-circuit-on-mostly-pii: true
+
+  ratelimit:
+    anonymous:
+      per-minute: 8
+      per-day: 200
+    authenticated:
+      per-minute: 20
+      per-day: 1000
+    agent:
+      per-minute: 40
+      per-day: 2000
+
+  queue:
+    enabled: ${WORKER_ENABLED:false}
+    poll-interval-ms: 1000
+    concurrency:
+      ingestion: 2
+      embedding: 4
+
+  storage:
+    provider: s3
+    versioning-required: true
+    object-lock:
+      enabled: true
+      mode: COMPLIANCE
+      retain-days: 3650
+
+  retention:
+    conversation-anonymise-after-months: 24
+    sweeper:
+      cron: "0 30 2 * * *"
+      batch-size: 1000
+
+  observability:
+    log:
+      level: INFO
+      structured: true
+      redact-question-text: true         # same redaction as prod: UAT may hold synthetic PII shapes
+      redact-answer-text: true
+    slo:
+      faithfulness-min: 0.90
+      latency-p95-ms: 3500
+      cost-per-answer-usd-max: 0.0060
+      cache-hit-rate-min: 0.20           # lower than prod: synthetic traffic repeats less
+
+  kill-switch:
+    poll-interval-seconds: 30
+    max-propagation-seconds: 900
+    requires-second-approver: true       # exercised here so the procedure is not new during an incident
+    audit: ALWAYS
+
+  feature-flags:
+    cache-ttl-seconds: 30
+    unknown-flag-default: false
+
+  seed:
+    mode: IF_EMPTY
+
+logging:
+  level:
+    root: INFO
+    tn.albaraka.ai: INFO
+    tn.albaraka.ai.rag: INFO
+    tn.albaraka.ai.guardrails: INFO
+    tn.albaraka.ai.governance: INFO      # UAT is prod-shaped; inspect review state in the
+                                         # backoffice and in traces, not in DEBUG log payloads
+    org.springframework.security: WARN
+    org.springframework: WARN
+    org.springframework.web: WARN
+    org.flywaydb: WARN
+    org.hibernate: WARN
+    org.hibernate.SQL: WARN
+    tn.albaraka.ai.audit: INFO

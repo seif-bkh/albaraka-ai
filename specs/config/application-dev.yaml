@@ -1,0 +1,136 @@
+# ══════════════════════════════════════════════════════════════════════════════════════════════
+#  application-dev.yaml — local and shared development
+# ══════════════════════════════════════════════════════════════════════════════════════════════
+#  Brought up by `deploy/docker-compose.yml` (PostgreSQL+pgvector, Keycloak, Redis, MinIO).
+#  Nothing here may weaken a control that exists to be tested: the Sharia gate, the egress choke
+#  point and the guardrail stack all stay ON in dev, because a control that only runs in production
+#  is a control nobody has ever exercised.
+# ══════════════════════════════════════════════════════════════════════════════════════════════
+
+spring:
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/albaraka_ai}
+    hikari:
+      maximum-pool-size: 8
+      minimum-idle: 2
+  flyway:
+    # specs/db/seed carries V900–V902 (glossary, prompts, policies). Kept on the classpath path in
+    # dev so a fresh container is usable without a separate bootstrap step.
+    locations: classpath:db/migration,filesystem:specs/db/seed
+  ai:
+    openai:
+      # Set GROQ_API_KEY to a real key, or set PROVIDER_MODE=MOCK to run the whole pipeline against
+      # canned responses. MOCK is the only provider mode allowed to appear in a committed file.
+      base-url: ${GROQ_BASE_URL:https://api.groq.com}
+
+server:
+  port: 8081
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics,env,flyway,loggers
+  endpoint:
+    health:
+      show-details: always
+  tracing:
+    enabled: false                      # no collector in the compose stack
+
+albaraka:
+  env: dev
+
+  egress:
+    enforce: true                       # ON in dev: EgressGuard bugs must surface here, not in prod
+    classification-ceiling: INTERNAL
+    budget:
+      daily-usd: 5.00                   # a runaway loop in dev must stop before it costs anything
+      per-answer-usd: 0.0200
+      alert-at-percent: 50
+      hard-stop: true
+
+  providers:
+    mock:
+      enabled: ${PROVIDER_MODE:}        # PROVIDER_MODE=MOCK ⇒ deterministic fixtures, no network
+      fixtures-dir: file:./src/test/resources/provider-fixtures
+    onprem:
+      enabled: false
+
+  pipeline:
+    streaming: true
+    semantic-cache:
+      enabled: true
+      ttl-seconds: 300                  # short, so a knowledge-base edit is visible immediately
+      key-includes-kb-epoch: true
+
+  guardrails:
+    output:
+      sharia-judge:
+        enabled: true
+        autonomy: true
+    input:
+      prompt-guard:
+        enabled: true
+      llama-guard:
+        enabled: true
+
+  ratelimit:
+    anonymous:
+      per-minute: 60                    # relaxed for load testing and Playwright runs
+      per-day: 5000
+    authenticated:
+      per-minute: 120
+      per-day: 20000
+
+  queue:
+    enabled: true                       # workers run in the same JVM in dev
+    poll-interval-ms: 500
+    concurrency:
+      ingestion: 2
+      embedding: 2
+
+  storage:
+    provider: minio
+    endpoint: ${STORAGE_ENDPOINT:http://localhost:9000}
+    object-lock:
+      enabled: false                    # MinIO single-node cannot enforce COMPLIANCE retention
+      mode: GOVERNANCE
+
+  retention:
+    sweeper:
+      cron: "0 */15 * * * *"            # every 15 minutes, so retention is exercised daily
+      batch-size: 100
+
+  observability:
+    log:
+      level: DEBUG
+      structured: false                 # human-readable in dev
+      redact-question-text: false       # devs need the text to debug retrieval
+      redact-answer-text: false
+    slo:
+      latency-p95-ms: 8000              # local Groq round-trips are slower than production
+
+  kill-switch:
+    poll-interval-seconds: 5
+    requires-second-approver: false     # a single developer cannot convene a second approver
+
+  feature-flags:
+    cache-ttl-seconds: 5
+
+  seed:
+    mode: IF_EMPTY
+
+logging:
+  level:
+    root: INFO
+    tn.albaraka.ai: DEBUG
+    tn.albaraka.ai.rag: DEBUG
+    tn.albaraka.ai.guardrails: DEBUG
+    org.springframework.security: INFO
+    org.springframework.web: DEBUG
+    org.flywaydb: INFO
+    tn.albaraka.ai.governance: DEBUG
+    tn.albaraka.ai.audit: INFO
+    org.springframework: INFO
+    org.hibernate: WARN
+    org.hibernate.SQL: DEBUG

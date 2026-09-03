@@ -1,0 +1,234 @@
+# ══════════════════════════════════════════════════════════════════════════════════════════════
+#  application-prod.yaml — production
+# ══════════════════════════════════════════════════════════════════════════════════════════════
+#  This file overrides as little as possible. Every value it repeats from the base is repeated
+#  because getting it wrong is a compliance or a data-loss event, and a reviewer reading this file
+#  alone must be able to see the production posture without opening three others.
+#
+#  Three rules hold in production and nowhere else needs them:
+#    1. No literal secret, no dev-only endpoint, no debug logging — config-lint fails the build.
+#    2. Every fail-open switch is fail-CLOSED. An unavailable guardrail withholds the answer.
+#    3. Content redaction is unconditional. Application logs carry ids and metrics, never text.
+# ══════════════════════════════════════════════════════════════════════════════════════════════
+
+spring:
+  datasource:
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USER}
+    password: ${DATABASE_PASSWORD}
+    hikari:
+      maximum-pool-size: 30
+      minimum-idle: 6
+      connection-timeout: 2000
+      max-lifetime: 1200000
+  flyway:
+    locations: classpath:db/migration    # seeds are baked into the release bundle, not read from disk
+    validate-on-migrate: true
+    out-of-order: false
+    clean-disabled: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${KEYCLOAK_URL}/realms/albaraka
+          audiences: albaraka-assistant-api
+  ai:
+    openai:
+      base-url: ${GROQ_BASE_URL:https://api.groq.com}
+    google:
+      genai:
+        api-key: ${GOOGLE_API_KEY}
+
+server:
+  port: 8081
+  address: 0.0.0.0
+  forward-headers-strategy: framework
+  shutdown: graceful
+  tomcat:
+    max-http-form-post-size: 64KB
+    accesslog:
+      enabled: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus   # no env, no loggers, no flyway: those are attack surface
+  endpoint:
+    health:
+      show-details: when-authorized
+  otlp:
+    tracing:
+      sampling:
+        probability: ${OTEL_SAMPLE_RATE:0.05}
+
+albaraka:
+  env: prod
+
+  # ── egress: the control that keeps personal data inside Tunisia's jurisdiction ─────────────────
+  egress:
+    enforce: true
+    pii:
+      mode: TOKENIZE
+      reversible: true
+      fail-closed: true                   # a detection error blocks the call; it never lets it through
+    classification-ceiling: INTERNAL
+    max-classification-offshore: INTERNAL
+    providers-allowed-offshore: [GROQ, GOOGLE]
+    deny-by-default: true
+    budget:
+      daily-usd: ${ALBARAKA_DAILY_BUDGET_USD:60.00}
+      per-answer-usd: 0.0120
+      alert-at-percent: 70
+      hard-stop: true                     # over budget ⇒ degrade to REF-05, never overspend
+
+  providers:
+    mock:
+      enabled: false                      # hard false; not overridable by environment variable
+    onprem:
+      enabled: ${ONPREM_ENABLED:false}    # the exit ramp of ADR-002, kept one flag away
+
+  pipeline:
+    streaming: true
+    sources-before-first-token: true
+    max-retries-generation: 1
+    max-retries-provider: 2
+    answer-contract:
+      parser: STRICT_JSON
+      on-malformed: RETRY_THEN_REFUSE
+    semantic-cache:
+      enabled: true
+      ttl-seconds: 86400
+      key-includes-kb-epoch: true
+    history:
+      max-turns-sent-to-model: 6
+      summarise-above-turns: 12
+
+  guardrails:
+    input:
+      structural:
+        max-chars: 4000
+        max-chars-agent: 8000
+      prompt-guard:
+        enabled: true
+        block-above: 0.85
+        review-above: 0.50
+      llama-guard:
+        enabled: true
+      pii:
+        enabled: true
+        short-circuit-on-mostly-pii: true
+    output:
+      numeric-claims:
+        enabled: true
+        strict-for-intents: [TARIFF_FEES]
+      language-consistency:
+        enabled: true
+        min-confidence: 0.80
+      forbidden-renderings:
+        enabled: true
+      citation-integrity:
+        enabled: true
+      sharia-judge:
+        enabled: true
+        autonomy: ${SHARIA_JUDGE_AUTONOMY:false}   # false until the judge reaches κ ≥ 0.70 against
+                                                   # officer labels; then flipped by change request
+        retry-timeout-ms: 300
+        on-unavailable: REFUSE
+    disclaimers:
+      appended-by: SERVER
+
+  ratelimit:
+    anonymous:
+      per-minute: 8
+      per-day: 60
+      burst: 12
+    authenticated:
+      per-minute: 20
+      per-day: 400
+      burst: 30
+    agent:
+      per-minute: 40
+      per-day: 2000
+    strikes:
+      adversarial-before-cooldown: 3
+      cooldown-minutes: 30
+      device-ban-after: 10
+
+  queue:
+    enabled: ${WORKER_ENABLED:false}      # true only on the worker deployment, same image, `prod,worker`
+    poll-interval-ms: 1000
+    batch-size: 10
+    lock-timeout-ms: 900000
+    max-attempts: 3
+    dead-letter-after-attempts: 3
+    concurrency:
+      ingestion: 4
+      embedding: 8
+      translation: 2
+      evaluation: 2
+      sweepers: 1
+
+  storage:
+    provider: s3
+    versioning-required: true
+    object-lock:
+      enabled: true
+      mode: COMPLIANCE                    # originals are the Sharia evidence base; not deletable
+      retain-days: 3650
+    presign-ttl-seconds: 120
+
+  retention:
+    conversation-anonymise-after-months: 24
+    audit-event-retain-years: 10
+    guardrail-event-retain-months: 36
+    llm-call-log-retain-months: 6
+    retrieval-candidate-retain-months: 3
+    pii-token-map-ttl-hours: 24
+    sweeper:
+      cron: "0 30 2 * * *"
+      batch-size: 5000
+
+  observability:
+    correlation-id-header: X-Correlation-Id
+    propagate-to-providers: true
+    log:
+      level: INFO
+      structured: true
+      redact-question-text: true
+      redact-answer-text: true
+    slo:
+      faithfulness-min: 0.90
+      latency-p95-ms: 3000
+      cost-per-answer-usd-max: 0.0060
+      cache-hit-rate-min: 0.30
+
+  kill-switch:
+    poll-interval-seconds: 30
+    max-propagation-seconds: 900          # ≤ 15 minutes end to end (docs/05 §7)
+    modes: [FULL, SHARIA_ONLY, READ_ONLY, OFF]
+    requires-second-approver: true
+    audit: ALWAYS
+
+  feature-flags:
+    source: assistant_config
+    cache-ttl-seconds: 30
+    unknown-flag-default: false
+
+  seed:
+    mode: IF_EMPTY                          # idempotent: no-ops once the release bundle has seeded
+
+logging:
+  level:
+    root: WARN
+    tn.albaraka.ai: INFO
+    tn.albaraka.ai.governance: INFO
+    tn.albaraka.ai.audit: INFO
+    tn.albaraka.ai.rag: WARN
+    tn.albaraka.ai.guardrails: INFO       # guardrail decisions are audit-relevant, not noise
+    org.springframework: WARN
+    org.springframework.security: WARN
+    org.springframework.web: WARN
+    org.flywaydb: WARN
+    org.hibernate: WARN
+    org.hibernate.SQL: WARN

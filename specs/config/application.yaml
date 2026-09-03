@@ -1,0 +1,536 @@
+# ══════════════════════════════════════════════════════════════════════════════════════════════
+#  application.yaml — shared base configuration
+# ══════════════════════════════════════════════════════════════════════════════════════════════
+#
+#  THE ONE RULE THAT MATTERS HERE
+#  ─────────────────────────────
+#  This file contains environment wiring and **boot-time defaults only**. Anything an administrator
+#  may change at runtime — prompts, retrieval parameters, model routing, guardrail policies,
+#  microcopy, feature flags — lives in the database (`prompt_version`, `retrieval_config`,
+#  `model_config`, `guardrail_policy`, `assistant_config`, `message_bundle`) and is read from there
+#  on every request. The `albaraka.seed.*` blocks below are used **once**, on an empty database, to
+#  create the first `DRAFT` rows; they are never read again afterwards and they never override a
+#  database value.
+#
+#  That asymmetry is deliberate and load-bearing. A tunable that exists in both YAML and the database
+#  has two truths, and the one that wins depends on the environment, the deploy order and who looked
+#  last. `tools/config-lint` enforces the boundary: no runtime tunable may appear outside
+#  `albaraka.seed.*`, and every seeded value must be inside the range documented in docs/04 §11.
+#
+#  Secrets are never literal here. Every credential is `${ENV_VAR}` resolved from Vault by the
+#  platform (docs/12 §6). A literal secret in this file fails the build.
+#
+#  Profiles: `dev`, `uat`, `prod` (environment) and `worker` (role, additive — the same image runs
+#  the API and the background workers, see ADR-005).
+# ══════════════════════════════════════════════════════════════════════════════════════════════
+
+spring:
+  application:
+    name: albaraka-assistant
+  main:
+    banner-mode: off
+  threads:
+    virtual:
+      enabled: true                     # Java 21 virtual threads; the pipeline is I/O-bound
+  jackson:
+    default-property-inclusion: non_null
+    serialization:
+      write-dates-as-timestamps: false
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/albaraka_ai}
+    username: ${DATABASE_USER:albaraka}
+    password: ${DATABASE_PASSWORD}
+    hikari:
+      pool-name: assistant-pool
+      maximum-pool-size: 20
+      minimum-idle: 4
+      connection-timeout: 3000
+      max-lifetime: 1500000
+      data-source-properties:
+        options: -c search_path=albaraka_ai,public
+  flyway:
+    enabled: true
+    locations: classpath:db/migration,filesystem:specs/db/seed
+    baseline-on-migrate: false
+    validate-on-migrate: true
+    out-of-order: false                 # governance migrations must never be reordered
+    clean-disabled: true                # `flyway clean` cannot be invoked in any environment
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      timeout: 1500ms
+      lettuce:
+        pool:
+          max-active: 32
+          max-idle: 8
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${KEYCLOAK_URL:http://localhost:8080}/realms/albaraka
+          audiences: albaraka-assistant-api
+          jwk-set-uri: ${KEYCLOAK_URL:http://localhost:8080}/realms/albaraka/protocol/openid-connect/certs
+  ai:
+    # Groq is consumed through the OpenAI-compatible starter (ADR-002 decision 1). GroqChatOptionsSanitizer
+    # strips parameters Groq rejects or ignores before the call leaves assistant-infra.
+    openai:
+      base-url: ${GROQ_BASE_URL:https://api.groq.com}
+      api-key: ${GROQ_API_KEY}
+      chat:
+        completions-path: /openai/v1/chat/completions
+        options:
+          model: llama-3.3-70b-versatile
+          temperature: 0.2
+      embedding:
+        enabled: false                  # Groq serves no embeddings — never enable this
+    google:
+      genai:
+        api-key: ${GOOGLE_API_KEY}
+        embedding:
+          text:
+            model: gemini-embedding-001
+            output-dimensionality: 1536
+            task-type: RETRIEVAL_DOCUMENT
+
+server:
+  port: ${SERVER_PORT:8081}
+  address: 0.0.0.0
+  shutdown: graceful
+  # `none` locally (no proxy in front); `framework` behind the TLS-terminating edge in uat/prod.
+  forward-headers-strategy: none
+  compression:
+    enabled: true
+    mime-types: application/json,text/event-stream,text/plain
+    min-response-size: 1024
+  # SSE must not be buffered: a buffered stream delivers the whole answer at once and destroys the
+  # sources-before-first-token guarantee of docs/08 §4.
+  servlet:
+    encoding:
+      charset: UTF-8
+      force: true
+  tomcat:
+    max-http-form-post-size: 64KB
+    connection-timeout: 20000
+    threads:
+      max: 200
+    accesslog:
+      enabled: false                    # access logs would capture question text; use audit_event
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: when-authorized
+      probes:
+        enabled: true
+      group:
+        liveness:
+          include: livenessState
+        readiness:
+          include: readinessState,db,redis
+  health:
+    db:
+      enabled: true
+    redis:
+      enabled: true
+  otlp:
+    metrics:
+      export:
+        url: ${OTEL_EXPORTER_OTLP_ENDPOINT:http://localhost:4318}/v1/metrics
+    tracing:
+      endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT:http://localhost:4318}/v1/traces
+      sampling:
+        probability: ${OTEL_SAMPLE_RATE:0.1}
+  tracing:
+    enabled: true                       # set false in dev, where there is no collector to receive
+    propagation:
+      type: w3c
+  metrics:
+    tags:
+      application: ${spring.application.name}
+      environment: ${ALBARAKA_ENV:dev}
+
+# ── application-owned configuration ──────────────────────────────────────────────────────────────
+albaraka:
+  env: ${ALBARAKA_ENV:dev}
+
+  assistant:
+    name: "Al-Mouchir"
+    name-ar: "المشير"
+    bank-name: "Al Baraka Bank Tunisia"
+    committee-name-fr: "comité de contrôle de la conformité aux normes bancaires islamiques"
+    committee-name-ar: "لجنة مراقبة مطابقة المعايير المصرفية الإسلامية"
+    committee-name-en: "Islamic Banking Standards Compliance Committee"
+    default-locale: fr-FR
+    supported-locales: [fr-FR, ar-TN, en-GB]
+
+  # ── egress choke point (docs/07 §5, ADR-002 decision 6) ────────────────────────────────────────
+  # Every outbound provider call passes here. No module outside assistant-infra may open a socket.
+  egress:
+    enforce: true
+    # v1 sends NO personal data to a US-hosted provider. Reversible PII tokens are substituted
+    # before the call and restored after; the mapping never leaves the platform.
+    pii:
+      mode: TOKENIZE                    # TOKENIZE | REDACT | BLOCK
+      reversible: true
+      fail-closed: true                 # a PII detection error blocks the call, never lets it through
+    classification-ceiling: INTERNAL    # nothing above INTERNAL leaves the platform in v1
+    max-classification-offshore: INTERNAL
+    providers-allowed-offshore: [GROQ, GOOGLE]
+    providers-onshore-only: [ONPREM]
+    allowlist:
+      - api.groq.com
+      - generativelanguage.googleapis.com
+    deny-by-default: true
+    budget:
+      daily-usd: ${ALBARAKA_DAILY_BUDGET_USD:60.00}
+      per-answer-usd: 0.0200
+      alert-at-percent: 80
+      hard-stop: true                   # exceeding the daily budget degrades to REF-05, not to overspend
+
+  # ── providers and model roles ─────────────────────────────────────────────────────────────────
+  # `albaraka.seed.models` populates model_config on an empty database. Runtime routing is read from
+  # model_config where state = 'ACTIVE'; the ONPREM exit profile swaps rows, not code (ADR-002 §5).
+  providers:
+    # MOCK is declared here, disabled, so that no environment can introduce it as a new key:
+    # enabling it is an override of a known control, which is reviewable, rather than the appearance
+    # of an unknown one, which is not. It is the only provider mode permitted in a committed file.
+    mock:
+      enabled: false
+      fixtures-dir: ""
+    groq:
+      base-url: ${GROQ_BASE_URL:https://api.groq.com}
+      api-key: ${GROQ_API_KEY}
+      connect-timeout-ms: 2000
+      read-timeout-ms: 30000
+      # A second, independently pooled client for the guard models: a saturated guard path must not
+      # be caused by, and must not cause, saturation of the answering path (docs/02 note).
+      guard:
+        connect-timeout-ms: 1000
+        read-timeout-ms: 2000
+        max-connections: 64
+    google:
+      api-key: ${GOOGLE_API_KEY}
+      connect-timeout-ms: 2000
+      read-timeout-ms: 10000
+      embedding-batch-size: 100
+    onprem:
+      enabled: false                    # set true under the ONPREM profile
+      openai-compatible-base-url: ${ONPREM_LLM_URL:}
+      embedding-base-url: ${ONPREM_EMBEDDING_URL:}
+
+  # ── pipeline behaviour that is NOT an admin tunable ────────────────────────────────────────────
+  # Structural settings: changing one is a code-level decision reviewed in a PR, not a slider in the
+  # Retrieval Lab. Admin-tunable values are under albaraka.seed.retrieval.
+  pipeline:
+    streaming: true
+    sources-before-first-token: true    # docs/08 §4 — the client renders citations before prose
+    max-retries-generation: 1           # one stricter regeneration, then suppress (docs/04 stage 10)
+    max-retries-provider: 2
+    answer-contract:
+      parser: STRICT_JSON
+      on-malformed: RETRY_THEN_REFUSE   # REF-05 technical variant
+    semantic-cache:
+      enabled: true
+      backend: redis
+      key-includes-kb-epoch: true       # a knowledge-base change invalidates every entry
+      ttl-seconds: 86400
+      max-entries: 200000
+    history:
+      max-turns-sent-to-model: 6
+      summarise-above-turns: 12
+    context-assembly-order:
+      - SYSTEM_PROMPT
+      - POLICY_BLOCK
+      - GLOSSARY_BLOCK
+      - CONTEXT_BLOCK
+      - HISTORY_BLOCK
+      - QUESTION
+      - CONTRACT_REMINDER
+
+  # ── guardrail wiring (thresholds and lexicons live in guardrail_policy) ────────────────────────
+  guardrails:
+    input:
+      structural:
+        max-chars: 4000
+        max-chars-agent: 8000
+      prompt-guard:
+        enabled: true
+        block-above: 0.85
+        review-above: 0.50
+      llama-guard:
+        enabled: true
+        categories: [violence, sexual, hate, self-harm, illicit]
+      pii:
+        enabled: true
+        short-circuit-on-mostly-pii: true
+    output:
+      numeric-claims:
+        enabled: true
+        strict-for-intents: [TARIFF_FEES]
+        normalise-thousands-separators: true
+        normalise-currency-aliases: true
+      language-consistency:
+        enabled: true
+        detector: fasttext
+        min-confidence: 0.80
+      forbidden-renderings:
+        enabled: true
+        source: term_glossary
+      citation-integrity:
+        enabled: true
+        require-marker-on-factual-sentence: true
+      sharia-judge:
+        enabled: true
+        autonomy: ${SHARIA_JUDGE_AUTONOMY:true}   # false ⇒ every BLOCK goes to the human queue
+        retry-timeout-ms: 300
+        on-unavailable: REFUSE          # REF-05 technical; never pass an unverified answer
+    disclaimers:
+      appended-by: SERVER               # never generated by a model
+      source: assistant_config
+
+  # ── rate limits and abuse (docs/07 §5) ─────────────────────────────────────────────────────────
+  ratelimit:
+    backend: redis
+    anonymous:
+      per-minute: 8
+      per-day: 60
+      burst: 12
+    authenticated:
+      per-minute: 20
+      per-day: 400
+      burst: 30
+    agent:
+      per-minute: 40
+      per-day: 2000
+    strikes:
+      adversarial-before-cooldown: 3
+      cooldown-minutes: 30
+      device-ban-after: 10
+
+  # ── background workers (ADR-005: DB queue, FOR UPDATE SKIP LOCKED, no broker) ──────────────────
+  queue:
+    enabled: ${WORKER_ENABLED:false}    # true under the `worker` profile
+    poll-interval-ms: 1000
+    batch-size: 10
+    lock-timeout-ms: 900000
+    max-attempts: 3
+    backoff-base-ms: 5000
+    dead-letter-after-attempts: 3
+    concurrency:
+      ingestion: 4
+      embedding: 8
+      translation: 2
+      evaluation: 2
+      sweepers: 1
+
+  # ── object storage (S3-compatible; MinIO in dev, the bank's platform in prod) ──────────────────
+  storage:
+    provider: ${STORAGE_PROVIDER:minio}
+    endpoint: ${STORAGE_ENDPOINT:http://localhost:9000}
+    region: ${STORAGE_REGION:us-east-1}
+    bucket-originals: ${STORAGE_BUCKET_ORIGINALS:albaraka-ai-originals}
+    bucket-artifacts: ${STORAGE_BUCKET_ARTIFACTS:albaraka-ai-artifacts}
+    access-key: ${STORAGE_ACCESS_KEY}
+    secret-key: ${STORAGE_SECRET_KEY}
+    path-style-access: true
+    presign-ttl-seconds: 300
+    # Originals are the evidence base for Sharia review: never deleted, never overwritten in place.
+    versioning-required: true
+    object-lock:
+      enabled: true
+      mode: COMPLIANCE
+      retain-days: 3650
+
+  # ── internationalisation (docs/06) ────────────────────────────────────────────────────────────
+  i18n:
+    normalisation-spec: specs/i18n/normalization.json
+    derja-map-spec: specs/i18n/derja-msa.json
+    arabizi-input-only: true            # Derja and arabizi are accepted in, never emitted out
+    answer-language: QUESTION_LANGUAGE  # never the conversation locale
+    bidi:
+      enabled: true
+      mixed-direction-markers: true
+    currency:
+      code: TND
+      decimals: 3
+      symbol-fr: "DT"
+      symbol-ar: "د.ت"
+      symbol-en: "TND"
+    mt:
+      auto-publish-forbidden-tiers: [T3_HIGH]
+      requires-human-verification: true
+
+  # ── retention and anonymisation (loi 2004-63 / INPDP, docs/07 §7) ──────────────────────────────
+  retention:
+    conversation-anonymise-after-months: 24
+    audit-event-retain-years: 10
+    guardrail-event-retain-months: 36
+    llm-call-log-retain-months: 6
+    retrieval-candidate-retain-months: 3
+    pii-token-map-ttl-hours: 24
+    sweeper:
+      cron: "0 30 2 * * *"
+      batch-size: 5000
+
+  # ── observability ─────────────────────────────────────────────────────────────────────────────
+  observability:
+    correlation-id-header: X-Correlation-Id
+    propagate-to-providers: true
+    log:
+      level: INFO
+      structured: true
+      redact-question-text: true        # application logs carry ids and metrics, never content
+      redact-answer-text: true
+    slo:
+      faithfulness-min: 0.90
+      latency-p95-ms: 3000
+      cost-per-answer-usd-max: 0.0060
+      cache-hit-rate-min: 0.30
+
+  # ── kill switch (docs/05 §7, S1–S4 ladder) ────────────────────────────────────────────────────
+  kill-switch:
+    config-key: kill.switch.mode
+    poll-interval-seconds: 30
+    max-propagation-seconds: 900        # ≤ 15 minutes end to end, including cache invalidation
+    modes: [FULL, SHARIA_ONLY, READ_ONLY, OFF]
+    requires-second-approver: true
+    audit: ALWAYS
+
+  feature-flags:
+    source: assistant_config            # never a YAML value at runtime
+    cache-ttl-seconds: 30
+    unknown-flag-default: false         # an unrecognised flag is OFF, not ON
+
+# ══════════════════════════════════════════════════════════════════════════════════════════════
+#  SEED BLOCKS — consumed once, on an empty database, by SeedOnEmptyDatabaseRunner.
+#
+#  `albaraka.seed:` is written as a dotted top-level key on purpose. Spring's YAML loader flattens
+#  nested maps by joining keys with '.', so this produces exactly the same property names as nesting
+#  it under `albaraka:` — `albaraka.seed.models[0].code` and so on — while keeping the boundary
+#  between "wiring" and "first-boot defaults" visible at a glance.
+#  Never read at request time. Never able to override an ACTIVE database row.
+#  Every numeric value here must be inside the range documented in docs/04 §11 and equal to the
+#  column DEFAULT in specs/db/schema.sql, or config-lint fails.
+# ══════════════════════════════════════════════════════════════════════════════════════════════
+  seed:
+    mode: ${SEED_MODE:IF_EMPTY}           # IF_EMPTY | NEVER. Prod keeps IF_EMPTY; it is idempotent
+    models:
+      - code: CHAT_PRIMARY
+        provider: GROQ
+        model-id: llama-3.3-70b-versatile
+        temperature: 0.20
+        max-tokens: 700
+        timeout-ms: 30000
+        retries: 2
+        rate-limit-per-min: 60
+        daily-budget-usd: 40.00
+        fallback: CHAT_FALLBACK
+      - code: CHAT_FAST
+        provider: GROQ
+        model-id: llama-3.1-8b-instant
+        temperature: 0.00
+        max-tokens: 700
+        timeout-ms: 4000
+        retries: 2
+        rate-limit-per-min: 300
+        daily-budget-usd: 8.00
+      - code: CHAT_FALLBACK
+        provider: GROQ
+        model-id: openai/gpt-oss-120b
+        temperature: 0.20
+        max-tokens: 700
+        timeout-ms: 30000
+        retries: 1
+        rate-limit-per-min: 30
+        daily-budget-usd: 10.00
+      - code: RERANKER
+        provider: GROQ
+        model-id: llama-3.1-8b-instant
+        temperature: 0.00
+        max-tokens: 700
+        timeout-ms: 1200
+        retries: 1
+        rate-limit-per-min: 300
+        daily-budget-usd: 4.00
+      - code: GUARD_SAFETY
+        provider: GROQ
+        model-id: meta-llama/llama-guard-4-12b
+        temperature: 0.00
+        max-tokens: 200
+        timeout-ms: 1500
+        retries: 1
+        rate-limit-per-min: 300
+        daily-budget-usd: 5.00
+      - code: GUARD_INJECTION
+        provider: GROQ
+        model-id: meta-llama/llama-prompt-guard-2-86m
+        temperature: 0.00
+        max-tokens: 50
+        timeout-ms: 800
+        retries: 1
+        rate-limit-per-min: 600
+        daily-budget-usd: 2.00
+      - code: EMBEDDING
+        provider: GOOGLE
+        model-id: gemini-embedding-001
+        embedding-dim: 1536
+        task-type: RETRIEVAL_DOCUMENT
+        timeout-ms: 10000
+        retries: 3
+        rate-limit-per-min: 1200
+        daily-budget-usd: 10.00
+
+    retrieval:
+      channel: WEB_APP
+      top-k-dense: 25
+      top-k-fts: 20
+      top-k-trgm: 10
+      rrf-k: 60
+      w-dense: 1.00
+      w-fts: 0.85
+      w-trgm: 0.45
+      min-score-dense: 0.350
+      min-score-fts: 0.050
+      rerank-enabled: true
+      rerank-top-n: 8
+      rerank-min-relevance: 4
+      context-token-budget: 6000
+      mmr-lambda: 0.75
+      hyde-enabled: false
+      query-expansion-enabled: true
+      cross-lingual-enabled: true
+      cross-lingual-fallback-min-hits: 3
+      boost-recent-days: 90
+      embedding-variant: gemini-embedding-001@1536
+      canary-percent: 100
+
+    generation:
+      temperature: 0.20
+      max-tokens-answer: 700
+      answer-word-limit: 220
+      semantic-cache-similarity: 0.950
+      max-turns-per-conversation: 20
+
+# Every logger a profile may override is declared here. A logger named only in a profile is a key
+# the base does not know about, which is how a typo becomes a silently ignored setting.
+logging:
+  level:
+    root: INFO
+    tn.albaraka.ai: INFO
+    tn.albaraka.ai.rag: INFO
+    tn.albaraka.ai.guardrails: INFO
+    tn.albaraka.ai.governance: INFO
+    tn.albaraka.ai.audit: INFO
+    org.springframework: WARN
+    org.springframework.security: WARN
+    org.springframework.web: INFO
+    org.flywaydb: WARN
+    org.hibernate: WARN
+    org.hibernate.SQL: WARN
