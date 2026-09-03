@@ -550,12 +550,387 @@ ${Object.entries(routing).map(([c, v]) => `--   ${c.padEnd(20)} ${v.modelRole.pa
 }
 
 // ─────────────────────────────────────────────────────────────────────────────────────────────────
+//  V902 — policies: guardrails, refusal messages, and the runtime-editable registers
+// ─────────────────────────────────────────────────────────────────────────────────────────────────
+
+/** Resolves a dotted path in application.yaml. A register naming a path that does not exist is
+ *  exactly the drift this generator exists to prevent. */
+function yamlPath(doc, path) {
+  const parts = path.split('.');
+  let cur = doc;
+  for (const p of parts) {
+    if (cur === null || cur === undefined || typeof cur !== 'object' || !(p in cur)) return undefined;
+    cur = cur[p];
+  }
+  return cur;
+}
+
+/** Parses the guardrail policy register in docs/07 §6.1. */
+function parseGuardrailRegister(md) {
+  const start = md.indexOf('### 6.1 Guardrail policy register');
+  if (start < 0) throw new Error('V902: docs/07 has no §6.1 guardrail policy register');
+  const section = md.slice(start, md.indexOf('\n## ', start + 10) > 0 ? md.indexOf('\n## ', start + 10) : undefined);
+  const rows = [];
+  for (const line of section.split('\n')) {
+    if (!line.startsWith('| `')) continue;
+    const cells = line.split('|').slice(1, -1).map((c) => c.trim());
+    if (cells.length < 8) continue;
+    const code = cells[0].replace(/`/g, '');
+    if (!/^[A-Z_]+$/.test(code)) continue;
+    rows.push({
+      code, scope: cells[1], severity: cells[2], decision: cells[3], tier: cells[4],
+      emits: cells[5], catches: cells[6],
+      paramsPath: (cells[7].match(/`([^`]+)`/) || [, null])[1],
+    });
+  }
+  if (!rows.length) throw new Error('V902: parsed no rows from the docs/07 §6.1 register — the table shape changed');
+  return rows;
+}
+
+const MESSAGE_KEY = {
+  refusal: (code, part) => `refusal.${code}.${part}`,
+  followup: (pool, i) => `followup.${pool}.${i}`,
+  disclaimer: (id) => `disclaimer.${id}`,
+};
+
+function buildV902() {
+  const CODES = enumValues('guardrail_policy_code');
+  const SCOPES = enumValues('guardrail_scope');
+  const SEVERITIES = enumValues('guardrail_severity');
+  const DECISIONS = enumValues('guardrail_decision');
+  const TIERS = enumValues('risk_tier');
+  const LOCALES = enumValues('locale_code');
+
+  const app = yaml.load(read('specs/config/application.yaml'));
+  const refusals = yaml.load(read('specs/prompts/templates.refusals.yaml'));
+  const register = parseGuardrailRegister(read('docs/07-security-iam-compliance.md'));
+
+  // ── the register must cover the enum exactly ──────────────────────────────────────────────────
+  const missing = CODES.filter((c) => !register.some((r) => r.code === c));
+  if (missing.length) throw new Error(`V902: guardrail_policy_code value(s) absent from docs/07 §6.1: ${missing.join(', ')}`);
+  const extra = register.filter((r) => !CODES.includes(r.code));
+  if (extra.length) throw new Error(`V902: docs/07 §6.1 lists code(s) the enum does not have: ${extra.map((r) => r.code).join(', ')}`);
+  for (const r of register) {
+    if (!SCOPES.includes(r.scope)) throw new Error(`V902: ${r.code} scope '${r.scope}' is not in guardrail_scope`);
+    if (!SEVERITIES.includes(r.severity)) throw new Error(`V902: ${r.code} severity '${r.severity}' is not in guardrail_severity`);
+    if (!DECISIONS.includes(r.decision)) throw new Error(`V902: ${r.code} decision '${r.decision}' is not in guardrail_decision`);
+    if (!TIERS.includes(r.tier)) throw new Error(`V902: ${r.code} tier '${r.tier}' is not in risk_tier`);
+  }
+
+  // ── guardrail_policy ──────────────────────────────────────────────────────────────────────────
+  const policyRows = register.map((r) => {
+    const params = r.paramsPath ? yamlPath(app, r.paramsPath) : undefined;
+    if (r.paramsPath && params === undefined) {
+      throw new Error(`V902: docs/07 §6.1 gives ${r.code} the params path ${r.paramsPath}, which does not exist in specs/config/application.yaml`);
+    }
+    const emitted = (r.emits.match(/REF-\d\d/) || [null])[0];
+    if (!emitted && !/event only|429/.test(r.emits)) {
+      throw new Error(`V902: ${r.code} emits '${r.emits}', which is neither a REF code nor a documented non-refusal outcome`);
+    }
+    if (emitted && !(refusals.templates || []).some((t) => t.code === emitted)) {
+      throw new Error(`V902: ${r.code} emits ${emitted}, which templates.refusals.yaml does not define`);
+    }
+    const value = {
+      ...(params && typeof params === 'object' ? params : {}),
+      _provenance: { register: 'docs/07 §6.1', paramsPath: r.paramsPath || null, catches: r.catches, emits: r.emits },
+      ...(emitted ? { refusalCode: emitted } : {}),
+    };
+    return [
+      q(uuidv5(`guardrail_policy:${r.code}:1`)), q(r.code), n(1), q(r.scope), q(r.severity), q(r.decision),
+      bool(true), jb(value), q(r.tier), q('DRAFT'), q('flyway:V902__seed_policies'),
+    ];
+  });
+
+  // ── the documented contract in the header of templates.refusals.yaml ──────────────────────────
+  // The file states its own key convention and its own list of server-resolved placeholders. Both
+  // are parsed rather than assumed: if the header changes, the seed must change with it.
+  const header = read('specs/prompts/templates.refusals.yaml').split('\ntemplates:')[0];
+  const documentedPlaceholders = [...new Set(
+    [...header.matchAll(/^\s*#\s+.*$/gm)].flatMap((l) => [...l[0].matchAll(/\{\{(\w+)\}\}/g)].map((m) => m[1]))
+  )];
+  if (!documentedPlaceholders.length) throw new Error('V902: the header of templates.refusals.yaml no longer lists its server-resolved placeholders');
+  const documentedKeys = [...new Set([...header.matchAll(/(refusal\.\{CODE\}\.[\w{}.]+)/g)].map((m) => m[1]))];
+  if (documentedKeys.length < 3) throw new Error('V902: the header of templates.refusals.yaml no longer documents its message_key convention');
+
+  // ── message_bundle ────────────────────────────────────────────────────────────────────────────
+  const bundle = [];
+  const refusalPolicy = {};
+  const addMsg = (key, locale, text) => {
+    if (text === null || text === undefined || !String(text).trim()) return;
+    bundle.push([q(key), q(locale), q(String(text))]);
+  };
+  const pools = refusals.followup_pools || {};
+
+  for (const t of refusals.templates || []) {
+    const have = Object.keys(t.locales || {});
+    const absent = LOCALES.filter((l) => !have.includes(l));
+    if (absent.length) {
+      throw new Error(`V902: refusal ${t.code} has no ${absent.join(', ')} text — a customer asking in that language would be refused in another`);
+    }
+    for (const [locale, l] of Object.entries(t.locales)) {
+      if (!LOCALES.includes(locale)) throw new Error(`V902: refusal ${t.code} declares locale '${locale}', not in locale_code`);
+      addMsg(`refusal.${t.code}.title`, locale, l.title);
+      addMsg(`refusal.${t.code}.body`, locale, l.body);
+      addMsg(`refusal.${t.code}.cta`, locale, l.cta);
+    }
+
+    // Variant bodies override `body` when their condition holds (REF-05 technical, agent audience).
+    const variants = {};
+    for (const [name, v] of Object.entries(t.variants || {})) {
+      variants[name] = { reasonCodes: v.reason_codes ?? [], note: v.note ?? null };
+      for (const [locale, l] of Object.entries(v.locales || {})) {
+        if (!LOCALES.includes(locale)) throw new Error(`V902: ${t.code} variant ${name} declares locale '${locale}', not in locale_code`);
+        for (const part of ['title', 'body', 'cta']) {
+          addMsg(`refusal.${t.code}.${part}.${name}`, locale, l[part]);
+        }
+      }
+      const covered = Object.keys(v.locales || {});
+      const vAbsent = LOCALES.filter((l) => !covered.includes(l));
+      if (vAbsent.length) throw new Error(`V902: ${t.code} variant '${name}' has no ${vAbsent.join(', ')} text`);
+    }
+
+    // Suggested-question chips are keyed per refusal code, per the documented convention, and are
+    // materialised from the pool the template names. RELATED_QUESTIONS is deliberately not seeded: it
+    // is filled at runtime with the titles of retrieved sources that scored below the relevance
+    // threshold, and an empty pool is the correct result when retrieval returned nothing.
+    const followups = {};
+    if (t.followup_policy && t.followup_policy !== 'NONE' && t.followup_policy !== 'RELATED_QUESTIONS') {
+      const pool = pools[t.followup_policy];
+      if (!pool) throw new Error(`V902: ${t.code} names follow-up pool '${t.followup_policy}', which templates.refusals.yaml does not define`);
+      for (const [locale, items] of Object.entries(pool)) {
+        if (!Array.isArray(items)) continue;
+        items.forEach((text, i) => addMsg(`refusal.${t.code}.followup.${i + 1}`, locale, text));
+      }
+      followups.pool = t.followup_policy;
+      followups.perLocale = Object.fromEntries(Object.entries(pool).filter(([, v]) => Array.isArray(v)).map(([k, v]) => [k, v.length]));
+    } else {
+      followups.pool = t.followup_policy ?? 'NONE';
+      followups.perLocale = {};
+      if (followups.pool === 'RELATED_QUESTIONS') followups.composedAtRuntime = 'titles of the top retrieved sources below the relevance threshold; empty when retrieval returned nothing';
+    }
+
+    // Message keys this refusal's flow refers to but whose text is not authored anywhere. Seeding
+    // invented customer-facing copy is not the generator's call — it needs the R1–R8 review — so the
+    // gap is recorded in the data where the backoffice and G7h can see it, rather than left to
+    // render as a null or as the raw key in front of a customer.
+    const referenced = [];
+    if (t.referral?.consent_key) referenced.push(t.referral.consent_key);
+    for (const step of [...(t.referral?.on_accept || []), ...(t.referral?.on_decline || [])]) {
+      const m = String(step).match(/message_key (\S+)/);
+      if (m) referenced.push(m[1]);
+    }
+    const unauthored = [...new Set(referenced)].filter((k) => !bundle.some((r) => r[0] === q(k)));
+
+    refusalPolicy[t.code] = {
+      name: t.name, triggersIncident: !!t.triggers_incident, followupPolicy: t.followup_policy ?? null,
+      ctaAction: t.cta_action ?? null, audienceDefault: t.audience_default ?? null, log: t.log ?? null,
+      emittedBy: t.emitted_by ?? [], shortCircuit: t.short_circuit ?? false,
+      followups, ...(Object.keys(variants).length ? { variants } : {}),
+      ...(t.referral ? { referral: t.referral } : {}),
+      ...(unauthored.length ? { referencedMessagesNotAuthored: unauthored } : {}),
+    };
+  }
+
+  const disclaimerWiring = {};
+  for (const [id, d] of Object.entries(refusals.disclaimers || {})) {
+    for (const locale of LOCALES) {
+      if (!d[locale]) throw new Error(`V902: disclaimer ${id} has no ${locale} text`);
+      addMsg(`disclaimer.${id}`, locale, d[locale]);
+    }
+    disclaimerWiring[id] = { appliesTo: d.applies_to ?? [], condition: d.condition ?? null };
+  }
+
+  // Every generated key must match a pattern the source file documents, or the runtime will look up
+  // a key the backoffice cannot explain.
+  const patterns = documentedKeys.map((k) => new RegExp(`^${k.replace('{CODE}', 'REF-\\d\\d').replace('{n}', '\\d+').replace('{PART}', '(title|body|cta)').replace('{VARIANT}', '[a-z]+').replace(/\./g, '\\.')}$`));
+  for (const [rawKey] of bundle.map((r) => [r[0].slice(1, -1)])) {
+    if (rawKey.startsWith('disclaimer.')) continue;                 // the header documents refusal keys only
+    if (!patterns.some((re) => re.test(rawKey))) {
+      throw new Error(`V902: generated message_key '${rawKey}' matches none of the documented patterns (${documentedKeys.join(', ')})`);
+    }
+  }
+  const seen = new Set();
+  for (const [key, locale] of bundle.map((r) => [r[0], r[1]])) {
+    const k = `${key}|${locale}`;
+    if (seen.has(k)) throw new Error(`V902: duplicate message_bundle primary key ${k}`);
+    seen.add(k);
+  }
+
+  // ── assistant_config: the registers the runtime reads and an administrator may edit ───────────
+  const routing = {};
+  for (const b of parsePromptBlocks()) {
+    const m = b.meta;
+    if (!m.model_role) continue;
+    const prev = routing[m.code];
+    routing[m.code] = { ...(prev || {}), modelRole: m.model_role,
+      locales: [...new Set([...(prev?.locales || []), m.locale])],
+      ...(m.output_schema ? { outputSchema: m.output_schema } : {}),
+      ...(m.max_tokens ? { maxTokens: m.max_tokens } : {}),
+      ...(m.temperature !== undefined ? { temperature: m.temperature } : {}) };
+  }
+  // docs/glossary-trilingual.md §6 is cross-cutting: it prohibits renderings of concepts that are not
+  // single glossary terms, so it does not fit term_glossary's three NOT NULL label columns.
+  const registerSection = (() => {
+    const md = read('docs/glossary-trilingual.md');
+    const start = md.indexOf('## 6. Forbidden-rendering register');
+    const end = md.indexOf('\n## 7.', start);
+    const out = [];
+    for (const line of md.slice(start, end > 0 ? end : undefined).split('\n')) {
+      if (!line.startsWith('|') || line.startsWith('|---') || line.startsWith('| Concept')) continue;
+      const c = line.split('|').slice(1, -1).map((x) => x.trim());
+      if (c.length < 5) continue;
+      const split = (s) => s.split(/[,،]/).map((x) => x.trim()).filter(Boolean);
+      out.push({ concept: c[0], neverSay: { fr: split(c[1]), ar: split(c[2]), en: split(c[3]) }, sayInstead: c[4] });
+    }
+    if (!out.length) throw new Error('V902: parsed no rows from the docs/glossary-trilingual.md §6 register');
+    return out;
+  })();
+
+  // Which component resolves each placeholder. Three are constants and come from assistant.identity;
+  // the rest are composed per request, because their content depends on retrieval, on the rate
+  // limiter or on the audience. A placeholder nobody resolves reaches the customer verbatim.
+  const IDENTITY_KEYS = ['assistant_name', 'bank_name', 'committee_name'];
+  const COMPOSED = {
+    alternative_block: 'RefusalComposer — the participatory alternative to the prohibited product asked for, from term_glossary and retrieval',
+    documentation_block: 'RefusalComposer — citations of the approved documentation that describes the operation',
+    referral_cta: 'RefusalComposer — the label of the Sharia-committee referral action for the answer language',
+    handoff_cta: 'RefusalComposer — the label of the human handoff action for the answer language',
+    handoff_channel: 'RefusalComposer — the authenticated or agency channel that can serve the request, per channel and audience',
+    top_sources: 'RefusalComposer — the titles of the top retrieved sources that scored below the relevance threshold, rendered as questions',
+    retry_after: 'RateLimiter — the Retry-After window in seconds, from the bucket that was exhausted',
+    correlation_id: 'IncidentContext — the correlation id of the guardrail_event or incident row, so an agent can trace the refusal. REF-05 agent variant only.',
+    failed_stage: 'IncidentContext — the pipeline stage that failed. REF-05 agent variant only: R3 forbids naming internals in customer-facing copy, so this must never appear in an unqualified body.',
+  };
+  const fragments = {};
+  for (const ph of documentedPlaceholders) {
+    if (IDENTITY_KEYS.includes(ph)) fragments[ph] = { resolvedBy: 'assistant_config', source: 'assistant.identity' };
+    else if (COMPOSED[ph]) fragments[ph] = { resolvedBy: 'runtime', source: COMPOSED[ph] };
+    else throw new Error(`V902: templates.refusals.yaml documents the placeholder {{${ph}}} but nothing declares how it is resolved`);
+  }
+  for (const k of Object.keys(COMPOSED)) {
+    if (!documentedPlaceholders.includes(k)) throw new Error(`V902: {{${k}}} has a declared composer but the source header no longer lists it`);
+  }
+
+  // R3: a placeholder documented as agent-variant-only must not appear in customer-facing copy. The
+  // header says so in prose; this is what makes the prose enforceable.
+  const agentOnly = documentedPlaceholders.filter((ph) => COMPOSED[ph] && /agent variant only/i.test(COMPOSED[ph]));
+  for (const [rawKey, , rawText] of bundle) {
+    const key = rawKey.slice(1, -1);
+    if (/\.(agent)$/.test(key)) continue;                          // the agent variant may use them
+    for (const ph of agentOnly) {
+      if (rawText.includes(`{{${ph}}}`)) {
+        throw new Error(`V902: ${key} is customer-facing but interpolates {{${ph}}}, which the source reserves for the agent variant (R3 forbids naming internals to a customer)`);
+      }
+    }
+  }
+
+
+  // The refusal bodies and the system prompts interpolate {{assistant_name}}, {{bank_name}} and
+  // {{committee_name}}. Nothing else in the seed supplies them, so a refusal would reach a customer
+  // with the literal text "{{committee_name}}" in it. Keyed by placeholder name on purpose: the
+  // runtime resolves a placeholder by looking its name up in this object.
+  const ident = app?.albaraka?.assistant;
+  if (!ident) throw new Error('V902: application.yaml has no albaraka.assistant block to seed assistant.identity from');
+  const identity = {
+    assistant_name: ident.name ?? null,
+    assistant_name_ar: ident['name-ar'] ?? null,
+    bank_name: ident['bank-name'] ?? null,
+    committee_name: ident['committee-name-fr'] ?? null,
+    committee_name_ar: ident['committee-name-ar'] ?? null,
+    committee_name_en: ident['committee-name-en'] ?? null,
+    default_locale: ident['default-locale'] ?? null,
+    supported_locales: ident['supported-locales'] ?? [],
+  };
+  const unresolvedIdentity = Object.entries(identity).filter(([k, v]) => v === null || v === '');
+  if (unresolvedIdentity.length) throw new Error(`V902: albaraka.assistant supplies no value for ${unresolvedIdentity.map(([k]) => k).join(', ')}`);
+
+  const assistantConfig = [
+    ['assistant.identity', identity, 'T1_LOW',
+     'The names interpolated into prompts and refusal messages, keyed by placeholder name. Seeded from albaraka.assistant in specs/config/application.yaml. Renaming the assistant is a branding decision an administrator can take without a migration; seed_test.sql G7e fails if a seeded message uses a placeholder this object does not supply.'],
+    ['refusal.fragments', fragments, 'T2_MEDIUM',
+     'Every placeholder that appears in a refusal, and what resolves it. Three are constants from assistant.identity; the rest are composed per request, because their content depends on retrieval, on the rate limiter or on the audience. Derived from the placeholder list in the header of specs/prompts/templates.refusals.yaml — a placeholder the header stops documenting fails the build rather than reaching a customer verbatim.'],
+    ['prompt.model_routing', routing, 'T2_MEDIUM',
+     'Which model_config runs each prompt code, and the output schema, max_tokens and temperature that go with it. prompt_version has no columns for these, so the binding lives here and stays editable at runtime rather than frozen into a migration. Generated from the front matter of specs/prompts/*.md.'],
+    ['refusal.policy', refusalPolicy, 'T3_HIGH',
+     'Per refusal code: the machine name, whether a hit opens an incident, which follow-up pool and CTA apply, which variants exist and when, the referral flow, and which guardrail stages emit it. message_bundle stores only text, so the behaviour around a refusal lives here. Where a flow refers to a message whose text has not been authored, the key is listed under referencedMessagesNotAuthored rather than invented. Generated from specs/prompts/templates.refusals.yaml.'],
+    ['guardrail.forbidden_renderings_register', registerSection, 'T3_HIGH',
+     'Cross-cutting prohibited renderings for concepts that are not single glossary terms, and what to say instead. term_glossary.forbidden_renderings covers the per-term cases; this covers the rest. Generated from docs/glossary-trilingual.md §6.'],
+    ['disclaimer.wiring', disclaimerWiring, 'T2_MEDIUM',
+     'Which disclaimer applies to which refusal code, and under what condition. Disclaimers are appended by the SERVER after the refusal body and are never generated by a model. Generated from specs/prompts/templates.refusals.yaml.'],
+  ];
+  const acRows = assistantConfig.map(([key, value, tier, desc]) => [
+    q(key), jb(value), q('JSON'), 'NULL', q(tier), q(desc), n(0), q('flyway:V902__seed_policies'),
+  ]);
+
+  const body = `SET search_path TO ${SCHEMA}, public;
+
+-- ── guardrail_policy ─────────────────────────────────────────────────────────────────────────────
+-- ${policyRows.length} policies, one per member of guardrail_policy_code. Scope, severity, decision and tier
+-- come from the docs/07 §6.1 register; params is the application.yaml block that register names,
+-- resolved at generation time and stored with its provenance, so the seeded policy and the configured
+-- thresholds cannot disagree.
+--
+-- All seeded state = 'DRAFT'. Enabling a guardrail is a governance act, and so is weakening one:
+-- lowering a CRITICAL policy from BLOCK is a T3 change needing the two-eyes quorum of docs/05 §4.
+--
+-- NOT seeded here, deliberately: model_config and retrieval_config belong to
+-- SeedOnEmptyDatabaseRunner, which reads albaraka.seed from application.yaml on an empty database
+-- (specs/config/README). Two writers for one row is two truths.
+${insert('guardrail_policy',
+  ['id', 'code', 'version_no', 'applies_to', 'severity', 'decision_on_hit', 'enabled', 'params',
+   'risk_tier', 'state', 'created_by'],
+  policyRows, 3)}
+-- ── message_bundle ───────────────────────────────────────────────────────────────────────────────
+-- ${bundle.length} rows. Key convention: refusal.<CODE>.<title|body|cta>, followup.<POOL>.<n>,
+-- disclaimer.<ID>. Every refusal carries all ${LOCALES.length} locales — the generator fails if one is missing,
+-- because a customer refused in a language they did not ask in has been refused twice.
+-- RELATED_QUESTIONS is not seeded: it is filled at runtime with the titles of retrieved sources that
+-- scored below the relevance threshold, and an empty pool is the correct result when retrieval
+-- returned nothing.
+${insert('message_bundle', ['message_key', 'locale', 'text'], bundle, 6)}
+-- ── assistant_config ─────────────────────────────────────────────────────────────────────────────
+-- ${acRows.length} runtime-editable registers. These are the parts of the seed that an administrator is meant to
+-- change without a migration; each description names the file it was generated from.
+${insert('assistant_config',
+  ['key', 'value', 'value_type', 'locale', 'risk_tier', 'description', 'version', 'updated_by'],
+  acRows, 1)}
+-- ── invariants a reviewer can re-run ─────────────────────────────────────────────────────────────
+-- SELECT count(*) FROM guardrail_policy;                                  → ${policyRows.length}
+-- SELECT count(*) FROM guardrail_policy WHERE state <> 'DRAFT';           → 0
+-- SELECT count(*) FROM guardrail_policy WHERE severity = 'CRITICAL'
+--                                          AND decision_on_hit <> 'BLOCK'; → ${register.filter((r) => r.severity === 'CRITICAL' && r.decision !== 'BLOCK').length}
+-- SELECT count(*) FROM message_bundle;                                    → ${bundle.length}
+-- SELECT count(DISTINCT message_key) FROM message_bundle;                 → ${new Set(bundle.map((r) => r[0])).size}
+-- SELECT count(*) FROM assistant_config;                                  → ${acRows.length}
+`;
+
+  return migration('V902__seed_policies.sql', 'guardrail policies, refusal messages and runtime registers', [
+    'docs/07-security-iam-compliance.md §6.1   (the guardrail policy register: scope, severity, decision, tier, params path)',
+    'specs/config/application.yaml             (the params blocks the register names, resolved by path)',
+    'specs/prompts/templates.refusals.yaml     (refusal text in three locales, follow-up pools, disclaimers, per-code behaviour)',
+    'docs/glossary-trilingual.md §6            (the cross-cutting forbidden-rendering register)',
+    'specs/prompts/*.md                        (the prompt → model-role binding)',
+    'specs/db/schema.sql                       (guardrail_policy_code, guardrail_scope, guardrail_severity, guardrail_decision, risk_tier, locale_code)',
+  ], [
+    'params is resolved from application.yaml at generation time and stored with a _provenance member',
+    'naming the path it came from. A register that names a path which no longer exists fails the',
+    'build rather than seeding an empty policy.',
+    '',
+    'The refusal each policy emits is checked against templates.refusals.yaml, and every refusal must',
+    'exist in all three locales. RATE_LIMIT is the one policy that emits an HTTP 429 instead of a',
+    'refusal, and LANGUAGE_CONSISTENCY the one that warns instead of blocking; both are argued in',
+    'docs/07 §6.1 rather than left as a surprise in the data.',
+  ], body);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────────────────────────
 //  CLI
 // ─────────────────────────────────────────────────────────────────────────────────────────────────
 
 const BUILDERS = {
   V900: ['V900__seed_glossary.sql', buildV900],
   V901: ['V901__seed_prompts.sql', buildV901],
+  V902: ['V902__seed_policies.sql', buildV902],
   V903: ['V903__seed_dialect.sql', buildV903],
 };
 
@@ -571,7 +946,7 @@ function main() {
     if (only && only !== id) continue;
     let text;
     try { text = build(); }
-    catch (e) { console.error(`\n  ✗ ${id}: ${e.message}\n`); process.exit(2); }
+    catch (e) { console.error(`\n  ✗ ${e.message.startsWith(`${id}:`) ? e.message : `${id}: ${e.message}`}\n`); process.exit(2); }
     const path = join(OUT, file);
     if (!check) {
       writeFileSync(path, text);

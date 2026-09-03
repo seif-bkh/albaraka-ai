@@ -8,7 +8,10 @@
 #      refusal.{CODE}.title                 → short heading shown above the body
 #      refusal.{CODE}.body                  → main text, markdown allowed (paragraphs + bold only)
 #      refusal.{CODE}.cta                   → primary action label (null = no action offered)
-#      refusal.{CODE}.body.{VARIANT}        → variant body, overrides `body` when the variant applies
+#      refusal.{CODE}.{PART}.{VARIANT}      → variant of `title`, `body` or `cta`; overrides the
+#                                             unqualified key when the variant applies. REF-05's
+#                                             `technical` variant carries all three: it is a
+#                                             different message, not a different paragraph
 #      refusal.{CODE}.followup.{n}          → suggested-question chips rendered under the refusal
 #
 #  Variants in use:
@@ -22,6 +25,10 @@
 #      {{assistant_name}} {{bank_name}} {{alternative_block}} {{documentation_block}}
 #      {{referral_cta}} {{handoff_cta}} {{top_sources}} {{handoff_channel}} {{committee_name}}
 #      {{retry_after}}
+#      {{correlation_id}} {{failed_stage}}   ← REF-05 `agent` variant ONLY. An internal audience may
+#                                              be told which stage failed and how to trace it; R3
+#                                              forbids naming internals in customer-facing copy, so
+#                                              these two must never appear in an unqualified body.
 #
 #  Rules these strings must respect (enforced in review, docs/06 §7 and docs/10 §4):
 #   R1  No template may state or imply a religious ruling.

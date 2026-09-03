@@ -1,5 +1,5 @@
 -- ═══════════════════════════════════════════════════════════════════════════════════════════════
---  Al-Mouchir — seed content tests (G5 glossary and dialect map, G6 prompt library)
+--  Al-Mouchir — seed content tests (G5 glossary and dialect map, G6 prompt library, G7 policies)
 --
 --  Runs AFTER specs/db/schema.sql and the generated content migrations in specs/db/seed/. It tests
 --  the seeded DATA, which schema_test.sql cannot: the schema can be perfect and the seed can still
@@ -9,6 +9,7 @@
 --      -f specs/db/schema.sql \
 --      -f specs/db/seed/V900__seed_glossary.sql \
 --      -f specs/db/seed/V901__seed_prompts.sql \
+--      -f specs/db/seed/V902__seed_policies.sql \
 --      -f specs/db/seed/V903__seed_dialect.sql \
 --      -f specs/db/tests/seed_test.sql
 --
@@ -30,6 +31,15 @@
 --    G6d  no {{placeholder}} in a body that variables[] does not declare
 --    G6e  the Arabic system prompt survives storage intact
 --    G6f  no truncated body
+--
+--    G7a  every guardrail_policy_code is seeded once, all DRAFT
+--    G7b  no CRITICAL policy is weaker than BLOCK
+--    G7c  no policy has empty params — a guard with no thresholds never fires
+--    G7d  every refusal code has a title and a body in every locale
+--    G7e  every {{placeholder}} in a seeded message resolves against assistant.identity
+--    G7f  refusal.policy and message_bundle cover the same codes
+--    G7g  every wired disclaimer has text in every locale, and none is unwired
+--    G7h  every message key a refusal flow refers to is seeded or explicitly tracked as unauthored
 -- ═══════════════════════════════════════════════════════════════════════════════════════════════
 SET search_path TO albaraka_ai, public;
 SET client_min_messages TO NOTICE;
@@ -286,4 +296,206 @@ BEGIN
   END IF;
   RAISE NOTICE 'PASS G6f: every seeded body is substantial (% to % characters) with a token estimate',
     (SELECT min(length(body)) FROM prompt_version), (SELECT max(length(body)) FROM prompt_version);
+END $$;
+
+-- ───────────────────────────── G7 — seeded policies (V902) ─────────────────────────────
+-- The guardrail register and the refusal messages are the parts of the seed a customer can feel: a
+-- policy seeded weaker than the register promises, or a refusal missing a locale, changes what the
+-- assistant says without any code changing.
+
+-- G7a: every guardrail_policy_code the schema declares is seeded exactly once, and nothing is
+-- seeded ACTIVE. An unseeded code means the runtime loads a policy that does not exist and the
+-- guard silently does not run.
+DO $$
+DECLARE n integer; missing text; dupes text;
+BEGIN
+  SELECT count(*) INTO n FROM unnest(enum_range(NULL::guardrail_policy_code));
+  SELECT string_agg(c::text, ', ') INTO missing
+    FROM unnest(enum_range(NULL::guardrail_policy_code)) AS c
+   WHERE NOT EXISTS (SELECT 1 FROM guardrail_policy g WHERE g.code = c);
+  IF missing IS NOT NULL THEN
+    RAISE EXCEPTION 'TEST FAILED G7a: guardrail_policy_code value(s) with no seeded policy: %', missing;
+  END IF;
+  SELECT string_agg(code::text, ', ') INTO dupes FROM (
+    SELECT code FROM guardrail_policy GROUP BY code HAVING count(*) > 1) d;
+  IF dupes IS NOT NULL THEN
+    RAISE EXCEPTION 'TEST FAILED G7a: policy code(s) seeded more than once: %', dupes;
+  END IF;
+  IF EXISTS (SELECT 1 FROM guardrail_policy WHERE state <> 'DRAFT') THEN
+    RAISE EXCEPTION 'TEST FAILED G7a: a guardrail policy was seeded in a state other than DRAFT — enabling a guard is a governance act';
+  END IF;
+  RAISE NOTICE 'PASS G7a: all % guardrail policies seeded once each, all DRAFT', n;
+END $$;
+
+-- G7b: no CRITICAL policy is seeded with a decision weaker than BLOCK.
+-- docs/07 §6.1 argues each of these; a seed that quietly downgraded one would look identical in the
+-- backoffice list and would only be noticed by the incident that got through.
+DO $$
+DECLARE bad text;
+BEGIN
+  SELECT string_agg(code::text || '=' || decision_on_hit::text, ', ') INTO bad
+    FROM guardrail_policy WHERE severity = 'CRITICAL' AND decision_on_hit <> 'BLOCK';
+  IF bad IS NOT NULL THEN
+    RAISE EXCEPTION 'TEST FAILED G7b: CRITICAL polic(ies) that do not block: %', bad;
+  END IF;
+  RAISE NOTICE 'PASS G7b: every CRITICAL policy blocks (% of % policies are CRITICAL)',
+    (SELECT count(*) FROM guardrail_policy WHERE severity = 'CRITICAL'),
+    (SELECT count(*) FROM guardrail_policy);
+END $$;
+
+-- G7c: no policy is seeded with empty params. A guard with no thresholds is a guard that never fires,
+-- and it still shows as enabled in the backoffice.
+DO $$
+DECLARE bad text;
+BEGIN
+  SELECT string_agg(code::text, ', ') INTO bad
+    FROM guardrail_policy
+   WHERE params = '{}'::jsonb OR params IS NULL OR NOT (params ? '_provenance');
+  IF bad IS NOT NULL THEN
+    RAISE EXCEPTION 'TEST FAILED G7c: polic(ies) with no params or no provenance: %', bad;
+  END IF;
+  RAISE NOTICE 'PASS G7c: every policy carries resolved params and the application.yaml path they came from';
+END $$;
+
+-- G7d: every refusal code has a title and a body in every supported locale.
+-- A refusal served in a language the customer did not ask in is a second refusal.
+DO $$
+DECLARE bad text;
+BEGIN
+  SELECT string_agg(r.code || '/' || l.locale || '/' || p.part, ', ') INTO bad
+    FROM unnest(enum_range(NULL::refusal_code)) AS r(code)
+   CROSS JOIN unnest(enum_range(NULL::locale_code)) AS l(locale)
+   CROSS JOIN (VALUES ('title'), ('body')) AS p(part)
+   WHERE NOT EXISTS (SELECT 1 FROM message_bundle mb
+                      WHERE mb.message_key = 'refusal.' || r.code || '.' || p.part
+                        AND mb.locale = l.locale
+                        AND length(btrim(mb.text)) > 0);
+  IF bad IS NOT NULL THEN
+    RAISE EXCEPTION 'TEST FAILED G7d: refusal message(s) missing or blank: %', bad;
+  END IF;
+  RAISE NOTICE 'PASS G7d: all % refusal codes carry a title and a body in all % locales',
+    (SELECT count(*) FROM unnest(enum_range(NULL::refusal_code))),
+    (SELECT count(*) FROM unnest(enum_range(NULL::locale_code)));
+END $$;
+
+-- G7e: every {{placeholder}} in every seeded message is declared in refusal.fragments, and every
+-- placeholder declared as a constant actually exists in assistant.identity.
+-- Placeholders resolve in two tiers: three are constants (the assistant, bank and committee names),
+-- the rest are composed per request from retrieval, the rate limiter or the audience. An undeclared
+-- placeholder is not cosmetic — the customer reads "l'assistant de {{bank_name}}".
+DO $$
+DECLARE bad text; identity jsonb; fragments jsonb;
+BEGIN
+  SELECT value INTO identity FROM assistant_config WHERE key = 'assistant.identity';
+  SELECT value INTO fragments FROM assistant_config WHERE key = 'refusal.fragments';
+  IF identity IS NULL OR fragments IS NULL THEN
+    RAISE EXCEPTION 'TEST FAILED G7e: assistant_config is missing assistant.identity or refusal.fragments';
+  END IF;
+  SELECT string_agg(DISTINCT mb.message_key || ':{{' || p.m[1] || '}}', ', ') INTO bad
+    FROM message_bundle mb, LATERAL regexp_matches(mb.text, '\{\{(\w+)\}\}', 'g') AS p(m)
+   WHERE NOT (fragments ? p.m[1]);
+  IF bad IS NOT NULL THEN
+    RAISE EXCEPTION 'TEST FAILED G7e: placeholder(s) refusal.fragments does not declare: %', bad;
+  END IF;
+  SELECT string_agg(DISTINCT k, ', ') INTO bad
+    FROM jsonb_object_keys(fragments) AS k
+   WHERE fragments->k->>'resolvedBy' = 'assistant_config' AND NOT (identity ? k);
+  IF bad IS NOT NULL THEN
+    RAISE EXCEPTION 'TEST FAILED G7e: placeholder(s) declared as constants but absent from assistant.identity: %', bad;
+  END IF;
+  RAISE NOTICE 'PASS G7e: all % placeholders declared — % constants resolve against assistant.identity, % composed at runtime',
+    (SELECT count(*) FROM jsonb_object_keys(fragments)),
+    (SELECT count(*) FROM jsonb_object_keys(fragments) k WHERE fragments->k->>'resolvedBy' = 'assistant_config'),
+    (SELECT count(*) FROM jsonb_object_keys(fragments) k WHERE fragments->k->>'resolvedBy' = 'runtime');
+END $$;
+
+-- G7f: the refusal.policy register and the refusal messages cover the same codes.
+-- The register carries the behaviour (incident, follow-up pool, CTA); the bundle carries the text.
+-- One without the other means a refusal that is served with no CTA, or a CTA with no message.
+DO $$
+DECLARE bad text;
+BEGIN
+  WITH seeded AS MATERIALIZED (
+         SELECT DISTINCT split_part(message_key, '.', 2) AS c
+           FROM message_bundle WHERE message_key LIKE 'refusal.%'),
+       policy AS MATERIALIZED (
+         SELECT jsonb_object_keys(value) AS c
+           FROM assistant_config WHERE key = 'refusal.policy')
+  SELECT string_agg(c, ', ') INTO bad FROM (
+    (SELECT c FROM seeded EXCEPT SELECT c FROM policy)
+    UNION ALL
+    (SELECT c FROM policy EXCEPT SELECT c FROM seeded)
+  ) x;
+  IF bad IS NOT NULL THEN
+    RAISE EXCEPTION 'TEST FAILED G7f: refusal.policy and message_bundle disagree about these codes: %', bad;
+  END IF;
+  RAISE NOTICE 'PASS G7f: refusal.policy and message_bundle cover the same % refusal codes',
+    (SELECT count(*) FROM (SELECT DISTINCT jsonb_object_keys(value) AS k
+                             FROM assistant_config WHERE key = 'refusal.policy') y);
+END $$;
+
+-- G7g: every disclaimer the wiring refers to has text in every locale, and no seeded disclaimer is
+-- unwired. An unwired disclaimer is dead text; a wired-but-missing one is a null in a customer reply.
+DO $$
+DECLARE bad text; wiring jsonb;
+BEGIN
+  SELECT value INTO wiring FROM assistant_config WHERE key = 'disclaimer.wiring';
+  IF wiring IS NULL THEN
+    RAISE EXCEPTION 'TEST FAILED G7g: assistant_config has no disclaimer.wiring row';
+  END IF;
+  SELECT string_agg(k || '/' || l.locale, ', ') INTO bad
+    FROM jsonb_object_keys(wiring) AS k
+   CROSS JOIN unnest(enum_range(NULL::locale_code)) AS l(locale)
+   WHERE NOT EXISTS (SELECT 1 FROM message_bundle mb
+                      WHERE mb.message_key = 'disclaimer.' || k AND mb.locale = l.locale
+                        AND length(btrim(mb.text)) > 0);
+  IF bad IS NOT NULL THEN
+    RAISE EXCEPTION 'TEST FAILED G7g: wired disclaimer(s) with no text: %', bad;
+  END IF;
+  SELECT string_agg(split_part(message_key, '.', 2), ', ') INTO bad
+    FROM message_bundle
+   WHERE message_key LIKE 'disclaimer.%'
+     AND split_part(message_key, '.', 2) NOT IN (SELECT jsonb_object_keys(wiring));
+  IF bad IS NOT NULL THEN
+    RAISE EXCEPTION 'TEST FAILED G7g: seeded disclaimer(s) no wiring refers to: %', bad;
+  END IF;
+  RAISE NOTICE 'PASS G7g: all % disclaimers are wired and present in every locale',
+    (SELECT count(*) FROM jsonb_object_keys(wiring));
+END $$;
+
+-- G7h: every message key a refusal flow refers to is either seeded or explicitly recorded as not yet
+-- authored. The REF-03 Sharia referral names a consent prompt and two notifications whose copy does
+-- not exist in any source file; inventing customer-facing text is a content decision that needs the
+-- R1–R8 review, so the keys are tracked in refusal.policy instead. This assertion is what stops a
+-- NEW reference from being added silently: it must either be seeded or added to the tracked list.
+DO $$
+DECLARE untracked text; tracked integer;
+BEGIN
+  WITH refs AS (
+    SELECT DISTINCT trim(r) AS k FROM (
+      SELECT jsonb_path_query(value, '$.*.referral.consent_key') #>> '{}' AS r
+        FROM assistant_config WHERE key = 'refusal.policy'
+      UNION ALL
+      SELECT substring(step from 'message_key (\S+)') FROM (
+        SELECT jsonb_path_query(value, '$.*.referral.on_accept[*]') #>> '{}' AS step
+          FROM assistant_config WHERE key = 'refusal.policy'
+        UNION ALL
+        SELECT jsonb_path_query(value, '$.*.referral.on_decline[*]') #>> '{}'
+          FROM assistant_config WHERE key = 'refusal.policy') o
+      UNION ALL
+      SELECT jsonb_path_query(value, '$.*.referencedMessagesNotAuthored[*]') #>> '{}'
+        FROM assistant_config WHERE key = 'refusal.policy'
+    ) x WHERE r IS NOT NULL
+  ), declared AS (
+    SELECT jsonb_path_query(value, '$.*.referencedMessagesNotAuthored[*]') #>> '{}' AS k
+      FROM assistant_config WHERE key = 'refusal.policy'
+  )
+  SELECT string_agg(k, ', '), (SELECT count(*) FROM declared) INTO untracked, tracked
+    FROM (SELECT DISTINCT k FROM refs) r
+   WHERE NOT EXISTS (SELECT 1 FROM message_bundle mb WHERE mb.message_key = r.k)
+     AND NOT EXISTS (SELECT 1 FROM declared d WHERE d.k = r.k);
+  IF untracked IS NOT NULL THEN
+    RAISE EXCEPTION 'TEST FAILED G7h: refusal flow(s) reference message key(s) that are neither seeded nor recorded as unauthored: %', untracked;
+  END IF;
+  RAISE NOTICE 'PASS G7h: every referenced message key is seeded or tracked (% key(s) awaiting authored copy)', tracked;
 END $$;
