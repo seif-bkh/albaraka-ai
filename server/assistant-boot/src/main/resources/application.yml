@@ -6,8 +6,9 @@ spring:
     web-application-type: reactive
   config:
     # The platform contract lives in the repository (specs/config) and is mounted read-only by
-    # compose (docs/10 §4); this file only points at it and pins the local defaults.
-    import: optional:file:/app/specs/config/application.yaml,optional:classpath:application-local.yml
+    # compose (docs/10 §4). Import the whole directory so the dev profile's application-dev.yaml
+    # is also resolved, with the local defaults as a safety net.
+    import: optional:file:/app/specs/config/,optional:classpath:application-local.yml
   flyway:
     enabled: true
     locations: classpath:db/migration

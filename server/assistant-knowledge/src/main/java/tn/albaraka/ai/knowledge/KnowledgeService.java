@@ -1,6 +1,5 @@
 package tn.albaraka.ai.knowledge;
 
-import tools.jackson.databind.ObjectMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,9 +21,8 @@ import java.util.UUID;
 public class KnowledgeService {
 
     private final JdbcTemplate db;
-    private final ObjectMapper json;
 
-    public KnowledgeService(JdbcTemplate db, ObjectMapper json) { this.db = db; this.json = json; }
+    public KnowledgeService(JdbcTemplate db) { this.db = db; }
 
     public record NewDocument(UUID id, UUID versionId, int chunkCount) {}
 

@@ -1,0 +1,153 @@
+name: CI — Spring + Python + Angular build & full-stack smoke
+
+on:
+  push:
+    branches: [arena/01a06861-albaraka-ai, main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ─────────────────────────────────────────────────────────────────────────────────────────────
+  #  server — the exact build the Dockerfile runs (mvn -pl assistant-boot -am package)
+  # ─────────────────────────────────────────────────────────────────────────────────────────────
+  server:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+      - name: Compile Spring Boot modular monolith (same command as Dockerfile.server)
+        run: mvn -B -q -pl assistant-boot -am package -DskipTests
+        working-directory: server
+
+  # ─────────────────────────────────────────────────────────────────────────────────────────────
+  #  rag-assistant — pip install + the 8-case golden gate
+  # ─────────────────────────────────────────────────────────────────────────────────────────────
+  rag:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: rag-assistant
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install package
+        run: pip install -e .
+      - name: Golden gate (mock mode, no keys)
+        run: python -m pytest -q
+
+  # ─────────────────────────────────────────────────────────────────────────────────────────────
+  #  web — Angular 22: shared-ui + both production bundles (backoffice under /admin/)
+  # ─────────────────────────────────────────────────────────────────────────────────────────────
+  web:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: apps
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: apps/package-lock.json
+      - run: npm ci --no-audit --no-fund
+      - run: npm run build:ui
+      - run: npx ng build frontoffice-web --configuration production
+      - run: npx ng build backoffice-web --configuration production --base-href /admin/ --deploy-url /admin/
+
+  # ─────────────────────────────────────────────────────────────────────────────────────────────
+  #  gates — spec linters with mutation self-tests
+  # ─────────────────────────────────────────────────────────────────────────────────────────────
+  gates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: compose-lint + self-test
+        run: |
+          cd tools/compose-lint && npm ci --no-audit --no-fund
+          node lint.mjs && node self-test.mjs
+      - name: config-lint + self-test
+        run: |
+          cd tools/config-lint && npm ci --no-audit --no-fund
+          node lint.mjs && node self-test.mjs
+      - name: seed-gen staleness check
+        run: node tools/seed-gen/generate.mjs --check
+      - name: realm-lint + self-test
+        run: |
+          cd tools/realm-lint && npm ci --no-audit --no-fund
+          node lint.mjs && node self-test.mjs
+
+  # ─────────────────────────────────────────────────────────────────────────────────────────────
+  #  devstack — real end-to-end: builds every image and boots the compose stack, then probes
+  #  Spring + RAG health. On failure the step dumps the full service logs (the iteration loop
+  #  reads these via `gh run view --log-failed`).
+  # ─────────────────────────────────────────────────────────────────────────────────────────────
+  devstack:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      POSTGRES_PASSWORD: ci-postgres
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ci-admin
+      MINIO_ROOT_PASSWORD: ci-minio
+      RAG_PROVIDER_MODE: mock
+      RAG_VECTOR_BACKEND: mock
+    steps:
+      - uses: actions/checkout@v4
+      - name: Bootstrap .env for CI
+        run: |
+          sed "s/^POSTGRES_PASSWORD=.*/POSTGRES_PASSWORD=$POSTGRES_PASSWORD/
+               s/^KC_BOOTSTRAP_ADMIN_PASSWORD=.*/KC_BOOTSTRAP_ADMIN_PASSWORD=$KC_BOOTSTRAP_ADMIN_PASSWORD/
+               s/^MINIO_ROOT_PASSWORD=.*/MINIO_ROOT_PASSWORD=$MINIO_ROOT_PASSWORD/" .env.example > .env
+          grep -E "^(POSTGRES_PASSWORD|KC_BOOTSTRAP_ADMIN_PASSWORD|MINIO_ROOT_PASSWORD)=" .env
+      - name: Build all images
+        run: docker compose --env-file .env -f deploy/docker-compose.yml --profile app build
+      - name: Boot the application
+        run: docker compose --env-file .env -f deploy/docker-compose.yml --profile app up -d --no-build
+      - name: Wait for Spring liveness (max 9 min)
+        run: |
+          for i in $(seq 1 54); do
+            if curl -sf http://localhost:8081/actuator/health/liveness >/dev/null; then
+              echo "server UP after $((i*10))s"; exit 0
+            fi
+            sleep 10
+          done
+          echo "server did not become healthy — dumping logs"; exit 1
+      - name: Wait for RAG health (max 3 min)
+        run: |
+          for i in $(seq 1 18); do
+            if curl -sf http://localhost:8000/v1/rag/health >/dev/null; then
+              echo "rag UP after $((i*10))s"; exit 0
+            fi
+            sleep 10
+          done
+          echo "rag did not become healthy"; exit 1
+      - name: Smoke — one chat SSE round-trip via the edge
+        run: |
+          curl -sf -N -X POST http://localhost:8082/api/v1/chat \
+            -H 'Content-Type: application/json' \
+            -d '{"text":"comment ouvrir un compte courant ?","locale":"fr-FR"}' \
+            | head -c 1200
+      - name: Show containers
+        if: always()
+        run: docker compose --env-file .env -f deploy/docker-compose.yml --profile app ps
+      - name: Dump service logs on failure
+        if: failure()
+        run: docker compose --env-file .env -f deploy/docker-compose.yml --profile app logs --tail=200
