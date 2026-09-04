@@ -307,6 +307,26 @@ jobs:
           echo "$fb" | grep -q '"status":"NEW"' || { echo "feedback endpoint broken: $fb"; exit 1; }
           echo "frontoffice contract OK (config, conversation, SSE answer, feedback)"
 
+      - name: Smoke — backoffice login via the Keycloak bridge (fresh realm import)
+        run: |
+          set -euo pipefail
+          resp=$(curl -s -w '\n%{http_code}' -X POST http://localhost:9000/api/v1/auth/login \
+            -H 'Content-Type: application/json' \
+            -d '{"email":"admin@albaraka.tn","password":"Admin#123"}')
+          code=$(printf '%s' "$resp" | tail -1)
+          body=$(printf '%s' "$resp" | sed '$d')
+          if [ "$code" != "200" ]; then
+            echo "login failed (HTTP $code): $body" | tee -a /tmp/devstack-smoke.txt
+            echo "── server auth / keycloak lines ──"
+            docker compose --env-file .env -f deploy/docker-compose.yml --profile app logs server --tail=80 2>&1 \
+              | grep -iE "auth:|keycloak|token grant|jwt" | tail -25 | tee -a /tmp/devstack-smoke.txt || true
+            docker compose --env-file .env -f deploy/docker-compose.yml --profile app logs keycloak --tail=80 2>&1 \
+              | grep -iE "error|warn|grant|client" | tail -25 | tee -a /tmp/devstack-smoke.txt || true
+            exit 1
+          fi
+          echo "$body" | grep -q '"accessToken"' || { echo "no accessToken in login response: $body"; exit 1; }
+          echo "backoffice login OK (bridge + fresh realm import)"
+
       - name: Smoke — SPA shells via the edge (frontoffice, admin, module MIME)
         run: |
           # GHA invokes bash with -e: a bare `( ... ) > file` subshell that fails would exit

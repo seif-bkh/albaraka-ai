@@ -1,5 +1,8 @@
 package tn.albaraka.ai.api;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -11,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 import tn.albaraka.ai.shared.config.AlbarakaProperties;
 import tn.albaraka.ai.shared.error.ApiException;
@@ -21,11 +24,14 @@ import java.util.Map;
 
 /**
  * Backoffice sign-in bridge: the SPA posts credentials, this endpoint performs the Keycloak
- * password grant (DAG enabled on albaraka-backoffice-web) and returns a bearer + user claims.
+ * password grant against the confidential {@code albaraka-assistant-bridge} client (DAG is
+ * enabled only there — realm-lint M14) and returns a bearer + user claims.
  */
 @RestController
 @RequestMapping("/api/v1/auth")
 public class AuthController {
+
+    private static final Logger log = LoggerFactory.getLogger(AuthController.class);
 
     private final WebClient web;
     private final ReactiveJwtDecoder jwtDecoder;
@@ -61,10 +67,26 @@ public class AuthController {
                     if (token == null || token.isBlank() || "null".equals(token)) {
                         return Mono.error(ApiException.unprocessable("AUTH.INVALID_CREDENTIALS", "invalid credentials"));
                     }
-                    return jwtDecoder.decode(token).map(jwt -> new LoginResponse(token, userOf(jwt)));
+                    return jwtDecoder.decode(token)
+                            .map(jwt -> new LoginResponse(token, userOf(jwt)))
+                            .onErrorMap(e -> {
+                                // token issued but our resource server refuses it (audience/issuer/jwk
+                                // mismatch) — log the real reason, never the generic error alone
+                                log.warn("auth: token rejected by the resource server: {}", e.toString());
+                                return ApiException.unprocessable("AUTH.INVALID_CREDENTIALS", "invalid credentials");
+                            });
                 })
-                .onErrorMap(e -> e instanceof ApiException ? e :
-                        ApiException.unprocessable("AUTH.INVALID_CREDENTIALS", "invalid credentials"));
+                .onErrorMap(e -> {
+                    // Keycloak answers 400 with {error, error_description} for bad user/client
+                    // (invalid_grant, invalid_client, invalid_grant for wrong secret, …). Surface it
+                    // in the server log so `make logs` pinpoints the cause instead of a silent 401.
+                    if (e instanceof WebClientResponseException wce) {
+                        log.warn("auth: keycloak token grant rejected (status {}): {}", wce.getStatusCode().value(),
+                                wce.getResponseBodyAsString());
+                    }
+                    return e instanceof ApiException ? e
+                            : ApiException.unprocessable("AUTH.INVALID_CREDENTIALS", "invalid credentials");
+                });
     }
 
     @GetMapping("/me")
