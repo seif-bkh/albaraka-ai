@@ -212,7 +212,7 @@ for (const f of ['application.yaml', 'application-dev.yaml', 'application-uat.ya
     if (String(c.environment?.KC_DB || '') !== 'postgres') err('[K03] KC_DB must be postgres');
     const health = JSON.stringify(c.healthcheck || {});
     if (!health.includes('openid-configuration')) err('[K04] keycloak healthcheck should probe /realms/albaraka/.well-known/openid-configuration');
-    if (JSON.stringify(c.ports || []).includes('9001:8080') === false) err('[K05] keycloak must publish 9001:8080 — the browser-visible issuer (KC_HOSTNAME_PORT, application.yaml KEYCLOAK_URL default, docs/12, runbooks, spike) all use localhost:9001');
+    if (JSON.stringify(c.ports || []).includes('9001:8080') === false) err('[K05] keycloak must publish 9001:8080 — the browser-visible issuer (KC_HOSTNAME, application.yaml KEYCLOAK_URL default, docs/12, runbooks, spike) all use localhost:9001');
     const deps = JSON.stringify(c.depends_on || {});
     if (!deps.includes('service_healthy')) err('[K04] keycloak must depend on postgres being healthy, not merely started');
     const kcRetries = Number(c.healthcheck?.retries ?? 0);
@@ -220,8 +220,18 @@ for (const f of ['application.yaml', 'application-dev.yaml', 'application-uat.ya
  
     const kcPub = (c.ports || []).map(String).find((p) => /^[0-9]+:8080$/.test(p)) || '';
     const kcHostPort = kcPub ? kcPub.split(':')[0] : '';
-    if (String(c.environment?.KC_HOSTNAME_PORT || '') !== kcHostPort) {
-      err(`[K07] KC_HOSTNAME_PORT must equal the published host port (${kcHostPort}) — Keycloak advertises its issuer with this port; a mismatch makes the token issuer unreachable from the browser and the server rejects every token`);
+    // Keycloak 26 hostname v2: KC_HOSTNAME carries the FULL URL (scheme://host:port) and
+    // KC_HOSTNAME_PORT is the deprecated v1 split (it logs "Hostname v1 options are still in use"
+    // and did not compose the issuer correctly). The guard's intent is unchanged: the issuer port
+    // advertised by Keycloak must equal the published host port, or every token is rejected
+    // ("The iss claim is not valid").
+    const hostV2 = String(c.environment?.KC_HOSTNAME || '');
+    const portInUrl = (hostV2.match(/:(\d+)(\/|$)/) || [])[1];
+    if (portInUrl && portInUrl !== kcHostPort) {
+      err(`[K07] KC_HOSTNAME full URL must use the published host port (${kcHostPort}, got :${portInUrl}) — Keycloak advertises this port in the issuer; a mismatch makes the token issuer unreachable from the browser and the server rejects every token`);
+    }
+    if (String(c.environment?.KC_HOSTNAME_PORT || '') && String(c.environment?.KC_HOSTNAME_PORT) !== kcHostPort) {
+      err(`[K07] KC_HOSTNAME_PORT (deprecated v1 split) must equal the published host port (${kcHostPort}) — prefer the full URL form KC_HOSTNAME=http://localhost:${kcHostPort}`);
     }
   }
   ok.push('keycloak: KC_BOOTSTRAP_ADMIN_*, sed-substituted realm import, postgres-backed, healthcheck on the albaraka realm');
@@ -252,7 +262,10 @@ for (const f of ['application.yaml', 'application-dev.yaml', 'application-uat.ya
   // blind overwrite): `cp -n` only helps the first run, so an older .env misses required
   // vars added later — this is exactly the regression E09 guards
   const makeText = read(MAKEFILE_FILE);
-  if (!makeText.includes('tools/env-sync.sh')) err('[E10] Makefile `up` must invoke tools/env-sync.sh — it merges newly required keys into an existing .env without overwriting user values');
+  // recipe block of the `up` target (tab-indented lines) — shared by E10 and E14. Target-scoped,
+  // so another target calling env-sync (reset-db) cannot mask `up` dropping it.
+  const upBlock = makeText.match(/^up:[^\n]*\n((?:\t.*\n?)+)/m)?.[1] || '';
+  if (!upBlock.includes('tools/env-sync.sh')) err('[E10] Makefile `up` must invoke tools/env-sync.sh — it merges newly required keys into an existing .env without overwriting user values');
   if (makeText.includes('cp -n .env.example .env')) err('[E10] replace `cp -n .env.example .env` with tools/env-sync.sh — cp -n never updates an existing .env, so a stale .env misses new required vars and `make up` fails');
 
   // env-sync is the pre-flight guard: MinIO hard-requires a root password of ≥8 characters and
@@ -285,7 +298,6 @@ for (const f of ['application.yaml', 'application-dev.yaml', 'application-uat.ya
 
   // `make up` must surface logs when compose fails: the failure is only actionable if the user
   // sees container state + logs in the same command (this is what the user asked for this turn)
-  const upBlock = makeText.match(/^up:[^\n]*\n((?:\t.*\n?)+)/m)?.[1] || '';
   if (!upBlock.includes('up -d --build')) err('[E14] Makefile `up` must run $(COMPOSE) up -d --build');
   if (!upBlock.includes('logs --tail=')) err('[E14] Makefile `up` must print `$(COMPOSE) logs --tail=…` when compose fails — a bare `docker compose logs` hits the deploy/ project-dir interpolation trap, so the failure output must carry the logs itself');
   if (!upBlock.includes('ps -a')) err('[E14] Makefile `up` failure report must include `$(COMPOSE) ps -a` (container state)');

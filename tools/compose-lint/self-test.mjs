@@ -170,7 +170,8 @@ const MUTATIONS = [
   { id: 'M40 keycloak returns to a 5-minute health grace', run: (c) => { svc(c, 'keycloak').healthcheck.retries = 30; }, expect: '[K06] keycloak healthcheck retries must be ≥60' },
 
   // ── port-map parity (the 9000-range sweep) ────────────────────────────────────────────────
-  { id: 'M41 KC_HOSTNAME_PORT drifts from the published keycloak port', run: (c) => { svc(c, 'keycloak').environment.KC_HOSTNAME_PORT = '8080'; }, expect: '[K07] KC_HOSTNAME_PORT must equal' },
+  { id: 'M41 the KC_HOSTNAME full URL drifts from the published keycloak port', run: (c) => { svc(c, 'keycloak').environment.KC_HOSTNAME = 'http://localhost:8080'; }, expect: '[K07] KC_HOSTNAME full URL must use' },
+  { id: 'M41b the legacy v1 KC_HOSTNAME_PORT split reappears', run: (c) => { svc(c, 'keycloak').environment.KC_HOSTNAME_PORT = '8080'; }, expect: '[K07] KC_HOSTNAME_PORT (deprecated' },
   { id: 'M42 the server port falls back to 8081', run: (c) => { svc(c, 'server').ports = ['8081:8080']; }, expect: '[E15] server must publish 9002:8080' },
   { id: 'M43 postgres republishes 5432 to the host', run: (c) => { svc(c, 'postgres').ports = ['5432:5432']; }, expect: '[P04] postgres must publish 9004:5432' },
   { id: 'M44 env-sync stops migrating the pre-9000 realm URLs', run: () => {}, expect: '[E16] tools/env-sync.sh must migrate', file: 'envSync',
