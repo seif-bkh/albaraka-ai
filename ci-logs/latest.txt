@@ -1,12 +1,425 @@
-## run 33859854973 — keycloak
+## run 33859967531 — keycloak
+keycloak-1  | WARNING: Hostname v1 options [hostname-port] are still in use, please review your configuration
+keycloak-1  | Updating the configuration and installing your custom providers, if any. Please wait.
+keycloak-1  | 2026-09-04 09:47:33,169 INFO  [io.quarkus.deployment.QuarkusAugmentor] (main) Quarkus augmentation completed in 8384ms
+keycloak-1  | WARNING: Hostname v1 options [hostname-port] are still in use, please review your configuration
+keycloak-1  | Running the server in development mode. DO NOT use this configuration in production.
+keycloak-1  | 2026-09-04 09:47:35,606 INFO  [org.keycloak.url.HostnameV2ProviderFactory] (main) If hostname is specified, hostname-strict is effectively ignored
+keycloak-1  | 2026-09-04 09:47:36,888 INFO  [org.infinispan.CONTAINER] (main) ISPN000974: Virtual threads support: enabled
+keycloak-1  | 2026-09-04 09:47:37,850 INFO  [org.hibernate.orm.jdbc.batch] (JPA Startup Thread) HHH100501: Automatic JDBC statement batching enabled (maximum batch size 32)
+keycloak-1  | 2026-09-04 09:47:39,135 INFO  [org.keycloak.quarkus.runtime.storage.database.liquibase.QuarkusJpaUpdaterProvider] (main) Initializing database schema. Using changelog META-INF/jpa-changelog-master.xml
+keycloak-1  | 2026-09-04 09:47:46,045 INFO  [org.infinispan.CONTAINER] (main) ISPN000556: Starting user marshaller 'org.infinispan.commons.marshall.ImmutableProtoStreamMarshaller'
+keycloak-1  | 2026-09-04 09:47:46,420 INFO  [org.keycloak.connections.infinispan.DefaultInfinispanConnectionProviderFactory] (main) Node name: node_940781, Site name: null
+keycloak-1  | 2026-09-04 09:47:46,571 INFO  [org.keycloak.quarkus.runtime.storage.database.jpa.DatabaseIndexChecker] (db-index-checker) Running database index checker
+keycloak-1  | 2026-09-04 09:47:46,577 INFO  [org.keycloak.models.workflow.WorkflowsEventListenerFactory] (main) Workflow runner task scheduled: next execution at 21:47:46, then every PT12H
+keycloak-1  | 2026-09-04 09:47:46,677 INFO  [org.keycloak.exportimport.dir.DirImportProvider] (main) Importing from directory /opt/keycloak/bin/../data/import
+keycloak-1  | 2026-09-04 09:47:46,705 INFO  [org.keycloak.services] (main) KC-SERVICES0050: Initializing master realm
+keycloak-1  | 2026-09-04 09:47:48,229 INFO  [org.keycloak.services] (main) KC-SERVICES0030: Full model import requested. Strategy: IGNORE_EXISTING
+keycloak-1  | 2026-09-04 09:47:48,969 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
+keycloak-1  | 2026-09-04 09:47:48,975 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'profile' doesn't exist. Ignoring
+keycloak-1  | 2026-09-04 09:47:49,065 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
+keycloak-1  | 2026-09-04 09:47:49,070 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'profile' doesn't exist. Ignoring
+keycloak-1  | 2026-09-04 09:47:49,123 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'webauthn' doesn't exist. Ignoring
+keycloak-1  | 2026-09-04 09:47:49,129 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
+keycloak-1  | 2026-09-04 09:47:49,134 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'profile' doesn't exist. Ignoring
+keycloak-1  | 2026-09-04 09:47:49,139 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'email' doesn't exist. Ignoring
+keycloak-1  | 2026-09-04 09:47:49,144 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'roles' doesn't exist. Ignoring
+keycloak-1  | 2026-09-04 09:47:49,194 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
+keycloak-1  | 2026-09-04 09:47:50,294 INFO  [org.keycloak.exportimport.util.ImportUtils] (main) Realm 'albaraka' imported
+keycloak-1  | 2026-09-04 09:47:50,299 INFO  [org.keycloak.services] (main) KC-SERVICES0032: Import finished successfully
+keycloak-1  | 2026-09-04 09:47:50,376 INFO  [org.keycloak.services] (main) KC-SERVICES0077: Created temporary admin user with username admin
+keycloak-1  | 2026-09-04 09:47:50,547 INFO  [org.keycloak.services.resources.KeycloakApplication] (main) Bootstrap completed in 12.563000 seconds
+keycloak-1  | 2026-09-04 09:47:50,625 INFO  [io.quarkus] (main) Keycloak 26.6.3 on JVM (powered by Quarkus 3.33.2) started in 17.304s. Listening on: http://0.0.0.0:8080. Management interface listening on http://0.0.0.0:9000.
+keycloak-1  | 2026-09-04 09:47:50,625 INFO  [io.quarkus] (main) Profile dev activated. 
+keycloak-1  | 2026-09-04 09:47:50,625 INFO  [io.quarkus] (main) Installed features: [agroal, cdi, hibernate-orm, jdbc-postgresql, keycloak, micrometer, narayana-jta, opentelemetry, reactive-routes, rest, rest-jackson, smallrye-context-propagation, smallrye-health, vertx]
 
 ## server (Flyway, boot, chat errors)
+server-1  | 2026-09-04T09:48:52.374Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] s.w.r.r.m.a.RequestMappingHandlerMapping : [c7d3a392-16] Mapped to tn.albaraka.ai.api.ChatController#chat(ChatRequest)
+server-1  | 2026-09-04T09:48:52.374Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] .r.m.a.RequestBodyMethodArgumentResolver : [c7d3a392-16] Content-Type:application/json
+server-1  | 2026-09-04T09:48:52.375Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] .r.m.a.RequestBodyMethodArgumentResolver : [c7d3a392-16] 0..1 [tn.albaraka.ai.api.ChatController$ChatRequest]
+server-1  | 2026-09-04T09:48:52.375Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] org.springframework.web.HttpLogging      : [c7d3a392-16] Decoded [ChatRequest[text=comment ouvrir un compte courant ?, locale=fr-FR, clientId=null, deviceId=null, con (truncated)...]
+server-1  | 2026-09-04T09:48:52.375Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [c7d3a392-16] Using 'text/event-stream' given [*/*] and supported [text/event-stream]
+server-1  | 2026-09-04T09:48:52.376Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [c7d3a392-16] 0..N [org.springframework.http.codec.ServerSentEvent<java.lang.String>]
+server-1  | 2026-09-04T09:48:52.379Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-105] o.s.w.r.f.client.ExchangeFunctions       : [cce5b9c] HTTP POST http://rag-assistant:8000/v1/rag/chat
+server-1  | 2026-09-04T09:48:52.380Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] org.springframework.web.HttpLogging      : [cce5b9c] Encoding [RagChatRequest[text=comment ouvrir un compte courant ?, context={max_classification=PUBLIC, audience (truncated)...]
+server-1  | 2026-09-04T09:48:52.384Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] o.s.w.r.f.client.ExchangeFunctions       : [cce5b9c] [a5d6f9fa-1] Response 200 OK
+server-1  | 2026-09-04T09:48:52.388Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-112] o.s.w.r.f.client.ExchangeFunctions       : [cce5b9c] Cancel signal (to close connection)
+server-1  | 2026-09-04T09:48:52.389Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] s.w.r.r.m.a.RequestMappingHandlerAdapter : [c7d3a392-16] Using @ExceptionHandler tn.albaraka.ai.api.GlobalExceptionHandler#handleOther(Exception)
+server-1  | 2026-09-04T09:48:52.390Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] .s.w.r.r.m.a.ResponseEntityResultHandler : [c7d3a392-16] Found 'Content-Type:text/event-stream;charset=UTF-8' in response
+server-1  | 2026-09-04T09:48:52.390Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] .s.w.r.r.m.a.ResponseEntityResultHandler : [c7d3a392-16] 0..1 [java.util.Map<java.lang.String, java.lang.Object>]
+server-1  | 2026-09-04T09:48:52.390Z ERROR 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.s.adapter.HttpWebHandlerAdapter    : [c7d3a392-16] Error [java.lang.UnsupportedOperationException] for HTTP POST "/api/v1/chat", but ServerHttpResponse already committed (200 OK)
+server-1  | 2026-09-04T09:48:52.391Z ERROR 1 --- [albaraka-assistant] [or-http-epoll-2] r.n.http.server.HttpServerOperations     : [c7d3a392-1, L:/172.18.0.5:8080 - R:/172.18.0.10:40312] Error finishing response. Closing connection
+server-1  | 
+server-1  | java.lang.UnsupportedOperationException
+server-1  | 	at org.springframework.http.ReadOnlyHttpHeaders.set(ReadOnlyHttpHeaders.java:112) ~[spring-web-7.0.8.jar!/:7.0.8]
+server-1  | 	Suppressed: The stacktrace has been enhanced by Reactor, refer to additional information below: 
+server-1  | Error has been observed at the following site(s):
+server-1  | 	*__checkpoint ⇢ Exception handler tn.albaraka.ai.api.GlobalExceptionHandler#handleOther(Exception), error="PreparedStatementCallback; SQL [INSERT INTO albaraka_ai.retrieval_trace
+server-1  |   (id, message_id, message_created_at, intent, assembled_context, best_score, outcome, created_at)
+server-1  | VALUES (?, ?, now(), ?::intent_code, ?::jsonb, ?, ?, now())
+server-1  | ]; ERROR: insert or update on table "retrieval_trace" violates foreign key constraint "retrieval_trace_message_id_message_created_at_fkey"
+server-1  |   Detail: Key (message_id, message_created_at)=(c8586303-0904-4624-a8dc-849fe481332c, 2026-09-04 09:48:52.38835+00) is not present in table "message"." [DispatcherHandler]
+server-1  | 	*__checkpoint ⇢ AuthorizationWebFilter [DefaultWebFilterChain]
+server-1  | 	*__checkpoint ⇢ ExceptionTranslationWebFilter [DefaultWebFilterChain]
+server-1  | 	*__checkpoint ⇢ LogoutWebFilter [DefaultWebFilterChain]
+server-1  | 	*__checkpoint ⇢ ServerRequestCacheWebFilter [DefaultWebFilterChain]
+server-1  | 	*__checkpoint ⇢ SecurityContextServerWebExchangeWebFilter [DefaultWebFilterChain]
+server-1  | 	*__checkpoint ⇢ AuthenticationWebFilter [DefaultWebFilterChain]
+server-1  | 	*__checkpoint ⇢ ReactorContextWebFilter [DefaultWebFilterChain]
+server-1  | 	*__checkpoint ⇢ CorsWebFilter [DefaultWebFilterChain]
+server-1  | 	*__checkpoint ⇢ HttpHeaderWriterWebFilter [DefaultWebFilterChain]
+server-1  | 	*__checkpoint ⇢ ServerWebExchangeReactorContextWebFilter [DefaultWebFilterChain]
+server-1  | 	*__checkpoint ⇢ org.springframework.security.web.server.WebFilterChainProxy@2520010e
+server-1  | 	*__checkpoint ⇢ HTTP POST "/api/v1/chat" [ExceptionHandlingWebHandler]
+server-1  | Original Stack Trace:
+server-1  | 		at org.springframework.http.ReadOnlyHttpHeaders.set(ReadOnlyHttpHeaders.java:112) ~[spring-web-7.0.8.jar!/:7.0.8]
+server-1  | 		at org.springframework.http.HttpHeaders.setContentType(HttpHeaders.java:1081) ~[spring-web-7.0.8.jar!/:7.0.8]
+server-1  | 		at org.springframework.http.codec.ServerSentEventHttpMessageWriter.write(ServerSentEventHttpMessageWriter.java:109) ~[spring-web-7.0.8.jar!/:7.0.8]
+server-1  | 		at org.springframework.http.codec.ServerSentEventHttpMessageWriter.write(ServerSentEventHttpMessageWriter.java:200) ~[spring-web-7.0.8.jar!/:7.0.8]
+server-1  | 		at org.springframework.web.reactive.result.method.annotation.AbstractMessageWriterResultHandler.writeBody(AbstractMessageWriterResultHandler.java:233) ~[spring-webflux-7.0.8.jar!/:7.0.8]
+server-1  | 		at org.springframework.web.reactive.result.method.annotation.ResponseEntityResultHandler.lambda$handleResult$0(ResponseEntityResultHandler.java:205) ~[spring-webflux-7.0.8.jar!/:7.0.8]
+server-1  | 		at reactor.core.publisher.FluxFlatMap.trySubscribeScalarMap(FluxFlatMap.java:153) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.MonoFlatMap.subscribeOrReturn(MonoFlatMap.java:53) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.InternalMonoOperator.subscribe(InternalMonoOperator.java:62) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.MonoFlatMap$FlatMapMain.onNext(MonoFlatMap.java:165) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.FluxOnErrorResume$ResumeSubscriber.onNext(FluxOnErrorResume.java:80) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.MonoFlatMap$FlatMapMain.onNext(MonoFlatMap.java:158) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.MonoZip$ZipCoordinator.signal(MonoZip.java:296) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.MonoZip$ZipInner.onNext(MonoZip.java:479) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.Operators$ScalarSubscription.request(Operators.java:2564) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.MonoZip$ZipInner.onSubscribe(MonoZip.java:471) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.MonoJust.subscribe(MonoJust.java:56) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.MonoZip$ZipCoordinator.request(MonoZip.java:219) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.MonoFlatMap$FlatMapMain.request(MonoFlatMap.java:194) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.Operators$MultiSubscriptionSubscriber.set(Operators.java:2361) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.FluxOnErrorResume$ResumeSubscriber.onSubscribe(FluxOnErrorResume.java:75) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.MonoFlatMap$FlatMapMain.onSubscribe(MonoFlatMap.java:117) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.MonoZip.subscribe(MonoZip.java:129) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.Mono.subscribe(Mono.java:4569) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.FluxOnErrorResume$ResumeSubscriber.onError(FluxOnErrorResume.java:104) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.MonoPeekTerminal$MonoTerminalPeekSubscriber.onError(MonoPeekTerminal.java:262) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at org.springframework.http.server.reactive.ChannelSendOperator$WriteCompletionBarrier.onError(ChannelSendOperator.java:413) ~[spring-web-7.0.8.jar!/:7.0.8]
+server-1  | 		at reactor.core.publisher.MonoIgnoreElements$IgnoreElementsSubscriber.onError(MonoIgnoreElements.java:84) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.FluxConcatArray$ConcatArraySubscriber.onError(FluxConcatArray.java:190) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.MonoIgnoreThen$ThenIgnoreMain.onError(MonoIgnoreThen.java:283) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.netty.channel.MonoSendMany$SendManyInner.run(MonoSendMany.java:356) ~[reactor-netty-core-1.3.6.jar!/:1.3.6]
+server-1  | 		at io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java:148) ~[netty-common-4.2.15.Final.jar!/:4.2.15.Final]
+server-1  | 		at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java:141) ~[netty-common-4.2.15.Final.jar!/:4.2.15.Final]
+server-1  | 		at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:535) ~[netty-common-4.2.15.Final.jar!/:4.2.15.Final]
+server-1  | 		at io.netty.channel.SingleThreadIoEventLoop.run(SingleThreadIoEventLoop.java:201) ~[netty-transport-4.2.15.Final.jar!/:4.2.15.Final]
+server-1  | 		at io.netty.util.concurrent.SingleThreadEventExecutor$5.run(SingleThreadEventExecutor.java:1195) ~[netty-common-4.2.15.Final.jar!/:4.2.15.Final]
+server-1  | 		at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) ~[netty-common-4.2.15.Final.jar!/:4.2.15.Final]
+server-1  | 		at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) ~[netty-common-4.2.15.Final.jar!/:4.2.15.Final]
+server-1  | 		at java.base/java.lang.Thread.run(Unknown Source) ~[na:na]
+server-1  | 
+server-1  | 2026-09-04T09:48:54.357Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.s.adapter.HttpWebHandlerAdapter    : [54f90651-17] HTTP GET "/actuator/health/liveness"
+server-1  | 2026-09-04T09:48:54.359Z DEBUG 1 --- [albaraka-assistant] [     parallel-1] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
+server-1  | 2026-09-04T09:48:54.362Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-114] .s.w.r.r.m.a.ResponseEntityResultHandler : [54f90651-17] Using 'application/vnd.spring-boot.actuator.v3+json' given [*/*] and supported [application/vnd.spring-boot.actuator.v3+json, application/vnd.spring-boot.actuator.v2+json, application/json]
+server-1  | 2026-09-04T09:48:54.362Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-114] .s.w.r.r.m.a.ResponseEntityResultHandler : [54f90651-17] 0..1 [org.springframework.boot.health.actuate.endpoint.CompositeHealthDescriptor]
+server-1  | 2026-09-04T09:48:54.362Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-114] org.springframework.web.HttpLogging      : [54f90651-17] Encoding [org.springframework.boot.health.actuate.endpoint.CompositeHealthDescriptor@291c58da]
+server-1  | 2026-09-04T09:48:54.363Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-114] o.s.w.s.adapter.HttpWebHandlerAdapter    : [54f90651-17] Completed 200 OK
+server-1  | 2026-09-04T09:48:57.403Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.s.adapter.HttpWebHandlerAdapter    : [9fa24a96-18] HTTP POST "/api/v1/chat"
+server-1  | 2026-09-04T09:48:57.405Z DEBUG 1 --- [albaraka-assistant] [     parallel-2] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
+server-1  | 2026-09-04T09:48:57.406Z DEBUG 1 --- [albaraka-assistant] [     parallel-2] s.w.r.r.m.a.RequestMappingHandlerMapping : [9fa24a96-18] Mapped to tn.albaraka.ai.api.ChatController#chat(ChatRequest)
+server-1  | 2026-09-04T09:48:57.406Z DEBUG 1 --- [albaraka-assistant] [     parallel-2] .r.m.a.RequestBodyMethodArgumentResolver : [9fa24a96-18] Content-Type:application/json
+server-1  | 2026-09-04T09:48:57.406Z DEBUG 1 --- [albaraka-assistant] [     parallel-2] .r.m.a.RequestBodyMethodArgumentResolver : [9fa24a96-18] 0..1 [tn.albaraka.ai.api.ChatController$ChatRequest]
+server-1  | 2026-09-04T09:48:57.407Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] org.springframework.web.HttpLogging      : [9fa24a96-18] Decoded [ChatRequest[text=comment ouvrir un compte courant ?, locale=fr-FR, clientId=null, deviceId=null, con (truncated)...]
+server-1  | 2026-09-04T09:48:57.407Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [9fa24a96-18] Using 'text/event-stream' given [*/*] and supported [text/event-stream]
+server-1  | 2026-09-04T09:48:57.407Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [9fa24a96-18] 0..N [org.springframework.http.codec.ServerSentEvent<java.lang.String>]
+server-1  | 2026-09-04T09:48:57.410Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-117] o.s.w.r.f.client.ExchangeFunctions       : [546214be] HTTP POST http://rag-assistant:8000/v1/rag/chat
+server-1  | 2026-09-04T09:48:57.412Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] org.springframework.web.HttpLogging      : [546214be] Encoding [RagChatRequest[text=comment ouvrir un compte courant ?, context={max_classification=PUBLIC, audience (truncated)...]
+server-1  | 2026-09-04T09:48:57.415Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] o.s.w.r.f.client.ExchangeFunctions       : [546214be] [95fd9b2e-1] Response 200 OK
+server-1  | 2026-09-04T09:48:57.420Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-124] o.s.w.r.f.client.ExchangeFunctions       : [546214be] Cancel signal (to close connection)
+server-1  | 2026-09-04T09:48:57.420Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] s.w.r.r.m.a.RequestMappingHandlerAdapter : [9fa24a96-18] Using @ExceptionHandler tn.albaraka.ai.api.GlobalExceptionHandler#handleOther(Exception)
+server-1  | 2026-09-04T09:48:57.421Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] .s.w.r.r.m.a.ResponseEntityResultHandler : [9fa24a96-18] Found 'Content-Type:text/event-stream;charset=UTF-8' in response
+server-1  | 2026-09-04T09:48:57.421Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] .s.w.r.r.m.a.ResponseEntityResultHandler : [9fa24a96-18] 0..1 [java.util.Map<java.lang.String, java.lang.Object>]
+server-1  | 2026-09-04T09:48:57.421Z ERROR 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.s.adapter.HttpWebHandlerAdapter    : [9fa24a96-18] Error [java.lang.UnsupportedOperationException] for HTTP POST "/api/v1/chat", but ServerHttpResponse already committed (200 OK)
+server-1  | 2026-09-04T09:48:57.422Z ERROR 1 --- [albaraka-assistant] [or-http-epoll-2] r.n.http.server.HttpServerOperations     : [9fa24a96-1, L:/172.18.0.5:8080 - R:/172.18.0.10:40324] Error finishing response. Closing connection
+server-1  | 
+server-1  | java.lang.UnsupportedOperationException
+server-1  | 	at org.springframework.http.ReadOnlyHttpHeaders.set(ReadOnlyHttpHeaders.java:112) ~[spring-web-7.0.8.jar!/:7.0.8]
+server-1  | 	Suppressed: The stacktrace has been enhanced by Reactor, refer to additional information below: 
+server-1  | Error has been observed at the following site(s):
+server-1  | 	*__checkpoint ⇢ Exception handler tn.albaraka.ai.api.GlobalExceptionHandler#handleOther(Exception), error="PreparedStatementCallback; SQL [INSERT INTO albaraka_ai.retrieval_trace
+server-1  |   (id, message_id, message_created_at, intent, assembled_context, best_score, outcome, created_at)
+server-1  | VALUES (?, ?, now(), ?::intent_code, ?::jsonb, ?, ?, now())
+server-1  | ]; ERROR: insert or update on table "retrieval_trace" violates foreign key constraint "retrieval_trace_message_id_message_created_at_fkey"
+server-1  |   Detail: Key (message_id, message_created_at)=(4237af5f-c9e3-4f45-8450-482d90cd25c0, 2026-09-04 09:48:57.419811+00) is not present in table "message"." [DispatcherHandler]
+server-1  | 	*__checkpoint ⇢ AuthorizationWebFilter [DefaultWebFilterChain]
+server-1  | 	*__checkpoint ⇢ ExceptionTranslationWebFilter [DefaultWebFilterChain]
+server-1  | 	*__checkpoint ⇢ LogoutWebFilter [DefaultWebFilterChain]
+server-1  | 	*__checkpoint ⇢ ServerRequestCacheWebFilter [DefaultWebFilterChain]
+server-1  | 	*__checkpoint ⇢ SecurityContextServerWebExchangeWebFilter [DefaultWebFilterChain]
+server-1  | 	*__checkpoint ⇢ AuthenticationWebFilter [DefaultWebFilterChain]
+server-1  | 	*__checkpoint ⇢ ReactorContextWebFilter [DefaultWebFilterChain]
+server-1  | 	*__checkpoint ⇢ CorsWebFilter [DefaultWebFilterChain]
+server-1  | 	*__checkpoint ⇢ HttpHeaderWriterWebFilter [DefaultWebFilterChain]
+server-1  | 	*__checkpoint ⇢ ServerWebExchangeReactorContextWebFilter [DefaultWebFilterChain]
+server-1  | 	*__checkpoint ⇢ org.springframework.security.web.server.WebFilterChainProxy@2520010e
+server-1  | 	*__checkpoint ⇢ HTTP POST "/api/v1/chat" [ExceptionHandlingWebHandler]
+server-1  | Original Stack Trace:
+server-1  | 		at org.springframework.http.ReadOnlyHttpHeaders.set(ReadOnlyHttpHeaders.java:112) ~[spring-web-7.0.8.jar!/:7.0.8]
+server-1  | 		at org.springframework.http.HttpHeaders.setContentType(HttpHeaders.java:1081) ~[spring-web-7.0.8.jar!/:7.0.8]
+server-1  | 		at org.springframework.http.codec.ServerSentEventHttpMessageWriter.write(ServerSentEventHttpMessageWriter.java:109) ~[spring-web-7.0.8.jar!/:7.0.8]
+server-1  | 		at org.springframework.http.codec.ServerSentEventHttpMessageWriter.write(ServerSentEventHttpMessageWriter.java:200) ~[spring-web-7.0.8.jar!/:7.0.8]
+server-1  | 		at org.springframework.web.reactive.result.method.annotation.AbstractMessageWriterResultHandler.writeBody(AbstractMessageWriterResultHandler.java:233) ~[spring-webflux-7.0.8.jar!/:7.0.8]
+server-1  | 		at org.springframework.web.reactive.result.method.annotation.ResponseEntityResultHandler.lambda$handleResult$0(ResponseEntityResultHandler.java:205) ~[spring-webflux-7.0.8.jar!/:7.0.8]
+server-1  | 		at reactor.core.publisher.FluxFlatMap.trySubscribeScalarMap(FluxFlatMap.java:153) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.MonoFlatMap.subscribeOrReturn(MonoFlatMap.java:53) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.InternalMonoOperator.subscribe(InternalMonoOperator.java:62) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.MonoFlatMap$FlatMapMain.onNext(MonoFlatMap.java:165) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.FluxOnErrorResume$ResumeSubscriber.onNext(FluxOnErrorResume.java:80) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.MonoFlatMap$FlatMapMain.onNext(MonoFlatMap.java:158) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.MonoZip$ZipCoordinator.signal(MonoZip.java:296) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.MonoZip$ZipInner.onNext(MonoZip.java:479) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.Operators$ScalarSubscription.request(Operators.java:2564) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.MonoZip$ZipInner.onSubscribe(MonoZip.java:471) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.MonoJust.subscribe(MonoJust.java:56) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.MonoZip$ZipCoordinator.request(MonoZip.java:219) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.MonoFlatMap$FlatMapMain.request(MonoFlatMap.java:194) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.Operators$MultiSubscriptionSubscriber.set(Operators.java:2361) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.FluxOnErrorResume$ResumeSubscriber.onSubscribe(FluxOnErrorResume.java:75) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.MonoFlatMap$FlatMapMain.onSubscribe(MonoFlatMap.java:117) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.MonoZip.subscribe(MonoZip.java:129) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.Mono.subscribe(Mono.java:4569) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.FluxOnErrorResume$ResumeSubscriber.onError(FluxOnErrorResume.java:104) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.MonoPeekTerminal$MonoTerminalPeekSubscriber.onError(MonoPeekTerminal.java:262) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at org.springframework.http.server.reactive.ChannelSendOperator$WriteCompletionBarrier.onError(ChannelSendOperator.java:413) ~[spring-web-7.0.8.jar!/:7.0.8]
+server-1  | 		at reactor.core.publisher.MonoIgnoreElements$IgnoreElementsSubscriber.onError(MonoIgnoreElements.java:84) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.FluxConcatArray$ConcatArraySubscriber.onError(FluxConcatArray.java:190) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.MonoIgnoreThen$ThenIgnoreMain.onError(MonoIgnoreThen.java:283) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.netty.channel.MonoSendMany$SendManyInner.run(MonoSendMany.java:356) ~[reactor-netty-core-1.3.6.jar!/:1.3.6]
+server-1  | 		at io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java:148) ~[netty-common-4.2.15.Final.jar!/:4.2.15.Final]
+server-1  | 		at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java:141) ~[netty-common-4.2.15.Final.jar!/:4.2.15.Final]
+server-1  | 		at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:535) ~[netty-common-4.2.15.Final.jar!/:4.2.15.Final]
+server-1  | 		at io.netty.channel.SingleThreadIoEventLoop.run(SingleThreadIoEventLoop.java:201) ~[netty-transport-4.2.15.Final.jar!/:4.2.15.Final]
+server-1  | 		at io.netty.util.concurrent.SingleThreadEventExecutor$5.run(SingleThreadEventExecutor.java:1195) ~[netty-common-4.2.15.Final.jar!/:4.2.15.Final]
+server-1  | 		at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) ~[netty-common-4.2.15.Final.jar!/:4.2.15.Final]
+server-1  | 		at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) ~[netty-common-4.2.15.Final.jar!/:4.2.15.Final]
+server-1  | 		at java.base/java.lang.Thread.run(Unknown Source) ~[na:na]
+server-1  | 
+server-1  | 2026-09-04T09:49:02.435Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.s.adapter.HttpWebHandlerAdapter    : [eba6f67e-19] HTTP POST "/api/v1/chat"
+server-1  | 2026-09-04T09:49:02.436Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
+server-1  | 2026-09-04T09:49:02.437Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] s.w.r.r.m.a.RequestMappingHandlerMapping : [eba6f67e-19] Mapped to tn.albaraka.ai.api.ChatController#chat(ChatRequest)
+server-1  | 2026-09-04T09:49:02.437Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] .r.m.a.RequestBodyMethodArgumentResolver : [eba6f67e-19] Content-Type:application/json
+server-1  | 2026-09-04T09:49:02.438Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] .r.m.a.RequestBodyMethodArgumentResolver : [eba6f67e-19] 0..1 [tn.albaraka.ai.api.ChatController$ChatRequest]
+server-1  | 2026-09-04T09:49:02.438Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] org.springframework.web.HttpLogging      : [eba6f67e-19] Decoded [ChatRequest[text=comment ouvrir un compte courant ?, locale=fr-FR, clientId=null, deviceId=null, con (truncated)...]
+server-1  | 2026-09-04T09:49:02.438Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [eba6f67e-19] Using 'text/event-stream' given [*/*] and supported [text/event-stream]
+server-1  | 2026-09-04T09:49:02.438Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [eba6f67e-19] 0..N [org.springframework.http.codec.ServerSentEvent<java.lang.String>]
+server-1  | 2026-09-04T09:49:02.442Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-127] o.s.w.r.f.client.ExchangeFunctions       : [2dbe3f9b] HTTP POST http://rag-assistant:8000/v1/rag/chat
+server-1  | 2026-09-04T09:49:02.445Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] org.springframework.web.HttpLogging      : [2dbe3f9b] Encoding [RagChatRequest[text=comment ouvrir un compte courant ?, context={max_classification=PUBLIC, audience (truncated)...]
+server-1  | 2026-09-04T09:49:02.449Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.r.f.client.ExchangeFunctions       : [2dbe3f9b] [9b195a93-1] Response 200 OK
+server-1  | 2026-09-04T09:49:02.455Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-134] o.s.w.r.f.client.ExchangeFunctions       : [2dbe3f9b] Cancel signal (to close connection)
+server-1  | 2026-09-04T09:49:02.456Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] s.w.r.r.m.a.RequestMappingHandlerAdapter : [eba6f67e-19] Using @ExceptionHandler tn.albaraka.ai.api.GlobalExceptionHandler#handleOther(Exception)
+server-1  | 2026-09-04T09:49:02.456Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] .s.w.r.r.m.a.ResponseEntityResultHandler : [eba6f67e-19] Found 'Content-Type:text/event-stream;charset=UTF-8' in response
+server-1  | 2026-09-04T09:49:02.456Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] .s.w.r.r.m.a.ResponseEntityResultHandler : [eba6f67e-19] 0..1 [java.util.Map<java.lang.String, java.lang.Object>]
+server-1  | 2026-09-04T09:49:02.457Z ERROR 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.s.adapter.HttpWebHandlerAdapter    : [eba6f67e-19] Error [java.lang.UnsupportedOperationException] for HTTP POST "/api/v1/chat", but ServerHttpResponse already committed (200 OK)
+server-1  | 2026-09-04T09:49:02.457Z ERROR 1 --- [albaraka-assistant] [or-http-epoll-1] r.n.http.server.HttpServerOperations     : [eba6f67e-1, L:/172.18.0.5:8080 - R:/172.18.0.10:42216] Error finishing response. Closing connection
+server-1  | 
+server-1  | java.lang.UnsupportedOperationException
+server-1  | 	at org.springframework.http.ReadOnlyHttpHeaders.set(ReadOnlyHttpHeaders.java:112) ~[spring-web-7.0.8.jar!/:7.0.8]
+server-1  | 	Suppressed: The stacktrace has been enhanced by Reactor, refer to additional information below: 
+server-1  | Error has been observed at the following site(s):
+server-1  | 	*__checkpoint ⇢ Exception handler tn.albaraka.ai.api.GlobalExceptionHandler#handleOther(Exception), error="PreparedStatementCallback; SQL [INSERT INTO albaraka_ai.retrieval_trace
+server-1  |   (id, message_id, message_created_at, intent, assembled_context, best_score, outcome, created_at)
+server-1  | VALUES (?, ?, now(), ?::intent_code, ?::jsonb, ?, ?, now())
+server-1  | ]; ERROR: insert or update on table "retrieval_trace" violates foreign key constraint "retrieval_trace_message_id_message_created_at_fkey"
+server-1  |   Detail: Key (message_id, message_created_at)=(0e4059ef-65fd-4192-9332-3ca9d2275f11, 2026-09-04 09:49:02.453791+00) is not present in table "message"." [DispatcherHandler]
+server-1  | 	*__checkpoint ⇢ AuthorizationWebFilter [DefaultWebFilterChain]
+server-1  | 	*__checkpoint ⇢ ExceptionTranslationWebFilter [DefaultWebFilterChain]
+server-1  | 	*__checkpoint ⇢ LogoutWebFilter [DefaultWebFilterChain]
+server-1  | 	*__checkpoint ⇢ ServerRequestCacheWebFilter [DefaultWebFilterChain]
+server-1  | 	*__checkpoint ⇢ SecurityContextServerWebExchangeWebFilter [DefaultWebFilterChain]
+server-1  | 	*__checkpoint ⇢ AuthenticationWebFilter [DefaultWebFilterChain]
+server-1  | 	*__checkpoint ⇢ ReactorContextWebFilter [DefaultWebFilterChain]
+server-1  | 	*__checkpoint ⇢ CorsWebFilter [DefaultWebFilterChain]
+server-1  | 	*__checkpoint ⇢ HttpHeaderWriterWebFilter [DefaultWebFilterChain]
+server-1  | 	*__checkpoint ⇢ ServerWebExchangeReactorContextWebFilter [DefaultWebFilterChain]
+server-1  | 	*__checkpoint ⇢ org.springframework.security.web.server.WebFilterChainProxy@2520010e
+server-1  | 	*__checkpoint ⇢ HTTP POST "/api/v1/chat" [ExceptionHandlingWebHandler]
+server-1  | Original Stack Trace:
+server-1  | 		at org.springframework.http.ReadOnlyHttpHeaders.set(ReadOnlyHttpHeaders.java:112) ~[spring-web-7.0.8.jar!/:7.0.8]
+server-1  | 		at org.springframework.http.HttpHeaders.setContentType(HttpHeaders.java:1081) ~[spring-web-7.0.8.jar!/:7.0.8]
+server-1  | 		at org.springframework.http.codec.ServerSentEventHttpMessageWriter.write(ServerSentEventHttpMessageWriter.java:109) ~[spring-web-7.0.8.jar!/:7.0.8]
+server-1  | 		at org.springframework.http.codec.ServerSentEventHttpMessageWriter.write(ServerSentEventHttpMessageWriter.java:200) ~[spring-web-7.0.8.jar!/:7.0.8]
+server-1  | 		at org.springframework.web.reactive.result.method.annotation.AbstractMessageWriterResultHandler.writeBody(AbstractMessageWriterResultHandler.java:233) ~[spring-webflux-7.0.8.jar!/:7.0.8]
+server-1  | 		at org.springframework.web.reactive.result.method.annotation.ResponseEntityResultHandler.lambda$handleResult$0(ResponseEntityResultHandler.java:205) ~[spring-webflux-7.0.8.jar!/:7.0.8]
+server-1  | 		at reactor.core.publisher.FluxFlatMap.trySubscribeScalarMap(FluxFlatMap.java:153) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.MonoFlatMap.subscribeOrReturn(MonoFlatMap.java:53) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.InternalMonoOperator.subscribe(InternalMonoOperator.java:62) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.MonoFlatMap$FlatMapMain.onNext(MonoFlatMap.java:165) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.FluxOnErrorResume$ResumeSubscriber.onNext(FluxOnErrorResume.java:80) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.MonoFlatMap$FlatMapMain.onNext(MonoFlatMap.java:158) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.MonoZip$ZipCoordinator.signal(MonoZip.java:296) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.MonoZip$ZipInner.onNext(MonoZip.java:479) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.Operators$ScalarSubscription.request(Operators.java:2564) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.MonoZip$ZipInner.onSubscribe(MonoZip.java:471) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.MonoJust.subscribe(MonoJust.java:56) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.MonoZip$ZipCoordinator.request(MonoZip.java:219) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.MonoFlatMap$FlatMapMain.request(MonoFlatMap.java:194) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.Operators$MultiSubscriptionSubscriber.set(Operators.java:2361) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.FluxOnErrorResume$ResumeSubscriber.onSubscribe(FluxOnErrorResume.java:75) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.MonoFlatMap$FlatMapMain.onSubscribe(MonoFlatMap.java:117) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.MonoZip.subscribe(MonoZip.java:129) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.Mono.subscribe(Mono.java:4569) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.FluxOnErrorResume$ResumeSubscriber.onError(FluxOnErrorResume.java:104) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.MonoPeekTerminal$MonoTerminalPeekSubscriber.onError(MonoPeekTerminal.java:262) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at org.springframework.http.server.reactive.ChannelSendOperator$WriteCompletionBarrier.onError(ChannelSendOperator.java:413) ~[spring-web-7.0.8.jar!/:7.0.8]
+server-1  | 		at reactor.core.publisher.MonoIgnoreElements$IgnoreElementsSubscriber.onError(MonoIgnoreElements.java:84) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.FluxConcatArray$ConcatArraySubscriber.onError(FluxConcatArray.java:190) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.core.publisher.MonoIgnoreThen$ThenIgnoreMain.onError(MonoIgnoreThen.java:283) ~[reactor-core-3.8.6.jar!/:3.8.6]
+server-1  | 		at reactor.netty.channel.MonoSendMany$SendManyInner.run(MonoSendMany.java:356) ~[reactor-netty-core-1.3.6.jar!/:1.3.6]
+server-1  | 		at io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java:148) ~[netty-common-4.2.15.Final.jar!/:4.2.15.Final]
+server-1  | 		at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java:141) ~[netty-common-4.2.15.Final.jar!/:4.2.15.Final]
+server-1  | 		at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:535) ~[netty-common-4.2.15.Final.jar!/:4.2.15.Final]
+server-1  | 		at io.netty.channel.SingleThreadIoEventLoop.run(SingleThreadIoEventLoop.java:201) ~[netty-transport-4.2.15.Final.jar!/:4.2.15.Final]
+server-1  | 		at io.netty.util.concurrent.SingleThreadEventExecutor$5.run(SingleThreadEventExecutor.java:1195) ~[netty-common-4.2.15.Final.jar!/:4.2.15.Final]
+server-1  | 		at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) ~[netty-common-4.2.15.Final.jar!/:4.2.15.Final]
+server-1  | 		at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) ~[netty-common-4.2.15.Final.jar!/:4.2.15.Final]
+server-1  | 		at java.base/java.lang.Thread.run(Unknown Source) ~[na:na]
+server-1  | 
+server-1  | 2026-09-04T09:49:04.405Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] o.s.w.s.adapter.HttpWebHandlerAdapter    : [89dcd18e-20] HTTP GET "/actuator/health/liveness"
+server-1  | 2026-09-04T09:49:04.406Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
+server-1  | 2026-09-04T09:49:04.409Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-136] .s.w.r.r.m.a.ResponseEntityResultHandler : [89dcd18e-20] Using 'application/vnd.spring-boot.actuator.v3+json' given [*/*] and supported [application/vnd.spring-boot.actuator.v3+json, application/vnd.spring-boot.actuator.v2+json, application/json]
+server-1  | 2026-09-04T09:49:04.409Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-136] .s.w.r.r.m.a.ResponseEntityResultHandler : [89dcd18e-20] 0..1 [org.springframework.boot.health.actuate.endpoint.CompositeHealthDescriptor]
+server-1  | 2026-09-04T09:49:04.409Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-136] org.springframework.web.HttpLogging      : [89dcd18e-20] Encoding [org.springframework.boot.health.actuate.endpoint.CompositeHealthDescriptor@68c913bc]
+server-1  | 2026-09-04T09:49:04.410Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-136] o.s.w.s.adapter.HttpWebHandlerAdapter    : [89dcd18e-20] Completed 200 OK
 
 ## server — flyway / migration lines (whole log)
+server-1  | 2026-09-04T09:47:57.004Z  INFO 1 --- [albaraka-assistant] [           main] org.flywaydb.core.FlywayExecutor         : Database: jdbc:postgresql://postgres:5432/albaraka_ai (PostgreSQL 17.8)
+server-1  | 2026-09-04T09:47:57.089Z  INFO 1 --- [albaraka-assistant] [           main] o.f.c.i.s.JdbcTableSchemaHistory         : Schema history table "public"."flyway_schema_history" does not exist yet
+server-1  | 2026-09-04T09:47:57.093Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbValidate     : Successfully validated 6 migrations (execution time 00:00.035s)
+server-1  | 2026-09-04T09:47:57.108Z  INFO 1 --- [albaraka-assistant] [           main] o.f.c.i.s.JdbcTableSchemaHistory         : Creating Schema History table "public"."flyway_schema_history" ...
+server-1  | 2026-09-04T09:47:57.156Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Current version of schema "public": << Empty Schema >>
+server-1  | 2026-09-04T09:47:57.259Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "1 - baseline schema"
+server-1  | 2026-09-04T09:47:57.558Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "2 - demo seed"
+server-1  | 2026-09-04T09:47:57.634Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "900 - seed glossary"
+server-1  | 2026-09-04T09:47:57.685Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "901 - seed prompts"
+server-1  | 2026-09-04T09:47:57.711Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "902 - seed policies"
+server-1  | 2026-09-04T09:47:57.751Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "903 - seed dialect"
+server-1  | 2026-09-04T09:47:57.778Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Successfully applied 6 migrations to schema "public", now at version v903 (execution time 00:00.363s)
 
 ## rag-assistant
+rag-assistant-1  | INFO:     Started server process [1]
+rag-assistant-1  | INFO:     Waiting for application startup.
+rag-assistant-1  | 2026-09-04 09:47:24,142 INFO rag_assistant mock vector backend ready — 10 demo chunks indexed
+rag-assistant-1  | INFO:     Application startup complete.
+rag-assistant-1  | INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+rag-assistant-1  | INFO:     127.0.0.1:35938 - "GET /v1/rag/health HTTP/1.1" 200 OK
+rag-assistant-1  | INFO:     127.0.0.1:37122 - "GET /v1/rag/health HTTP/1.1" 200 OK
+rag-assistant-1  | INFO:     127.0.0.1:48478 - "GET /v1/rag/health HTTP/1.1" 200 OK
+rag-assistant-1  | INFO:     127.0.0.1:43564 - "GET /v1/rag/health HTTP/1.1" 200 OK
+rag-assistant-1  | INFO:     172.18.0.1:47124 - "GET /v1/rag/health HTTP/1.1" 200 OK
+rag-assistant-1  | INFO:     172.18.0.5:55376 - "POST /v1/rag/chat HTTP/1.1" 200 OK
+rag-assistant-1  | INFO:     127.0.0.1:46670 - "GET /v1/rag/health HTTP/1.1" 200 OK
+rag-assistant-1  | INFO:     172.18.0.5:39106 - "POST /v1/rag/chat HTTP/1.1" 200 OK
+rag-assistant-1  | INFO:     172.18.0.5:39108 - "POST /v1/rag/chat HTTP/1.1" 200 OK
+rag-assistant-1  | INFO:     127.0.0.1:54508 - "GET /v1/rag/health HTTP/1.1" 200 OK
+rag-assistant-1  | INFO:     172.18.0.5:45088 - "POST /v1/rag/chat HTTP/1.1" 200 OK
+rag-assistant-1  | INFO:     172.18.0.5:45104 - "POST /v1/rag/chat HTTP/1.1" 200 OK
+rag-assistant-1  | INFO:     127.0.0.1:34280 - "GET /v1/rag/health HTTP/1.1" 200 OK
+rag-assistant-1  | INFO:     172.18.0.5:47306 - "POST /v1/rag/chat HTTP/1.1" 200 OK
+rag-assistant-1  | INFO:     172.18.0.5:47308 - "POST /v1/rag/chat HTTP/1.1" 200 OK
+rag-assistant-1  | INFO:     127.0.0.1:49594 - "GET /v1/rag/health HTTP/1.1" 200 OK
+rag-assistant-1  | INFO:     172.18.0.5:44376 - "POST /v1/rag/chat HTTP/1.1" 200 OK
+rag-assistant-1  | INFO:     172.18.0.5:44378 - "POST /v1/rag/chat HTTP/1.1" 200 OK
+rag-assistant-1  | INFO:     127.0.0.1:35214 - "GET /v1/rag/health HTTP/1.1" 200 OK
+rag-assistant-1  | INFO:     172.18.0.5:40426 - "POST /v1/rag/chat HTTP/1.1" 200 OK
+rag-assistant-1  | INFO:     172.18.0.5:40432 - "POST /v1/rag/chat HTTP/1.1" 200 OK
+rag-assistant-1  | INFO:     127.0.0.1:45630 - "GET /v1/rag/health HTTP/1.1" 200 OK
+rag-assistant-1  | INFO:     172.18.0.5:57536 - "POST /v1/rag/chat HTTP/1.1" 200 OK
 
 ## ps -a
-NAME      IMAGE     COMMAND   SERVICE   CREATED   STATUS    PORTS
+NAME                            IMAGE                                              COMMAND                  SERVICE           CREATED              STATUS                          PORTS
+albaraka-ai-backoffice-web-1    albaraka-ai/backoffice-web:dev                     "/docker-entrypoint.…"   backoffice-web    About a minute ago   Up About a minute (healthy)     80/tcp
+albaraka-ai-frontoffice-web-1   albaraka-ai/frontoffice-web:dev                    "/docker-entrypoint.…"   frontoffice-web   About a minute ago   Up About a minute (healthy)     80/tcp
+albaraka-ai-keycloak-1          quay.io/keycloak/keycloak:26.6.3                   "/bin/bash -ec 'mkdi…"   keycloak          About a minute ago   Up About a minute (healthy)     8443/tcp, 9000/tcp, 0.0.0.0:9001->8080/tcp, [::]:9001->8080/tcp
+albaraka-ai-minio-1             quay.io/minio/minio:RELEASE.2025-03-12T18-04-18Z   "/usr/bin/docker-ent…"   minio             About a minute ago   Up About a minute (healthy)     9000/tcp
+albaraka-ai-minio-init-1        quay.io/minio/mc:RELEASE.2025-03-12T17-29-24Z      "/bin/sh -ec 'until …"   minio-init        About a minute ago   Exited (0) About a minute ago   
+albaraka-ai-nginx-1             nginx:1.28-alpine                                  "/docker-entrypoint.…"   nginx             About a minute ago   Up About a minute               0.0.0.0:9000->80/tcp, [::]:9000->80/tcp
+albaraka-ai-postgres-1          pgvector/pgvector:0.8.1-pg17                       "docker-entrypoint.s…"   postgres          About a minute ago   Up About a minute (healthy)     0.0.0.0:9004->5432/tcp, [::]:9004->5432/tcp
+albaraka-ai-rag-assistant-1     albaraka-ai/rag-assistant:dev                      "uvicorn rag_assista…"   rag-assistant     About a minute ago   Up About a minute (healthy)     0.0.0.0:9003->8000/tcp, [::]:9003->8000/tcp
+albaraka-ai-redis-1             redis:7.4-alpine                                   "docker-entrypoint.s…"   redis             About a minute ago   Up About a minute (healthy)     6379/tcp
+albaraka-ai-server-1            albaraka-ai/server:dev                             "java -jar app.jar"      server            About a minute ago   Up About a minute (healthy)     0.0.0.0:9002->8080/tcp, [::]:9002->8080/tcp
 
 ## postgres
+postgres-1  | 2026-09-04 09:47:17.966 UTC [67] LOG:  database system was shut down at 2026-09-04 09:47:17 UTC
+postgres-1  | 2026-09-04 09:47:17.980 UTC [1] LOG:  database system is ready to accept connections
+postgres-1  | 2026-09-04 09:47:38.022 UTC [95] ERROR:  relation "migration_model" does not exist at character 25
+postgres-1  | 2026-09-04 09:47:38.022 UTC [95] STATEMENT:  SELECT ID, VERSION FROM MIGRATION_MODEL ORDER BY UPDATE_TIME DESC
+postgres-1  | 2026-09-04 09:47:39.088 UTC [105] ERROR:  relation "public.databasechangeloglock" does not exist at character 22
+postgres-1  | 2026-09-04 09:47:39.088 UTC [105] STATEMENT:  SELECT COUNT(*) FROM public.databasechangeloglock
+postgres-1  | 2026-09-04 09:48:06.541 UTC [65] LOG:  checkpoint starting: immediate force wait
+postgres-1  | 2026-09-04 09:48:06.684 UTC [65] LOG:  checkpoint complete: wrote 1164 buffers (7.1%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.013 s, sync=0.125 s, total=0.143 s; sync files=1066, longest=0.003 s, average=0.001 s; distance=14993 kB, estimate=14993 kB; lsn=0/2BD0470, redo lsn=0/2BD0418
+postgres-1  | 2026-09-04 09:48:07.059 UTC [133] ERROR:  insert or update on table "retrieval_trace" violates foreign key constraint "retrieval_trace_message_id_message_created_at_fkey"
+postgres-1  | 2026-09-04 09:48:07.059 UTC [133] DETAIL:  Key (message_id, message_created_at)=(3fd48d3b-e3a4-42a7-a4dc-898b2c48c469, 2026-09-04 09:48:07.058505+00) is not present in table "message".
+postgres-1  | 2026-09-04 09:48:07.059 UTC [133] STATEMENT:  INSERT INTO albaraka_ai.retrieval_trace
+postgres-1  | 	  (id, message_id, message_created_at, intent, assembled_context, best_score, outcome, created_at)
+postgres-1  | 	VALUES ($1, $2, now(), $3::intent_code, $4::jsonb, $5, $6, now())
+postgres-1  | 	
+postgres-1  | 2026-09-04 09:48:12.115 UTC [133] ERROR:  insert or update on table "retrieval_trace" violates foreign key constraint "retrieval_trace_message_id_message_created_at_fkey"
+postgres-1  | 2026-09-04 09:48:12.115 UTC [133] DETAIL:  Key (message_id, message_created_at)=(edb431bb-c038-4714-8acc-98136047a9ac, 2026-09-04 09:48:12.114861+00) is not present in table "message".
+postgres-1  | 2026-09-04 09:48:12.115 UTC [133] STATEMENT:  INSERT INTO albaraka_ai.retrieval_trace
+postgres-1  | 	  (id, message_id, message_created_at, intent, assembled_context, best_score, outcome, created_at)
+postgres-1  | 	VALUES ($1, $2, now(), $3::intent_code, $4::jsonb, $5, $6, now())
+postgres-1  | 	
+postgres-1  | 2026-09-04 09:48:17.151 UTC [133] ERROR:  insert or update on table "retrieval_trace" violates foreign key constraint "retrieval_trace_message_id_message_created_at_fkey"
+postgres-1  | 2026-09-04 09:48:17.151 UTC [133] DETAIL:  Key (message_id, message_created_at)=(aefc6a98-a0a8-4c1e-bf32-bf45dba8e822, 2026-09-04 09:48:17.151255+00) is not present in table "message".
+postgres-1  | 2026-09-04 09:48:17.151 UTC [133] STATEMENT:  INSERT INTO albaraka_ai.retrieval_trace
+postgres-1  | 	  (id, message_id, message_created_at, intent, assembled_context, best_score, outcome, created_at)
+postgres-1  | 	VALUES ($1, $2, now(), $3::intent_code, $4::jsonb, $5, $6, now())
+postgres-1  | 	
+postgres-1  | 2026-09-04 09:48:22.188 UTC [133] ERROR:  insert or update on table "retrieval_trace" violates foreign key constraint "retrieval_trace_message_id_message_created_at_fkey"
+postgres-1  | 2026-09-04 09:48:22.188 UTC [133] DETAIL:  Key (message_id, message_created_at)=(3339066c-e6c2-4d64-a4ad-57fdeb37636a, 2026-09-04 09:48:22.188074+00) is not present in table "message".
+postgres-1  | 2026-09-04 09:48:22.188 UTC [133] STATEMENT:  INSERT INTO albaraka_ai.retrieval_trace
+postgres-1  | 	  (id, message_id, message_created_at, intent, assembled_context, best_score, outcome, created_at)
+postgres-1  | 	VALUES ($1, $2, now(), $3::intent_code, $4::jsonb, $5, $6, now())
+postgres-1  | 	
+postgres-1  | 2026-09-04 09:48:27.222 UTC [133] ERROR:  insert or update on table "retrieval_trace" violates foreign key constraint "retrieval_trace_message_id_message_created_at_fkey"
+postgres-1  | 2026-09-04 09:48:27.222 UTC [133] DETAIL:  Key (message_id, message_created_at)=(446ea601-43b9-493d-91bd-96ce915c8766, 2026-09-04 09:48:27.221759+00) is not present in table "message".
+postgres-1  | 2026-09-04 09:48:27.222 UTC [133] STATEMENT:  INSERT INTO albaraka_ai.retrieval_trace
+postgres-1  | 	  (id, message_id, message_created_at, intent, assembled_context, best_score, outcome, created_at)
+postgres-1  | 	VALUES ($1, $2, now(), $3::intent_code, $4::jsonb, $5, $6, now())
+postgres-1  | 	
+postgres-1  | 2026-09-04 09:48:32.258 UTC [133] ERROR:  insert or update on table "retrieval_trace" violates foreign key constraint "retrieval_trace_message_id_message_created_at_fkey"
+postgres-1  | 2026-09-04 09:48:32.258 UTC [133] DETAIL:  Key (message_id, message_created_at)=(3620ae41-237e-4ab8-bc1a-5a7b24164704, 2026-09-04 09:48:32.257446+00) is not present in table "message".
+postgres-1  | 2026-09-04 09:48:32.258 UTC [133] STATEMENT:  INSERT INTO albaraka_ai.retrieval_trace
+postgres-1  | 	  (id, message_id, message_created_at, intent, assembled_context, best_score, outcome, created_at)
+postgres-1  | 	VALUES ($1, $2, now(), $3::intent_code, $4::jsonb, $5, $6, now())
+postgres-1  | 	
+postgres-1  | 2026-09-04 09:48:37.292 UTC [133] ERROR:  insert or update on table "retrieval_trace" violates foreign key constraint "retrieval_trace_message_id_message_created_at_fkey"
+postgres-1  | 2026-09-04 09:48:37.292 UTC [133] DETAIL:  Key (message_id, message_created_at)=(b092aa94-ec40-4cf6-9637-ac08fd8de5cd, 2026-09-04 09:48:37.292204+00) is not present in table "message".
+postgres-1  | 2026-09-04 09:48:37.292 UTC [133] STATEMENT:  INSERT INTO albaraka_ai.retrieval_trace
+postgres-1  | 	  (id, message_id, message_created_at, intent, assembled_context, best_score, outcome, created_at)
+postgres-1  | 	VALUES ($1, $2, now(), $3::intent_code, $4::jsonb, $5, $6, now())
+postgres-1  | 	
+postgres-1  | 2026-09-04 09:48:42.324 UTC [133] ERROR:  insert or update on table "retrieval_trace" violates foreign key constraint "retrieval_trace_message_id_message_created_at_fkey"
+postgres-1  | 2026-09-04 09:48:42.324 UTC [133] DETAIL:  Key (message_id, message_created_at)=(7ef47f60-8380-4001-87f7-80c0b1a440aa, 2026-09-04 09:48:42.324018+00) is not present in table "message".
+postgres-1  | 2026-09-04 09:48:42.324 UTC [133] STATEMENT:  INSERT INTO albaraka_ai.retrieval_trace
+postgres-1  | 	  (id, message_id, message_created_at, intent, assembled_context, best_score, outcome, created_at)
+postgres-1  | 	VALUES ($1, $2, now(), $3::intent_code, $4::jsonb, $5, $6, now())
+postgres-1  | 	
+postgres-1  | 2026-09-04 09:48:47.357 UTC [133] ERROR:  insert or update on table "retrieval_trace" violates foreign key constraint "retrieval_trace_message_id_message_created_at_fkey"
+postgres-1  | 2026-09-04 09:48:47.357 UTC [133] DETAIL:  Key (message_id, message_created_at)=(014b1660-3a3e-454b-a506-1a87dd4249bd, 2026-09-04 09:48:47.35738+00) is not present in table "message".
+postgres-1  | 2026-09-04 09:48:47.357 UTC [133] STATEMENT:  INSERT INTO albaraka_ai.retrieval_trace
+postgres-1  | 	  (id, message_id, message_created_at, intent, assembled_context, best_score, outcome, created_at)
+postgres-1  | 	VALUES ($1, $2, now(), $3::intent_code, $4::jsonb, $5, $6, now())
+postgres-1  | 	
+postgres-1  | 2026-09-04 09:48:52.388 UTC [133] ERROR:  insert or update on table "retrieval_trace" violates foreign key constraint "retrieval_trace_message_id_message_created_at_fkey"
+postgres-1  | 2026-09-04 09:48:52.388 UTC [133] DETAIL:  Key (message_id, message_created_at)=(c8586303-0904-4624-a8dc-849fe481332c, 2026-09-04 09:48:52.38835+00) is not present in table "message".
+postgres-1  | 2026-09-04 09:48:52.388 UTC [133] STATEMENT:  INSERT INTO albaraka_ai.retrieval_trace
+postgres-1  | 	  (id, message_id, message_created_at, intent, assembled_context, best_score, outcome, created_at)
+postgres-1  | 	VALUES ($1, $2, now(), $3::intent_code, $4::jsonb, $5, $6, now())
+postgres-1  | 	
+postgres-1  | 2026-09-04 09:48:57.420 UTC [133] ERROR:  insert or update on table "retrieval_trace" violates foreign key constraint "retrieval_trace_message_id_message_created_at_fkey"
+postgres-1  | 2026-09-04 09:48:57.420 UTC [133] DETAIL:  Key (message_id, message_created_at)=(4237af5f-c9e3-4f45-8450-482d90cd25c0, 2026-09-04 09:48:57.419811+00) is not present in table "message".
+postgres-1  | 2026-09-04 09:48:57.420 UTC [133] STATEMENT:  INSERT INTO albaraka_ai.retrieval_trace
+postgres-1  | 	  (id, message_id, message_created_at, intent, assembled_context, best_score, outcome, created_at)
+postgres-1  | 	VALUES ($1, $2, now(), $3::intent_code, $4::jsonb, $5, $6, now())
+postgres-1  | 	
+postgres-1  | 2026-09-04 09:49:02.454 UTC [133] ERROR:  insert or update on table "retrieval_trace" violates foreign key constraint "retrieval_trace_message_id_message_created_at_fkey"
+postgres-1  | 2026-09-04 09:49:02.454 UTC [133] DETAIL:  Key (message_id, message_created_at)=(0e4059ef-65fd-4192-9332-3ca9d2275f11, 2026-09-04 09:49:02.453791+00) is not present in table "message".
+postgres-1  | 2026-09-04 09:49:02.454 UTC [133] STATEMENT:  INSERT INTO albaraka_ai.retrieval_trace
+postgres-1  | 	  (id, message_id, message_created_at, intent, assembled_context, best_score, outcome, created_at)
+postgres-1  | 	VALUES ($1, $2, now(), $3::intent_code, $4::jsonb, $5, $6, now())
+postgres-1  | 	
