@@ -1,552 +1,555 @@
-## run 33877005954 — keycloak
+## run 33877287578 — keycloak
 keycloak-1  | WARNING: Hostname v1 options [hostname-port] are still in use, please review your configuration
 keycloak-1  | Updating the configuration and installing your custom providers, if any. Please wait.
-keycloak-1  | 2026-09-04 13:16:16,186 INFO  [io.quarkus.deployment.QuarkusAugmentor] (main) Quarkus augmentation completed in 7960ms
+keycloak-1  | 2026-09-04 13:19:25,008 INFO  [io.quarkus.deployment.QuarkusAugmentor] (main) Quarkus augmentation completed in 8595ms
 keycloak-1  | WARNING: Hostname v1 options [hostname-port] are still in use, please review your configuration
 keycloak-1  | Running the server in development mode. DO NOT use this configuration in production.
-keycloak-1  | 2026-09-04 13:16:17,633 INFO  [org.keycloak.url.HostnameV2ProviderFactory] (main) If hostname is specified, hostname-strict is effectively ignored
-keycloak-1  | 2026-09-04 13:16:18,736 INFO  [org.infinispan.CONTAINER] (main) ISPN000974: Virtual threads support: enabled
-keycloak-1  | 2026-09-04 13:16:19,416 INFO  [org.hibernate.orm.jdbc.batch] (JPA Startup Thread) HHH100501: Automatic JDBC statement batching enabled (maximum batch size 32)
-keycloak-1  | 2026-09-04 13:16:20,278 INFO  [org.keycloak.quarkus.runtime.storage.database.liquibase.QuarkusJpaUpdaterProvider] (main) Initializing database schema. Using changelog META-INF/jpa-changelog-master.xml
-keycloak-1  | 2026-09-04 13:16:27,440 INFO  [org.infinispan.CONTAINER] (main) ISPN000556: Starting user marshaller 'org.infinispan.commons.marshall.ImmutableProtoStreamMarshaller'
-keycloak-1  | 2026-09-04 13:16:27,726 INFO  [org.keycloak.connections.infinispan.DefaultInfinispanConnectionProviderFactory] (main) Node name: node_778386, Site name: null
-keycloak-1  | 2026-09-04 13:16:27,859 INFO  [org.keycloak.quarkus.runtime.storage.database.jpa.DatabaseIndexChecker] (db-index-checker) Running database index checker
-keycloak-1  | 2026-09-04 13:16:27,874 INFO  [org.keycloak.models.workflow.WorkflowsEventListenerFactory] (main) Workflow runner task scheduled: next execution at 01:16:27, then every PT12H
-keycloak-1  | 2026-09-04 13:16:27,973 INFO  [org.keycloak.exportimport.dir.DirImportProvider] (main) Importing from directory /opt/keycloak/bin/../data/import
-keycloak-1  | 2026-09-04 13:16:28,012 INFO  [org.keycloak.services] (main) KC-SERVICES0050: Initializing master realm
-keycloak-1  | 2026-09-04 13:16:29,037 INFO  [org.keycloak.services] (main) KC-SERVICES0030: Full model import requested. Strategy: IGNORE_EXISTING
-keycloak-1  | 2026-09-04 13:16:29,551 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
-keycloak-1  | 2026-09-04 13:16:29,556 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'profile' doesn't exist. Ignoring
-keycloak-1  | 2026-09-04 13:16:29,622 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
-keycloak-1  | 2026-09-04 13:16:29,625 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'profile' doesn't exist. Ignoring
-keycloak-1  | 2026-09-04 13:16:29,661 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'webauthn' doesn't exist. Ignoring
-keycloak-1  | 2026-09-04 13:16:29,664 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
-keycloak-1  | 2026-09-04 13:16:29,667 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'profile' doesn't exist. Ignoring
-keycloak-1  | 2026-09-04 13:16:29,671 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'email' doesn't exist. Ignoring
-keycloak-1  | 2026-09-04 13:16:29,674 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'roles' doesn't exist. Ignoring
-keycloak-1  | 2026-09-04 13:16:29,706 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
-keycloak-1  | 2026-09-04 13:16:30,387 INFO  [org.keycloak.exportimport.util.ImportUtils] (main) Realm 'albaraka' imported
-keycloak-1  | 2026-09-04 13:16:30,391 INFO  [org.keycloak.services] (main) KC-SERVICES0032: Import finished successfully
-keycloak-1  | 2026-09-04 13:16:30,442 INFO  [org.keycloak.services] (main) KC-SERVICES0077: Created temporary admin user with username admin
-keycloak-1  | 2026-09-04 13:16:30,551 INFO  [org.keycloak.services.resources.KeycloakApplication] (main) Bootstrap completed in 11.045000 seconds
-keycloak-1  | 2026-09-04 13:16:30,625 INFO  [io.quarkus] (main) Keycloak 26.6.3 on JVM (powered by Quarkus 3.33.2) started in 14.313s. Listening on: http://0.0.0.0:8080. Management interface listening on http://0.0.0.0:9000.
-keycloak-1  | 2026-09-04 13:16:30,625 INFO  [io.quarkus] (main) Profile dev activated. 
-keycloak-1  | 2026-09-04 13:16:30,625 INFO  [io.quarkus] (main) Installed features: [agroal, cdi, hibernate-orm, jdbc-postgresql, keycloak, micrometer, narayana-jta, opentelemetry, reactive-routes, rest, rest-jackson, smallrye-context-propagation, smallrye-health, vertx]
-keycloak-1  | 2026-09-04 13:16:41,787 ERROR [org.keycloak.events.EventBuilder] (executor-thread-1) Event listeners [metrics-listener] registered, but provider not found
-keycloak-1  | 2026-09-04 13:16:42,153 INFO  [org.keycloak.keys.DefaultKeyManager] (executor-thread-1) No keys found for realm=albaraka and algorithm=PS256 for use=SIG. Generating keys.
+keycloak-1  | 2026-09-04 13:19:27,015 INFO  [org.keycloak.url.HostnameV2ProviderFactory] (main) If hostname is specified, hostname-strict is effectively ignored
+keycloak-1  | 2026-09-04 13:19:28,718 INFO  [org.infinispan.CONTAINER] (main) ISPN000974: Virtual threads support: enabled
+keycloak-1  | 2026-09-04 13:19:29,775 INFO  [org.hibernate.orm.jdbc.batch] (JPA Startup Thread) HHH100501: Automatic JDBC statement batching enabled (maximum batch size 32)
+keycloak-1  | 2026-09-04 13:19:30,945 INFO  [org.keycloak.quarkus.runtime.storage.database.liquibase.QuarkusJpaUpdaterProvider] (main) Initializing database schema. Using changelog META-INF/jpa-changelog-master.xml
+keycloak-1  | 2026-09-04 13:19:37,423 INFO  [org.infinispan.CONTAINER] (main) ISPN000556: Starting user marshaller 'org.infinispan.commons.marshall.ImmutableProtoStreamMarshaller'
+keycloak-1  | 2026-09-04 13:19:37,781 INFO  [org.keycloak.connections.infinispan.DefaultInfinispanConnectionProviderFactory] (main) Node name: node_938907, Site name: null
+keycloak-1  | 2026-09-04 13:19:37,946 INFO  [org.keycloak.quarkus.runtime.storage.database.jpa.DatabaseIndexChecker] (db-index-checker) Running database index checker
+keycloak-1  | 2026-09-04 13:19:37,958 INFO  [org.keycloak.models.workflow.WorkflowsEventListenerFactory] (main) Workflow runner task scheduled: next execution at 01:19:37, then every PT12H
+keycloak-1  | 2026-09-04 13:19:38,048 INFO  [org.keycloak.exportimport.dir.DirImportProvider] (main) Importing from directory /opt/keycloak/bin/../data/import
+keycloak-1  | 2026-09-04 13:19:38,067 INFO  [org.keycloak.services] (main) KC-SERVICES0050: Initializing master realm
+keycloak-1  | 2026-09-04 13:19:39,589 INFO  [org.keycloak.services] (main) KC-SERVICES0030: Full model import requested. Strategy: IGNORE_EXISTING
+keycloak-1  | 2026-09-04 13:19:40,402 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
+keycloak-1  | 2026-09-04 13:19:40,411 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'profile' doesn't exist. Ignoring
+keycloak-1  | 2026-09-04 13:19:40,503 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
+keycloak-1  | 2026-09-04 13:19:40,508 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'profile' doesn't exist. Ignoring
+keycloak-1  | 2026-09-04 13:19:40,550 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'webauthn' doesn't exist. Ignoring
+keycloak-1  | 2026-09-04 13:19:40,554 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
+keycloak-1  | 2026-09-04 13:19:40,558 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'profile' doesn't exist. Ignoring
+keycloak-1  | 2026-09-04 13:19:40,561 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'email' doesn't exist. Ignoring
+keycloak-1  | 2026-09-04 13:19:40,565 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'roles' doesn't exist. Ignoring
+keycloak-1  | 2026-09-04 13:19:40,606 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
+keycloak-1  | 2026-09-04 13:19:41,768 INFO  [org.keycloak.exportimport.util.ImportUtils] (main) Realm 'albaraka' imported
+keycloak-1  | 2026-09-04 13:19:41,773 INFO  [org.keycloak.services] (main) KC-SERVICES0032: Import finished successfully
+keycloak-1  | 2026-09-04 13:19:41,846 INFO  [org.keycloak.services] (main) KC-SERVICES0077: Created temporary admin user with username admin
+keycloak-1  | 2026-09-04 13:19:42,013 INFO  [org.keycloak.services.resources.KeycloakApplication] (main) Bootstrap completed in 12.100000 seconds
+keycloak-1  | 2026-09-04 13:19:42,100 INFO  [io.quarkus] (main) Keycloak 26.6.3 on JVM (powered by Quarkus 3.33.2) started in 16.941s. Listening on: http://0.0.0.0:8080. Management interface listening on http://0.0.0.0:9000.
+keycloak-1  | 2026-09-04 13:19:42,100 INFO  [io.quarkus] (main) Profile dev activated. 
+keycloak-1  | 2026-09-04 13:19:42,100 INFO  [io.quarkus] (main) Installed features: [agroal, cdi, hibernate-orm, jdbc-postgresql, keycloak, micrometer, narayana-jta, opentelemetry, reactive-routes, rest, rest-jackson, smallrye-context-propagation, smallrye-health, vertx]
+keycloak-1  | 2026-09-04 13:19:59,317 ERROR [org.keycloak.events.EventBuilder] (executor-thread-1) Event listeners [metrics-listener] registered, but provider not found
+keycloak-1  | 2026-09-04 13:19:59,721 ERROR [org.keycloak.events.EventBuilder] (executor-thread-1) Event listeners [metrics-listener] registered, but provider not found
 
 ## server (Flyway, boot, chat errors)
-server-1  | 2026-09-04T13:16:41.527Z DEBUG 1 --- [albaraka-assistant] [undedElastic-46] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (25 bytes)
-server-1  | 2026-09-04T13:16:41.527Z DEBUG 1 --- [albaraka-assistant] [undedElastic-47] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (24)
-server-1  | 2026-09-04T13:16:41.528Z DEBUG 1 --- [albaraka-assistant] [undedElastic-47] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (21 bytes)
-server-1  | 2026-09-04T13:16:41.528Z DEBUG 1 --- [albaraka-assistant] [undedElastic-48] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (20)
-server-1  | 2026-09-04T13:16:41.528Z DEBUG 1 --- [albaraka-assistant] [undedElastic-48] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
-server-1  | 2026-09-04T13:16:41.529Z DEBUG 1 --- [albaraka-assistant] [undedElastic-49] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
-server-1  | 2026-09-04T13:16:41.529Z DEBUG 1 --- [albaraka-assistant] [undedElastic-49] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (24 bytes)
-server-1  | 2026-09-04T13:16:41.529Z DEBUG 1 --- [albaraka-assistant] [undedElastic-50] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (23)
-server-1  | 2026-09-04T13:16:41.529Z DEBUG 1 --- [albaraka-assistant] [undedElastic-50] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (26 bytes)
-server-1  | 2026-09-04T13:16:41.530Z DEBUG 1 --- [albaraka-assistant] [undedElastic-51] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (25)
-server-1  | 2026-09-04T13:16:41.530Z DEBUG 1 --- [albaraka-assistant] [undedElastic-51] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
-server-1  | 2026-09-04T13:16:41.530Z DEBUG 1 --- [albaraka-assistant] [undedElastic-52] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
-server-1  | 2026-09-04T13:16:41.531Z DEBUG 1 --- [albaraka-assistant] [undedElastic-52] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (22 bytes)
-server-1  | 2026-09-04T13:16:41.531Z DEBUG 1 --- [albaraka-assistant] [undedElastic-53] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (21)
-server-1  | 2026-09-04T13:16:41.531Z DEBUG 1 --- [albaraka-assistant] [undedElastic-53] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
-server-1  | 2026-09-04T13:16:41.532Z DEBUG 1 --- [albaraka-assistant] [undedElastic-54] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
-server-1  | 2026-09-04T13:16:41.532Z DEBUG 1 --- [albaraka-assistant] [undedElastic-54] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (19 bytes)
-server-1  | 2026-09-04T13:16:41.532Z DEBUG 1 --- [albaraka-assistant] [undedElastic-55] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (18)
-server-1  | 2026-09-04T13:16:41.533Z DEBUG 1 --- [albaraka-assistant] [undedElastic-55] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
-server-1  | 2026-09-04T13:16:41.533Z DEBUG 1 --- [albaraka-assistant] [undedElastic-56] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
-server-1  | 2026-09-04T13:16:41.533Z DEBUG 1 --- [albaraka-assistant] [undedElastic-56] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (19 bytes)
-server-1  | 2026-09-04T13:16:41.533Z DEBUG 1 --- [albaraka-assistant] [undedElastic-57] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (18)
-server-1  | 2026-09-04T13:16:41.534Z DEBUG 1 --- [albaraka-assistant] [undedElastic-57] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (19 bytes)
-server-1  | 2026-09-04T13:16:41.534Z DEBUG 1 --- [albaraka-assistant] [undedElastic-58] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (18)
-server-1  | 2026-09-04T13:16:41.534Z DEBUG 1 --- [albaraka-assistant] [undedElastic-58] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (17 bytes)
-server-1  | 2026-09-04T13:16:41.535Z DEBUG 1 --- [albaraka-assistant] [undedElastic-59] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (16)
-server-1  | 2026-09-04T13:16:41.535Z DEBUG 1 --- [albaraka-assistant] [undedElastic-59] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (20 bytes)
-server-1  | 2026-09-04T13:16:41.535Z DEBUG 1 --- [albaraka-assistant] [undedElastic-61] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (19)
-server-1  | 2026-09-04T13:16:41.536Z DEBUG 1 --- [albaraka-assistant] [undedElastic-61] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (19 bytes)
-server-1  | 2026-09-04T13:16:41.536Z DEBUG 1 --- [albaraka-assistant] [undedElastic-62] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (18)
-server-1  | 2026-09-04T13:16:41.536Z DEBUG 1 --- [albaraka-assistant] [undedElastic-62] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (24 bytes)
-server-1  | 2026-09-04T13:16:41.537Z DEBUG 1 --- [albaraka-assistant] [undedElastic-63] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (23)
-server-1  | 2026-09-04T13:16:41.537Z DEBUG 1 --- [albaraka-assistant] [undedElastic-63] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (18 bytes)
-server-1  | 2026-09-04T13:16:41.537Z DEBUG 1 --- [albaraka-assistant] [undedElastic-64] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (17)
-server-1  | 2026-09-04T13:16:41.537Z DEBUG 1 --- [albaraka-assistant] [undedElastic-64] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (18 bytes)
-server-1  | 2026-09-04T13:16:41.538Z DEBUG 1 --- [albaraka-assistant] [undedElastic-65] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (17)
-server-1  | 2026-09-04T13:16:41.538Z DEBUG 1 --- [albaraka-assistant] [undedElastic-65] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (19 bytes)
-server-1  | 2026-09-04T13:16:41.539Z DEBUG 1 --- [albaraka-assistant] [undedElastic-66] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (18)
-server-1  | 2026-09-04T13:16:41.539Z DEBUG 1 --- [albaraka-assistant] [undedElastic-66] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (35 bytes)
-server-1  | 2026-09-04T13:16:41.540Z DEBUG 1 --- [albaraka-assistant] [undedElastic-67] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (34)
-server-1  | 2026-09-04T13:16:41.540Z DEBUG 1 --- [albaraka-assistant] [undedElastic-67] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (19 bytes)
-server-1  | 2026-09-04T13:16:41.540Z DEBUG 1 --- [albaraka-assistant] [undedElastic-68] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (18)
-server-1  | 2026-09-04T13:16:41.541Z DEBUG 1 --- [albaraka-assistant] [undedElastic-68] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (20 bytes)
-server-1  | 2026-09-04T13:16:41.541Z DEBUG 1 --- [albaraka-assistant] [undedElastic-69] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (19)
-server-1  | 2026-09-04T13:16:41.541Z DEBUG 1 --- [albaraka-assistant] [undedElastic-69] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (18 bytes)
-server-1  | 2026-09-04T13:16:41.542Z DEBUG 1 --- [albaraka-assistant] [undedElastic-70] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (17)
-server-1  | 2026-09-04T13:16:41.542Z DEBUG 1 --- [albaraka-assistant] [undedElastic-70] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (17 bytes)
-server-1  | 2026-09-04T13:16:41.543Z DEBUG 1 --- [albaraka-assistant] [undedElastic-71] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (16)
-server-1  | 2026-09-04T13:16:41.543Z DEBUG 1 --- [albaraka-assistant] [undedElastic-71] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (24 bytes)
-server-1  | 2026-09-04T13:16:41.544Z DEBUG 1 --- [albaraka-assistant] [undedElastic-72] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (23)
-server-1  | 2026-09-04T13:16:41.544Z DEBUG 1 --- [albaraka-assistant] [undedElastic-72] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
-server-1  | 2026-09-04T13:16:41.545Z DEBUG 1 --- [albaraka-assistant] [undedElastic-73] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
-server-1  | 2026-09-04T13:16:41.545Z DEBUG 1 --- [albaraka-assistant] [undedElastic-72] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (23 bytes)
-server-1  | 2026-09-04T13:16:41.546Z DEBUG 1 --- [albaraka-assistant] [undedElastic-74] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (22)
-server-1  | 2026-09-04T13:16:41.546Z DEBUG 1 --- [albaraka-assistant] [undedElastic-72] tn.albaraka.ai.ragclient.RagClient       : rag frame received: status (58 bytes)
-server-1  | 2026-09-04T13:16:41.547Z DEBUG 1 --- [albaraka-assistant] [undedElastic-75] tn.albaraka.ai.api.ChatStreamer          : chat frame [status] forwarded (55)
-server-1  | 2026-09-04T13:16:41.548Z DEBUG 1 --- [albaraka-assistant] [undedElastic-75] tn.albaraka.ai.ragclient.RagClient       : rag frame received: answer (1672 bytes)
-server-1  | 2026-09-04T13:16:41.564Z DEBUG 1 --- [albaraka-assistant] [undedElastic-76] tn.albaraka.ai.api.ChatStreamer          : chat frame [answer] forwarded (1542)
-server-1  | 2026-09-04T13:16:41.564Z DEBUG 1 --- [albaraka-assistant] [undedElastic-76] tn.albaraka.ai.ragclient.RagClient       : rag frame received: done (101 bytes)
-server-1  | 2026-09-04T13:16:41.566Z DEBUG 1 --- [albaraka-assistant] [undedElastic-76] tn.albaraka.ai.ragclient.RagClient       : rag stream completed normally
-server-1  | 2026-09-04T13:16:41.566Z DEBUG 1 --- [albaraka-assistant] [undedElastic-77] tn.albaraka.ai.api.ChatStreamer          : chat frame [done] forwarded (94)
-server-1  | 2026-09-04T13:16:41.567Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.s.adapter.HttpWebHandlerAdapter    : [22a77fb3-3] Completed 200 OK
-server-1  | 2026-09-04T13:16:41.590Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.s.adapter.HttpWebHandlerAdapter    : [92b46058-4] HTTP GET "/api/v1/assistant/config"
-server-1  | 2026-09-04T13:16:41.592Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
-server-1  | 2026-09-04T13:16:41.594Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] s.w.r.r.m.a.RequestMappingHandlerMapping : [92b46058-4] Mapped to tn.albaraka.ai.api.FrontofficeController#config()
-server-1  | 2026-09-04T13:16:41.598Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [92b46058-4] Using 'application/json' given [*/*] and supported [application/json, application/*+json, application/x-ndjson, text/event-stream]
-server-1  | 2026-09-04T13:16:41.599Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [92b46058-4] 0..1 [java.util.Map<java.lang.String, java.lang.Object>]
-server-1  | 2026-09-04T13:16:41.603Z DEBUG 1 --- [albaraka-assistant] [undedElastic-79] org.springframework.web.HttpLogging      : [92b46058-4] Encoding [{assistantName=Al-Mouchir, enabled=true, mode=ON, locales=[fr-FR, ar-TN, en-GB], defaultLocale=fr-FR (truncated)...]
-server-1  | 2026-09-04T13:16:41.608Z DEBUG 1 --- [albaraka-assistant] [undedElastic-79] o.s.w.s.adapter.HttpWebHandlerAdapter    : [92b46058-4] Completed 200 OK
-server-1  | 2026-09-04T13:16:41.617Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] o.s.w.s.adapter.HttpWebHandlerAdapter    : [85e083f5-5] HTTP POST "/api/v1/assistant/conversations"
-server-1  | 2026-09-04T13:16:41.619Z DEBUG 1 --- [albaraka-assistant] [     parallel-1] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
-server-1  | 2026-09-04T13:16:41.621Z DEBUG 1 --- [albaraka-assistant] [     parallel-1] s.w.r.r.m.a.RequestMappingHandlerMapping : [85e083f5-5] Mapped to tn.albaraka.ai.api.FrontofficeController#createConversation(CreateConversationRequest)
-server-1  | 2026-09-04T13:16:41.621Z DEBUG 1 --- [albaraka-assistant] [     parallel-1] .r.m.a.RequestBodyMethodArgumentResolver : [85e083f5-5] Content-Type:application/json
-server-1  | 2026-09-04T13:16:41.621Z DEBUG 1 --- [albaraka-assistant] [     parallel-1] .r.m.a.RequestBodyMethodArgumentResolver : [85e083f5-5] 0..1 [tn.albaraka.ai.api.FrontofficeController$CreateConversationRequest]
-server-1  | 2026-09-04T13:16:41.624Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] org.springframework.web.HttpLogging      : [85e083f5-5] Decoded [CreateConversationRequest[channel=WEB_APP, locale=fr-FR, pageContext=null]]
-server-1  | 2026-09-04T13:16:41.625Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [85e083f5-5] Using 'application/json' given [*/*] and supported [application/json, application/*+json, application/x-ndjson, text/event-stream]
-server-1  | 2026-09-04T13:16:41.625Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [85e083f5-5] 0..1 [java.util.Map<java.lang.String, java.lang.Object>]
-server-1  | 2026-09-04T13:16:41.629Z DEBUG 1 --- [albaraka-assistant] [undedElastic-81] org.springframework.web.HttpLogging      : [85e083f5-5] Encoding [{id=fd05f96d-6ace-4057-a4f2-00c2df45f590, channel=WEB_APP, locale=fr-FR, dir=ltr, state=ACTIVE, star (truncated)...]
-server-1  | 2026-09-04T13:16:41.630Z DEBUG 1 --- [albaraka-assistant] [undedElastic-81] o.s.w.s.adapter.HttpWebHandlerAdapter    : [85e083f5-5] Completed 201 CREATED
-server-1  | 2026-09-04T13:16:41.639Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] o.s.w.s.adapter.HttpWebHandlerAdapter    : [510395fb-6] HTTP POST "/api/v1/assistant/conversations/fd05f96d-6ace-4057-a4f2-00c2df45f590/messages"
-server-1  | 2026-09-04T13:16:41.640Z DEBUG 1 --- [albaraka-assistant] [     parallel-2] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
-server-1  | 2026-09-04T13:16:41.641Z DEBUG 1 --- [albaraka-assistant] [     parallel-2] s.w.r.r.m.a.RequestMappingHandlerMapping : [510395fb-6] Mapped to tn.albaraka.ai.api.FrontofficeController#sendMessage(UUID, SendMessageRequest)
-server-1  | 2026-09-04T13:16:41.643Z DEBUG 1 --- [albaraka-assistant] [     parallel-2] .r.m.a.RequestBodyMethodArgumentResolver : [510395fb-6] Content-Type:application/json
-server-1  | 2026-09-04T13:16:41.643Z DEBUG 1 --- [albaraka-assistant] [     parallel-2] .r.m.a.RequestBodyMethodArgumentResolver : [510395fb-6] 0..1 [tn.albaraka.ai.api.FrontofficeController$SendMessageRequest]
-server-1  | 2026-09-04T13:16:41.649Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] org.springframework.web.HttpLogging      : [510395fb-6] Decoded [SendMessageRequest[text=comment ouvrir un compte courant ?, locale=fr-FR, clientId=null]]
-server-1  | 2026-09-04T13:16:41.650Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [510395fb-6] Using 'text/event-stream' given [*/*] and supported [text/event-stream]
-server-1  | 2026-09-04T13:16:41.650Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [510395fb-6] 0..N [org.springframework.http.codec.ServerSentEvent<java.lang.String>]
-server-1  | 2026-09-04T13:16:41.655Z DEBUG 1 --- [albaraka-assistant] [undedElastic-84] o.s.w.r.f.client.ExchangeFunctions       : [528d84ad] HTTP POST http://rag-assistant:8000/v1/rag/chat
-server-1  | 2026-09-04T13:16:41.656Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] org.springframework.web.HttpLogging      : [528d84ad] Encoding [RagChatRequest[text=comment ouvrir un compte courant ?, context={max_classification=PUBLIC, audience (truncated)...]
-server-1  | 2026-09-04T13:16:41.660Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] o.s.w.r.f.client.ExchangeFunctions       : [528d84ad] [c3825a8b-2] Response 200 OK
-server-1  | 2026-09-04T13:16:41.660Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] tn.albaraka.ai.ragclient.RagClient       : rag frame received: accepted (144 bytes)
-server-1  | 2026-09-04T13:16:41.661Z DEBUG 1 --- [albaraka-assistant] [undedElastic-85] tn.albaraka.ai.api.ChatStreamer          : chat frame [accepted] forwarded (137)
-server-1  | 2026-09-04T13:16:41.662Z DEBUG 1 --- [albaraka-assistant] [undedElastic-85] tn.albaraka.ai.ragclient.RagClient       : rag frame received: status (58 bytes)
-server-1  | 2026-09-04T13:16:41.664Z DEBUG 1 --- [albaraka-assistant] [undedElastic-88] tn.albaraka.ai.api.ChatStreamer          : chat frame [status] forwarded (55)
-server-1  | 2026-09-04T13:16:41.664Z DEBUG 1 --- [albaraka-assistant] [undedElastic-88] tn.albaraka.ai.ragclient.RagClient       : rag frame received: status (58 bytes)
-server-1  | 2026-09-04T13:16:41.664Z DEBUG 1 --- [albaraka-assistant] [undedElastic-89] tn.albaraka.ai.api.ChatStreamer          : chat frame [status] forwarded (55)
-server-1  | 2026-09-04T13:16:41.665Z DEBUG 1 --- [albaraka-assistant] [undedElastic-89] tn.albaraka.ai.ragclient.RagClient       : rag frame received: status (57 bytes)
-server-1  | 2026-09-04T13:16:41.666Z DEBUG 1 --- [albaraka-assistant] [undedElastic-90] tn.albaraka.ai.api.ChatStreamer          : chat frame [status] forwarded (54)
-server-1  | 2026-09-04T13:16:41.667Z DEBUG 1 --- [albaraka-assistant] [undedElastic-89] tn.albaraka.ai.ragclient.RagClient       : rag frame received: sources (672 bytes)
-server-1  | 2026-09-04T13:16:41.670Z DEBUG 1 --- [albaraka-assistant] [undedElastic-91] tn.albaraka.ai.api.ChatStreamer          : chat frame [sources] forwarded (610)
-server-1  | 2026-09-04T13:16:41.670Z DEBUG 1 --- [albaraka-assistant] [undedElastic-91] tn.albaraka.ai.ragclient.RagClient       : rag frame received: status (59 bytes)
-server-1  | 2026-09-04T13:16:41.671Z DEBUG 1 --- [albaraka-assistant] [undedElastic-92] tn.albaraka.ai.api.ChatStreamer          : chat frame [status] forwarded (56)
-server-1  | 2026-09-04T13:16:41.672Z DEBUG 1 --- [albaraka-assistant] [undedElastic-92] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (19 bytes)
-server-1  | 2026-09-04T13:16:41.672Z DEBUG 1 --- [albaraka-assistant] [undedElastic-93] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (18)
-server-1  | 2026-09-04T13:16:41.673Z DEBUG 1 --- [albaraka-assistant] [undedElastic-93] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
-server-1  | 2026-09-04T13:16:41.674Z DEBUG 1 --- [albaraka-assistant] [undedElastic-94] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
-server-1  | 2026-09-04T13:16:41.674Z DEBUG 1 --- [albaraka-assistant] [undedElastic-93] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (17 bytes)
-server-1  | 2026-09-04T13:16:41.675Z DEBUG 1 --- [albaraka-assistant] [undedElastic-95] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (16)
-server-1  | 2026-09-04T13:16:41.675Z DEBUG 1 --- [albaraka-assistant] [undedElastic-95] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (17 bytes)
-server-1  | 2026-09-04T13:16:41.675Z DEBUG 1 --- [albaraka-assistant] [undedElastic-96] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (16)
-server-1  | 2026-09-04T13:16:41.676Z DEBUG 1 --- [albaraka-assistant] [undedElastic-95] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
-server-1  | 2026-09-04T13:16:41.677Z DEBUG 1 --- [albaraka-assistant] [undedElastic-97] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
-server-1  | 2026-09-04T13:16:41.677Z DEBUG 1 --- [albaraka-assistant] [undedElastic-97] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (27 bytes)
-server-1  | 2026-09-04T13:16:41.678Z DEBUG 1 --- [albaraka-assistant] [undedElastic-98] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (26)
-server-1  | 2026-09-04T13:16:41.679Z DEBUG 1 --- [albaraka-assistant] [undedElastic-98] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (23 bytes)
-server-1  | 2026-09-04T13:16:41.679Z DEBUG 1 --- [albaraka-assistant] [undedElastic-99] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (22)
-server-1  | 2026-09-04T13:16:41.680Z DEBUG 1 --- [albaraka-assistant] [undedElastic-99] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (20 bytes)
-server-1  | 2026-09-04T13:16:41.681Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-100] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (19)
-server-1  | 2026-09-04T13:16:41.681Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-100] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (25 bytes)
-server-1  | 2026-09-04T13:16:41.682Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-101] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (24)
-server-1  | 2026-09-04T13:16:41.682Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-100] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (18 bytes)
-server-1  | 2026-09-04T13:16:41.683Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-102] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (17)
-server-1  | 2026-09-04T13:16:41.683Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-102] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (20 bytes)
-server-1  | 2026-09-04T13:16:41.684Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-103] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (19)
-server-1  | 2026-09-04T13:16:41.684Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-102] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (21 bytes)
-server-1  | 2026-09-04T13:16:41.685Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-104] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (20)
-server-1  | 2026-09-04T13:16:41.686Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-102] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
-server-1  | 2026-09-04T13:16:41.686Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-105] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
-server-1  | 2026-09-04T13:16:41.686Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-105] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (20 bytes)
-server-1  | 2026-09-04T13:16:41.687Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-106] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (19)
-server-1  | 2026-09-04T13:16:41.688Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-106] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
-server-1  | 2026-09-04T13:16:41.688Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-107] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
-server-1  | 2026-09-04T13:16:41.689Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-107] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (18 bytes)
-server-1  | 2026-09-04T13:16:41.689Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-108] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (17)
-server-1  | 2026-09-04T13:16:41.690Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-108] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
-server-1  | 2026-09-04T13:16:41.691Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-109] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
-server-1  | 2026-09-04T13:16:41.691Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-109] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (20 bytes)
-server-1  | 2026-09-04T13:16:41.692Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-110] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (19)
-server-1  | 2026-09-04T13:16:41.692Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-110] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (18 bytes)
-server-1  | 2026-09-04T13:16:41.693Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-112] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (17)
-server-1  | 2026-09-04T13:16:41.693Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-110] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (17 bytes)
-server-1  | 2026-09-04T13:16:41.694Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-113] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (16)
-server-1  | 2026-09-04T13:16:41.694Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-113] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (26 bytes)
-server-1  | 2026-09-04T13:16:41.695Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-114] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (25)
-server-1  | 2026-09-04T13:16:41.695Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-114] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (21 bytes)
-server-1  | 2026-09-04T13:16:41.696Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-115] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (20)
-server-1  | 2026-09-04T13:16:41.696Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-115] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (24 bytes)
-server-1  | 2026-09-04T13:16:41.697Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-116] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (23)
-server-1  | 2026-09-04T13:16:41.697Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-116] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
-server-1  | 2026-09-04T13:16:41.698Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-117] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
-server-1  | 2026-09-04T13:16:41.698Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-116] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (20 bytes)
-server-1  | 2026-09-04T13:16:41.699Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-118] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (19)
-server-1  | 2026-09-04T13:16:41.699Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-116] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
-server-1  | 2026-09-04T13:16:41.700Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-119] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
-server-1  | 2026-09-04T13:16:41.700Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-119] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (21 bytes)
-server-1  | 2026-09-04T13:16:41.701Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-120] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (20)
-server-1  | 2026-09-04T13:16:41.701Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-119] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (21 bytes)
-server-1  | 2026-09-04T13:16:41.702Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-121] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (20)
-server-1  | 2026-09-04T13:16:41.702Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-121] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (20 bytes)
-server-1  | 2026-09-04T13:16:41.703Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-122] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (19)
-server-1  | 2026-09-04T13:16:41.703Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-122] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (25 bytes)
-server-1  | 2026-09-04T13:16:41.703Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-123] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (24)
-server-1  | 2026-09-04T13:16:41.703Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-123] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (21 bytes)
-server-1  | 2026-09-04T13:16:41.704Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-124] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (20)
-server-1  | 2026-09-04T13:16:41.704Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-124] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
-server-1  | 2026-09-04T13:16:41.704Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-125] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
-server-1  | 2026-09-04T13:16:41.705Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-124] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (24 bytes)
-server-1  | 2026-09-04T13:16:41.705Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-126] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (23)
-server-1  | 2026-09-04T13:16:41.705Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-126] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (26 bytes)
-server-1  | 2026-09-04T13:16:41.707Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-127] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (25)
-server-1  | 2026-09-04T13:16:41.707Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-127] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
-server-1  | 2026-09-04T13:16:41.707Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-128] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
-server-1  | 2026-09-04T13:16:41.708Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-128] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (22 bytes)
-server-1  | 2026-09-04T13:16:41.708Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-129] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (21)
-server-1  | 2026-09-04T13:16:41.709Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-128] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
-server-1  | 2026-09-04T13:16:41.709Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-130] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
-server-1  | 2026-09-04T13:16:41.710Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-128] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (19 bytes)
-server-1  | 2026-09-04T13:16:41.710Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-131] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (18)
-server-1  | 2026-09-04T13:16:41.711Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-131] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
-server-1  | 2026-09-04T13:16:41.711Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-132] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
-server-1  | 2026-09-04T13:16:41.711Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-131] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (19 bytes)
-server-1  | 2026-09-04T13:16:41.712Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-133] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (18)
-server-1  | 2026-09-04T13:16:41.712Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-133] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (19 bytes)
-server-1  | 2026-09-04T13:16:41.712Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-134] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (18)
-server-1  | 2026-09-04T13:16:41.713Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-134] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (17 bytes)
-server-1  | 2026-09-04T13:16:41.713Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-135] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (16)
-server-1  | 2026-09-04T13:16:41.713Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-135] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (20 bytes)
-server-1  | 2026-09-04T13:16:41.714Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-137] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (19)
-server-1  | 2026-09-04T13:16:41.715Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-137] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (19 bytes)
-server-1  | 2026-09-04T13:16:41.715Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-138] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (18)
-server-1  | 2026-09-04T13:16:41.715Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-138] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (24 bytes)
-server-1  | 2026-09-04T13:16:41.716Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-139] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (23)
-server-1  | 2026-09-04T13:16:41.716Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-139] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (18 bytes)
-server-1  | 2026-09-04T13:16:41.716Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-140] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (17)
-server-1  | 2026-09-04T13:16:41.716Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-140] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (18 bytes)
-server-1  | 2026-09-04T13:16:41.717Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-141] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (17)
-server-1  | 2026-09-04T13:16:41.717Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-141] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (19 bytes)
-server-1  | 2026-09-04T13:16:41.718Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-142] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (18)
-server-1  | 2026-09-04T13:16:41.718Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-142] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (35 bytes)
-server-1  | 2026-09-04T13:16:41.719Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-143] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (34)
-server-1  | 2026-09-04T13:16:41.719Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-143] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (19 bytes)
-server-1  | 2026-09-04T13:16:41.719Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-144] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (18)
-server-1  | 2026-09-04T13:16:41.720Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-144] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (20 bytes)
-server-1  | 2026-09-04T13:16:41.720Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-145] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (19)
-server-1  | 2026-09-04T13:16:41.720Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-145] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (18 bytes)
-server-1  | 2026-09-04T13:16:41.720Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-146] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (17)
-server-1  | 2026-09-04T13:16:41.721Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-146] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (17 bytes)
-server-1  | 2026-09-04T13:16:41.721Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-147] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (16)
-server-1  | 2026-09-04T13:16:41.721Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-147] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (24 bytes)
-server-1  | 2026-09-04T13:16:41.722Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-148] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (23)
-server-1  | 2026-09-04T13:16:41.722Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-148] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
-server-1  | 2026-09-04T13:16:41.723Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-149] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
-server-1  | 2026-09-04T13:16:41.723Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-149] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (23 bytes)
-server-1  | 2026-09-04T13:16:41.723Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-150] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (22)
-server-1  | 2026-09-04T13:16:41.723Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-149] tn.albaraka.ai.ragclient.RagClient       : rag frame received: status (58 bytes)
-server-1  | 2026-09-04T13:16:41.724Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-151] tn.albaraka.ai.api.ChatStreamer          : chat frame [status] forwarded (55)
-server-1  | 2026-09-04T13:16:41.724Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-149] tn.albaraka.ai.ragclient.RagClient       : rag frame received: answer (1672 bytes)
-server-1  | 2026-09-04T13:16:41.729Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-152] tn.albaraka.ai.api.ChatStreamer          : chat frame [answer] forwarded (1542)
-server-1  | 2026-09-04T13:16:41.729Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-152] tn.albaraka.ai.ragclient.RagClient       : rag frame received: done (101 bytes)
-server-1  | 2026-09-04T13:16:41.730Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-153] tn.albaraka.ai.api.ChatStreamer          : chat frame [done] forwarded (94)
-server-1  | 2026-09-04T13:16:41.730Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-152] tn.albaraka.ai.ragclient.RagClient       : rag stream completed normally
-server-1  | 2026-09-04T13:16:41.730Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] o.s.w.s.adapter.HttpWebHandlerAdapter    : [510395fb-6] Completed 200 OK
-server-1  | 2026-09-04T13:16:41.739Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.s.adapter.HttpWebHandlerAdapter    : [2678080e-7] HTTP POST "/api/v1/assistant/messages/516a31de-7418-449e-ac71-9f6b9a7b3fa1/feedback"
-server-1  | 2026-09-04T13:16:41.741Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
-server-1  | 2026-09-04T13:16:41.742Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] s.w.r.r.m.a.RequestMappingHandlerMapping : [2678080e-7] Mapped to tn.albaraka.ai.api.FrontofficeController#feedback(UUID, FeedbackRequest)
-server-1  | 2026-09-04T13:16:41.742Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] .r.m.a.RequestBodyMethodArgumentResolver : [2678080e-7] Content-Type:application/json
-server-1  | 2026-09-04T13:16:41.742Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] .r.m.a.RequestBodyMethodArgumentResolver : [2678080e-7] 0..1 [tn.albaraka.ai.api.FrontofficeController$FeedbackRequest]
-server-1  | 2026-09-04T13:16:41.745Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] org.springframework.web.HttpLogging      : [2678080e-7] Decoded [FeedbackRequest[rating=UP, comment=null, contactOptIn=null, contact=null]]
-server-1  | 2026-09-04T13:16:41.746Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [2678080e-7] Using 'application/json' given [*/*] and supported [application/json, application/*+json, application/x-ndjson, text/event-stream]
-server-1  | 2026-09-04T13:16:41.746Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [2678080e-7] 0..1 [java.util.Map<java.lang.String, java.lang.Object>]
-server-1  | 2026-09-04T13:16:41.751Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-155] org.springframework.web.HttpLogging      : [2678080e-7] Encoding [{id=2954125f-50ea-455c-9069-e036c079263a, messageId=516a31de-7418-449e-ac71-9f6b9a7b3fa1, rating=UP, (truncated)...]
-server-1  | 2026-09-04T13:16:41.752Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-155] o.s.w.s.adapter.HttpWebHandlerAdapter    : [2678080e-7] Completed 201 CREATED
-server-1  | 2026-09-04T13:16:41.766Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.s.adapter.HttpWebHandlerAdapter    : [62bf8431-8] HTTP POST "/api/v1/auth/login"
-server-1  | 2026-09-04T13:16:41.767Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
-server-1  | 2026-09-04T13:16:41.769Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] s.w.r.r.m.a.RequestMappingHandlerMapping : [62bf8431-8] Mapped to tn.albaraka.ai.api.AuthController#login(LoginRequest)
-server-1  | 2026-09-04T13:16:41.769Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] .r.m.a.RequestBodyMethodArgumentResolver : [62bf8431-8] Content-Type:application/json
-server-1  | 2026-09-04T13:16:41.769Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] .r.m.a.RequestBodyMethodArgumentResolver : [62bf8431-8] 0..1 [tn.albaraka.ai.api.AuthController$LoginRequest]
-server-1  | 2026-09-04T13:16:41.771Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] org.springframework.web.HttpLogging      : [62bf8431-8] Decoded [LoginRequest[email=admin@albaraka.tn, password=Admin#123]]
-server-1  | 2026-09-04T13:16:41.772Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [62bf8431-8] Using 'application/json' given [*/*] and supported [application/json, application/*+json, application/x-ndjson, text/event-stream]
-server-1  | 2026-09-04T13:16:41.772Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [62bf8431-8] 0..1 [tn.albaraka.ai.api.AuthController$LoginResponse]
-server-1  | 2026-09-04T13:16:41.773Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.r.f.client.ExchangeFunctions       : [d109067] HTTP POST http://keycloak:8080/realms/albaraka/protocol/openid-connect/token
-server-1  | 2026-09-04T13:16:41.780Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] org.springframework.web.HttpLogging      : [d109067] Writing form fields [grant_type, client_id, client_secret, username, password, scope] (content masked)
-server-1  | 2026-09-04T13:16:42.228Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.r.f.client.ExchangeFunctions       : [d109067] [c8c0a5e9-1] Response 200 OK
-server-1  | 2026-09-04T13:16:42.238Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] org.springframework.web.HttpLogging      : [d109067] [c8c0a5e9-1] Decoded [{access_token=eyJhbGciOiJQUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJweWlDbllPcWJiYkVqZHNKRXNrTGtlbzQwUW (truncated)...]
-server-1  | 2026-09-04T13:16:42.287Z  WARN 1 --- [albaraka-assistant] [or-http-epoll-2] tn.albaraka.ai.api.AuthController        : auth: token rejected by the resource server: org.springframework.security.oauth2.jwt.BadJwtException: Unsupported algorithm of PS256
-server-1  | 2026-09-04T13:16:42.292Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] s.w.r.r.m.a.RequestMappingHandlerAdapter : [62bf8431-8] Using @ExceptionHandler tn.albaraka.ai.api.GlobalExceptionHandler#handle(ApiException)
-server-1  | 2026-09-04T13:16:42.296Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] .s.w.r.r.m.a.ResponseEntityResultHandler : [62bf8431-8] Using 'application/json' given [*/*] and supported [application/json, application/*+json, application/x-ndjson, text/event-stream]
-server-1  | 2026-09-04T13:16:42.296Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] .s.w.r.r.m.a.ResponseEntityResultHandler : [62bf8431-8] 0..1 [java.util.Map<java.lang.String, java.lang.Object>]
-server-1  | 2026-09-04T13:16:42.297Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] org.springframework.web.HttpLogging      : [62bf8431-8] Encoding [{error={message=invalid credentials, code=AUTH.INVALID_CREDENTIALS}}]
-server-1  | 2026-09-04T13:16:42.299Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.s.adapter.HttpWebHandlerAdapter    : [62bf8431-8] Completed 422 UNPROCESSABLE_ENTITY
+server-1  | 2026-09-04T13:19:58.905Z DEBUG 1 --- [albaraka-assistant] [undedElastic-48] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (20)
+server-1  | 2026-09-04T13:19:58.905Z DEBUG 1 --- [albaraka-assistant] [undedElastic-46] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
+server-1  | 2026-09-04T13:19:58.905Z DEBUG 1 --- [albaraka-assistant] [undedElastic-49] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
+server-1  | 2026-09-04T13:19:58.906Z DEBUG 1 --- [albaraka-assistant] [undedElastic-46] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (24 bytes)
+server-1  | 2026-09-04T13:19:58.908Z DEBUG 1 --- [albaraka-assistant] [undedElastic-50] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (23)
+server-1  | 2026-09-04T13:19:58.908Z DEBUG 1 --- [albaraka-assistant] [undedElastic-50] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (26 bytes)
+server-1  | 2026-09-04T13:19:58.909Z DEBUG 1 --- [albaraka-assistant] [undedElastic-51] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (25)
+server-1  | 2026-09-04T13:19:58.909Z DEBUG 1 --- [albaraka-assistant] [undedElastic-51] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
+server-1  | 2026-09-04T13:19:58.911Z DEBUG 1 --- [albaraka-assistant] [undedElastic-52] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
+server-1  | 2026-09-04T13:19:58.911Z DEBUG 1 --- [albaraka-assistant] [undedElastic-52] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (22 bytes)
+server-1  | 2026-09-04T13:19:58.912Z DEBUG 1 --- [albaraka-assistant] [undedElastic-53] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (21)
+server-1  | 2026-09-04T13:19:58.913Z DEBUG 1 --- [albaraka-assistant] [undedElastic-52] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
+server-1  | 2026-09-04T13:19:58.913Z DEBUG 1 --- [albaraka-assistant] [undedElastic-54] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
+server-1  | 2026-09-04T13:19:58.914Z DEBUG 1 --- [albaraka-assistant] [undedElastic-54] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (19 bytes)
+server-1  | 2026-09-04T13:19:58.915Z DEBUG 1 --- [albaraka-assistant] [undedElastic-55] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (18)
+server-1  | 2026-09-04T13:19:58.915Z DEBUG 1 --- [albaraka-assistant] [undedElastic-55] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
+server-1  | 2026-09-04T13:19:58.916Z DEBUG 1 --- [albaraka-assistant] [undedElastic-56] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
+server-1  | 2026-09-04T13:19:58.916Z DEBUG 1 --- [albaraka-assistant] [undedElastic-56] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (19 bytes)
+server-1  | 2026-09-04T13:19:58.917Z DEBUG 1 --- [albaraka-assistant] [undedElastic-57] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (18)
+server-1  | 2026-09-04T13:19:58.917Z DEBUG 1 --- [albaraka-assistant] [undedElastic-57] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (19 bytes)
+server-1  | 2026-09-04T13:19:58.918Z DEBUG 1 --- [albaraka-assistant] [undedElastic-58] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (18)
+server-1  | 2026-09-04T13:19:58.918Z DEBUG 1 --- [albaraka-assistant] [undedElastic-58] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (17 bytes)
+server-1  | 2026-09-04T13:19:58.919Z DEBUG 1 --- [albaraka-assistant] [undedElastic-59] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (16)
+server-1  | 2026-09-04T13:19:58.920Z DEBUG 1 --- [albaraka-assistant] [undedElastic-59] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (20 bytes)
+server-1  | 2026-09-04T13:19:58.920Z DEBUG 1 --- [albaraka-assistant] [undedElastic-61] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (19)
+server-1  | 2026-09-04T13:19:58.920Z DEBUG 1 --- [albaraka-assistant] [undedElastic-61] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (19 bytes)
+server-1  | 2026-09-04T13:19:58.920Z DEBUG 1 --- [albaraka-assistant] [undedElastic-62] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (18)
+server-1  | 2026-09-04T13:19:58.921Z DEBUG 1 --- [albaraka-assistant] [undedElastic-62] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (24 bytes)
+server-1  | 2026-09-04T13:19:58.921Z DEBUG 1 --- [albaraka-assistant] [undedElastic-63] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (23)
+server-1  | 2026-09-04T13:19:58.922Z DEBUG 1 --- [albaraka-assistant] [undedElastic-62] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (18 bytes)
+server-1  | 2026-09-04T13:19:58.922Z DEBUG 1 --- [albaraka-assistant] [undedElastic-64] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (17)
+server-1  | 2026-09-04T13:19:58.923Z DEBUG 1 --- [albaraka-assistant] [undedElastic-62] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (18 bytes)
+server-1  | 2026-09-04T13:19:58.923Z DEBUG 1 --- [albaraka-assistant] [undedElastic-65] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (17)
+server-1  | 2026-09-04T13:19:58.924Z DEBUG 1 --- [albaraka-assistant] [undedElastic-65] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (19 bytes)
+server-1  | 2026-09-04T13:19:58.924Z DEBUG 1 --- [albaraka-assistant] [undedElastic-66] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (18)
+server-1  | 2026-09-04T13:19:58.924Z DEBUG 1 --- [albaraka-assistant] [undedElastic-66] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (35 bytes)
+server-1  | 2026-09-04T13:19:58.925Z DEBUG 1 --- [albaraka-assistant] [undedElastic-67] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (34)
+server-1  | 2026-09-04T13:19:58.925Z DEBUG 1 --- [albaraka-assistant] [undedElastic-67] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (19 bytes)
+server-1  | 2026-09-04T13:19:58.926Z DEBUG 1 --- [albaraka-assistant] [undedElastic-68] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (18)
+server-1  | 2026-09-04T13:19:58.926Z DEBUG 1 --- [albaraka-assistant] [undedElastic-68] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (20 bytes)
+server-1  | 2026-09-04T13:19:58.926Z DEBUG 1 --- [albaraka-assistant] [undedElastic-69] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (19)
+server-1  | 2026-09-04T13:19:58.926Z DEBUG 1 --- [albaraka-assistant] [undedElastic-69] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (18 bytes)
+server-1  | 2026-09-04T13:19:58.927Z DEBUG 1 --- [albaraka-assistant] [undedElastic-70] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (17)
+server-1  | 2026-09-04T13:19:58.927Z DEBUG 1 --- [albaraka-assistant] [undedElastic-70] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (17 bytes)
+server-1  | 2026-09-04T13:19:58.928Z DEBUG 1 --- [albaraka-assistant] [undedElastic-71] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (16)
+server-1  | 2026-09-04T13:19:58.928Z DEBUG 1 --- [albaraka-assistant] [undedElastic-71] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (24 bytes)
+server-1  | 2026-09-04T13:19:58.929Z DEBUG 1 --- [albaraka-assistant] [undedElastic-72] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (23)
+server-1  | 2026-09-04T13:19:58.929Z DEBUG 1 --- [albaraka-assistant] [undedElastic-72] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
+server-1  | 2026-09-04T13:19:58.930Z DEBUG 1 --- [albaraka-assistant] [undedElastic-73] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
+server-1  | 2026-09-04T13:19:58.930Z DEBUG 1 --- [albaraka-assistant] [undedElastic-73] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (23 bytes)
+server-1  | 2026-09-04T13:19:58.931Z DEBUG 1 --- [albaraka-assistant] [undedElastic-74] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (22)
+server-1  | 2026-09-04T13:19:58.931Z DEBUG 1 --- [albaraka-assistant] [undedElastic-74] tn.albaraka.ai.ragclient.RagClient       : rag frame received: status (58 bytes)
+server-1  | 2026-09-04T13:19:58.932Z DEBUG 1 --- [albaraka-assistant] [undedElastic-75] tn.albaraka.ai.api.ChatStreamer          : chat frame [status] forwarded (55)
+server-1  | 2026-09-04T13:19:58.932Z DEBUG 1 --- [albaraka-assistant] [undedElastic-74] tn.albaraka.ai.ragclient.RagClient       : rag frame received: answer (1672 bytes)
+server-1  | 2026-09-04T13:19:58.950Z DEBUG 1 --- [albaraka-assistant] [undedElastic-76] tn.albaraka.ai.api.ChatStreamer          : chat frame [answer] forwarded (1542)
+server-1  | 2026-09-04T13:19:58.950Z DEBUG 1 --- [albaraka-assistant] [undedElastic-76] tn.albaraka.ai.ragclient.RagClient       : rag frame received: done (101 bytes)
+server-1  | 2026-09-04T13:19:58.952Z DEBUG 1 --- [albaraka-assistant] [undedElastic-77] tn.albaraka.ai.api.ChatStreamer          : chat frame [done] forwarded (94)
+server-1  | 2026-09-04T13:19:58.953Z DEBUG 1 --- [albaraka-assistant] [undedElastic-76] tn.albaraka.ai.ragclient.RagClient       : rag stream completed normally
+server-1  | 2026-09-04T13:19:58.954Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.s.adapter.HttpWebHandlerAdapter    : [7317a84e-3] Completed 200 OK
+server-1  | 2026-09-04T13:19:58.999Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.s.adapter.HttpWebHandlerAdapter    : [bdf6a892-4] HTTP GET "/api/v1/assistant/config"
+server-1  | 2026-09-04T13:19:59.021Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
+server-1  | 2026-09-04T13:19:59.027Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] s.w.r.r.m.a.RequestMappingHandlerMapping : [bdf6a892-4] Mapped to tn.albaraka.ai.api.FrontofficeController#config()
+server-1  | 2026-09-04T13:19:59.030Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [bdf6a892-4] Using 'application/json' given [*/*] and supported [application/json, application/*+json, application/x-ndjson, text/event-stream]
+server-1  | 2026-09-04T13:19:59.030Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [bdf6a892-4] 0..1 [java.util.Map<java.lang.String, java.lang.Object>]
+server-1  | 2026-09-04T13:19:59.035Z DEBUG 1 --- [albaraka-assistant] [undedElastic-79] org.springframework.web.HttpLogging      : [bdf6a892-4] Encoding [{assistantName=Al-Mouchir, enabled=true, mode=ON, locales=[fr-FR, ar-TN, en-GB], defaultLocale=fr-FR (truncated)...]
+server-1  | 2026-09-04T13:19:59.043Z DEBUG 1 --- [albaraka-assistant] [undedElastic-79] o.s.w.s.adapter.HttpWebHandlerAdapter    : [bdf6a892-4] Completed 200 OK
+server-1  | 2026-09-04T13:19:59.055Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] o.s.w.s.adapter.HttpWebHandlerAdapter    : [66142cb9-5] HTTP POST "/api/v1/assistant/conversations"
+server-1  | 2026-09-04T13:19:59.058Z DEBUG 1 --- [albaraka-assistant] [     parallel-1] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
+server-1  | 2026-09-04T13:19:59.060Z DEBUG 1 --- [albaraka-assistant] [     parallel-1] s.w.r.r.m.a.RequestMappingHandlerMapping : [66142cb9-5] Mapped to tn.albaraka.ai.api.FrontofficeController#createConversation(CreateConversationRequest)
+server-1  | 2026-09-04T13:19:59.061Z DEBUG 1 --- [albaraka-assistant] [     parallel-1] .r.m.a.RequestBodyMethodArgumentResolver : [66142cb9-5] Content-Type:application/json
+server-1  | 2026-09-04T13:19:59.062Z DEBUG 1 --- [albaraka-assistant] [     parallel-1] .r.m.a.RequestBodyMethodArgumentResolver : [66142cb9-5] 0..1 [tn.albaraka.ai.api.FrontofficeController$CreateConversationRequest]
+server-1  | 2026-09-04T13:19:59.069Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] org.springframework.web.HttpLogging      : [66142cb9-5] Decoded [CreateConversationRequest[channel=WEB_APP, locale=fr-FR, pageContext=null]]
+server-1  | 2026-09-04T13:19:59.070Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [66142cb9-5] Using 'application/json' given [*/*] and supported [application/json, application/*+json, application/x-ndjson, text/event-stream]
+server-1  | 2026-09-04T13:19:59.070Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [66142cb9-5] 0..1 [java.util.Map<java.lang.String, java.lang.Object>]
+server-1  | 2026-09-04T13:19:59.075Z DEBUG 1 --- [albaraka-assistant] [undedElastic-81] org.springframework.web.HttpLogging      : [66142cb9-5] Encoding [{id=786e4c67-88ec-4eae-8980-ad1d0fcfd696, channel=WEB_APP, locale=fr-FR, dir=ltr, state=ACTIVE, star (truncated)...]
+server-1  | 2026-09-04T13:19:59.079Z DEBUG 1 --- [albaraka-assistant] [undedElastic-81] o.s.w.s.adapter.HttpWebHandlerAdapter    : [66142cb9-5] Completed 201 CREATED
+server-1  | 2026-09-04T13:19:59.092Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] o.s.w.s.adapter.HttpWebHandlerAdapter    : [7b4fc8c5-6] HTTP POST "/api/v1/assistant/conversations/786e4c67-88ec-4eae-8980-ad1d0fcfd696/messages"
+server-1  | 2026-09-04T13:19:59.094Z DEBUG 1 --- [albaraka-assistant] [     parallel-2] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
+server-1  | 2026-09-04T13:19:59.096Z DEBUG 1 --- [albaraka-assistant] [     parallel-2] s.w.r.r.m.a.RequestMappingHandlerMapping : [7b4fc8c5-6] Mapped to tn.albaraka.ai.api.FrontofficeController#sendMessage(UUID, SendMessageRequest)
+server-1  | 2026-09-04T13:19:59.098Z DEBUG 1 --- [albaraka-assistant] [     parallel-2] .r.m.a.RequestBodyMethodArgumentResolver : [7b4fc8c5-6] Content-Type:application/json
+server-1  | 2026-09-04T13:19:59.099Z DEBUG 1 --- [albaraka-assistant] [     parallel-2] .r.m.a.RequestBodyMethodArgumentResolver : [7b4fc8c5-6] 0..1 [tn.albaraka.ai.api.FrontofficeController$SendMessageRequest]
+server-1  | 2026-09-04T13:19:59.106Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] org.springframework.web.HttpLogging      : [7b4fc8c5-6] Decoded [SendMessageRequest[text=comment ouvrir un compte courant ?, locale=fr-FR, clientId=null]]
+server-1  | 2026-09-04T13:19:59.107Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [7b4fc8c5-6] Using 'text/event-stream' given [*/*] and supported [text/event-stream]
+server-1  | 2026-09-04T13:19:59.108Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [7b4fc8c5-6] 0..N [org.springframework.http.codec.ServerSentEvent<java.lang.String>]
+server-1  | 2026-09-04T13:19:59.113Z DEBUG 1 --- [albaraka-assistant] [undedElastic-84] o.s.w.r.f.client.ExchangeFunctions       : [407dea29] HTTP POST http://rag-assistant:8000/v1/rag/chat
+server-1  | 2026-09-04T13:19:59.115Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] org.springframework.web.HttpLogging      : [407dea29] Encoding [RagChatRequest[text=comment ouvrir un compte courant ?, context={max_classification=PUBLIC, audience (truncated)...]
+server-1  | 2026-09-04T13:19:59.121Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] o.s.w.r.f.client.ExchangeFunctions       : [407dea29] [de87555b-2] Response 200 OK
+server-1  | 2026-09-04T13:19:59.122Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] tn.albaraka.ai.ragclient.RagClient       : rag frame received: accepted (144 bytes)
+server-1  | 2026-09-04T13:19:59.124Z DEBUG 1 --- [albaraka-assistant] [undedElastic-85] tn.albaraka.ai.api.ChatStreamer          : chat frame [accepted] forwarded (137)
+server-1  | 2026-09-04T13:19:59.125Z DEBUG 1 --- [albaraka-assistant] [undedElastic-85] tn.albaraka.ai.ragclient.RagClient       : rag frame received: status (58 bytes)
+server-1  | 2026-09-04T13:19:59.129Z DEBUG 1 --- [albaraka-assistant] [undedElastic-88] tn.albaraka.ai.api.ChatStreamer          : chat frame [status] forwarded (55)
+server-1  | 2026-09-04T13:19:59.130Z DEBUG 1 --- [albaraka-assistant] [undedElastic-88] tn.albaraka.ai.ragclient.RagClient       : rag frame received: status (58 bytes)
+server-1  | 2026-09-04T13:19:59.132Z DEBUG 1 --- [albaraka-assistant] [undedElastic-89] tn.albaraka.ai.api.ChatStreamer          : chat frame [status] forwarded (55)
+server-1  | 2026-09-04T13:19:59.132Z DEBUG 1 --- [albaraka-assistant] [undedElastic-89] tn.albaraka.ai.ragclient.RagClient       : rag frame received: status (57 bytes)
+server-1  | 2026-09-04T13:19:59.133Z DEBUG 1 --- [albaraka-assistant] [undedElastic-90] tn.albaraka.ai.api.ChatStreamer          : chat frame [status] forwarded (54)
+server-1  | 2026-09-04T13:19:59.134Z DEBUG 1 --- [albaraka-assistant] [undedElastic-90] tn.albaraka.ai.ragclient.RagClient       : rag frame received: sources (672 bytes)
+server-1  | 2026-09-04T13:19:59.137Z DEBUG 1 --- [albaraka-assistant] [undedElastic-91] tn.albaraka.ai.api.ChatStreamer          : chat frame [sources] forwarded (610)
+server-1  | 2026-09-04T13:19:59.137Z DEBUG 1 --- [albaraka-assistant] [undedElastic-91] tn.albaraka.ai.ragclient.RagClient       : rag frame received: status (59 bytes)
+server-1  | 2026-09-04T13:19:59.138Z DEBUG 1 --- [albaraka-assistant] [undedElastic-92] tn.albaraka.ai.api.ChatStreamer          : chat frame [status] forwarded (56)
+server-1  | 2026-09-04T13:19:59.138Z DEBUG 1 --- [albaraka-assistant] [undedElastic-91] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (19 bytes)
+server-1  | 2026-09-04T13:19:59.139Z DEBUG 1 --- [albaraka-assistant] [undedElastic-93] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (18)
+server-1  | 2026-09-04T13:19:59.139Z DEBUG 1 --- [albaraka-assistant] [undedElastic-93] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
+server-1  | 2026-09-04T13:19:59.139Z DEBUG 1 --- [albaraka-assistant] [undedElastic-94] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
+server-1  | 2026-09-04T13:19:59.139Z DEBUG 1 --- [albaraka-assistant] [undedElastic-94] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (17 bytes)
+server-1  | 2026-09-04T13:19:59.140Z DEBUG 1 --- [albaraka-assistant] [undedElastic-95] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (16)
+server-1  | 2026-09-04T13:19:59.140Z DEBUG 1 --- [albaraka-assistant] [undedElastic-95] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (17 bytes)
+server-1  | 2026-09-04T13:19:59.141Z DEBUG 1 --- [albaraka-assistant] [undedElastic-96] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (16)
+server-1  | 2026-09-04T13:19:59.141Z DEBUG 1 --- [albaraka-assistant] [undedElastic-96] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
+server-1  | 2026-09-04T13:19:59.142Z DEBUG 1 --- [albaraka-assistant] [undedElastic-97] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
+server-1  | 2026-09-04T13:19:59.142Z DEBUG 1 --- [albaraka-assistant] [undedElastic-97] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (27 bytes)
+server-1  | 2026-09-04T13:19:59.142Z DEBUG 1 --- [albaraka-assistant] [undedElastic-98] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (26)
+server-1  | 2026-09-04T13:19:59.144Z DEBUG 1 --- [albaraka-assistant] [undedElastic-98] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (23 bytes)
+server-1  | 2026-09-04T13:19:59.144Z DEBUG 1 --- [albaraka-assistant] [undedElastic-99] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (22)
+server-1  | 2026-09-04T13:19:59.145Z DEBUG 1 --- [albaraka-assistant] [undedElastic-99] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (20 bytes)
+server-1  | 2026-09-04T13:19:59.145Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-100] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (19)
+server-1  | 2026-09-04T13:19:59.146Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-100] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (25 bytes)
+server-1  | 2026-09-04T13:19:59.147Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-101] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (24)
+server-1  | 2026-09-04T13:19:59.147Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-101] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (18 bytes)
+server-1  | 2026-09-04T13:19:59.148Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-102] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (17)
+server-1  | 2026-09-04T13:19:59.149Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-101] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (20 bytes)
+server-1  | 2026-09-04T13:19:59.149Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-103] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (19)
+server-1  | 2026-09-04T13:19:59.149Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-103] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (21 bytes)
+server-1  | 2026-09-04T13:19:59.150Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-104] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (20)
+server-1  | 2026-09-04T13:19:59.151Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-104] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
+server-1  | 2026-09-04T13:19:59.151Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-105] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
+server-1  | 2026-09-04T13:19:59.152Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-104] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (20 bytes)
+server-1  | 2026-09-04T13:19:59.153Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-106] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (19)
+server-1  | 2026-09-04T13:19:59.153Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-106] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
+server-1  | 2026-09-04T13:19:59.154Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-107] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
+server-1  | 2026-09-04T13:19:59.154Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-107] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (18 bytes)
+server-1  | 2026-09-04T13:19:59.155Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-108] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (17)
+server-1  | 2026-09-04T13:19:59.156Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-108] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
+server-1  | 2026-09-04T13:19:59.156Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-109] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
+server-1  | 2026-09-04T13:19:59.157Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-108] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (20 bytes)
+server-1  | 2026-09-04T13:19:59.157Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-110] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (19)
+server-1  | 2026-09-04T13:19:59.158Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-110] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (18 bytes)
+server-1  | 2026-09-04T13:19:59.159Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-112] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (17)
+server-1  | 2026-09-04T13:19:59.159Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-112] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (17 bytes)
+server-1  | 2026-09-04T13:19:59.160Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-113] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (16)
+server-1  | 2026-09-04T13:19:59.160Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-112] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (26 bytes)
+server-1  | 2026-09-04T13:19:59.161Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-114] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (25)
+server-1  | 2026-09-04T13:19:59.162Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-114] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (21 bytes)
+server-1  | 2026-09-04T13:19:59.164Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-115] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (20)
+server-1  | 2026-09-04T13:19:59.165Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-115] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (24 bytes)
+server-1  | 2026-09-04T13:19:59.167Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-116] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (23)
+server-1  | 2026-09-04T13:19:59.168Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-116] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
+server-1  | 2026-09-04T13:19:59.168Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-117] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
+server-1  | 2026-09-04T13:19:59.168Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-117] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (20 bytes)
+server-1  | 2026-09-04T13:19:59.169Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-118] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (19)
+server-1  | 2026-09-04T13:19:59.169Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-118] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
+server-1  | 2026-09-04T13:19:59.169Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-119] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
+server-1  | 2026-09-04T13:19:59.169Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-119] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (21 bytes)
+server-1  | 2026-09-04T13:19:59.173Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-120] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (20)
+server-1  | 2026-09-04T13:19:59.173Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-120] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (21 bytes)
+server-1  | 2026-09-04T13:19:59.174Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-121] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (20)
+server-1  | 2026-09-04T13:19:59.174Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-121] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (20 bytes)
+server-1  | 2026-09-04T13:19:59.174Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-122] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (19)
+server-1  | 2026-09-04T13:19:59.174Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-122] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (25 bytes)
+server-1  | 2026-09-04T13:19:59.175Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-123] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (24)
+server-1  | 2026-09-04T13:19:59.175Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-123] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (21 bytes)
+server-1  | 2026-09-04T13:19:59.175Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-124] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (20)
+server-1  | 2026-09-04T13:19:59.178Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-124] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
+server-1  | 2026-09-04T13:19:59.179Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-125] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
+server-1  | 2026-09-04T13:19:59.181Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-125] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (24 bytes)
+server-1  | 2026-09-04T13:19:59.181Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-126] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (23)
+server-1  | 2026-09-04T13:19:59.182Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-126] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (26 bytes)
+server-1  | 2026-09-04T13:19:59.182Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-127] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (25)
+server-1  | 2026-09-04T13:19:59.183Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-127] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
+server-1  | 2026-09-04T13:19:59.183Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-128] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
+server-1  | 2026-09-04T13:19:59.184Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-128] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (22 bytes)
+server-1  | 2026-09-04T13:19:59.184Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-129] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (21)
+server-1  | 2026-09-04T13:19:59.185Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-129] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
+server-1  | 2026-09-04T13:19:59.185Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-130] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
+server-1  | 2026-09-04T13:19:59.185Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-130] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (19 bytes)
+server-1  | 2026-09-04T13:19:59.186Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-131] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (18)
+server-1  | 2026-09-04T13:19:59.186Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-131] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
+server-1  | 2026-09-04T13:19:59.186Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-132] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
+server-1  | 2026-09-04T13:19:59.187Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-132] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (19 bytes)
+server-1  | 2026-09-04T13:19:59.187Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-133] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (18)
+server-1  | 2026-09-04T13:19:59.187Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-132] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (19 bytes)
+server-1  | 2026-09-04T13:19:59.188Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-134] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (18)
+server-1  | 2026-09-04T13:19:59.188Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-134] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (17 bytes)
+server-1  | 2026-09-04T13:19:59.189Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-135] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (16)
+server-1  | 2026-09-04T13:19:59.189Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-135] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (20 bytes)
+server-1  | 2026-09-04T13:19:59.190Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-137] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (19)
+server-1  | 2026-09-04T13:19:59.190Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-137] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (19 bytes)
+server-1  | 2026-09-04T13:19:59.191Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-138] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (18)
+server-1  | 2026-09-04T13:19:59.192Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-138] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (24 bytes)
+server-1  | 2026-09-04T13:19:59.192Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-139] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (23)
+server-1  | 2026-09-04T13:19:59.193Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-138] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (18 bytes)
+server-1  | 2026-09-04T13:19:59.193Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-140] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (17)
+server-1  | 2026-09-04T13:19:59.194Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-140] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (18 bytes)
+server-1  | 2026-09-04T13:19:59.194Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-141] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (17)
+server-1  | 2026-09-04T13:19:59.195Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-141] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (19 bytes)
+server-1  | 2026-09-04T13:19:59.195Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-142] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (18)
+server-1  | 2026-09-04T13:19:59.196Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-141] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (35 bytes)
+server-1  | 2026-09-04T13:19:59.196Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-143] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (34)
+server-1  | 2026-09-04T13:19:59.197Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-141] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (19 bytes)
+server-1  | 2026-09-04T13:19:59.197Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-144] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (18)
+server-1  | 2026-09-04T13:19:59.198Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-144] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (20 bytes)
+server-1  | 2026-09-04T13:19:59.199Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-145] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (19)
+server-1  | 2026-09-04T13:19:59.199Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-145] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (18 bytes)
+server-1  | 2026-09-04T13:19:59.200Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-146] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (17)
+server-1  | 2026-09-04T13:19:59.200Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-145] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (17 bytes)
+server-1  | 2026-09-04T13:19:59.201Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-147] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (16)
+server-1  | 2026-09-04T13:19:59.201Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-147] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (24 bytes)
+server-1  | 2026-09-04T13:19:59.202Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-148] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (23)
+server-1  | 2026-09-04T13:19:59.202Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-147] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
+server-1  | 2026-09-04T13:19:59.203Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-149] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
+server-1  | 2026-09-04T13:19:59.203Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-149] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (23 bytes)
+server-1  | 2026-09-04T13:19:59.204Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-150] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (22)
+server-1  | 2026-09-04T13:19:59.204Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-150] tn.albaraka.ai.ragclient.RagClient       : rag frame received: status (58 bytes)
+server-1  | 2026-09-04T13:19:59.205Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-151] tn.albaraka.ai.api.ChatStreamer          : chat frame [status] forwarded (55)
+server-1  | 2026-09-04T13:19:59.205Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-151] tn.albaraka.ai.ragclient.RagClient       : rag frame received: answer (1672 bytes)
+server-1  | 2026-09-04T13:19:59.209Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-152] tn.albaraka.ai.api.ChatStreamer          : chat frame [answer] forwarded (1542)
+server-1  | 2026-09-04T13:19:59.210Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-152] tn.albaraka.ai.ragclient.RagClient       : rag frame received: done (101 bytes)
+server-1  | 2026-09-04T13:19:59.211Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-153] tn.albaraka.ai.api.ChatStreamer          : chat frame [done] forwarded (94)
+server-1  | 2026-09-04T13:19:59.211Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-152] tn.albaraka.ai.ragclient.RagClient       : rag stream completed normally
+server-1  | 2026-09-04T13:19:59.212Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] o.s.w.s.adapter.HttpWebHandlerAdapter    : [7b4fc8c5-6] Completed 200 OK
+server-1  | 2026-09-04T13:19:59.229Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.s.adapter.HttpWebHandlerAdapter    : [e86ba061-7] HTTP POST "/api/v1/assistant/messages/44749abb-b956-4ec4-82c1-c91467616765/feedback"
+server-1  | 2026-09-04T13:19:59.230Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
+server-1  | 2026-09-04T13:19:59.232Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] s.w.r.r.m.a.RequestMappingHandlerMapping : [e86ba061-7] Mapped to tn.albaraka.ai.api.FrontofficeController#feedback(UUID, FeedbackRequest)
+server-1  | 2026-09-04T13:19:59.232Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] .r.m.a.RequestBodyMethodArgumentResolver : [e86ba061-7] Content-Type:application/json
+server-1  | 2026-09-04T13:19:59.232Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] .r.m.a.RequestBodyMethodArgumentResolver : [e86ba061-7] 0..1 [tn.albaraka.ai.api.FrontofficeController$FeedbackRequest]
+server-1  | 2026-09-04T13:19:59.237Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] org.springframework.web.HttpLogging      : [e86ba061-7] Decoded [FeedbackRequest[rating=UP, comment=null, contactOptIn=null, contact=null]]
+server-1  | 2026-09-04T13:19:59.238Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [e86ba061-7] Using 'application/json' given [*/*] and supported [application/json, application/*+json, application/x-ndjson, text/event-stream]
+server-1  | 2026-09-04T13:19:59.238Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [e86ba061-7] 0..1 [java.util.Map<java.lang.String, java.lang.Object>]
+server-1  | 2026-09-04T13:19:59.243Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-155] org.springframework.web.HttpLogging      : [e86ba061-7] Encoding [{id=75961dec-bd2b-4328-8611-72f7027b08e2, messageId=44749abb-b956-4ec4-82c1-c91467616765, rating=UP, (truncated)...]
+server-1  | 2026-09-04T13:19:59.244Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-155] o.s.w.s.adapter.HttpWebHandlerAdapter    : [e86ba061-7] Completed 201 CREATED
+server-1  | 2026-09-04T13:19:59.270Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.s.adapter.HttpWebHandlerAdapter    : [dd3120e3-8] HTTP POST "/api/v1/auth/login"
+server-1  | 2026-09-04T13:19:59.272Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
+server-1  | 2026-09-04T13:19:59.274Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] s.w.r.r.m.a.RequestMappingHandlerMapping : [dd3120e3-8] Mapped to tn.albaraka.ai.api.AuthController#login(LoginRequest)
+server-1  | 2026-09-04T13:19:59.274Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] .r.m.a.RequestBodyMethodArgumentResolver : [dd3120e3-8] Content-Type:application/json
+server-1  | 2026-09-04T13:19:59.275Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] .r.m.a.RequestBodyMethodArgumentResolver : [dd3120e3-8] 0..1 [tn.albaraka.ai.api.AuthController$LoginRequest]
+server-1  | 2026-09-04T13:19:59.277Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] org.springframework.web.HttpLogging      : [dd3120e3-8] Decoded [LoginRequest[email=admin@albaraka.tn, password=Admin#123]]
+server-1  | 2026-09-04T13:19:59.281Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [dd3120e3-8] Using 'application/json' given [*/*] and supported [application/json, application/*+json, application/x-ndjson, text/event-stream]
+server-1  | 2026-09-04T13:19:59.281Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [dd3120e3-8] 0..1 [tn.albaraka.ai.api.AuthController$LoginResponse]
+server-1  | 2026-09-04T13:19:59.283Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.r.f.client.ExchangeFunctions       : [1da4d568] HTTP POST http://keycloak:8080/realms/albaraka/protocol/openid-connect/token
+server-1  | 2026-09-04T13:19:59.306Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] org.springframework.web.HttpLogging      : [1da4d568] Writing form fields [grant_type, client_id, client_secret, username, password, scope] (content masked)
+server-1  | 2026-09-04T13:19:59.645Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.r.f.client.ExchangeFunctions       : [1da4d568] [315aec89-1] Response 200 OK
+server-1  | 2026-09-04T13:19:59.653Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] org.springframework.web.HttpLogging      : [1da4d568] [315aec89-1] Decoded [{access_token=eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJVa1JaOFp4b2NqdG1XSHZ6WFpILW9weVJIMS (truncated)...]
+server-1  | 2026-09-04T13:19:59.708Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.r.f.client.ExchangeFunctions       : [52399312] HTTP GET http://keycloak:8080/realms/albaraka/protocol/openid-connect/certs
+server-1  | 2026-09-04T13:19:59.766Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.r.f.client.ExchangeFunctions       : [52399312] [bfa1c873-1] Response 200 OK
+server-1  | 2026-09-04T13:19:59.768Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] org.springframework.web.HttpLogging      : [52399312] [bfa1c873-1] Decoded "{"keys":[{"kid":"UkRZ8ZxocjtmWHvzXZH-opyRH1-5HjjbjvaCoLTwV3g","kty":"RSA","alg":"RS256","use":"sig", (truncated)..."
+server-1  | 2026-09-04T13:19:59.792Z  WARN 1 --- [albaraka-assistant] [or-http-epoll-2] tn.albaraka.ai.api.AuthController        : auth: token rejected by the resource server: org.springframework.security.oauth2.jwt.JwtValidationException: The iss claim is not valid
+server-1  | 2026-09-04T13:19:59.796Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] s.w.r.r.m.a.RequestMappingHandlerAdapter : [dd3120e3-8] Using @ExceptionHandler tn.albaraka.ai.api.GlobalExceptionHandler#handle(ApiException)
+server-1  | 2026-09-04T13:19:59.798Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] .s.w.r.r.m.a.ResponseEntityResultHandler : [dd3120e3-8] Using 'application/json' given [*/*] and supported [application/json, application/*+json, application/x-ndjson, text/event-stream]
+server-1  | 2026-09-04T13:19:59.798Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] .s.w.r.r.m.a.ResponseEntityResultHandler : [dd3120e3-8] 0..1 [java.util.Map<java.lang.String, java.lang.Object>]
+server-1  | 2026-09-04T13:19:59.799Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] org.springframework.web.HttpLogging      : [dd3120e3-8] Encoding [{error={code=AUTH.INVALID_CREDENTIALS, message=invalid credentials}}]
+server-1  | 2026-09-04T13:19:59.801Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.s.adapter.HttpWebHandlerAdapter    : [dd3120e3-8] Completed 422 UNPROCESSABLE_ENTITY
 
 ## server — flyway / migration lines (whole log)
-server-1  | 2026-09-04T13:16:35.123Z  INFO 1 --- [albaraka-assistant] [           main] org.flywaydb.core.FlywayExecutor         : Database: jdbc:postgresql://postgres:5432/albaraka_ai (PostgreSQL 17.8)
-server-1  | 2026-09-04T13:16:35.179Z  INFO 1 --- [albaraka-assistant] [           main] o.f.c.i.s.JdbcTableSchemaHistory         : Schema history table "public"."flyway_schema_history" does not exist yet
-server-1  | 2026-09-04T13:16:35.181Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbValidate     : Successfully validated 6 migrations (execution time 00:00.020s)
-server-1  | 2026-09-04T13:16:35.189Z  INFO 1 --- [albaraka-assistant] [           main] o.f.c.i.s.JdbcTableSchemaHistory         : Creating Schema History table "public"."flyway_schema_history" ...
-server-1  | 2026-09-04T13:16:35.236Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Current version of schema "public": << Empty Schema >>
-server-1  | 2026-09-04T13:16:35.289Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "1 - baseline schema"
-server-1  | 2026-09-04T13:16:35.466Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "2 - demo seed"
-server-1  | 2026-09-04T13:16:35.504Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "900 - seed glossary"
-server-1  | 2026-09-04T13:16:35.529Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "901 - seed prompts"
-server-1  | 2026-09-04T13:16:35.545Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "902 - seed policies"
-server-1  | 2026-09-04T13:16:35.570Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "903 - seed dialect"
-server-1  | 2026-09-04T13:16:35.586Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Successfully applied 6 migrations to schema "public", now at version v903 (execution time 00:00.205s)
+server-1  | 2026-09-04T13:19:48.922Z  INFO 1 --- [albaraka-assistant] [           main] org.flywaydb.core.FlywayExecutor         : Database: jdbc:postgresql://postgres:5432/albaraka_ai (PostgreSQL 17.8)
+server-1  | 2026-09-04T13:19:49.026Z  INFO 1 --- [albaraka-assistant] [           main] o.f.c.i.s.JdbcTableSchemaHistory         : Schema history table "public"."flyway_schema_history" does not exist yet
+server-1  | 2026-09-04T13:19:49.031Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbValidate     : Successfully validated 6 migrations (execution time 00:00.049s)
+server-1  | 2026-09-04T13:19:49.048Z  INFO 1 --- [albaraka-assistant] [           main] o.f.c.i.s.JdbcTableSchemaHistory         : Creating Schema History table "public"."flyway_schema_history" ...
+server-1  | 2026-09-04T13:19:49.110Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Current version of schema "public": << Empty Schema >>
+server-1  | 2026-09-04T13:19:49.255Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "1 - baseline schema"
+server-1  | 2026-09-04T13:19:49.498Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "2 - demo seed"
+server-1  | 2026-09-04T13:19:49.553Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "900 - seed glossary"
+server-1  | 2026-09-04T13:19:49.604Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "901 - seed prompts"
+server-1  | 2026-09-04T13:19:49.634Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "902 - seed policies"
+server-1  | 2026-09-04T13:19:49.673Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "903 - seed dialect"
+server-1  | 2026-09-04T13:19:49.702Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Successfully applied 6 migrations to schema "public", now at version v903 (execution time 00:00.308s)
+server-1  | 2026-09-04T13:19:59.792Z  WARN 1 --- [albaraka-assistant] [or-http-epoll-2] tn.albaraka.ai.api.AuthController        : auth: token rejected by the resource server: org.springframework.security.oauth2.jwt.JwtValidationException: The iss claim is not valid
 
 ## server — chat/rag frame lines (whole log)
-server-1  | 2026-09-04T13:16:41.446Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] tn.albaraka.ai.ragclient.RagClient       : rag frame received: accepted (144 bytes)
-server-1  | 2026-09-04T13:16:41.466Z DEBUG 1 --- [albaraka-assistant] [oundedElastic-9] tn.albaraka.ai.api.ChatStreamer          : chat frame [accepted] forwarded (137)
-server-1  | 2026-09-04T13:16:41.476Z DEBUG 1 --- [albaraka-assistant] [oundedElastic-9] tn.albaraka.ai.ragclient.RagClient       : rag frame received: status (58 bytes)
-server-1  | 2026-09-04T13:16:41.481Z DEBUG 1 --- [albaraka-assistant] [undedElastic-12] tn.albaraka.ai.api.ChatStreamer          : chat frame [status] forwarded (55)
-server-1  | 2026-09-04T13:16:41.481Z DEBUG 1 --- [albaraka-assistant] [undedElastic-12] tn.albaraka.ai.ragclient.RagClient       : rag frame received: status (58 bytes)
-server-1  | 2026-09-04T13:16:41.482Z DEBUG 1 --- [albaraka-assistant] [undedElastic-13] tn.albaraka.ai.api.ChatStreamer          : chat frame [status] forwarded (55)
-server-1  | 2026-09-04T13:16:41.482Z DEBUG 1 --- [albaraka-assistant] [undedElastic-13] tn.albaraka.ai.ragclient.RagClient       : rag frame received: status (57 bytes)
-server-1  | 2026-09-04T13:16:41.483Z DEBUG 1 --- [albaraka-assistant] [undedElastic-14] tn.albaraka.ai.api.ChatStreamer          : chat frame [status] forwarded (54)
-server-1  | 2026-09-04T13:16:41.483Z DEBUG 1 --- [albaraka-assistant] [undedElastic-14] tn.albaraka.ai.ragclient.RagClient       : rag frame received: sources (672 bytes)
-server-1  | 2026-09-04T13:16:41.498Z DEBUG 1 --- [albaraka-assistant] [undedElastic-15] tn.albaraka.ai.api.ChatStreamer          : chat frame [sources] forwarded (610)
-server-1  | 2026-09-04T13:16:41.498Z DEBUG 1 --- [albaraka-assistant] [undedElastic-15] tn.albaraka.ai.ragclient.RagClient       : rag frame received: status (59 bytes)
-server-1  | 2026-09-04T13:16:41.499Z DEBUG 1 --- [albaraka-assistant] [undedElastic-16] tn.albaraka.ai.api.ChatStreamer          : chat frame [status] forwarded (56)
-server-1  | 2026-09-04T13:16:41.499Z DEBUG 1 --- [albaraka-assistant] [undedElastic-16] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (19 bytes)
-server-1  | 2026-09-04T13:16:41.500Z DEBUG 1 --- [albaraka-assistant] [undedElastic-17] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (18)
-server-1  | 2026-09-04T13:16:41.501Z DEBUG 1 --- [albaraka-assistant] [undedElastic-17] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
-server-1  | 2026-09-04T13:16:41.501Z DEBUG 1 --- [albaraka-assistant] [undedElastic-18] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
-server-1  | 2026-09-04T13:16:41.502Z DEBUG 1 --- [albaraka-assistant] [undedElastic-17] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (17 bytes)
-server-1  | 2026-09-04T13:16:41.502Z DEBUG 1 --- [albaraka-assistant] [undedElastic-19] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (16)
-server-1  | 2026-09-04T13:16:41.503Z DEBUG 1 --- [albaraka-assistant] [undedElastic-19] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (17 bytes)
-server-1  | 2026-09-04T13:16:41.503Z DEBUG 1 --- [albaraka-assistant] [undedElastic-20] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (16)
-server-1  | 2026-09-04T13:16:41.503Z DEBUG 1 --- [albaraka-assistant] [undedElastic-20] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
-server-1  | 2026-09-04T13:16:41.504Z DEBUG 1 --- [albaraka-assistant] [undedElastic-21] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
-server-1  | 2026-09-04T13:16:41.504Z DEBUG 1 --- [albaraka-assistant] [undedElastic-21] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (27 bytes)
-server-1  | 2026-09-04T13:16:41.504Z DEBUG 1 --- [albaraka-assistant] [undedElastic-22] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (26)
-server-1  | 2026-09-04T13:16:41.505Z DEBUG 1 --- [albaraka-assistant] [undedElastic-22] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (23 bytes)
-server-1  | 2026-09-04T13:16:41.505Z DEBUG 1 --- [albaraka-assistant] [undedElastic-23] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (22)
-server-1  | 2026-09-04T13:16:41.506Z DEBUG 1 --- [albaraka-assistant] [undedElastic-22] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (20 bytes)
-server-1  | 2026-09-04T13:16:41.506Z DEBUG 1 --- [albaraka-assistant] [undedElastic-24] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (19)
-server-1  | 2026-09-04T13:16:41.506Z DEBUG 1 --- [albaraka-assistant] [undedElastic-24] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (25 bytes)
-server-1  | 2026-09-04T13:16:41.507Z DEBUG 1 --- [albaraka-assistant] [undedElastic-25] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (24)
-server-1  | 2026-09-04T13:16:41.508Z DEBUG 1 --- [albaraka-assistant] [undedElastic-25] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (18 bytes)
-server-1  | 2026-09-04T13:16:41.508Z DEBUG 1 --- [albaraka-assistant] [undedElastic-26] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (17)
-server-1  | 2026-09-04T13:16:41.508Z DEBUG 1 --- [albaraka-assistant] [undedElastic-26] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (20 bytes)
-server-1  | 2026-09-04T13:16:41.509Z DEBUG 1 --- [albaraka-assistant] [undedElastic-27] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (19)
-server-1  | 2026-09-04T13:16:41.509Z DEBUG 1 --- [albaraka-assistant] [undedElastic-27] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (21 bytes)
-server-1  | 2026-09-04T13:16:41.510Z DEBUG 1 --- [albaraka-assistant] [undedElastic-28] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (20)
-server-1  | 2026-09-04T13:16:41.510Z DEBUG 1 --- [albaraka-assistant] [undedElastic-28] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
-server-1  | 2026-09-04T13:16:41.511Z DEBUG 1 --- [albaraka-assistant] [undedElastic-29] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
-server-1  | 2026-09-04T13:16:41.512Z DEBUG 1 --- [albaraka-assistant] [undedElastic-28] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (20 bytes)
-server-1  | 2026-09-04T13:16:41.513Z DEBUG 1 --- [albaraka-assistant] [undedElastic-30] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (19)
-server-1  | 2026-09-04T13:16:41.514Z DEBUG 1 --- [albaraka-assistant] [undedElastic-30] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
-server-1  | 2026-09-04T13:16:41.514Z DEBUG 1 --- [albaraka-assistant] [undedElastic-31] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
-server-1  | 2026-09-04T13:16:41.514Z DEBUG 1 --- [albaraka-assistant] [undedElastic-31] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (18 bytes)
-server-1  | 2026-09-04T13:16:41.515Z DEBUG 1 --- [albaraka-assistant] [undedElastic-32] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (17)
-server-1  | 2026-09-04T13:16:41.515Z DEBUG 1 --- [albaraka-assistant] [undedElastic-32] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
-server-1  | 2026-09-04T13:16:41.516Z DEBUG 1 --- [albaraka-assistant] [undedElastic-33] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
-server-1  | 2026-09-04T13:16:41.517Z DEBUG 1 --- [albaraka-assistant] [undedElastic-33] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (20 bytes)
-server-1  | 2026-09-04T13:16:41.517Z DEBUG 1 --- [albaraka-assistant] [undedElastic-34] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (19)
-server-1  | 2026-09-04T13:16:41.517Z DEBUG 1 --- [albaraka-assistant] [undedElastic-34] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (18 bytes)
-server-1  | 2026-09-04T13:16:41.518Z DEBUG 1 --- [albaraka-assistant] [undedElastic-36] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (17)
-server-1  | 2026-09-04T13:16:41.518Z DEBUG 1 --- [albaraka-assistant] [undedElastic-36] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (17 bytes)
-server-1  | 2026-09-04T13:16:41.519Z DEBUG 1 --- [albaraka-assistant] [undedElastic-37] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (16)
-server-1  | 2026-09-04T13:16:41.519Z DEBUG 1 --- [albaraka-assistant] [undedElastic-37] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (26 bytes)
-server-1  | 2026-09-04T13:16:41.520Z DEBUG 1 --- [albaraka-assistant] [undedElastic-38] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (25)
-server-1  | 2026-09-04T13:16:41.520Z DEBUG 1 --- [albaraka-assistant] [undedElastic-38] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (21 bytes)
-server-1  | 2026-09-04T13:16:41.521Z DEBUG 1 --- [albaraka-assistant] [undedElastic-39] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (20)
-server-1  | 2026-09-04T13:16:41.521Z DEBUG 1 --- [albaraka-assistant] [undedElastic-39] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (24 bytes)
-server-1  | 2026-09-04T13:16:41.522Z DEBUG 1 --- [albaraka-assistant] [undedElastic-40] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (23)
-server-1  | 2026-09-04T13:16:41.522Z DEBUG 1 --- [albaraka-assistant] [undedElastic-39] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
-server-1  | 2026-09-04T13:16:41.523Z DEBUG 1 --- [albaraka-assistant] [undedElastic-41] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
-server-1  | 2026-09-04T13:16:41.524Z DEBUG 1 --- [albaraka-assistant] [undedElastic-41] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (20 bytes)
-server-1  | 2026-09-04T13:16:41.524Z DEBUG 1 --- [albaraka-assistant] [undedElastic-42] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (19)
-server-1  | 2026-09-04T13:16:41.524Z DEBUG 1 --- [albaraka-assistant] [undedElastic-42] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
-server-1  | 2026-09-04T13:16:41.525Z DEBUG 1 --- [albaraka-assistant] [undedElastic-43] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
-server-1  | 2026-09-04T13:16:41.525Z DEBUG 1 --- [albaraka-assistant] [undedElastic-43] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (21 bytes)
-server-1  | 2026-09-04T13:16:41.525Z DEBUG 1 --- [albaraka-assistant] [undedElastic-44] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (20)
-server-1  | 2026-09-04T13:16:41.526Z DEBUG 1 --- [albaraka-assistant] [undedElastic-44] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (21 bytes)
-server-1  | 2026-09-04T13:16:41.526Z DEBUG 1 --- [albaraka-assistant] [undedElastic-45] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (20)
-server-1  | 2026-09-04T13:16:41.526Z DEBUG 1 --- [albaraka-assistant] [undedElastic-45] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (20 bytes)
-server-1  | 2026-09-04T13:16:41.527Z DEBUG 1 --- [albaraka-assistant] [undedElastic-46] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (19)
-server-1  | 2026-09-04T13:16:41.527Z DEBUG 1 --- [albaraka-assistant] [undedElastic-46] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (25 bytes)
-server-1  | 2026-09-04T13:16:41.527Z DEBUG 1 --- [albaraka-assistant] [undedElastic-47] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (24)
-server-1  | 2026-09-04T13:16:41.528Z DEBUG 1 --- [albaraka-assistant] [undedElastic-47] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (21 bytes)
-server-1  | 2026-09-04T13:16:41.528Z DEBUG 1 --- [albaraka-assistant] [undedElastic-48] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (20)
-server-1  | 2026-09-04T13:16:41.528Z DEBUG 1 --- [albaraka-assistant] [undedElastic-48] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
-server-1  | 2026-09-04T13:16:41.529Z DEBUG 1 --- [albaraka-assistant] [undedElastic-49] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
-server-1  | 2026-09-04T13:16:41.529Z DEBUG 1 --- [albaraka-assistant] [undedElastic-49] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (24 bytes)
-server-1  | 2026-09-04T13:16:41.529Z DEBUG 1 --- [albaraka-assistant] [undedElastic-50] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (23)
-server-1  | 2026-09-04T13:16:41.529Z DEBUG 1 --- [albaraka-assistant] [undedElastic-50] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (26 bytes)
-server-1  | 2026-09-04T13:16:41.530Z DEBUG 1 --- [albaraka-assistant] [undedElastic-51] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (25)
-server-1  | 2026-09-04T13:16:41.530Z DEBUG 1 --- [albaraka-assistant] [undedElastic-51] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
-server-1  | 2026-09-04T13:16:41.530Z DEBUG 1 --- [albaraka-assistant] [undedElastic-52] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
-server-1  | 2026-09-04T13:16:41.531Z DEBUG 1 --- [albaraka-assistant] [undedElastic-52] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (22 bytes)
-server-1  | 2026-09-04T13:16:41.531Z DEBUG 1 --- [albaraka-assistant] [undedElastic-53] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (21)
-server-1  | 2026-09-04T13:16:41.531Z DEBUG 1 --- [albaraka-assistant] [undedElastic-53] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
-server-1  | 2026-09-04T13:16:41.532Z DEBUG 1 --- [albaraka-assistant] [undedElastic-54] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
-server-1  | 2026-09-04T13:16:41.532Z DEBUG 1 --- [albaraka-assistant] [undedElastic-54] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (19 bytes)
-server-1  | 2026-09-04T13:16:41.532Z DEBUG 1 --- [albaraka-assistant] [undedElastic-55] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (18)
-server-1  | 2026-09-04T13:16:41.533Z DEBUG 1 --- [albaraka-assistant] [undedElastic-55] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
-server-1  | 2026-09-04T13:16:41.533Z DEBUG 1 --- [albaraka-assistant] [undedElastic-56] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
-server-1  | 2026-09-04T13:16:41.533Z DEBUG 1 --- [albaraka-assistant] [undedElastic-56] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (19 bytes)
-server-1  | 2026-09-04T13:16:41.533Z DEBUG 1 --- [albaraka-assistant] [undedElastic-57] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (18)
-server-1  | 2026-09-04T13:16:41.534Z DEBUG 1 --- [albaraka-assistant] [undedElastic-57] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (19 bytes)
-server-1  | 2026-09-04T13:16:41.534Z DEBUG 1 --- [albaraka-assistant] [undedElastic-58] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (18)
-server-1  | 2026-09-04T13:16:41.534Z DEBUG 1 --- [albaraka-assistant] [undedElastic-58] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (17 bytes)
-server-1  | 2026-09-04T13:16:41.535Z DEBUG 1 --- [albaraka-assistant] [undedElastic-59] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (16)
-server-1  | 2026-09-04T13:16:41.535Z DEBUG 1 --- [albaraka-assistant] [undedElastic-59] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (20 bytes)
-server-1  | 2026-09-04T13:16:41.535Z DEBUG 1 --- [albaraka-assistant] [undedElastic-61] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (19)
-server-1  | 2026-09-04T13:16:41.536Z DEBUG 1 --- [albaraka-assistant] [undedElastic-61] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (19 bytes)
-server-1  | 2026-09-04T13:16:41.536Z DEBUG 1 --- [albaraka-assistant] [undedElastic-62] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (18)
-server-1  | 2026-09-04T13:16:41.536Z DEBUG 1 --- [albaraka-assistant] [undedElastic-62] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (24 bytes)
-server-1  | 2026-09-04T13:16:41.537Z DEBUG 1 --- [albaraka-assistant] [undedElastic-63] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (23)
-server-1  | 2026-09-04T13:16:41.537Z DEBUG 1 --- [albaraka-assistant] [undedElastic-63] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (18 bytes)
-server-1  | 2026-09-04T13:16:41.537Z DEBUG 1 --- [albaraka-assistant] [undedElastic-64] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (17)
-server-1  | 2026-09-04T13:16:41.537Z DEBUG 1 --- [albaraka-assistant] [undedElastic-64] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (18 bytes)
-server-1  | 2026-09-04T13:16:41.538Z DEBUG 1 --- [albaraka-assistant] [undedElastic-65] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (17)
-server-1  | 2026-09-04T13:16:41.538Z DEBUG 1 --- [albaraka-assistant] [undedElastic-65] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (19 bytes)
-server-1  | 2026-09-04T13:16:41.539Z DEBUG 1 --- [albaraka-assistant] [undedElastic-66] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (18)
-server-1  | 2026-09-04T13:16:41.539Z DEBUG 1 --- [albaraka-assistant] [undedElastic-66] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (35 bytes)
-server-1  | 2026-09-04T13:16:41.540Z DEBUG 1 --- [albaraka-assistant] [undedElastic-67] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (34)
-server-1  | 2026-09-04T13:16:41.540Z DEBUG 1 --- [albaraka-assistant] [undedElastic-67] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (19 bytes)
-server-1  | 2026-09-04T13:16:41.540Z DEBUG 1 --- [albaraka-assistant] [undedElastic-68] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (18)
-server-1  | 2026-09-04T13:16:41.541Z DEBUG 1 --- [albaraka-assistant] [undedElastic-68] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (20 bytes)
-server-1  | 2026-09-04T13:16:41.541Z DEBUG 1 --- [albaraka-assistant] [undedElastic-69] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (19)
-server-1  | 2026-09-04T13:16:41.541Z DEBUG 1 --- [albaraka-assistant] [undedElastic-69] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (18 bytes)
-server-1  | 2026-09-04T13:16:41.542Z DEBUG 1 --- [albaraka-assistant] [undedElastic-70] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (17)
-server-1  | 2026-09-04T13:16:41.542Z DEBUG 1 --- [albaraka-assistant] [undedElastic-70] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (17 bytes)
-server-1  | 2026-09-04T13:16:41.543Z DEBUG 1 --- [albaraka-assistant] [undedElastic-71] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (16)
-server-1  | 2026-09-04T13:16:41.543Z DEBUG 1 --- [albaraka-assistant] [undedElastic-71] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (24 bytes)
-server-1  | 2026-09-04T13:16:41.544Z DEBUG 1 --- [albaraka-assistant] [undedElastic-72] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (23)
-server-1  | 2026-09-04T13:16:41.544Z DEBUG 1 --- [albaraka-assistant] [undedElastic-72] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
-server-1  | 2026-09-04T13:16:41.545Z DEBUG 1 --- [albaraka-assistant] [undedElastic-73] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
-server-1  | 2026-09-04T13:16:41.545Z DEBUG 1 --- [albaraka-assistant] [undedElastic-72] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (23 bytes)
-server-1  | 2026-09-04T13:16:41.546Z DEBUG 1 --- [albaraka-assistant] [undedElastic-74] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (22)
-server-1  | 2026-09-04T13:16:41.546Z DEBUG 1 --- [albaraka-assistant] [undedElastic-72] tn.albaraka.ai.ragclient.RagClient       : rag frame received: status (58 bytes)
-server-1  | 2026-09-04T13:16:41.547Z DEBUG 1 --- [albaraka-assistant] [undedElastic-75] tn.albaraka.ai.api.ChatStreamer          : chat frame [status] forwarded (55)
-server-1  | 2026-09-04T13:16:41.548Z DEBUG 1 --- [albaraka-assistant] [undedElastic-75] tn.albaraka.ai.ragclient.RagClient       : rag frame received: answer (1672 bytes)
-server-1  | 2026-09-04T13:16:41.564Z DEBUG 1 --- [albaraka-assistant] [undedElastic-76] tn.albaraka.ai.api.ChatStreamer          : chat frame [answer] forwarded (1542)
-server-1  | 2026-09-04T13:16:41.564Z DEBUG 1 --- [albaraka-assistant] [undedElastic-76] tn.albaraka.ai.ragclient.RagClient       : rag frame received: done (101 bytes)
-server-1  | 2026-09-04T13:16:41.566Z DEBUG 1 --- [albaraka-assistant] [undedElastic-76] tn.albaraka.ai.ragclient.RagClient       : rag stream completed normally
-server-1  | 2026-09-04T13:16:41.566Z DEBUG 1 --- [albaraka-assistant] [undedElastic-77] tn.albaraka.ai.api.ChatStreamer          : chat frame [done] forwarded (94)
-server-1  | 2026-09-04T13:16:41.660Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] tn.albaraka.ai.ragclient.RagClient       : rag frame received: accepted (144 bytes)
-server-1  | 2026-09-04T13:16:41.661Z DEBUG 1 --- [albaraka-assistant] [undedElastic-85] tn.albaraka.ai.api.ChatStreamer          : chat frame [accepted] forwarded (137)
-server-1  | 2026-09-04T13:16:41.662Z DEBUG 1 --- [albaraka-assistant] [undedElastic-85] tn.albaraka.ai.ragclient.RagClient       : rag frame received: status (58 bytes)
-server-1  | 2026-09-04T13:16:41.664Z DEBUG 1 --- [albaraka-assistant] [undedElastic-88] tn.albaraka.ai.api.ChatStreamer          : chat frame [status] forwarded (55)
-server-1  | 2026-09-04T13:16:41.664Z DEBUG 1 --- [albaraka-assistant] [undedElastic-88] tn.albaraka.ai.ragclient.RagClient       : rag frame received: status (58 bytes)
-server-1  | 2026-09-04T13:16:41.664Z DEBUG 1 --- [albaraka-assistant] [undedElastic-89] tn.albaraka.ai.api.ChatStreamer          : chat frame [status] forwarded (55)
-server-1  | 2026-09-04T13:16:41.665Z DEBUG 1 --- [albaraka-assistant] [undedElastic-89] tn.albaraka.ai.ragclient.RagClient       : rag frame received: status (57 bytes)
-server-1  | 2026-09-04T13:16:41.666Z DEBUG 1 --- [albaraka-assistant] [undedElastic-90] tn.albaraka.ai.api.ChatStreamer          : chat frame [status] forwarded (54)
-server-1  | 2026-09-04T13:16:41.667Z DEBUG 1 --- [albaraka-assistant] [undedElastic-89] tn.albaraka.ai.ragclient.RagClient       : rag frame received: sources (672 bytes)
-server-1  | 2026-09-04T13:16:41.670Z DEBUG 1 --- [albaraka-assistant] [undedElastic-91] tn.albaraka.ai.api.ChatStreamer          : chat frame [sources] forwarded (610)
-server-1  | 2026-09-04T13:16:41.670Z DEBUG 1 --- [albaraka-assistant] [undedElastic-91] tn.albaraka.ai.ragclient.RagClient       : rag frame received: status (59 bytes)
-server-1  | 2026-09-04T13:16:41.671Z DEBUG 1 --- [albaraka-assistant] [undedElastic-92] tn.albaraka.ai.api.ChatStreamer          : chat frame [status] forwarded (56)
-server-1  | 2026-09-04T13:16:41.672Z DEBUG 1 --- [albaraka-assistant] [undedElastic-92] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (19 bytes)
-server-1  | 2026-09-04T13:16:41.672Z DEBUG 1 --- [albaraka-assistant] [undedElastic-93] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (18)
-server-1  | 2026-09-04T13:16:41.673Z DEBUG 1 --- [albaraka-assistant] [undedElastic-93] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
-server-1  | 2026-09-04T13:16:41.674Z DEBUG 1 --- [albaraka-assistant] [undedElastic-94] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
-server-1  | 2026-09-04T13:16:41.674Z DEBUG 1 --- [albaraka-assistant] [undedElastic-93] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (17 bytes)
-server-1  | 2026-09-04T13:16:41.675Z DEBUG 1 --- [albaraka-assistant] [undedElastic-95] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (16)
-server-1  | 2026-09-04T13:16:41.675Z DEBUG 1 --- [albaraka-assistant] [undedElastic-95] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (17 bytes)
-server-1  | 2026-09-04T13:16:41.675Z DEBUG 1 --- [albaraka-assistant] [undedElastic-96] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (16)
-server-1  | 2026-09-04T13:16:41.676Z DEBUG 1 --- [albaraka-assistant] [undedElastic-95] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
-server-1  | 2026-09-04T13:16:41.677Z DEBUG 1 --- [albaraka-assistant] [undedElastic-97] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
-server-1  | 2026-09-04T13:16:41.677Z DEBUG 1 --- [albaraka-assistant] [undedElastic-97] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (27 bytes)
-server-1  | 2026-09-04T13:16:41.678Z DEBUG 1 --- [albaraka-assistant] [undedElastic-98] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (26)
-server-1  | 2026-09-04T13:16:41.679Z DEBUG 1 --- [albaraka-assistant] [undedElastic-98] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (23 bytes)
-server-1  | 2026-09-04T13:16:41.679Z DEBUG 1 --- [albaraka-assistant] [undedElastic-99] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (22)
-server-1  | 2026-09-04T13:16:41.680Z DEBUG 1 --- [albaraka-assistant] [undedElastic-99] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (20 bytes)
-server-1  | 2026-09-04T13:16:41.681Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-100] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (19)
-server-1  | 2026-09-04T13:16:41.681Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-100] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (25 bytes)
-server-1  | 2026-09-04T13:16:41.682Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-101] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (24)
-server-1  | 2026-09-04T13:16:41.682Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-100] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (18 bytes)
-server-1  | 2026-09-04T13:16:41.683Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-102] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (17)
-server-1  | 2026-09-04T13:16:41.683Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-102] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (20 bytes)
-server-1  | 2026-09-04T13:16:41.684Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-103] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (19)
-server-1  | 2026-09-04T13:16:41.684Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-102] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (21 bytes)
-server-1  | 2026-09-04T13:16:41.685Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-104] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (20)
-server-1  | 2026-09-04T13:16:41.686Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-102] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
-server-1  | 2026-09-04T13:16:41.686Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-105] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
-server-1  | 2026-09-04T13:16:41.686Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-105] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (20 bytes)
-server-1  | 2026-09-04T13:16:41.687Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-106] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (19)
-server-1  | 2026-09-04T13:16:41.688Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-106] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
-server-1  | 2026-09-04T13:16:41.688Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-107] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
-server-1  | 2026-09-04T13:16:41.689Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-107] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (18 bytes)
-server-1  | 2026-09-04T13:16:41.689Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-108] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (17)
-server-1  | 2026-09-04T13:16:41.690Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-108] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
-server-1  | 2026-09-04T13:16:41.691Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-109] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
-server-1  | 2026-09-04T13:16:41.691Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-109] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (20 bytes)
-server-1  | 2026-09-04T13:16:41.692Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-110] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (19)
-server-1  | 2026-09-04T13:16:41.692Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-110] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (18 bytes)
-server-1  | 2026-09-04T13:16:41.693Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-112] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (17)
-server-1  | 2026-09-04T13:16:41.693Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-110] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (17 bytes)
-server-1  | 2026-09-04T13:16:41.694Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-113] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (16)
-server-1  | 2026-09-04T13:16:41.694Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-113] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (26 bytes)
-server-1  | 2026-09-04T13:16:41.695Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-114] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (25)
-server-1  | 2026-09-04T13:16:41.695Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-114] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (21 bytes)
-server-1  | 2026-09-04T13:16:41.696Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-115] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (20)
-server-1  | 2026-09-04T13:16:41.696Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-115] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (24 bytes)
-server-1  | 2026-09-04T13:16:41.697Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-116] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (23)
-server-1  | 2026-09-04T13:16:41.697Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-116] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
-server-1  | 2026-09-04T13:16:41.698Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-117] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
-server-1  | 2026-09-04T13:16:41.698Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-116] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (20 bytes)
-server-1  | 2026-09-04T13:16:41.699Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-118] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (19)
-server-1  | 2026-09-04T13:16:41.699Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-116] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
-server-1  | 2026-09-04T13:16:41.700Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-119] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
-server-1  | 2026-09-04T13:16:41.700Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-119] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (21 bytes)
-server-1  | 2026-09-04T13:16:41.701Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-120] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (20)
-server-1  | 2026-09-04T13:16:41.701Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-119] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (21 bytes)
-server-1  | 2026-09-04T13:16:41.702Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-121] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (20)
-server-1  | 2026-09-04T13:16:41.702Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-121] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (20 bytes)
+server-1  | 2026-09-04T13:19:58.806Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] tn.albaraka.ai.ragclient.RagClient       : rag frame received: accepted (144 bytes)
+server-1  | 2026-09-04T13:19:58.822Z DEBUG 1 --- [albaraka-assistant] [oundedElastic-9] tn.albaraka.ai.api.ChatStreamer          : chat frame [accepted] forwarded (137)
+server-1  | 2026-09-04T13:19:58.832Z DEBUG 1 --- [albaraka-assistant] [oundedElastic-9] tn.albaraka.ai.ragclient.RagClient       : rag frame received: status (58 bytes)
+server-1  | 2026-09-04T13:19:58.839Z DEBUG 1 --- [albaraka-assistant] [undedElastic-12] tn.albaraka.ai.api.ChatStreamer          : chat frame [status] forwarded (55)
+server-1  | 2026-09-04T13:19:58.842Z DEBUG 1 --- [albaraka-assistant] [undedElastic-12] tn.albaraka.ai.ragclient.RagClient       : rag frame received: status (58 bytes)
+server-1  | 2026-09-04T13:19:58.843Z DEBUG 1 --- [albaraka-assistant] [undedElastic-13] tn.albaraka.ai.api.ChatStreamer          : chat frame [status] forwarded (55)
+server-1  | 2026-09-04T13:19:58.844Z DEBUG 1 --- [albaraka-assistant] [undedElastic-13] tn.albaraka.ai.ragclient.RagClient       : rag frame received: status (57 bytes)
+server-1  | 2026-09-04T13:19:58.845Z DEBUG 1 --- [albaraka-assistant] [undedElastic-14] tn.albaraka.ai.api.ChatStreamer          : chat frame [status] forwarded (54)
+server-1  | 2026-09-04T13:19:58.845Z DEBUG 1 --- [albaraka-assistant] [undedElastic-14] tn.albaraka.ai.ragclient.RagClient       : rag frame received: sources (672 bytes)
+server-1  | 2026-09-04T13:19:58.866Z DEBUG 1 --- [albaraka-assistant] [undedElastic-15] tn.albaraka.ai.api.ChatStreamer          : chat frame [sources] forwarded (610)
+server-1  | 2026-09-04T13:19:58.867Z DEBUG 1 --- [albaraka-assistant] [undedElastic-15] tn.albaraka.ai.ragclient.RagClient       : rag frame received: status (59 bytes)
+server-1  | 2026-09-04T13:19:58.868Z DEBUG 1 --- [albaraka-assistant] [undedElastic-16] tn.albaraka.ai.api.ChatStreamer          : chat frame [status] forwarded (56)
+server-1  | 2026-09-04T13:19:58.869Z DEBUG 1 --- [albaraka-assistant] [undedElastic-16] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (19 bytes)
+server-1  | 2026-09-04T13:19:58.870Z DEBUG 1 --- [albaraka-assistant] [undedElastic-17] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (18)
+server-1  | 2026-09-04T13:19:58.870Z DEBUG 1 --- [albaraka-assistant] [undedElastic-17] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
+server-1  | 2026-09-04T13:19:58.871Z DEBUG 1 --- [albaraka-assistant] [undedElastic-18] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
+server-1  | 2026-09-04T13:19:58.871Z DEBUG 1 --- [albaraka-assistant] [undedElastic-17] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (17 bytes)
+server-1  | 2026-09-04T13:19:58.872Z DEBUG 1 --- [albaraka-assistant] [undedElastic-19] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (16)
+server-1  | 2026-09-04T13:19:58.872Z DEBUG 1 --- [albaraka-assistant] [undedElastic-17] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (17 bytes)
+server-1  | 2026-09-04T13:19:58.873Z DEBUG 1 --- [albaraka-assistant] [undedElastic-20] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (16)
+server-1  | 2026-09-04T13:19:58.873Z DEBUG 1 --- [albaraka-assistant] [undedElastic-20] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
+server-1  | 2026-09-04T13:19:58.874Z DEBUG 1 --- [albaraka-assistant] [undedElastic-21] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
+server-1  | 2026-09-04T13:19:58.874Z DEBUG 1 --- [albaraka-assistant] [undedElastic-21] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (27 bytes)
+server-1  | 2026-09-04T13:19:58.875Z DEBUG 1 --- [albaraka-assistant] [undedElastic-22] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (26)
+server-1  | 2026-09-04T13:19:58.875Z DEBUG 1 --- [albaraka-assistant] [undedElastic-22] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (23 bytes)
+server-1  | 2026-09-04T13:19:58.876Z DEBUG 1 --- [albaraka-assistant] [undedElastic-23] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (22)
+server-1  | 2026-09-04T13:19:58.876Z DEBUG 1 --- [albaraka-assistant] [undedElastic-23] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (20 bytes)
+server-1  | 2026-09-04T13:19:58.877Z DEBUG 1 --- [albaraka-assistant] [undedElastic-24] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (19)
+server-1  | 2026-09-04T13:19:58.877Z DEBUG 1 --- [albaraka-assistant] [undedElastic-23] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (25 bytes)
+server-1  | 2026-09-04T13:19:58.878Z DEBUG 1 --- [albaraka-assistant] [undedElastic-25] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (24)
+server-1  | 2026-09-04T13:19:58.879Z DEBUG 1 --- [albaraka-assistant] [undedElastic-25] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (18 bytes)
+server-1  | 2026-09-04T13:19:58.879Z DEBUG 1 --- [albaraka-assistant] [undedElastic-26] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (17)
+server-1  | 2026-09-04T13:19:58.880Z DEBUG 1 --- [albaraka-assistant] [undedElastic-26] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (20 bytes)
+server-1  | 2026-09-04T13:19:58.880Z DEBUG 1 --- [albaraka-assistant] [undedElastic-27] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (19)
+server-1  | 2026-09-04T13:19:58.880Z DEBUG 1 --- [albaraka-assistant] [undedElastic-26] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (21 bytes)
+server-1  | 2026-09-04T13:19:58.881Z DEBUG 1 --- [albaraka-assistant] [undedElastic-28] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (20)
+server-1  | 2026-09-04T13:19:58.882Z DEBUG 1 --- [albaraka-assistant] [undedElastic-28] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
+server-1  | 2026-09-04T13:19:58.882Z DEBUG 1 --- [albaraka-assistant] [undedElastic-29] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
+server-1  | 2026-09-04T13:19:58.885Z DEBUG 1 --- [albaraka-assistant] [undedElastic-28] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (20 bytes)
+server-1  | 2026-09-04T13:19:58.886Z DEBUG 1 --- [albaraka-assistant] [undedElastic-30] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (19)
+server-1  | 2026-09-04T13:19:58.886Z DEBUG 1 --- [albaraka-assistant] [undedElastic-30] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
+server-1  | 2026-09-04T13:19:58.886Z DEBUG 1 --- [albaraka-assistant] [undedElastic-31] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
+server-1  | 2026-09-04T13:19:58.887Z DEBUG 1 --- [albaraka-assistant] [undedElastic-31] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (18 bytes)
+server-1  | 2026-09-04T13:19:58.887Z DEBUG 1 --- [albaraka-assistant] [undedElastic-32] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (17)
+server-1  | 2026-09-04T13:19:58.889Z DEBUG 1 --- [albaraka-assistant] [undedElastic-32] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
+server-1  | 2026-09-04T13:19:58.889Z DEBUG 1 --- [albaraka-assistant] [undedElastic-33] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
+server-1  | 2026-09-04T13:19:58.890Z DEBUG 1 --- [albaraka-assistant] [undedElastic-33] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (20 bytes)
+server-1  | 2026-09-04T13:19:58.890Z DEBUG 1 --- [albaraka-assistant] [undedElastic-34] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (19)
+server-1  | 2026-09-04T13:19:58.891Z DEBUG 1 --- [albaraka-assistant] [undedElastic-34] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (18 bytes)
+server-1  | 2026-09-04T13:19:58.891Z DEBUG 1 --- [albaraka-assistant] [undedElastic-36] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (17)
+server-1  | 2026-09-04T13:19:58.892Z DEBUG 1 --- [albaraka-assistant] [undedElastic-36] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (17 bytes)
+server-1  | 2026-09-04T13:19:58.892Z DEBUG 1 --- [albaraka-assistant] [undedElastic-37] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (16)
+server-1  | 2026-09-04T13:19:58.893Z DEBUG 1 --- [albaraka-assistant] [undedElastic-37] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (26 bytes)
+server-1  | 2026-09-04T13:19:58.893Z DEBUG 1 --- [albaraka-assistant] [undedElastic-38] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (25)
+server-1  | 2026-09-04T13:19:58.894Z DEBUG 1 --- [albaraka-assistant] [undedElastic-38] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (21 bytes)
+server-1  | 2026-09-04T13:19:58.895Z DEBUG 1 --- [albaraka-assistant] [undedElastic-39] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (20)
+server-1  | 2026-09-04T13:19:58.895Z DEBUG 1 --- [albaraka-assistant] [undedElastic-39] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (24 bytes)
+server-1  | 2026-09-04T13:19:58.896Z DEBUG 1 --- [albaraka-assistant] [undedElastic-40] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (23)
+server-1  | 2026-09-04T13:19:58.897Z DEBUG 1 --- [albaraka-assistant] [undedElastic-40] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
+server-1  | 2026-09-04T13:19:58.898Z DEBUG 1 --- [albaraka-assistant] [undedElastic-41] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
+server-1  | 2026-09-04T13:19:58.898Z DEBUG 1 --- [albaraka-assistant] [undedElastic-41] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (20 bytes)
+server-1  | 2026-09-04T13:19:58.899Z DEBUG 1 --- [albaraka-assistant] [undedElastic-42] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (19)
+server-1  | 2026-09-04T13:19:58.899Z DEBUG 1 --- [albaraka-assistant] [undedElastic-42] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
+server-1  | 2026-09-04T13:19:58.900Z DEBUG 1 --- [albaraka-assistant] [undedElastic-43] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
+server-1  | 2026-09-04T13:19:58.900Z DEBUG 1 --- [albaraka-assistant] [undedElastic-43] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (21 bytes)
+server-1  | 2026-09-04T13:19:58.900Z DEBUG 1 --- [albaraka-assistant] [undedElastic-44] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (20)
+server-1  | 2026-09-04T13:19:58.901Z DEBUG 1 --- [albaraka-assistant] [undedElastic-44] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (21 bytes)
+server-1  | 2026-09-04T13:19:58.901Z DEBUG 1 --- [albaraka-assistant] [undedElastic-45] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (20)
+server-1  | 2026-09-04T13:19:58.902Z DEBUG 1 --- [albaraka-assistant] [undedElastic-45] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (20 bytes)
+server-1  | 2026-09-04T13:19:58.902Z DEBUG 1 --- [albaraka-assistant] [undedElastic-46] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (19)
+server-1  | 2026-09-04T13:19:58.903Z DEBUG 1 --- [albaraka-assistant] [undedElastic-46] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (25 bytes)
+server-1  | 2026-09-04T13:19:58.904Z DEBUG 1 --- [albaraka-assistant] [undedElastic-47] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (24)
+server-1  | 2026-09-04T13:19:58.904Z DEBUG 1 --- [albaraka-assistant] [undedElastic-46] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (21 bytes)
+server-1  | 2026-09-04T13:19:58.905Z DEBUG 1 --- [albaraka-assistant] [undedElastic-48] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (20)
+server-1  | 2026-09-04T13:19:58.905Z DEBUG 1 --- [albaraka-assistant] [undedElastic-46] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
+server-1  | 2026-09-04T13:19:58.905Z DEBUG 1 --- [albaraka-assistant] [undedElastic-49] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
+server-1  | 2026-09-04T13:19:58.906Z DEBUG 1 --- [albaraka-assistant] [undedElastic-46] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (24 bytes)
+server-1  | 2026-09-04T13:19:58.908Z DEBUG 1 --- [albaraka-assistant] [undedElastic-50] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (23)
+server-1  | 2026-09-04T13:19:58.908Z DEBUG 1 --- [albaraka-assistant] [undedElastic-50] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (26 bytes)
+server-1  | 2026-09-04T13:19:58.909Z DEBUG 1 --- [albaraka-assistant] [undedElastic-51] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (25)
+server-1  | 2026-09-04T13:19:58.909Z DEBUG 1 --- [albaraka-assistant] [undedElastic-51] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
+server-1  | 2026-09-04T13:19:58.911Z DEBUG 1 --- [albaraka-assistant] [undedElastic-52] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
+server-1  | 2026-09-04T13:19:58.911Z DEBUG 1 --- [albaraka-assistant] [undedElastic-52] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (22 bytes)
+server-1  | 2026-09-04T13:19:58.912Z DEBUG 1 --- [albaraka-assistant] [undedElastic-53] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (21)
+server-1  | 2026-09-04T13:19:58.913Z DEBUG 1 --- [albaraka-assistant] [undedElastic-52] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
+server-1  | 2026-09-04T13:19:58.913Z DEBUG 1 --- [albaraka-assistant] [undedElastic-54] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
+server-1  | 2026-09-04T13:19:58.914Z DEBUG 1 --- [albaraka-assistant] [undedElastic-54] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (19 bytes)
+server-1  | 2026-09-04T13:19:58.915Z DEBUG 1 --- [albaraka-assistant] [undedElastic-55] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (18)
+server-1  | 2026-09-04T13:19:58.915Z DEBUG 1 --- [albaraka-assistant] [undedElastic-55] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
+server-1  | 2026-09-04T13:19:58.916Z DEBUG 1 --- [albaraka-assistant] [undedElastic-56] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
+server-1  | 2026-09-04T13:19:58.916Z DEBUG 1 --- [albaraka-assistant] [undedElastic-56] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (19 bytes)
+server-1  | 2026-09-04T13:19:58.917Z DEBUG 1 --- [albaraka-assistant] [undedElastic-57] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (18)
+server-1  | 2026-09-04T13:19:58.917Z DEBUG 1 --- [albaraka-assistant] [undedElastic-57] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (19 bytes)
+server-1  | 2026-09-04T13:19:58.918Z DEBUG 1 --- [albaraka-assistant] [undedElastic-58] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (18)
+server-1  | 2026-09-04T13:19:58.918Z DEBUG 1 --- [albaraka-assistant] [undedElastic-58] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (17 bytes)
+server-1  | 2026-09-04T13:19:58.919Z DEBUG 1 --- [albaraka-assistant] [undedElastic-59] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (16)
+server-1  | 2026-09-04T13:19:58.920Z DEBUG 1 --- [albaraka-assistant] [undedElastic-59] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (20 bytes)
+server-1  | 2026-09-04T13:19:58.920Z DEBUG 1 --- [albaraka-assistant] [undedElastic-61] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (19)
+server-1  | 2026-09-04T13:19:58.920Z DEBUG 1 --- [albaraka-assistant] [undedElastic-61] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (19 bytes)
+server-1  | 2026-09-04T13:19:58.920Z DEBUG 1 --- [albaraka-assistant] [undedElastic-62] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (18)
+server-1  | 2026-09-04T13:19:58.921Z DEBUG 1 --- [albaraka-assistant] [undedElastic-62] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (24 bytes)
+server-1  | 2026-09-04T13:19:58.921Z DEBUG 1 --- [albaraka-assistant] [undedElastic-63] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (23)
+server-1  | 2026-09-04T13:19:58.922Z DEBUG 1 --- [albaraka-assistant] [undedElastic-62] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (18 bytes)
+server-1  | 2026-09-04T13:19:58.922Z DEBUG 1 --- [albaraka-assistant] [undedElastic-64] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (17)
+server-1  | 2026-09-04T13:19:58.923Z DEBUG 1 --- [albaraka-assistant] [undedElastic-62] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (18 bytes)
+server-1  | 2026-09-04T13:19:58.923Z DEBUG 1 --- [albaraka-assistant] [undedElastic-65] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (17)
+server-1  | 2026-09-04T13:19:58.924Z DEBUG 1 --- [albaraka-assistant] [undedElastic-65] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (19 bytes)
+server-1  | 2026-09-04T13:19:58.924Z DEBUG 1 --- [albaraka-assistant] [undedElastic-66] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (18)
+server-1  | 2026-09-04T13:19:58.924Z DEBUG 1 --- [albaraka-assistant] [undedElastic-66] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (35 bytes)
+server-1  | 2026-09-04T13:19:58.925Z DEBUG 1 --- [albaraka-assistant] [undedElastic-67] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (34)
+server-1  | 2026-09-04T13:19:58.925Z DEBUG 1 --- [albaraka-assistant] [undedElastic-67] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (19 bytes)
+server-1  | 2026-09-04T13:19:58.926Z DEBUG 1 --- [albaraka-assistant] [undedElastic-68] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (18)
+server-1  | 2026-09-04T13:19:58.926Z DEBUG 1 --- [albaraka-assistant] [undedElastic-68] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (20 bytes)
+server-1  | 2026-09-04T13:19:58.926Z DEBUG 1 --- [albaraka-assistant] [undedElastic-69] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (19)
+server-1  | 2026-09-04T13:19:58.926Z DEBUG 1 --- [albaraka-assistant] [undedElastic-69] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (18 bytes)
+server-1  | 2026-09-04T13:19:58.927Z DEBUG 1 --- [albaraka-assistant] [undedElastic-70] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (17)
+server-1  | 2026-09-04T13:19:58.927Z DEBUG 1 --- [albaraka-assistant] [undedElastic-70] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (17 bytes)
+server-1  | 2026-09-04T13:19:58.928Z DEBUG 1 --- [albaraka-assistant] [undedElastic-71] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (16)
+server-1  | 2026-09-04T13:19:58.928Z DEBUG 1 --- [albaraka-assistant] [undedElastic-71] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (24 bytes)
+server-1  | 2026-09-04T13:19:58.929Z DEBUG 1 --- [albaraka-assistant] [undedElastic-72] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (23)
+server-1  | 2026-09-04T13:19:58.929Z DEBUG 1 --- [albaraka-assistant] [undedElastic-72] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
+server-1  | 2026-09-04T13:19:58.930Z DEBUG 1 --- [albaraka-assistant] [undedElastic-73] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
+server-1  | 2026-09-04T13:19:58.930Z DEBUG 1 --- [albaraka-assistant] [undedElastic-73] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (23 bytes)
+server-1  | 2026-09-04T13:19:58.931Z DEBUG 1 --- [albaraka-assistant] [undedElastic-74] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (22)
+server-1  | 2026-09-04T13:19:58.931Z DEBUG 1 --- [albaraka-assistant] [undedElastic-74] tn.albaraka.ai.ragclient.RagClient       : rag frame received: status (58 bytes)
+server-1  | 2026-09-04T13:19:58.932Z DEBUG 1 --- [albaraka-assistant] [undedElastic-75] tn.albaraka.ai.api.ChatStreamer          : chat frame [status] forwarded (55)
+server-1  | 2026-09-04T13:19:58.932Z DEBUG 1 --- [albaraka-assistant] [undedElastic-74] tn.albaraka.ai.ragclient.RagClient       : rag frame received: answer (1672 bytes)
+server-1  | 2026-09-04T13:19:58.950Z DEBUG 1 --- [albaraka-assistant] [undedElastic-76] tn.albaraka.ai.api.ChatStreamer          : chat frame [answer] forwarded (1542)
+server-1  | 2026-09-04T13:19:58.950Z DEBUG 1 --- [albaraka-assistant] [undedElastic-76] tn.albaraka.ai.ragclient.RagClient       : rag frame received: done (101 bytes)
+server-1  | 2026-09-04T13:19:58.952Z DEBUG 1 --- [albaraka-assistant] [undedElastic-77] tn.albaraka.ai.api.ChatStreamer          : chat frame [done] forwarded (94)
+server-1  | 2026-09-04T13:19:58.953Z DEBUG 1 --- [albaraka-assistant] [undedElastic-76] tn.albaraka.ai.ragclient.RagClient       : rag stream completed normally
+server-1  | 2026-09-04T13:19:59.122Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] tn.albaraka.ai.ragclient.RagClient       : rag frame received: accepted (144 bytes)
+server-1  | 2026-09-04T13:19:59.124Z DEBUG 1 --- [albaraka-assistant] [undedElastic-85] tn.albaraka.ai.api.ChatStreamer          : chat frame [accepted] forwarded (137)
+server-1  | 2026-09-04T13:19:59.125Z DEBUG 1 --- [albaraka-assistant] [undedElastic-85] tn.albaraka.ai.ragclient.RagClient       : rag frame received: status (58 bytes)
+server-1  | 2026-09-04T13:19:59.129Z DEBUG 1 --- [albaraka-assistant] [undedElastic-88] tn.albaraka.ai.api.ChatStreamer          : chat frame [status] forwarded (55)
+server-1  | 2026-09-04T13:19:59.130Z DEBUG 1 --- [albaraka-assistant] [undedElastic-88] tn.albaraka.ai.ragclient.RagClient       : rag frame received: status (58 bytes)
+server-1  | 2026-09-04T13:19:59.132Z DEBUG 1 --- [albaraka-assistant] [undedElastic-89] tn.albaraka.ai.api.ChatStreamer          : chat frame [status] forwarded (55)
+server-1  | 2026-09-04T13:19:59.132Z DEBUG 1 --- [albaraka-assistant] [undedElastic-89] tn.albaraka.ai.ragclient.RagClient       : rag frame received: status (57 bytes)
+server-1  | 2026-09-04T13:19:59.133Z DEBUG 1 --- [albaraka-assistant] [undedElastic-90] tn.albaraka.ai.api.ChatStreamer          : chat frame [status] forwarded (54)
+server-1  | 2026-09-04T13:19:59.134Z DEBUG 1 --- [albaraka-assistant] [undedElastic-90] tn.albaraka.ai.ragclient.RagClient       : rag frame received: sources (672 bytes)
+server-1  | 2026-09-04T13:19:59.137Z DEBUG 1 --- [albaraka-assistant] [undedElastic-91] tn.albaraka.ai.api.ChatStreamer          : chat frame [sources] forwarded (610)
+server-1  | 2026-09-04T13:19:59.137Z DEBUG 1 --- [albaraka-assistant] [undedElastic-91] tn.albaraka.ai.ragclient.RagClient       : rag frame received: status (59 bytes)
+server-1  | 2026-09-04T13:19:59.138Z DEBUG 1 --- [albaraka-assistant] [undedElastic-92] tn.albaraka.ai.api.ChatStreamer          : chat frame [status] forwarded (56)
+server-1  | 2026-09-04T13:19:59.138Z DEBUG 1 --- [albaraka-assistant] [undedElastic-91] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (19 bytes)
+server-1  | 2026-09-04T13:19:59.139Z DEBUG 1 --- [albaraka-assistant] [undedElastic-93] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (18)
+server-1  | 2026-09-04T13:19:59.139Z DEBUG 1 --- [albaraka-assistant] [undedElastic-93] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
+server-1  | 2026-09-04T13:19:59.139Z DEBUG 1 --- [albaraka-assistant] [undedElastic-94] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
+server-1  | 2026-09-04T13:19:59.139Z DEBUG 1 --- [albaraka-assistant] [undedElastic-94] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (17 bytes)
+server-1  | 2026-09-04T13:19:59.140Z DEBUG 1 --- [albaraka-assistant] [undedElastic-95] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (16)
+server-1  | 2026-09-04T13:19:59.140Z DEBUG 1 --- [albaraka-assistant] [undedElastic-95] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (17 bytes)
+server-1  | 2026-09-04T13:19:59.141Z DEBUG 1 --- [albaraka-assistant] [undedElastic-96] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (16)
+server-1  | 2026-09-04T13:19:59.141Z DEBUG 1 --- [albaraka-assistant] [undedElastic-96] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
+server-1  | 2026-09-04T13:19:59.142Z DEBUG 1 --- [albaraka-assistant] [undedElastic-97] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
+server-1  | 2026-09-04T13:19:59.142Z DEBUG 1 --- [albaraka-assistant] [undedElastic-97] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (27 bytes)
+server-1  | 2026-09-04T13:19:59.142Z DEBUG 1 --- [albaraka-assistant] [undedElastic-98] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (26)
+server-1  | 2026-09-04T13:19:59.144Z DEBUG 1 --- [albaraka-assistant] [undedElastic-98] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (23 bytes)
+server-1  | 2026-09-04T13:19:59.144Z DEBUG 1 --- [albaraka-assistant] [undedElastic-99] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (22)
+server-1  | 2026-09-04T13:19:59.145Z DEBUG 1 --- [albaraka-assistant] [undedElastic-99] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (20 bytes)
+server-1  | 2026-09-04T13:19:59.145Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-100] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (19)
+server-1  | 2026-09-04T13:19:59.146Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-100] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (25 bytes)
+server-1  | 2026-09-04T13:19:59.147Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-101] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (24)
+server-1  | 2026-09-04T13:19:59.147Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-101] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (18 bytes)
+server-1  | 2026-09-04T13:19:59.148Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-102] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (17)
+server-1  | 2026-09-04T13:19:59.149Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-101] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (20 bytes)
+server-1  | 2026-09-04T13:19:59.149Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-103] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (19)
+server-1  | 2026-09-04T13:19:59.149Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-103] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (21 bytes)
+server-1  | 2026-09-04T13:19:59.150Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-104] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (20)
+server-1  | 2026-09-04T13:19:59.151Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-104] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
+server-1  | 2026-09-04T13:19:59.151Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-105] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
+server-1  | 2026-09-04T13:19:59.152Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-104] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (20 bytes)
+server-1  | 2026-09-04T13:19:59.153Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-106] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (19)
+server-1  | 2026-09-04T13:19:59.153Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-106] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
+server-1  | 2026-09-04T13:19:59.154Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-107] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
+server-1  | 2026-09-04T13:19:59.154Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-107] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (18 bytes)
+server-1  | 2026-09-04T13:19:59.155Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-108] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (17)
+server-1  | 2026-09-04T13:19:59.156Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-108] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
+server-1  | 2026-09-04T13:19:59.156Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-109] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
+server-1  | 2026-09-04T13:19:59.157Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-108] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (20 bytes)
+server-1  | 2026-09-04T13:19:59.157Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-110] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (19)
+server-1  | 2026-09-04T13:19:59.158Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-110] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (18 bytes)
+server-1  | 2026-09-04T13:19:59.159Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-112] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (17)
+server-1  | 2026-09-04T13:19:59.159Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-112] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (17 bytes)
+server-1  | 2026-09-04T13:19:59.160Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-113] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (16)
+server-1  | 2026-09-04T13:19:59.160Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-112] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (26 bytes)
+server-1  | 2026-09-04T13:19:59.161Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-114] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (25)
+server-1  | 2026-09-04T13:19:59.162Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-114] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (21 bytes)
+server-1  | 2026-09-04T13:19:59.164Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-115] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (20)
+server-1  | 2026-09-04T13:19:59.165Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-115] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (24 bytes)
+server-1  | 2026-09-04T13:19:59.167Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-116] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (23)
+server-1  | 2026-09-04T13:19:59.168Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-116] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
+server-1  | 2026-09-04T13:19:59.168Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-117] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
+server-1  | 2026-09-04T13:19:59.168Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-117] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (20 bytes)
+server-1  | 2026-09-04T13:19:59.169Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-118] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (19)
+server-1  | 2026-09-04T13:19:59.169Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-118] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (16 bytes)
+server-1  | 2026-09-04T13:19:59.169Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-119] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (15)
+server-1  | 2026-09-04T13:19:59.169Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-119] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (21 bytes)
+server-1  | 2026-09-04T13:19:59.173Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-120] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (20)
+server-1  | 2026-09-04T13:19:59.173Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-120] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (21 bytes)
+server-1  | 2026-09-04T13:19:59.174Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-121] tn.albaraka.ai.api.ChatStreamer          : chat frame [token] forwarded (20)
+server-1  | 2026-09-04T13:19:59.174Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-121] tn.albaraka.ai.ragclient.RagClient       : rag frame received: token (20 bytes)
 
 ## rag-assistant
 rag-assistant-1  | INFO:     Started server process [1]
 rag-assistant-1  | INFO:     Waiting for application startup.
-rag-assistant-1  | 2026-09-04 13:16:07,824 INFO rag_assistant mock vector backend ready — 10 demo chunks indexed
+rag-assistant-1  | 2026-09-04 13:19:15,684 INFO rag_assistant mock vector backend ready — 10 demo chunks indexed
 rag-assistant-1  | INFO:     Application startup complete.
 rag-assistant-1  | INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
-rag-assistant-1  | INFO:     127.0.0.1:40036 - "GET /v1/rag/health HTTP/1.1" 200 OK
-rag-assistant-1  | INFO:     127.0.0.1:36256 - "GET /v1/rag/health HTTP/1.1" 200 OK
-rag-assistant-1  | INFO:     127.0.0.1:39038 - "GET /v1/rag/health HTTP/1.1" 200 OK
-rag-assistant-1  | INFO:     172.18.0.1:55810 - "GET /v1/rag/health HTTP/1.1" 200 OK
-rag-assistant-1  | INFO:     172.18.0.5:38480 - "POST /v1/rag/chat HTTP/1.1" 200 OK
-rag-assistant-1  | INFO:     172.18.0.5:38480 - "POST /v1/rag/chat HTTP/1.1" 200 OK
-rag-assistant-1  | INFO:     127.0.0.1:34502 - "GET /v1/rag/health HTTP/1.1" 200 OK
+rag-assistant-1  | INFO:     127.0.0.1:47608 - "GET /v1/rag/health HTTP/1.1" 200 OK
+rag-assistant-1  | INFO:     127.0.0.1:57496 - "GET /v1/rag/health HTTP/1.1" 200 OK
+rag-assistant-1  | INFO:     127.0.0.1:49362 - "GET /v1/rag/health HTTP/1.1" 200 OK
+rag-assistant-1  | INFO:     127.0.0.1:56792 - "GET /v1/rag/health HTTP/1.1" 200 OK
+rag-assistant-1  | INFO:     172.18.0.1:38290 - "GET /v1/rag/health HTTP/1.1" 200 OK
+rag-assistant-1  | INFO:     172.18.0.5:59666 - "POST /v1/rag/chat HTTP/1.1" 200 OK
+rag-assistant-1  | INFO:     172.18.0.5:59666 - "POST /v1/rag/chat HTTP/1.1" 200 OK
 
 ## chat smoke diagnostics
-login failed (HTTP 422): {"error":{"message":"invalid credentials","code":"AUTH.INVALID_CREDENTIALS"}}
-server-1  | 2026-09-04T13:16:41.773Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.r.f.client.ExchangeFunctions       : [d109067] HTTP POST http://keycloak:8080/realms/albaraka/protocol/openid-connect/token
-server-1  | 2026-09-04T13:16:42.287Z  WARN 1 --- [albaraka-assistant] [or-http-epoll-2] tn.albaraka.ai.api.AuthController        : auth: token rejected by the resource server: org.springframework.security.oauth2.jwt.BadJwtException: Unsupported algorithm of PS256
+login failed (HTTP 422): {"error":{"code":"AUTH.INVALID_CREDENTIALS","message":"invalid credentials"}}
+server-1  | 2026-09-04T13:19:59.283Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.r.f.client.ExchangeFunctions       : [1da4d568] HTTP POST http://keycloak:8080/realms/albaraka/protocol/openid-connect/token
+server-1  | 2026-09-04T13:19:59.708Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.r.f.client.ExchangeFunctions       : [52399312] HTTP GET http://keycloak:8080/realms/albaraka/protocol/openid-connect/certs
+server-1  | 2026-09-04T13:19:59.792Z  WARN 1 --- [albaraka-assistant] [or-http-epoll-2] tn.albaraka.ai.api.AuthController        : auth: token rejected by the resource server: org.springframework.security.oauth2.jwt.JwtValidationException: The iss claim is not valid
 keycloak-1  | WARNING: Hostname v1 options [hostname-port] are still in use, please review your configuration
 keycloak-1  | WARNING: Hostname v1 options [hostname-port] are still in use, please review your configuration
-keycloak-1  | 2026-09-04 13:16:29,551 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
-keycloak-1  | 2026-09-04 13:16:29,556 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'profile' doesn't exist. Ignoring
-keycloak-1  | 2026-09-04 13:16:29,622 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
-keycloak-1  | 2026-09-04 13:16:29,625 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'profile' doesn't exist. Ignoring
-keycloak-1  | 2026-09-04 13:16:29,661 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'webauthn' doesn't exist. Ignoring
-keycloak-1  | 2026-09-04 13:16:29,664 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
-keycloak-1  | 2026-09-04 13:16:29,667 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'profile' doesn't exist. Ignoring
-keycloak-1  | 2026-09-04 13:16:29,671 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'email' doesn't exist. Ignoring
-keycloak-1  | 2026-09-04 13:16:29,674 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'roles' doesn't exist. Ignoring
-keycloak-1  | 2026-09-04 13:16:29,706 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
-keycloak-1  | 2026-09-04 13:16:41,787 ERROR [org.keycloak.events.EventBuilder] (executor-thread-1) Event listeners [metrics-listener] registered, but provider not found
+keycloak-1  | 2026-09-04 13:19:40,402 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
+keycloak-1  | 2026-09-04 13:19:40,411 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'profile' doesn't exist. Ignoring
+keycloak-1  | 2026-09-04 13:19:40,503 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
+keycloak-1  | 2026-09-04 13:19:40,508 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'profile' doesn't exist. Ignoring
+keycloak-1  | 2026-09-04 13:19:40,550 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'webauthn' doesn't exist. Ignoring
+keycloak-1  | 2026-09-04 13:19:40,554 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
+keycloak-1  | 2026-09-04 13:19:40,558 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'profile' doesn't exist. Ignoring
+keycloak-1  | 2026-09-04 13:19:40,561 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'email' doesn't exist. Ignoring
+keycloak-1  | 2026-09-04 13:19:40,565 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'roles' doesn't exist. Ignoring
+keycloak-1  | 2026-09-04 13:19:40,606 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
+keycloak-1  | 2026-09-04 13:19:59,317 ERROR [org.keycloak.events.EventBuilder] (executor-thread-1) Event listeners [metrics-listener] registered, but provider not found
+keycloak-1  | 2026-09-04 13:19:59,721 ERROR [org.keycloak.events.EventBuilder] (executor-thread-1) Event listeners [metrics-listener] registered, but provider not found
 
 ## ps -a
 NAME                            IMAGE                                              COMMAND                  SERVICE           CREATED          STATUS                            PORTS
-albaraka-ai-backoffice-web-1    albaraka-ai/backoffice-web:dev                     "/docker-entrypoint.…"   backoffice-web    43 seconds ago   Up 4 seconds (health: starting)   80/tcp
-albaraka-ai-frontoffice-web-1   albaraka-ai/frontoffice-web:dev                    "/docker-entrypoint.…"   frontoffice-web   43 seconds ago   Up 4 seconds (health: starting)   80/tcp
-albaraka-ai-keycloak-1          quay.io/keycloak/keycloak:26.6.3                   "/bin/bash -ec 'mkdi…"   keycloak          43 seconds ago   Up 36 seconds (healthy)           8443/tcp, 9000/tcp, 0.0.0.0:9001->8080/tcp, [::]:9001->8080/tcp
-albaraka-ai-minio-1             quay.io/minio/minio:RELEASE.2025-03-12T18-04-18Z   "/usr/bin/docker-ent…"   minio             43 seconds ago   Up 42 seconds (healthy)           9000/tcp
-albaraka-ai-minio-init-1        quay.io/minio/mc:RELEASE.2025-03-12T17-29-24Z      "/bin/sh -ec 'until …"   minio-init        43 seconds ago   Exited (0) 36 seconds ago         
-albaraka-ai-nginx-1             nginx:1.28-alpine                                  "/docker-entrypoint.…"   nginx             43 seconds ago   Up 4 seconds                      0.0.0.0:9000->80/tcp, [::]:9000->80/tcp
-albaraka-ai-postgres-1          pgvector/pgvector:0.8.1-pg17                       "docker-entrypoint.s…"   postgres          43 seconds ago   Up 42 seconds (healthy)           0.0.0.0:9004->5432/tcp, [::]:9004->5432/tcp
-albaraka-ai-rag-assistant-1     albaraka-ai/rag-assistant:dev                      "uvicorn rag_assista…"   rag-assistant     43 seconds ago   Up 36 seconds (healthy)           0.0.0.0:9003->8000/tcp, [::]:9003->8000/tcp
-albaraka-ai-redis-1             redis:7.4-alpine                                   "docker-entrypoint.s…"   redis             43 seconds ago   Up 42 seconds (healthy)           6379/tcp
-albaraka-ai-server-1            albaraka-ai/server:dev                             "java -jar app.jar"      server            43 seconds ago   Up 10 seconds (healthy)           0.0.0.0:9002->8080/tcp, [::]:9002->8080/tcp
+albaraka-ai-backoffice-web-1    albaraka-ai/backoffice-web:dev                     "/docker-entrypoint.…"   backoffice-web    52 seconds ago   Up 4 seconds (health: starting)   80/tcp
+albaraka-ai-frontoffice-web-1   albaraka-ai/frontoffice-web:dev                    "/docker-entrypoint.…"   frontoffice-web   52 seconds ago   Up 4 seconds (health: starting)   80/tcp
+albaraka-ai-keycloak-1          quay.io/keycloak/keycloak:26.6.3                   "/bin/bash -ec 'mkdi…"   keycloak          52 seconds ago   Up 46 seconds (healthy)           8443/tcp, 9000/tcp, 0.0.0.0:9001->8080/tcp, [::]:9001->8080/tcp
+albaraka-ai-minio-1             quay.io/minio/minio:RELEASE.2025-03-12T18-04-18Z   "/usr/bin/docker-ent…"   minio             52 seconds ago   Up 52 seconds (healthy)           9000/tcp
+albaraka-ai-minio-init-1        quay.io/minio/mc:RELEASE.2025-03-12T17-29-24Z      "/bin/sh -ec 'until …"   minio-init        52 seconds ago   Exited (0) 46 seconds ago         
+albaraka-ai-nginx-1             nginx:1.28-alpine                                  "/docker-entrypoint.…"   nginx             52 seconds ago   Up 4 seconds                      0.0.0.0:9000->80/tcp, [::]:9000->80/tcp
+albaraka-ai-postgres-1          pgvector/pgvector:0.8.1-pg17                       "docker-entrypoint.s…"   postgres          52 seconds ago   Up 52 seconds (healthy)           0.0.0.0:9004->5432/tcp, [::]:9004->5432/tcp
+albaraka-ai-rag-assistant-1     albaraka-ai/rag-assistant:dev                      "uvicorn rag_assista…"   rag-assistant     52 seconds ago   Up 46 seconds (healthy)           0.0.0.0:9003->8000/tcp, [::]:9003->8000/tcp
+albaraka-ai-redis-1             redis:7.4-alpine                                   "docker-entrypoint.s…"   redis             52 seconds ago   Up 52 seconds (healthy)           6379/tcp
+albaraka-ai-server-1            albaraka-ai/server:dev                             "java -jar app.jar"      server            52 seconds ago   Up 15 seconds (healthy)           0.0.0.0:9002->8080/tcp, [::]:9002->8080/tcp
 
 ## postgres
 postgres-1  | The files belonging to this database system will be owned by user "postgres".
@@ -575,10 +578,10 @@ postgres-1  | Success. You can now start the database server using:
 postgres-1  | 
 postgres-1  |     pg_ctl -D /var/lib/postgresql/data -l logfile start
 postgres-1  | 
-postgres-1  | waiting for server to start....2026-09-04 13:16:01.892 UTC [50] LOG:  starting PostgreSQL 17.8 (Debian 17.8-1.pgdg12+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit
-postgres-1  | 2026-09-04 13:16:01.893 UTC [50] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
-postgres-1  | 2026-09-04 13:16:01.896 UTC [53] LOG:  database system was shut down at 2026-09-04 13:16:01 UTC
-postgres-1  | 2026-09-04 13:16:01.899 UTC [50] LOG:  database system is ready to accept connections
+postgres-1  | waiting for server to start....2026-09-04 13:19:09.169 UTC [49] LOG:  starting PostgreSQL 17.8 (Debian 17.8-1.pgdg12+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit
+postgres-1  | 2026-09-04 13:19:09.169 UTC [49] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+postgres-1  | 2026-09-04 13:19:09.172 UTC [52] LOG:  database system was shut down at 2026-09-04 13:19:09 UTC
+postgres-1  | 2026-09-04 13:19:09.176 UTC [49] LOG:  database system is ready to accept connections
 postgres-1  |  done
 postgres-1  | server started
 postgres-1  | CREATE DATABASE
@@ -588,27 +591,27 @@ postgres-1  | /usr/local/bin/docker-entrypoint.sh: running /docker-entrypoint-in
 postgres-1  | CREATE DATABASE
 postgres-1  | 
 postgres-1  | 
-postgres-1  | waiting for server to shut down....2026-09-04 13:16:02.222 UTC [50] LOG:  received fast shutdown request
-postgres-1  | 2026-09-04 13:16:02.222 UTC [50] LOG:  aborting any active transactions
-postgres-1  | 2026-09-04 13:16:02.224 UTC [50] LOG:  background worker "logical replication launcher" (PID 56) exited with exit code 1
-postgres-1  | 2026-09-04 13:16:02.226 UTC [51] LOG:  shutting down
-postgres-1  | 2026-09-04 13:16:02.227 UTC [51] LOG:  checkpoint starting: shutdown immediate
-postgres-1  | 2026-09-04 13:16:02.427 UTC [51] LOG:  checkpoint complete: wrote 1836 buffers (11.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.095 s, sync=0.104 s, total=0.202 s; sync files=597, longest=0.010 s, average=0.001 s; distance=8476 kB, estimate=8476 kB; lsn=0/1D2BED8, redo lsn=0/1D2BED8
-postgres-1  | 2026-09-04 13:16:02.433 UTC [50] LOG:  database system is shut down
+postgres-1  | waiting for server to shut down...2026-09-04 13:19:09.421 UTC [49] LOG:  received fast shutdown request
+postgres-1  | .2026-09-04 13:19:09.421 UTC [49] LOG:  aborting any active transactions
+postgres-1  | 2026-09-04 13:19:09.424 UTC [49] LOG:  background worker "logical replication launcher" (PID 55) exited with exit code 1
+postgres-1  | 2026-09-04 13:19:09.425 UTC [50] LOG:  shutting down
+postgres-1  | 2026-09-04 13:19:09.425 UTC [50] LOG:  checkpoint starting: shutdown immediate
+postgres-1  | 2026-09-04 13:19:09.463 UTC [50] LOG:  checkpoint complete: wrote 1836 buffers (11.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.033 s, sync=0.004 s, total=0.038 s; sync files=597, longest=0.002 s, average=0.001 s; distance=8476 kB, estimate=8476 kB; lsn=0/1D2BED8, redo lsn=0/1D2BED8
+postgres-1  | 2026-09-04 13:19:09.472 UTC [49] LOG:  database system is shut down
 postgres-1  |  done
 postgres-1  | server stopped
 postgres-1  | 
 postgres-1  | PostgreSQL init process complete; ready for start up.
 postgres-1  | 
-postgres-1  | 2026-09-04 13:16:02.539 UTC [1] LOG:  starting PostgreSQL 17.8 (Debian 17.8-1.pgdg12+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit
-postgres-1  | 2026-09-04 13:16:02.539 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
-postgres-1  | 2026-09-04 13:16:02.539 UTC [1] LOG:  listening on IPv6 address "::", port 5432
-postgres-1  | 2026-09-04 13:16:02.561 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
-postgres-1  | 2026-09-04 13:16:02.564 UTC [68] LOG:  database system was shut down at 2026-09-04 13:16:02 UTC
-postgres-1  | 2026-09-04 13:16:02.646 UTC [1] LOG:  database system is ready to accept connections
-postgres-1  | 2026-09-04 13:16:19.525 UTC [96] ERROR:  relation "migration_model" does not exist at character 25
-postgres-1  | 2026-09-04 13:16:19.525 UTC [96] STATEMENT:  SELECT ID, VERSION FROM MIGRATION_MODEL ORDER BY UPDATE_TIME DESC
-postgres-1  | 2026-09-04 13:16:20.249 UTC [97] ERROR:  relation "public.databasechangeloglock" does not exist at character 22
-postgres-1  | 2026-09-04 13:16:20.249 UTC [97] STATEMENT:  SELECT COUNT(*) FROM public.databasechangeloglock
-postgres-1  | 2026-09-04 13:16:40.789 UTC [66] LOG:  checkpoint starting: immediate force wait
-postgres-1  | 2026-09-04 13:16:41.184 UTC [66] LOG:  checkpoint complete: wrote 1165 buffers (7.1%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.032 s, sync=0.360 s, total=0.396 s; sync files=1066, longest=0.009 s, average=0.001 s; distance=14997 kB, estimate=14997 kB; lsn=0/2BD1478, redo lsn=0/2BD1420
+postgres-1  | 2026-09-04 13:19:09.544 UTC [1] LOG:  starting PostgreSQL 17.8 (Debian 17.8-1.pgdg12+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit
+postgres-1  | 2026-09-04 13:19:09.544 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+postgres-1  | 2026-09-04 13:19:09.544 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+postgres-1  | 2026-09-04 13:19:09.545 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+postgres-1  | 2026-09-04 13:19:09.548 UTC [67] LOG:  database system was shut down at 2026-09-04 13:19:09 UTC
+postgres-1  | 2026-09-04 13:19:09.563 UTC [1] LOG:  database system is ready to accept connections
+postgres-1  | 2026-09-04 13:19:29.939 UTC [102] ERROR:  relation "migration_model" does not exist at character 25
+postgres-1  | 2026-09-04 13:19:29.939 UTC [102] STATEMENT:  SELECT ID, VERSION FROM MIGRATION_MODEL ORDER BY UPDATE_TIME DESC
+postgres-1  | 2026-09-04 13:19:30.901 UTC [104] ERROR:  relation "public.databasechangeloglock" does not exist at character 22
+postgres-1  | 2026-09-04 13:19:30.901 UTC [104] STATEMENT:  SELECT COUNT(*) FROM public.databasechangeloglock
+postgres-1  | 2026-09-04 13:19:58.230 UTC [65] LOG:  checkpoint starting: immediate force wait
+postgres-1  | 2026-09-04 13:19:58.448 UTC [65] LOG:  checkpoint complete: wrote 1165 buffers (7.1%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.014 s, sync=0.200 s, total=0.219 s; sync files=1066, longest=0.004 s, average=0.001 s; distance=14997 kB, estimate=14997 kB; lsn=0/2BD1668, redo lsn=0/2BD1610
