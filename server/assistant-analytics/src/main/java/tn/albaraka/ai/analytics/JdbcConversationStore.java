@@ -20,6 +20,10 @@ public class JdbcConversationStore {
 
     public record ConversationRef(UUID id, String locale) {}
 
+    public record ConversationInfo(UUID id, String locale, java.time.Instant startedAt, int turnCount) {}
+
+    public record SavedFeedback(UUID id, java.time.Instant createdAt) {}
+
     public ConversationRef findOrCreateConversation(String deviceId, String locale) {
         if (deviceId != null && !deviceId.isBlank()) {
             var rows = db.query("SELECT id, locale FROM albaraka_ai.conversation " +
@@ -35,6 +39,56 @@ public class JdbcConversationStore {
                         "VALUES (?, 'WEB_APP', ?, ?::locale_code, 'ACTIVE', true)",
                 id, deviceId != null ? deviceId : UUID.randomUUID().toString(), locale);
         return new ConversationRef(id, locale);
+    }
+
+    /** Explicit conversation creation (docs/08 §3 — POST /assistant/conversations). The frontoffice
+     *  flow is client-held: the returned UUID is the anonymous capability, so a random device id is
+     *  generated purely to satisfy the identity constraint. */
+    public ConversationInfo createConversation(String channel, String locale, String pageContext) {
+        UUID id = UUID.randomUUID();
+        db.update("""
+                INSERT INTO albaraka_ai.conversation
+                  (id, channel, device_id, locale, state, page_context, persist_conversation)
+                VALUES (?, ?::channel, ?, ?::locale_code, 'ACTIVE', ?, true)
+                """, id, channel, UUID.randomUUID().toString(), locale, pageContext);
+        return requireConversation(id);
+    }
+
+    public ConversationInfo requireConversation(UUID id) {
+        var rows = db.query("""
+                        SELECT id, locale, started_at, turn_count FROM albaraka_ai.conversation WHERE id = ?
+                        """,
+                (rs, i) -> new ConversationInfo(rs.getObject("id", UUID.class), rs.getString("locale"),
+                        rs.getTimestamp("started_at").toInstant(), rs.getInt("turn_count")),
+                id);
+        if (rows.isEmpty()) throw tn.albaraka.ai.shared.error.ApiException.notFound(
+                "RESOURCE.NOT_FOUND", "conversation " + id);
+        return rows.getFirst();
+    }
+
+    public SavedFeedback saveFeedback(UUID messageId, String rating, String comment,
+                                      boolean contactOptIn, String contact) {
+        UUID id = UUID.randomUUID();
+        // composite FK (message_id, message_created_at) → message(id, created_at): take the
+        // message row's ACTUAL created_at, as in saveRetrievalTrace.
+        int n = db.update("""
+                INSERT INTO albaraka_ai.feedback
+                  (id, message_id, message_created_at, rating, comment, contact_opt_in, contact, status)
+                SELECT ?, m.id, m.created_at, ?::feedback_rating, ?, ?, ?, 'NEW'
+                FROM albaraka_ai.message m WHERE m.id = ?
+                """, id, rating, comment, contactOptIn, contact, messageId);
+        if (n == 0) throw tn.albaraka.ai.shared.error.ApiException.notFound(
+                "RESOURCE.NOT_FOUND", "message " + messageId);
+        var rows = db.query("SELECT created_at FROM albaraka_ai.feedback WHERE id = ?",
+                (rs, i) -> rs.getTimestamp("created_at").toInstant(), id);
+        return new SavedFeedback(id, rows.isEmpty() ? java.time.Instant.now() : rows.getFirst());
+    }
+
+    /** Raw JSON text of one assistant_config key (the caller parses it with the platform mapper). */
+    public String configJson(String key) {
+        var rows = db.query("SELECT value::text AS v FROM albaraka_ai.assistant_config WHERE key = ?",
+                (rs, i) -> rs.getString("v"), key);
+        return rows.isEmpty() ? null : rows.getFirst();
     }
 
     public int nextOrdinal(UUID conversationId) {

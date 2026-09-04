@@ -37,6 +37,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsSource(props)))
                 .authorizeExchange(ex -> ex
                         .pathMatchers("/api/v1/auth/login").permitAll()
+                        .pathMatchers("/api/v1/assistant/**").permitAll()
                         .pathMatchers("/api/v1/chat").permitAll()
                         .pathMatchers(HttpMethod.GET, PUBLIC_GET).permitAll()
                         .pathMatchers("/api/v1/admin/**").hasAnyRole(
