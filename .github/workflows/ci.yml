@@ -194,11 +194,22 @@ jobs:
             # Flyway has created the schema, so the chat smoke used to 500 on
             # relation "albaraka_ai.conversation" does not exist
             if curl -sf http://localhost:9002/actuator/health/readiness 2>/dev/null | grep -q '"status":"UP"'; then
-              echo "server READY after $((i*10))s"; exit 0
+              echo "server READY after $((i*10))s"; break
             fi
             sleep 10
+            if [ "$i" = "54" ]; then echo "server did not become ready — dumping logs"; exit 1; fi
           done
-          echo "server did not become ready — dumping logs"; exit 1
+          # schema provenance: did Flyway run, and does the conversation table exist? This
+          # output is appended to the ci-logs channel so a missing table is diagnosable
+          # without artifact access (the 'relation does not exist' 500 class).
+          {
+            echo "## flyway history (server schema)"
+            docker compose --env-file .env -f deploy/docker-compose.yml --profile app exec -T postgres \
+              psql -U albaraka -d albaraka_ai -c "SELECT installed_rank, version, description, success FROM flyway_schema_history ORDER BY installed_rank;" 2>&1 || echo "NO flyway_schema_history"
+            echo "## tables in albaraka_ai"
+            docker compose --env-file .env -f deploy/docker-compose.yml --profile app exec -T postgres \
+              psql -U albaraka -d albaraka_ai -Atc "SELECT tablename FROM pg_tables WHERE schemaname='albaraka_ai' ORDER BY tablename;" 2>&1 | head -30
+          } | tee -a /tmp/devstack-logs.txt /tmp/devstack-boot.log
       - name: Wait for RAG health (max 3 min)
         run: |
           for i in $(seq 1 18); do
@@ -253,6 +264,12 @@ jobs:
           {
             echo "## run $GITHUB_RUN_ID — keycloak"
             docker compose --env-file .env -f deploy/docker-compose.yml --profile app logs keycloak --tail=250 2>&1 | head -250 || true
+            echo
+            echo "## server (Flyway, boot, chat errors)"
+            docker compose --env-file .env -f deploy/docker-compose.yml --profile app logs server --tail=250 2>&1 | head -250 || true
+            echo
+            echo "## server — flyway / migration lines (whole log)"
+            docker compose --env-file .env -f deploy/docker-compose.yml --profile app logs server 2>&1 | grep -iE "flyway|migrat|schema|validat" | head -80 || true
             echo
             echo "## ps -a"
             docker compose --env-file .env -f deploy/docker-compose.yml --profile app ps -a 2>&1 || true
