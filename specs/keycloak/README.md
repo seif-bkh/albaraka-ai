@@ -163,7 +163,7 @@ Keycloak outage degrades staff access but does **not** take down the customer wi
 | Brute force | `bruteForceProtected: true`, `permanentLockout: true`, `failureFactor: 10`, `maxFailureWaitSeconds: 900`, `maxDeltaTimeSeconds: 43200` |
 | Refresh tokens | `revokeRefreshToken: true`, `refreshTokenMaxReuse: 1` — rotation with reuse detection |
 | Sessions | realm idle 30 min / max 8 h; backoffice `client.session.idle.timeout` 30 min |
-| Signing | `defaultSignatureAlgorithm: PS256` |
+| Signing | `defaultSignatureAlgorithm: RS256` — matches docs/07 §5 (RS256/EdDSA) and the Spring resource server's default JWT algorithm set (PS256 is rejected with `BadJwtException: Unsupported algorithm`) |
 | MFA | A bound browser flow with a `REQUIRED` subflow offering `auth-otp-form` or `webauthn-authenticator`. No `CONDITIONAL` and no `DISABLED` execution inside it, so there is no path through login that skips the second factor |
 | WebAuthn | `userVerificationRequirement: required`, `avoidSameAuthenticatorRegister: true`, ES256/RS256 |
 | OTP | TOTP, HmacSHA256, 6 digits, 30 s, non-reusable codes |

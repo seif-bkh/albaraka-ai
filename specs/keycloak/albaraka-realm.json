@@ -42,7 +42,7 @@
   "clientOfflineSessionMaxLifespan": 0,
   "revokeRefreshToken": true,
   "refreshTokenMaxReuse": 1,
-  "defaultSignatureAlgorithm": "PS256",
+  "defaultSignatureAlgorithm": "RS256",
   "bruteForceProtected": true,
   "permanentLockout": true,
   "maxFailureWaitSeconds": 900,
