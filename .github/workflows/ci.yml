@@ -249,7 +249,16 @@ jobs:
               -H 'Content-Type: application/json' \
               -d '{"text":"comment ouvrir un compte courant ?","locale":"fr-FR"}' || true)
             if echo "$out" | grep -q 'event: answer'; then ok=1; echo "$out" | head -c 1200; break; fi
-            echo "chat smoke attempt $i/12 not answered yet — retrying"; sleep 5
+            echo "chat smoke attempt $i/12 — no answer; received $(printf '%s' "$out" | wc -c) bytes via edge:"
+            printf '%s' "$out" | head -c 700
+            echo
+            # raw RAG probe (what the server receives) — shows whether the defect is server or contract
+            curl -sfN -m 30 -X POST http://localhost:9003/v1/rag/chat \
+              -H 'Content-Type: application/json' \
+              -H "Authorization: Bearer ${RAG_SERVICE_TOKEN}" \
+              -d '{"text":"comment ouvrir un compte courant ?","context":{"conversation_id":"11111111-1111-4111-8111-111111111111","message_id":"22222222-2222-4222-8222-222222222222","locale":"fr-FR","channel":"WEB_APP","audience":"PUBLIC","max_classification":"PUBLIC","retrieval_config":{}}}' \
+              2>/dev/null | head -c 700 || echo "(direct RAG probe failed)"
+            sleep 5
           done
           [ "$ok" = "1" ] || { echo "chat SSE smoke failed — no answer event"; exit 1; }
       - name: Smoke — SPA shells via the edge (frontoffice, admin, module MIME)
