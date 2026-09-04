@@ -877,7 +877,9 @@
         "platform-admin",
         "kb-editor",
         "ai-engineer"
-      ]
+      ],
+      "emailVerified": true,
+      "requiredActions": []
     },
     {
       "username": "sharia@albaraka.tn",
@@ -894,7 +896,9 @@
       ],
       "realmRoles": [
         "sharia-officer"
-      ]
+      ],
+      "emailVerified": true,
+      "requiredActions": []
     },
     {
       "username": "compliance@albaraka.tn",
@@ -911,7 +915,9 @@
       ],
       "realmRoles": [
         "compliance"
-      ]
+      ],
+      "emailVerified": true,
+      "requiredActions": []
     },
     {
       "username": "reviewer@albaraka.tn",
@@ -929,7 +935,9 @@
       "realmRoles": [
         "analyst",
         "kb-editor"
-      ]
+      ],
+      "emailVerified": true,
+      "requiredActions": []
     },
     {
       "username": "agent@albaraka.tn",
@@ -946,7 +954,9 @@
       ],
       "realmRoles": [
         "branch-agent"
-      ]
+      ],
+      "emailVerified": true,
+      "requiredActions": []
     }
   ],
   "organizationsEnabled": false
