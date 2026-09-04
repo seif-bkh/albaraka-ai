@@ -53,7 +53,9 @@ public class ChatController {
         }).subscribeOn(Schedulers.boundedElastic());
 
         return ctx.flatMapMany(c -> rag.streamChat(new RagChatRequest(
-                        req.text(), locale, req.clientId(), c.conversationId().toString(), true, List.of()))
+                        req.text(),
+                        new RagChatRequest.Context(c.conversationId(), c.userMessageId(), locale,
+                                "WEB_APP", "PUBLIC", "PUBLIC", Map.of(), null, null, List.of())))
                 .concatMap(e -> persistAndSse(c, e))
                 .subscribeOn(Schedulers.boundedElastic()));
     }
@@ -69,7 +71,7 @@ public class ChatController {
                         }
                         case RagEvent.Refusal r -> {
                             UUID assistant = store.saveRefusal(c.conversationId(), c.ordinal() + 1, r,
-                                    "REFUSED", write(r.sources()));
+                                    "OUT_OF_SCOPE", write(r.sources()));
                             store.saveGuardrailEvent(assistant, policyOf(r), "BLOCK",
                                     "HIGH", r.refusalCode(), r.title(), r.refusalCode(), "OUTPUT");
                             if (r.fatwaRequestRef() != null) {

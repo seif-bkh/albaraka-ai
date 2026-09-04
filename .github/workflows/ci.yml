@@ -293,6 +293,9 @@ jobs:
             echo "## server — flyway / migration lines (whole log)"
             docker compose --env-file .env -f deploy/docker-compose.yml --profile app logs server 2>&1 | grep -iE "flyway|migrat|schema|validat" | head -80 || true
             echo
+            echo "## rag-assistant"
+            docker compose --env-file .env -f deploy/docker-compose.yml --profile app logs rag-assistant --tail=250 2>&1 | head -250 || true
+            echo
             echo "## ps -a"
             docker compose --env-file .env -f deploy/docker-compose.yml --profile app ps -a 2>&1 || true
             echo
