@@ -71,8 +71,11 @@ public class AuthController {
                             .map(jwt -> new LoginResponse(token, userOf(jwt)))
                             .onErrorMap(e -> {
                                 // token issued but our resource server refuses it (audience/issuer/jwk
-                                // mismatch) — log the real reason, never the generic error alone
+                                // mismatch) — log the real reason plus the token's own alg/iss so the
+                                // deploy mismatch is visible without exposing the token itself
                                 log.warn("auth: token rejected by the resource server: {}", e.toString());
+                                describeToken(token).ifPresent(desc ->
+                                        log.warn("auth: token header claims — {}", desc));
                                 return ApiException.unprocessable("AUTH.INVALID_CREDENTIALS", "invalid credentials");
                             });
                 })
@@ -87,6 +90,17 @@ public class AuthController {
                     return e instanceof ApiException ? e
                             : ApiException.unprocessable("AUTH.INVALID_CREDENTIALS", "invalid credentials");
                 });
+    }
+
+    /** Parse-only inspection (no signature validation): alg + iss, for issuer-mismatch diagnosis. */
+    private static java.util.Optional<String> describeToken(String token) {
+        try {
+            var jwt = com.nimbusds.jwt.SignedJWT.parse(token);
+            return java.util.Optional.of("alg=" + jwt.getHeader().getAlgorithm()
+                    + ", iss=" + jwt.getJWTClaimsSet().getIssuer());
+        } catch (Exception e) {
+            return java.util.Optional.empty();
+        }
     }
 
     @GetMapping("/me")

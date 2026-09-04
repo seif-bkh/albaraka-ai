@@ -103,9 +103,11 @@ services:
       KC_DB_USERNAME: albaraka
       KC_DB_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
       BRIDGE_CLIENT_SECRET: ${KEYCLOAK_BRIDGE_CLIENT_SECRET:?set KEYCLOAK_BRIDGE_CLIENT_SECRET in .env}
-      # tokens must be issued with the browser-visible issuer so the API can validate them
-      KC_HOSTNAME: localhost
-      KC_HOSTNAME_PORT: 9001
+      # tokens must be issued with the browser-visible issuer so the API can validate them.
+      # Keycloak 26 hostname v2: the option takes a FULL URL. The v1 split (KC_HOSTNAME +
+      # KC_HOSTNAME_PORT) logs "Hostname v1 options are still in use" and produced an issuer that
+      # did not match the API's configured issuer-uri (BadJwtException: The iss claim is not valid).
+      KC_HOSTNAME: http://localhost:9001
       KC_HEALTH_ENABLED: "true"
       KC_METRICS_ENABLED: "true"
       KC_LOG_LEVEL: INFO
