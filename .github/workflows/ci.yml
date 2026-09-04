@@ -283,6 +283,30 @@ jobs:
             sleep 5
           done
           [ "$ok" = "1" ] || { echo "chat SSE smoke failed — no answer event" | tee -a /tmp/devstack-smoke.txt; exit 1; }
+      - name: Smoke — frontoffice contract via the edge (config, conversation, SSE, feedback)
+        run: |
+          set -euo pipefail
+          # The browser path: GET config → POST conversation → POST message (SSE) → POST feedback.
+          cfg=$(curl -sf http://localhost:9000/api/v1/assistant/config)
+          echo "$cfg" | grep -q '"assistantName"' || { echo "config endpoint broken"; exit 1; }
+          conv=$(curl -sf -X POST http://localhost:9000/api/v1/assistant/conversations \
+            -H 'Content-Type: application/json' \
+            -d '{"channel":"WEB_APP","locale":"fr-FR"}')
+          cid=$(printf '%s' "$conv" | sed -E 's/.*"id":"([0-9a-f-]+)".*/\1/')
+          [ -n "$cid" ] && [ "$cid" != "$conv" ] || { echo "no conversation id: $conv"; exit 1; }
+          out=$(curl -sfN -m 60 -X POST "http://localhost:9000/api/v1/assistant/conversations/$cid/messages" \
+            -H 'Content-Type: application/json' \
+            -d '{"text":"comment ouvrir un compte courant ?","locale":"fr-FR"}')
+          echo "$out" | grep -qE '^event:[[:space:]]*answer' || {
+            printf '%s' "$out" | head -c 1200; echo; echo "no answer on the documented messages endpoint"; exit 1; }
+          mid=$(printf '%s' "$out" | grep -oE '"messageId":"[0-9a-f-]+"' | head -1 | cut -d'"' -f4)
+          [ -n "$mid" ] || { echo "no messageId in stream"; exit 1; }
+          fb=$(curl -sf -X POST "http://localhost:9000/api/v1/assistant/messages/$mid/feedback" \
+            -H 'Content-Type: application/json' \
+            -d '{"rating":"UP"}')
+          echo "$fb" | grep -q '"status":"NEW"' || { echo "feedback endpoint broken: $fb"; exit 1; }
+          echo "frontoffice contract OK (config, conversation, SSE answer, feedback)"
+
       - name: Smoke — SPA shells via the edge (frontoffice, admin, module MIME)
         run: |
           # GHA invokes bash with -e: a bare `( ... ) > file` subshell that fails would exit
