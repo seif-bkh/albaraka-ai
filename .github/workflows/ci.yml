@@ -210,13 +210,28 @@ jobs:
             docker compose --env-file .env -f deploy/docker-compose.yml --profile app exec -T postgres \
               psql -U albaraka -d albaraka_ai -Atc "SELECT tablename FROM pg_tables WHERE schemaname='albaraka_ai' ORDER BY tablename;" 2>&1 | head -30
           } | tee -a /tmp/devstack-logs.txt /tmp/devstack-boot.log
-          # live schema/seed gates: G1-G7 must hold on the Flyway-migrated database. This is the
-          # regression guard for the Boot-4 modularization bug where flyway-core was present but
-          # never wired (no starter) — Flyway 'ran' zero migrations and every table was missing.
+      - name: Verify migrated schema + seeds (G1-G7 — the DDL really ran)
+        run: |
+          # Regression guard for the Boot-4 modularization bug: flyway-core was present but never
+          # wired (no starter), so Flyway silently applied zero migrations. These gates only pass
+          # if migrations really ran. schema_test.sql creates its own fixtures, so it must run
+          # against a THROWAWAY database (its fixtures collide with the V900-V903 seeds on the
+          # live DB); seed_test.sql asserts pure content and runs against the migrated DB.
+          docker compose --env-file .env -f deploy/docker-compose.yml --profile app exec -T postgres \
+            psql -v ON_ERROR_STOP=1 -U albaraka -d postgres \
+              -c 'DROP DATABASE IF EXISTS verify' -c 'CREATE DATABASE verify OWNER albaraka'
+          err=0
+          echo "── G1-G4 schema behavioural tests (reference DDL, throwaway db) ──"
+          cat specs/db/schema.sql | docker compose --env-file .env -f deploy/docker-compose.yml --profile app exec -T postgres \
+            psql -v ON_ERROR_STOP=1 -U albaraka -d verify -f - 2>&1 | tail -3 || err=1
           cat specs/db/tests/schema_test.sql | docker compose --env-file .env -f deploy/docker-compose.yml --profile app exec -T postgres \
-            psql -v ON_ERROR_STOP=1 -U albaraka -d albaraka_ai -f - 2>&1 | tail -25
+            psql -v ON_ERROR_STOP=1 -U albaraka -d verify -f - 2>&1 | tail -30 || err=1
+          echo "── G5-G7 seed content tests (live Flyway database) ──"
           cat specs/db/tests/seed_test.sql | docker compose --env-file .env -f deploy/docker-compose.yml --profile app exec -T postgres \
-            psql -v ON_ERROR_STOP=1 -U albaraka -d albaraka_ai -f - 2>&1 | tail -25
+            psql -v ON_ERROR_STOP=1 -U albaraka -d albaraka_ai -f - 2>&1 | tail -45 || err=1
+          docker compose --env-file .env -f deploy/docker-compose.yml --profile app exec -T postgres \
+            psql -v ON_ERROR_STOP=1 -U albaraka -d postgres -c 'DROP DATABASE IF EXISTS verify' >/dev/null 2>&1 || true
+          if [ "$err" != "0" ]; then echo "schema/seed gates FAILED"; exit 1; fi
       - name: Wait for RAG health (max 3 min)
         run: |
           for i in $(seq 1 18); do

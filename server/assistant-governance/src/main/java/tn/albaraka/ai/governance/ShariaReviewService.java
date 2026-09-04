@@ -40,7 +40,7 @@ public class ShariaReviewService {
         db.update("""
                 INSERT INTO albaraka_ai.sharia_review
                   (id, ref, subject_type, subject_id, subject_label, risk_tier, state, submitted_by, due_at)
-                VALUES (?, ?, 'DOCUMENT_VERSION', ?, ?, ?, 'IN_REVIEW', ?, now() + interval '7 days')
+                VALUES (?, ?, 'DOCUMENT_VERSION', ?, ?, ?::risk_tier, 'IN_REVIEW', ?, now() + interval '7 days')
                 """, reviewId, ref, versionId, label, riskTier.name(), actor);
         for (String role : TASKS.getOrDefault(riskTier.name(), List.of("sharia-officer"))) {
             db.update("INSERT INTO albaraka_ai.review_task (id, review_id, assignee_role) VALUES (?, ?, ?)",
@@ -76,7 +76,7 @@ public class ShariaReviewService {
         }
         UUID taskId = (UUID) tasks.getFirst()[0];
         db.update("""
-                UPDATE albaraka_ai.review_task SET decision = ?, comments = ?, assignee_id = ?, decided_at = now()
+                UPDATE albaraka_ai.review_task SET decision = ?::review_decision, comments = ?, assignee_id = ?, decided_at = now()
                 WHERE id = ?
                 """, decision.name(), comments, actor, taskId);
 
@@ -87,12 +87,12 @@ public class ShariaReviewService {
             nextState = pending == 0 ? ReviewState.APPROVED.name() : state;
         } else {
             nextState = decision == ReviewDecision.REJECT ? ReviewState.REJECTED.name() : ReviewState.CHANGES_REQUESTED.name();
-            db.update("UPDATE albaraka_ai.review_task SET decision = ?, decided_at = now() " +
+            db.update("UPDATE albaraka_ai.review_task SET decision = ?::review_decision, decided_at = now() " +
                             "WHERE review_id = ? AND decided_at IS NULL",
                     decision.name(), reviewId);
         }
         db.update("""
-                UPDATE albaraka_ai.sharia_review SET state = ?, decided_at = now(), decision_by = ?
+                UPDATE albaraka_ai.sharia_review SET state = ?::review_state, decided_at = now(), decision_by = ?
                 WHERE id = ?
                 """, nextState, actor, reviewId);
         return nextState;

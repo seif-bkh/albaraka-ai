@@ -29,8 +29,10 @@ public class JdbcConversationStore {
             if (!rows.isEmpty()) return rows.getFirst();
         }
         UUID id = UUID.randomUUID();
+        // locale/state are Postgres enums; JDBC binds opaque strings as varchar, so every enum
+        // parameter must be cast explicitly (a varchar → enum bind fails at execution time).
         db.update("INSERT INTO albaraka_ai.conversation (id, channel, device_id, locale, state, persist_conversation) " +
-                        "VALUES (?, 'WEB_APP', ?, ?, 'ACTIVE', true)",
+                        "VALUES (?, 'WEB_APP', ?, ?::locale_code, 'ACTIVE', true)",
                 id, deviceId != null ? deviceId : UUID.randomUUID().toString(), locale);
         return new ConversationRef(id, locale);
     }
@@ -47,7 +49,7 @@ public class JdbcConversationStore {
                 INSERT INTO albaraka_ai.message
                   (id, conversation_id, ordinal, role, content_raw, content_rendered, locale, dir,
                    idempotency_key, created_at)
-                VALUES (?, ?, ?, 'USER', ?, ?, ?, ?, ?, now())
+                VALUES (?, ?, ?, 'USER', ?, ?, ?::locale_code, ?::direction, ?, now())
                 """, id, conversationId, ordinal, text, text, locale, dir,
                 isUuid(idempotencyKey) ? UUID.fromString(idempotencyKey) : null);
         db.update("UPDATE albaraka_ai.conversation SET turn_count = turn_count + 1, last_message_at = now() WHERE id = ?", conversationId);
@@ -61,7 +63,7 @@ public class JdbcConversationStore {
                   (id, conversation_id, ordinal, role, content_raw, content_rendered, locale, dir,
                    detected_intent, confidence, citations, needs_human, cached, degradation_step,
                    ttft_ms, latency_ms, tokens_in, tokens_out, created_at)
-                VALUES (?, ?, ?, 'ASSISTANT', ?, ?, ?, ?, ?, ?, ?::jsonb, ?, ?, 1, ?, ?, ?, ?, now())
+                VALUES (?, ?, ?, 'ASSISTANT', ?, ?, ?::locale_code, ?::direction, ?::intent_code, ?, ?::jsonb, ?, ?, 1, ?, ?, ?, ?, now())
                 """, id, conversationId, ordinal, e.answerMarkdown(), e.answerMarkdown(), e.language(), e.dir(),
                 intent, e.confidence(), citationsJson, e.needsHuman(), e.cached(), e.ttftMs(), e.latencyMs(),
                 0, 0);
@@ -75,7 +77,7 @@ public class JdbcConversationStore {
                   (id, conversation_id, ordinal, role, content_raw, content_rendered, locale, dir,
                    detected_intent, no_answer, no_answer_reason, refusal_code, citations,
                    degradation_step, tokens_in, tokens_out, created_at)
-                VALUES (?, ?, ?, 'ASSISTANT', ?, ?, ?, ?, ?, true, ?, ?, ?::jsonb, 1, ?, ?, now())
+                VALUES (?, ?, ?, 'ASSISTANT', ?, ?, ?::locale_code, ?::direction, ?::intent_code, true, ?, ?, ?::refusal_code, ?::jsonb, 1, ?, ?, now())
                 """, id, conversationId, ordinal, e.title() + "\n\n" + e.body(), e.title() + "\n\n" + e.body(),
                 e.locale(), Locales.dirOf(e.locale()), intent, "refused", e.refusalCode(),
                 citationsJson, 0, 0);
@@ -88,7 +90,7 @@ public class JdbcConversationStore {
                 INSERT INTO albaraka_ai.guardrail_event
                   (id, message_id, policy_code, policy_version, decision, severity, violation_code,
                    evidence, refusal_code, stage, created_at)
-                VALUES (?, ?, ?, 1, ?, ?, ?, ?, ?, ?, now())
+                VALUES (?, ?, ?::guardrail_policy_code, 1, ?::guardrail_decision, ?::guardrail_severity, ?, ?, ?::refusal_code, ?, now())
                 """, UUID.randomUUID(), messageId, policyCode, decision, severity, violationCode,
                 evidence, refusalCode, stage);
     }
@@ -106,7 +108,7 @@ public class JdbcConversationStore {
         db.update("""
                 INSERT INTO albaraka_ai.retrieval_trace
                   (id, message_id, message_created_at, intent, assembled_context, best_score, outcome, created_at)
-                VALUES (?, ?, now(), ?, ?::jsonb, ?, ?, now())
+                VALUES (?, ?, now(), ?::intent_code, ?::jsonb, ?, ?, now())
                 """, UUID.randomUUID(), messageId, intent, contextJson, bestScore, outcome);
     }
 
@@ -115,7 +117,7 @@ public class JdbcConversationStore {
         db.update("""
                 INSERT INTO albaraka_ai.llm_call_log
                   (id, message_id, purpose, provider, model_id, status, tokens_in, tokens_out, latency_ms, cost_usd, created_at)
-                VALUES (?, ?, ?, ?, ?, 'OK', ?, ?, ?, ?, now())
+                VALUES (?, ?, ?::model_role, ?::provider_code, ?, 'OK', ?, ?, ?, ?, now())
                 """, UUID.randomUUID(), messageId, purpose, provider, modelId, tokensIn, tokensOut, latencyMs, costUsd);
     }
 

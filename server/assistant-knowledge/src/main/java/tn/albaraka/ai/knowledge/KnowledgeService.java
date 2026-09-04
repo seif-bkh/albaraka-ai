@@ -48,14 +48,14 @@ public class KnowledgeService {
             db.update("""
                     INSERT INTO albaraka_ai.document
                       (id, collection_id, title_fr, title_ar, title_en, source_lang, lifecycle_state, created_by)
-                    VALUES (?, ?, ?, ?, ?, ?, 'DRAFT', ?)
+                    VALUES (?, ?, ?, ?, ?, ?::locale_code, 'DRAFT', ?)
                     """, docId, collectionId, titleFr, titleAr, titleEn, lang, actor);
         }
         UUID versionId = UUID.randomUUID();
         db.update("""
                 INSERT INTO albaraka_ai.document_version
                   (id, document_id, version_no, body_text, body_lang, state, body_sha256, created_by)
-                VALUES (?, ?, 1, ?, ?, 'DRAFT', ?, ?)
+                VALUES (?, ?, 1, ?, ?::locale_code, 'DRAFT', ?, ?)
                 """, versionId, docId, bodyText, lang, sha256(bodyText), actor);
 
         int ordinal = 0;
@@ -67,7 +67,7 @@ public class KnowledgeService {
                     INSERT INTO albaraka_ai.chunk
                       (id, document_version_id, ordinal, content, heading_path, token_count, lang,
                        normalized_text, content_sha256, embedding_status)
-                    VALUES (?, ?, ?, ?, ARRAY['DRAFT'], ?, ?, ?, ?, 'PENDING')
+                    VALUES (?, ?, ?, ?, ARRAY['DRAFT'], ?, ?::locale_code, ?, ?, 'PENDING')
                     """, chunkId, versionId, ordinal, p, tokenCount(p), lang, p, sha256(p));
         }
         return new NewDocument(docId, versionId, ordinal);
