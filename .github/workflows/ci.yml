@@ -285,7 +285,7 @@ jobs:
           [ "$ok" = "1" ] || { echo "chat SSE smoke failed — no answer event" | tee -a /tmp/devstack-smoke.txt; exit 1; }
       - name: Smoke — SPA shells via the edge (frontoffice, admin, module MIME)
         run: |
-          {
+          (
             set -euo pipefail
             # The edge/web containers only start after server AND keycloak are healthy
             # (depends_on conditions), so the checks below must not race the boot — poll
@@ -317,13 +317,11 @@ jobs:
             ctype2=$(curl -sfI "http://localhost:9000/admin/$ajs" | grep -i '^content-type:' | tr -d '\r')
             echo "$ctype2" | grep -qi "javascript" || { echo "bad admin module MIME: $ctype2"; exit 1; }
             echo "admin OK ($ajs → $ctype2)"
-          } > /tmp/devstack-spa.txt 2>&1
+          ) > /tmp/devstack-spa.txt 2>&1
           rc=$?
           cat /tmp/devstack-spa.txt
-          if [ "$rc" -ne 0 ]; then
-            echo "── SPA smoke output (failure) ──" >> /tmp/devstack-smoke.txt
-            cat /tmp/devstack-spa.txt >> /tmp/devstack-smoke.txt
-          fi
+          echo "── SPA smoke output (rc=$rc) ──" >> /tmp/devstack-smoke.txt
+          cat /tmp/devstack-spa.txt >> /tmp/devstack-smoke.txt
           exit $rc
       - name: Show containers
         if: always()
