@@ -41,11 +41,19 @@ export class App {
 
   constructor() {
     localStorage.setItem('al-mouchir-device', this.deviceId);
+    this.loadConfig();
+  }
+
+  private loadConfig() {
     getConfig().then((cfg) => {
       this.identity.set(cfg.identity || {});
       this.demoKb.set(!!cfg.demoKb?.demo);
-      this.connected.set(true);
-      this.suggested.set(cfg.suggestedQuestions?.[this.locale()] || []);
+      this.connected.set(!!cfg.enabled);
+      // AssistantConfig.suggestedQuestions is an array of {id, locale, text, intent}
+      // (specs/openapi.yaml) — pick the current locale's questions.
+      const questions: { locale?: string; text?: string }[] = cfg.suggestedQuestions || [];
+      this.suggested.set(questions.filter((q) => q.locale === this.locale())
+          .map((q) => q.text || '').filter(Boolean));
     }).catch(() => {});
   }
 
@@ -53,7 +61,8 @@ export class App {
     this.locale.set(l);
     document.documentElement.lang = l;
     document.documentElement.dir = dirOf(l);
-    getConfig().then((cfg) => this.suggested.set(cfg.suggestedQuestions?.[l] || [])).catch(() => {});
+    this.suggested.set([]);
+    this.loadConfig();
   }
 
   ask(q?: string) {
@@ -72,7 +81,7 @@ export class App {
     };
 
     streamChat(
-      text, this.locale(), this.deviceId, clientId,
+      text, this.locale(), clientId,
       (ev: SseEvent) => this.onEvent(ev, patch),
       undefined
     ).catch((e) => {
