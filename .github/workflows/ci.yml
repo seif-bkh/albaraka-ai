@@ -249,7 +249,9 @@ jobs:
             out=$(curl -sfN -m 60 -X POST http://localhost:9000/api/v1/chat \
               -H 'Content-Type: application/json' \
               -d '{"text":"comment ouvrir un compte courant ?","locale":"fr-FR"}' || true)
-            if echo "$out" | grep -q 'event: answer'; then ok=1; echo "$out" | head -c 1200; break; fi
+            # Spring's SSE encoder writes 'event:answer' without a space (valid per the SSE spec),
+            # so match the name loosely instead of the exact 'event: answer' spelling.
+            if echo "$out" | grep -qE '^event:[[:space:]]*answer'; then ok=1; echo "$out" | head -c 1200; break; fi
             { echo "== attempt $i/12 — no answer; received $(printf '%s' "$out" | wc -c) bytes via edge:"
               printf '%s' "$out" | head -c 700; echo
               echo "-- raw RAG probe (what the server receives):"

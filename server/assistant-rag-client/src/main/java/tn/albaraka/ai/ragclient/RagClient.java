@@ -75,8 +75,8 @@ public class RagClient {
                 case "accepted" -> new RagEvent.Accepted(text(n, "messageId"), text(n, "conversationId"),
                         text(n, "locale"), text(n, "dir"));
                 case "status" -> new RagEvent.Status(text(n, "stage"), text(n, "label"));
-                case "sources" -> new RagEvent.Sources(sources(n.path("sources")));
-                case "token" -> new RagEvent.Token(text(n, "token"));
+                case "sources" -> new RagEvent.Sources(citations(n.path("citations")));
+                case "token" -> new RagEvent.Token(text(n, "delta"));
                 case "answer" -> new RagEvent.Answer(text(n, "messageId"), text(n, "answerMarkdown"),
                         text(n, "language"), text(n, "dir"), n.path("confidence").asDouble(1.0),
                         sources(n.path("usedSources")), citations(n.path("citations")),
@@ -121,8 +121,11 @@ public class RagClient {
     private static List<RagEvent.Citation> citations(JsonNode arr) {
         List<RagEvent.Citation> out = new ArrayList<>();
         if (arr.isArray()) arr.forEach(x -> out.add(new RagEvent.Citation(
-                text(x, "documentId"), text(x, "title"), text(x, "url"),
-                x.path("score").isNumber() ? x.path("score").asDouble() : null, text(x, "locale"))));
+                text(x, "id"), text(x, "chunkId"), text(x, "documentId"), text(x, "documentTitle"),
+                text(x, "documentTitleLocale"), text(x, "collectionCode"), strings(x.path("headingPath")),
+                text(x, "excerpt"), text(x, "url"), text(x, "locale"),
+                text(x, "validFrom"), text(x, "validUntil"),
+                x.path("score").isNumber() ? x.path("score").asDouble() : null)));
         return out;
     }
 }

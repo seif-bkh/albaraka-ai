@@ -79,7 +79,7 @@ public class ChatController {
                             }
                         }
                         case RagEvent.Sources s -> store.saveRetrievalTrace(c.userMessageId(), "PRODUCT_QUESTION",
-                                write(s.sources()), bestScore(s), "ANSWERED");
+                                write(s.citations()), bestScore(s), "ANSWERED");
                         case RagEvent.Done d -> { /* usage is attributed on the answer frame */ }
                         default -> { }
                     }
@@ -108,7 +108,7 @@ public class ChatController {
     }
 
     private static double bestScore(RagEvent.Sources s) {
-        return s.sources().stream().mapToDouble(x -> x.score() == null ? 0.0 : x.score()).max().orElse(0.0);
+        return s.citations().stream().mapToDouble(x -> x.score() == null ? 0.0 : x.score()).max().orElse(0.0);
     }
 
     private static String modelOf(RagEvent.Answer a) {
