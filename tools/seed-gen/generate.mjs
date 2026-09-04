@@ -90,6 +90,39 @@ const bool = (v) => (v ? 'true' : 'false');
 const arr = (list) => (!list || !list.length ? `'{}'::text[]` : `ARRAY[${list.map(q).join(', ')}]::text[]`);
 const jb = (o) => `'${JSON.stringify(o).replace(/'/g, "''")}'::jsonb`;
 
+/**
+ * Resolves Spring-style `${NAME:default}` placeholders found in application.yaml sources at
+ * GENERATION time — the seed contract (file headers) says values are resolved at generation time
+ * and stored with their provenance, so a seeded row must never carry a raw placeholder. A default
+ * is parsed with JSON when possible so `true`/`300` seed as boolean/number, not strings. A
+ * placeholder WITHOUT a default is unresolvable and fails loudly instead of re-issuing a half
+ * resolved seed. Flyway would otherwise reject the SQL at migration time (its own `${...}`
+ * parser) — Boot 4 recalled this latent bug because migrations only started running now.
+ */
+function resolvePlaceholders(value) {
+  if (typeof value === 'string') {
+    // exact match: keep the resolved TYPE (boolean/number), because String.replace would coerce
+    const exact = value.match(/^\$\{([A-Z0-9_]+):(.*)\}$/);
+    if (exact) {
+      try { return JSON.parse(exact[2]); } catch { return exact[2]; }
+    }
+    return value.replace(/\$\{([A-Z0-9_]+):(.*)\}/g, (_m, key, def) => {
+      try { return JSON.parse(def); } catch { return def; }
+    });
+  }
+  if (Array.isArray(value)) return value.map(resolvePlaceholders);
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, resolvePlaceholders(v)]));
+  }
+  return value;
+}
+function assertNoRawPlaceholders(value, label) {
+  const s = JSON.stringify(value);
+  const found = s.match(/\$\{[^}]+\}/g);
+  if (found) throw new Error(`${label}: unresolved placeholder(s) ${found.join(', ')} would be stored in the database — resolve them in the generator, not in SQL`);
+  return value;
+}
+
 /** One INSERT per `per` rows: reviewable diffs without 500 separate statements. */
 function insert(table, columns, rows, per = 8) {
   if (!rows.length) return `-- (no rows)\n`;
@@ -630,11 +663,11 @@ function buildV902() {
     if (emitted && !(refusals.templates || []).some((t) => t.code === emitted)) {
       throw new Error(`V902: ${r.code} emits ${emitted}, which templates.refusals.yaml does not define`);
     }
-    const value = {
+    const value = assertNoRawPlaceholders(resolvePlaceholders({
       ...(params && typeof params === 'object' ? params : {}),
       _provenance: { register: 'docs/07 §6.1', paramsPath: r.paramsPath || null, catches: r.catches, emits: r.emits },
       ...(emitted ? { refusalCode: emitted } : {}),
-    };
+    }), `V902 ${r.code}`);
     return [
       q(uuidv5(`guardrail_policy:${r.code}:1`)), q(r.code), n(1), q(r.scope), q(r.severity), q(r.decision),
       bool(true), jb(value), q(r.tier), q('DRAFT'), q('flyway:V902__seed_policies'),
