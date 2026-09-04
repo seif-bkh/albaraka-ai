@@ -68,8 +68,9 @@ services:
   redis:
     image: redis:7.4-alpine
     command: ["redis-server", "--appendonly", "yes"]
-    ports:
-      - "6379:6379"
+    # no host ports: server/rag reach it at redis:6379 on the compose network (docs/12 §2.2 marks
+    # redis "—"); publishing 6379 is the classic developer-host failure — a local Redis daemon or
+    # another stack already holds the port and the container dies before it can start
     volumes:
       - redisdata:/data
     healthcheck:

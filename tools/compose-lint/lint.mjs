@@ -324,6 +324,7 @@ for (const f of ['application.yaml', 'application-dev.yaml', 'application-uat.ya
   if (r) {
     if (!JSON.stringify(r.command || []).includes('appendonly')) err('[R01] redis must run with --appendonly yes (cache + rate-limit state survives restarts)');
     if (!JSON.stringify(r.healthcheck?.test || []).includes('redis-cli') || !JSON.stringify(r.healthcheck?.test || []).includes('ping')) err('[R01] redis needs a redis-cli ping healthcheck');
+    if (JSON.stringify(r.ports || []).length > 2) err('[R02] redis must not publish host ports — server/rag reach it at redis:6379 on the compose network, and a published 6379 is the classic developer-host failure (a local Redis daemon already holds the port)');
   }
   const n = svc('nginx');
   if (n) {

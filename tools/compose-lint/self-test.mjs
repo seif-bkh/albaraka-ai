@@ -117,6 +117,7 @@ const MUTATIONS = [
 
   // ── R / N ───────────────────────────────────────────────────────────────────────────────────
   { id: 'M25 redis loses appendonly', run: (c) => { svc(c, 'redis').command = ['redis-server']; }, expect: '[R01] redis must run with --appendonly yes' },
+  { id: 'M35 redis republishes host ports (developer-host conflict class)', run: (c) => { svc(c, 'redis').ports = ['6379:6379']; }, expect: '[R02] redis must not publish host ports' },
   { id: 'M26 the nginx edge port leaves the documented dev origin', run: (c) => { svc(c, 'nginx').ports = ['8083:80']; }, expect: '[N01] nginx must publish 8082:80' },
   { id: 'M34 minio republishes host ports (developer-host conflict class)', run: (c) => { svc(c, 'minio').ports = ['9000:9000']; }, expect: '[I07] minio must not publish host ports' },
 
