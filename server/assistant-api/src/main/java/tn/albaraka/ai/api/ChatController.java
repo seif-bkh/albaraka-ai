@@ -1,5 +1,7 @@
 package tn.albaraka.ai.api;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import tools.jackson.databind.ObjectMapper;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.ServerSentEvent;
@@ -28,6 +30,8 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/chat")
 public class ChatController {
+
+    private static final Logger log = LoggerFactory.getLogger(ChatController.class);
 
     private final RagClient rag;
     private final JdbcConversationStore store;
@@ -87,7 +91,11 @@ public class ChatController {
                             .event(nameOf(e))
                             .data(write(e))
                             .build();
-                }).subscribeOn(Schedulers.boundedElastic());
+                }).doOnNext(sse -> log.debug("chat frame [{}] forwarded ({})", sse.event(),
+                        sse.data() == null ? 0 : sse.data().length()))
+                .doOnError(err -> log.warn("chat frame [{}] persistence/emission failed: {}",
+                        nameOf(e), err.toString()))
+                .subscribeOn(Schedulers.boundedElastic());
     }
 
     private static String nameOf(RagEvent e) {

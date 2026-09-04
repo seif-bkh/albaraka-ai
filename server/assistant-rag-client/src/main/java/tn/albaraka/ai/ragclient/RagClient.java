@@ -1,5 +1,7 @@
 package tn.albaraka.ai.ragclient;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 import org.springframework.core.ParameterizedTypeReference;
@@ -24,6 +26,8 @@ import java.util.Map;
  */
 @Component
 public class RagClient {
+
+    private static final Logger log = LoggerFactory.getLogger(RagClient.class);
 
     private static final ParameterizedTypeReference<ServerSentEvent<String>> SSE =
             new ParameterizedTypeReference<>() {};
@@ -53,7 +57,9 @@ public class RagClient {
                 })
                 .bodyValue(request)
                 .retrieve().bodyToFlux(SSE)
-                .mapNotNull(this::parse);
+                .mapNotNull(this::parse)
+                .doOnComplete(() -> log.debug("rag stream completed normally"))
+                .doOnError(err -> log.warn("rag stream errored: {}", err.toString()));
     }
 
     public Mono<Void> ingest(RagIngestRequest request) {
@@ -68,7 +74,12 @@ public class RagClient {
     }
 
     private RagEvent parse(ServerSentEvent<String> sse) {
-        if (sse.data() == null || sse.event() == null) return null;
+        if (sse.data() == null || sse.event() == null) {
+            log.debug("rag frame skipped (missing {}): {}", sse.event() == null ? "event" : "data",
+                    sse.data() == null ? sse.event() : sse.data().substring(0, Math.min(80, sse.data().length())));
+            return null;
+        }
+        log.debug("rag frame received: {} ({} bytes)", sse.event(), sse.data().length());
         try {
             JsonNode n = json.readTree(sse.data());
             return switch (sse.event()) {
@@ -93,6 +104,7 @@ public class RagClient {
                 default -> null;
             };
         } catch (Exception e) {
+            log.warn("rag frame [{}] failed to parse: {}", sse.event(), e.toString());
             return new RagEvent.Error("RAG_MALFORMED_FRAME", e.getMessage(), null);
         }
     }
