@@ -9,7 +9,10 @@
     <dependency><groupId>org.postgresql</groupId><artifactId>postgresql</artifactId></dependency>
     <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-data-jdbc</artifactId></dependency>
     <dependency><groupId>tn.albaraka.ai</groupId><artifactId>assistant-api</artifactId></dependency>
-    <dependency><groupId>org.flywaydb</groupId><artifactId>flyway-core</artifactId></dependency>
+    <!-- Boot 4 modularized auto-configuration: flyway-core alone is no longer wired (no
+         FlywayAutoConfiguration in spring-boot-autoconfigure); the starter is the contract.
+         The silent failure mode is a functional Flyway library that never runs a migration. -->
+    <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-flyway</artifactId></dependency>
     <dependency><groupId>org.flywaydb</groupId><artifactId>flyway-database-postgresql</artifactId></dependency>
   </dependencies>
   <build>

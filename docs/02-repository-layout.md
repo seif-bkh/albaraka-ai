@@ -112,7 +112,7 @@ Key starters in the server (model adapters intentionally absent — ADR-009):
 |---|---|
 | `spring-boot-starter-webflux` | WebClient to `rag-assistant` + SSE server responses |
 | `spring-boot-starter-oauth2-resource-server` | Keycloak JWT validation |
-| `spring-boot-starter-data-jdbc` / `flyway-core` | persistence & migrations |
+| `spring-boot-starter-data-jdbc` / `spring-boot-starter-flyway` (+ `flyway-database-postgresql`) | persistence & migrations — Boot 4 modularization requires the Flyway *starter*, not `flyway-core` alone (an unstarted Flyway is a silent no-op: no migration log line, no tables, no error) |
 | `spring-boot-starter-actuator` + `micrometer-tracing-bridge-otel` | health, metrics, tracing |
 | `spring-boot-starter-validation` | bean validation |
 | `spring-boot-starter-cache` + `data-redis` | conversation cache, rate-limit counters |
