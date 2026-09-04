@@ -187,15 +187,18 @@ jobs:
             docker compose --env-file .env -f deploy/docker-compose.yml --profile app ps -a 2>&1 | tee -a /tmp/devstack-boot.log
           fi
           exit $rc
-      - name: Wait for Spring liveness (max 9 min)
+      - name: Wait for Spring readiness (max 9 min — liveness alone races Flyway)
         run: |
           for i in $(seq 1 54); do
-            if curl -sf http://localhost:9002/actuator/health/liveness >/dev/null; then
-              echo "server UP after $((i*10))s"; exit 0
+            # readiness is DOWN until the datasource is wired; liveness goes UP long before
+            # Flyway has created the schema, so the chat smoke used to 500 on
+            # relation "albaraka_ai.conversation" does not exist
+            if curl -sf http://localhost:9002/actuator/health/readiness 2>/dev/null | grep -q '"status":"UP"'; then
+              echo "server READY after $((i*10))s"; exit 0
             fi
             sleep 10
           done
-          echo "server did not become healthy — dumping logs"; exit 1
+          echo "server did not become ready — dumping logs"; exit 1
       - name: Wait for RAG health (max 3 min)
         run: |
           for i in $(seq 1 18); do
@@ -207,10 +210,15 @@ jobs:
           echo "rag did not become healthy"; exit 1
       - name: Smoke — one chat SSE round-trip via the edge
         run: |
-          curl -sf -N -X POST http://localhost:9000/api/v1/chat \
-            -H 'Content-Type: application/json' \
-            -d '{"text":"comment ouvrir un compte courant ?","locale":"fr-FR"}' \
-            | head -c 1200
+          ok=0
+          for i in $(seq 1 12); do
+            out=$(curl -sfN -m 60 -X POST http://localhost:9000/api/v1/chat \
+              -H 'Content-Type: application/json' \
+              -d '{"text":"comment ouvrir un compte courant ?","locale":"fr-FR"}' || true)
+            if echo "$out" | grep -q 'event: answer'; then ok=1; echo "$out" | head -c 1200; break; fi
+            echo "chat smoke attempt $i/12 not answered yet — retrying"; sleep 5
+          done
+          [ "$ok" = "1" ] || { echo "chat SSE smoke failed — no answer event"; exit 1; }
       - name: Smoke — SPA shells via the edge (frontoffice, admin, module MIME)
         run: |
           set -euo pipefail
