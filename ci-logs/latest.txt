@@ -1,325 +1,325 @@
-## run 33860998980 — keycloak
+## run 33862354677 — keycloak
 keycloak-1  | WARNING: Hostname v1 options [hostname-port] are still in use, please review your configuration
 keycloak-1  | Updating the configuration and installing your custom providers, if any. Please wait.
-keycloak-1  | 2026-09-04 10:00:29,141 INFO  [io.quarkus.deployment.QuarkusAugmentor] (main) Quarkus augmentation completed in 7607ms
+keycloak-1  | 2026-09-04 10:16:53,213 INFO  [io.quarkus.deployment.QuarkusAugmentor] (main) Quarkus augmentation completed in 8053ms
 keycloak-1  | WARNING: Hostname v1 options [hostname-port] are still in use, please review your configuration
 keycloak-1  | Running the server in development mode. DO NOT use this configuration in production.
-keycloak-1  | 2026-09-04 10:00:31,384 INFO  [org.keycloak.url.HostnameV2ProviderFactory] (main) If hostname is specified, hostname-strict is effectively ignored
-keycloak-1  | 2026-09-04 10:00:32,594 INFO  [org.infinispan.CONTAINER] (main) ISPN000974: Virtual threads support: enabled
-keycloak-1  | 2026-09-04 10:00:33,521 INFO  [org.hibernate.orm.jdbc.batch] (JPA Startup Thread) HHH100501: Automatic JDBC statement batching enabled (maximum batch size 32)
-keycloak-1  | 2026-09-04 10:00:34,686 INFO  [org.keycloak.quarkus.runtime.storage.database.liquibase.QuarkusJpaUpdaterProvider] (main) Initializing database schema. Using changelog META-INF/jpa-changelog-master.xml
-keycloak-1  | 2026-09-04 10:00:41,321 INFO  [org.infinispan.CONTAINER] (main) ISPN000556: Starting user marshaller 'org.infinispan.commons.marshall.ImmutableProtoStreamMarshaller'
-keycloak-1  | 2026-09-04 10:00:41,663 INFO  [org.keycloak.connections.infinispan.DefaultInfinispanConnectionProviderFactory] (main) Node name: node_562567, Site name: null
-keycloak-1  | 2026-09-04 10:00:41,820 INFO  [org.keycloak.quarkus.runtime.storage.database.jpa.DatabaseIndexChecker] (db-index-checker) Running database index checker
-keycloak-1  | 2026-09-04 10:00:41,870 INFO  [org.keycloak.models.workflow.WorkflowsEventListenerFactory] (main) Workflow runner task scheduled: next execution at 22:00:41, then every PT12H
-keycloak-1  | 2026-09-04 10:00:41,891 INFO  [org.keycloak.exportimport.dir.DirImportProvider] (main) Importing from directory /opt/keycloak/bin/../data/import
-keycloak-1  | 2026-09-04 10:00:41,927 INFO  [org.keycloak.services] (main) KC-SERVICES0050: Initializing master realm
-keycloak-1  | 2026-09-04 10:00:43,644 INFO  [org.keycloak.services] (main) KC-SERVICES0030: Full model import requested. Strategy: IGNORE_EXISTING
-keycloak-1  | 2026-09-04 10:00:44,384 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
-keycloak-1  | 2026-09-04 10:00:44,390 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'profile' doesn't exist. Ignoring
-keycloak-1  | 2026-09-04 10:00:44,499 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
-keycloak-1  | 2026-09-04 10:00:44,510 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'profile' doesn't exist. Ignoring
-keycloak-1  | 2026-09-04 10:00:44,562 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'webauthn' doesn't exist. Ignoring
-keycloak-1  | 2026-09-04 10:00:44,565 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
-keycloak-1  | 2026-09-04 10:00:44,569 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'profile' doesn't exist. Ignoring
-keycloak-1  | 2026-09-04 10:00:44,572 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'email' doesn't exist. Ignoring
-keycloak-1  | 2026-09-04 10:00:44,575 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'roles' doesn't exist. Ignoring
-keycloak-1  | 2026-09-04 10:00:44,613 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
-keycloak-1  | 2026-09-04 10:00:45,653 INFO  [org.keycloak.exportimport.util.ImportUtils] (main) Realm 'albaraka' imported
-keycloak-1  | 2026-09-04 10:00:45,659 INFO  [org.keycloak.services] (main) KC-SERVICES0032: Import finished successfully
-keycloak-1  | 2026-09-04 10:00:45,744 INFO  [org.keycloak.services] (main) KC-SERVICES0077: Created temporary admin user with username admin
-keycloak-1  | 2026-09-04 10:00:45,916 INFO  [org.keycloak.services.resources.KeycloakApplication] (main) Bootstrap completed in 12.281000 seconds
-keycloak-1  | 2026-09-04 10:00:46,015 INFO  [io.quarkus] (main) Keycloak 26.6.3 on JVM (powered by Quarkus 3.33.2) started in 16.696s. Listening on: http://0.0.0.0:8080. Management interface listening on http://0.0.0.0:9000.
-keycloak-1  | 2026-09-04 10:00:46,015 INFO  [io.quarkus] (main) Profile dev activated. 
-keycloak-1  | 2026-09-04 10:00:46,015 INFO  [io.quarkus] (main) Installed features: [agroal, cdi, hibernate-orm, jdbc-postgresql, keycloak, micrometer, narayana-jta, opentelemetry, reactive-routes, rest, rest-jackson, smallrye-context-propagation, smallrye-health, vertx]
+keycloak-1  | 2026-09-04 10:16:55,639 INFO  [org.keycloak.url.HostnameV2ProviderFactory] (main) If hostname is specified, hostname-strict is effectively ignored
+keycloak-1  | 2026-09-04 10:16:56,986 INFO  [org.infinispan.CONTAINER] (main) ISPN000974: Virtual threads support: enabled
+keycloak-1  | 2026-09-04 10:16:58,042 INFO  [org.hibernate.orm.jdbc.batch] (JPA Startup Thread) HHH100501: Automatic JDBC statement batching enabled (maximum batch size 32)
+keycloak-1  | 2026-09-04 10:16:59,372 INFO  [org.keycloak.quarkus.runtime.storage.database.liquibase.QuarkusJpaUpdaterProvider] (main) Initializing database schema. Using changelog META-INF/jpa-changelog-master.xml
+keycloak-1  | 2026-09-04 10:17:05,824 INFO  [org.infinispan.CONTAINER] (main) ISPN000556: Starting user marshaller 'org.infinispan.commons.marshall.ImmutableProtoStreamMarshaller'
+keycloak-1  | 2026-09-04 10:17:06,200 INFO  [org.keycloak.connections.infinispan.DefaultInfinispanConnectionProviderFactory] (main) Node name: node_368564, Site name: null
+keycloak-1  | 2026-09-04 10:17:06,349 INFO  [org.keycloak.quarkus.runtime.storage.database.jpa.DatabaseIndexChecker] (db-index-checker) Running database index checker
+keycloak-1  | 2026-09-04 10:17:06,351 INFO  [org.keycloak.models.workflow.WorkflowsEventListenerFactory] (main) Workflow runner task scheduled: next execution at 22:17:06, then every PT12H
+keycloak-1  | 2026-09-04 10:17:06,512 INFO  [org.keycloak.exportimport.dir.DirImportProvider] (main) Importing from directory /opt/keycloak/bin/../data/import
+keycloak-1  | 2026-09-04 10:17:06,533 INFO  [org.keycloak.services] (main) KC-SERVICES0050: Initializing master realm
+keycloak-1  | 2026-09-04 10:17:08,484 INFO  [org.keycloak.services] (main) KC-SERVICES0030: Full model import requested. Strategy: IGNORE_EXISTING
+keycloak-1  | 2026-09-04 10:17:09,207 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
+keycloak-1  | 2026-09-04 10:17:09,220 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'profile' doesn't exist. Ignoring
+keycloak-1  | 2026-09-04 10:17:09,346 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
+keycloak-1  | 2026-09-04 10:17:09,353 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'profile' doesn't exist. Ignoring
+keycloak-1  | 2026-09-04 10:17:09,422 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'webauthn' doesn't exist. Ignoring
+keycloak-1  | 2026-09-04 10:17:09,429 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
+keycloak-1  | 2026-09-04 10:17:09,436 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'profile' doesn't exist. Ignoring
+keycloak-1  | 2026-09-04 10:17:09,442 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'email' doesn't exist. Ignoring
+keycloak-1  | 2026-09-04 10:17:09,449 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'roles' doesn't exist. Ignoring
+keycloak-1  | 2026-09-04 10:17:09,514 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
+keycloak-1  | 2026-09-04 10:17:11,092 INFO  [org.keycloak.exportimport.util.ImportUtils] (main) Realm 'albaraka' imported
+keycloak-1  | 2026-09-04 10:17:11,099 INFO  [org.keycloak.services] (main) KC-SERVICES0032: Import finished successfully
+keycloak-1  | 2026-09-04 10:17:11,214 INFO  [org.keycloak.services] (main) KC-SERVICES0077: Created temporary admin user with username admin
+keycloak-1  | 2026-09-04 10:17:11,366 INFO  [org.keycloak.services.resources.KeycloakApplication] (main) Bootstrap completed in 13.195000 seconds
+keycloak-1  | 2026-09-04 10:17:11,468 INFO  [io.quarkus] (main) Keycloak 26.6.3 on JVM (powered by Quarkus 3.33.2) started in 18.087s. Listening on: http://0.0.0.0:8080. Management interface listening on http://0.0.0.0:9000.
+keycloak-1  | 2026-09-04 10:17:11,468 INFO  [io.quarkus] (main) Profile dev activated. 
+keycloak-1  | 2026-09-04 10:17:11,469 INFO  [io.quarkus] (main) Installed features: [agroal, cdi, hibernate-orm, jdbc-postgresql, keycloak, micrometer, narayana-jta, opentelemetry, reactive-routes, rest, rest-jackson, smallrye-context-propagation, smallrye-health, vertx]
 
 ## server (Flyway, boot, chat errors)
-server-1  | 2026-09-04T10:00:51.868Z  INFO 1 --- [albaraka-assistant] [           main] t.a.ai.AlBarakaAssistantApplication      : Starting AlBarakaAssistantApplication v0.1.0-SNAPSHOT using Java 21.0.12 with PID 1 (/app/app.jar started by app in /app)
-server-1  | 2026-09-04T10:00:51.872Z DEBUG 1 --- [albaraka-assistant] [           main] t.a.ai.AlBarakaAssistantApplication      : Running with Spring Boot v4.1.0, Spring v7.0.8
-server-1  | 2026-09-04T10:00:51.873Z  INFO 1 --- [albaraka-assistant] [           main] t.a.ai.AlBarakaAssistantApplication      : The following 1 profile is active: "dev"
-server-1  | 2026-09-04T10:00:52.828Z  INFO 1 --- [albaraka-assistant] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JDBC repositories in DEFAULT mode.
-server-1  | 2026-09-04T10:00:52.847Z  INFO 1 --- [albaraka-assistant] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 12 ms. Found 0 JDBC repository interfaces.
-server-1  | 2026-09-04T10:00:53.705Z  INFO 1 --- [albaraka-assistant] [           main] com.zaxxer.hikari.HikariDataSource       : assistant-pool - Starting...
-server-1  | 2026-09-04T10:00:53.904Z  INFO 1 --- [albaraka-assistant] [           main] com.zaxxer.hikari.pool.HikariPool        : assistant-pool - Added connection org.postgresql.jdbc.PgConnection@520a95ff
-server-1  | 2026-09-04T10:00:53.905Z  INFO 1 --- [albaraka-assistant] [           main] com.zaxxer.hikari.HikariDataSource       : assistant-pool - Start completed.
-server-1  | 2026-09-04T10:00:53.928Z  INFO 1 --- [albaraka-assistant] [           main] org.flywaydb.core.FlywayExecutor         : Database: jdbc:postgresql://postgres:5432/albaraka_ai (PostgreSQL 17.8)
-server-1  | 2026-09-04T10:00:54.051Z  INFO 1 --- [albaraka-assistant] [           main] o.f.c.i.s.JdbcTableSchemaHistory         : Schema history table "public"."flyway_schema_history" does not exist yet
-server-1  | 2026-09-04T10:00:54.055Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbValidate     : Successfully validated 6 migrations (execution time 00:00.056s)
-server-1  | 2026-09-04T10:00:54.070Z  INFO 1 --- [albaraka-assistant] [           main] o.f.c.i.s.JdbcTableSchemaHistory         : Creating Schema History table "public"."flyway_schema_history" ...
-server-1  | 2026-09-04T10:00:54.119Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Current version of schema "public": << Empty Schema >>
-server-1  | 2026-09-04T10:00:54.216Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "1 - baseline schema"
-server-1  | 2026-09-04T10:00:54.442Z  INFO 1 --- [albaraka-assistant] [           main] o.f.c.i.s.DefaultSqlScriptExecutor       : +----------------------------+
+server-1  | 2026-09-04T10:17:15.038Z  INFO 1 --- [albaraka-assistant] [           main] t.a.ai.AlBarakaAssistantApplication      : Starting AlBarakaAssistantApplication v0.1.0-SNAPSHOT using Java 21.0.12 with PID 1 (/app/app.jar started by app in /app)
+server-1  | 2026-09-04T10:17:15.042Z DEBUG 1 --- [albaraka-assistant] [           main] t.a.ai.AlBarakaAssistantApplication      : Running with Spring Boot v4.1.0, Spring v7.0.8
+server-1  | 2026-09-04T10:17:15.042Z  INFO 1 --- [albaraka-assistant] [           main] t.a.ai.AlBarakaAssistantApplication      : The following 1 profile is active: "dev"
+server-1  | 2026-09-04T10:17:16.035Z  INFO 1 --- [albaraka-assistant] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JDBC repositories in DEFAULT mode.
+server-1  | 2026-09-04T10:17:16.057Z  INFO 1 --- [albaraka-assistant] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 15 ms. Found 0 JDBC repository interfaces.
+server-1  | 2026-09-04T10:17:17.065Z  INFO 1 --- [albaraka-assistant] [           main] com.zaxxer.hikari.HikariDataSource       : assistant-pool - Starting...
+server-1  | 2026-09-04T10:17:17.307Z  INFO 1 --- [albaraka-assistant] [           main] com.zaxxer.hikari.pool.HikariPool        : assistant-pool - Added connection org.postgresql.jdbc.PgConnection@7de5871d
+server-1  | 2026-09-04T10:17:17.308Z  INFO 1 --- [albaraka-assistant] [           main] com.zaxxer.hikari.HikariDataSource       : assistant-pool - Start completed.
+server-1  | 2026-09-04T10:17:17.331Z  INFO 1 --- [albaraka-assistant] [           main] org.flywaydb.core.FlywayExecutor         : Database: jdbc:postgresql://postgres:5432/albaraka_ai (PostgreSQL 17.8)
+server-1  | 2026-09-04T10:17:17.435Z  INFO 1 --- [albaraka-assistant] [           main] o.f.c.i.s.JdbcTableSchemaHistory         : Schema history table "public"."flyway_schema_history" does not exist yet
+server-1  | 2026-09-04T10:17:17.439Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbValidate     : Successfully validated 6 migrations (execution time 00:00.044s)
+server-1  | 2026-09-04T10:17:17.454Z  INFO 1 --- [albaraka-assistant] [           main] o.f.c.i.s.JdbcTableSchemaHistory         : Creating Schema History table "public"."flyway_schema_history" ...
+server-1  | 2026-09-04T10:17:17.512Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Current version of schema "public": << Empty Schema >>
+server-1  | 2026-09-04T10:17:17.613Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "1 - baseline schema"
+server-1  | 2026-09-04T10:17:17.819Z  INFO 1 --- [albaraka-assistant] [           main] o.f.c.i.s.DefaultSqlScriptExecutor       : +----------------------------+
 server-1  | | fn_ensure_partitions_ahead |
 server-1  | +----------------------------+
 server-1  | |                            |
 server-1  | +----------------------------+
 server-1  | 
-server-1  | 2026-09-04T10:00:54.476Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "2 - demo seed"
-server-1  | 2026-09-04T10:00:54.533Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "900 - seed glossary"
-server-1  | 2026-09-04T10:00:54.580Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "901 - seed prompts"
-server-1  | 2026-09-04T10:00:54.609Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "902 - seed policies"
-server-1  | 2026-09-04T10:00:54.677Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "903 - seed dialect"
-server-1  | 2026-09-04T10:00:54.712Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Successfully applied 6 migrations to schema "public", now at version v903 (execution time 00:00.333s)
-server-1  | 2026-09-04T10:00:55.260Z DEBUG 1 --- [albaraka-assistant] [           main] s.w.r.r.m.a.RequestMappingHandlerMapping : 21 mappings in 'requestMappingHandlerMapping'
-server-1  | 2026-09-04T10:00:55.365Z DEBUG 1 --- [albaraka-assistant] [           main] o.s.w.r.handler.SimpleUrlHandlerMapping  : Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
-server-1  | 2026-09-04T10:00:55.479Z  INFO 1 --- [albaraka-assistant] [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 6 endpoints beneath base path '/actuator'
-server-1  | 2026-09-04T10:00:55.520Z DEBUG 1 --- [albaraka-assistant] [           main] o.s.w.r.r.m.a.ControllerMethodResolver   : ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 @ExceptionHandler
-server-1  | 2026-09-04T10:00:55.543Z DEBUG 1 --- [albaraka-assistant] [           main] o.s.w.s.adapter.HttpWebHandlerAdapter    : enableLoggingRequestDetails='false': form data and headers will be masked to prevent unsafe logging of potentially sensitive data
-server-1  | 2026-09-04T10:00:55.856Z  INFO 1 --- [albaraka-assistant] [           main] o.s.boot.reactor.netty.NettyWebServer    : Netty started on port 8080 (http)
-server-1  | 2026-09-04T10:00:55.870Z  INFO 1 --- [albaraka-assistant] [           main] t.a.ai.AlBarakaAssistantApplication      : Started AlBarakaAssistantApplication in 4.526 seconds (process running for 5.059)
-server-1  | 2026-09-04T10:00:56.024Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] o.s.w.s.adapter.HttpWebHandlerAdapter    : [cbe09c1c-1] HTTP GET "/actuator/health/liveness"
-server-1  | 2026-09-04T10:00:56.085Z DEBUG 1 --- [albaraka-assistant] [     parallel-1] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
-server-1  | 2026-09-04T10:00:56.140Z DEBUG 1 --- [albaraka-assistant] [oundedElastic-2] .s.w.r.r.m.a.ResponseEntityResultHandler : [cbe09c1c-1] Using 'application/vnd.spring-boot.actuator.v3+json' given [*/*] and supported [application/vnd.spring-boot.actuator.v3+json, application/vnd.spring-boot.actuator.v2+json, application/json]
-server-1  | 2026-09-04T10:00:56.141Z DEBUG 1 --- [albaraka-assistant] [oundedElastic-2] .s.w.r.r.m.a.ResponseEntityResultHandler : [cbe09c1c-1] 0..1 [org.springframework.boot.health.actuate.endpoint.CompositeHealthDescriptor]
-server-1  | 2026-09-04T10:00:56.154Z DEBUG 1 --- [albaraka-assistant] [oundedElastic-2] org.springframework.web.HttpLogging      : [cbe09c1c-1] Encoding [org.springframework.boot.health.actuate.endpoint.CompositeHealthDescriptor@68b0320b]
-server-1  | 2026-09-04T10:00:56.206Z DEBUG 1 --- [albaraka-assistant] [oundedElastic-2] o.s.w.s.adapter.HttpWebHandlerAdapter    : [cbe09c1c-1] Completed 200 OK
-server-1  | 2026-09-04T10:00:57.151Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.s.adapter.HttpWebHandlerAdapter    : [f3023ac4-2] HTTP GET "/actuator/health/readiness"
-server-1  | 2026-09-04T10:00:57.152Z DEBUG 1 --- [albaraka-assistant] [     parallel-2] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
-server-1  | 2026-09-04T10:00:57.157Z DEBUG 1 --- [albaraka-assistant] [oundedElastic-5] .s.w.r.r.m.a.ResponseEntityResultHandler : [f3023ac4-2] Using 'application/vnd.spring-boot.actuator.v3+json' given [*/*] and supported [application/vnd.spring-boot.actuator.v3+json, application/vnd.spring-boot.actuator.v2+json, application/json]
-server-1  | 2026-09-04T10:00:57.158Z DEBUG 1 --- [albaraka-assistant] [oundedElastic-5] .s.w.r.r.m.a.ResponseEntityResultHandler : [f3023ac4-2] 0..1 [org.springframework.boot.health.actuate.endpoint.CompositeHealthDescriptor]
-server-1  | 2026-09-04T10:00:57.158Z DEBUG 1 --- [albaraka-assistant] [oundedElastic-5] org.springframework.web.HttpLogging      : [f3023ac4-2] Encoding [org.springframework.boot.health.actuate.endpoint.CompositeHealthDescriptor@5f8edf91]
-server-1  | 2026-09-04T10:00:57.160Z DEBUG 1 --- [albaraka-assistant] [oundedElastic-5] o.s.w.s.adapter.HttpWebHandlerAdapter    : [f3023ac4-2] Completed 200 OK
-server-1  | 2026-09-04T10:00:58.694Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.s.adapter.HttpWebHandlerAdapter    : [230a123c-3] HTTP POST "/api/v1/chat"
-server-1  | 2026-09-04T10:00:58.696Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
-server-1  | 2026-09-04T10:00:58.699Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] s.w.r.r.m.a.RequestMappingHandlerMapping : [230a123c-3] Mapped to tn.albaraka.ai.api.ChatController#chat(ChatRequest)
-server-1  | 2026-09-04T10:00:58.700Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] .r.m.a.RequestBodyMethodArgumentResolver : [230a123c-3] Content-Type:application/json
-server-1  | 2026-09-04T10:00:58.702Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] .r.m.a.RequestBodyMethodArgumentResolver : [230a123c-3] 0..1 [tn.albaraka.ai.api.ChatController$ChatRequest]
-server-1  | 2026-09-04T10:00:58.722Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] org.springframework.web.HttpLogging      : [230a123c-3] Decoded [ChatRequest[text=comment ouvrir un compte courant ?, locale=fr-FR, clientId=null, deviceId=null, con (truncated)...]
-server-1  | 2026-09-04T10:00:58.724Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [230a123c-3] Using 'text/event-stream' given [*/*] and supported [text/event-stream]
-server-1  | 2026-09-04T10:00:58.724Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [230a123c-3] 0..N [org.springframework.http.codec.ServerSentEvent<java.lang.String>]
-server-1  | 2026-09-04T10:00:58.780Z DEBUG 1 --- [albaraka-assistant] [oundedElastic-8] o.s.w.r.f.client.ExchangeFunctions       : [2036dce6] HTTP POST http://rag-assistant:8000/v1/rag/chat
-server-1  | 2026-09-04T10:00:58.922Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] org.springframework.web.HttpLogging      : [2036dce6] Encoding [RagChatRequest[text=comment ouvrir un compte courant ?, context={max_classification=PUBLIC, audience (truncated)...]
-server-1  | 2026-09-04T10:00:58.952Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] o.s.w.r.f.client.ExchangeFunctions       : [2036dce6] [7cb0179a-1] Response 200 OK
-server-1  | 2026-09-04T10:00:59.041Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.s.adapter.HttpWebHandlerAdapter    : [230a123c-3] Completed 200 OK
-server-1  | 2026-09-04T10:01:04.072Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.s.adapter.HttpWebHandlerAdapter    : [4f3716ca-4] HTTP POST "/api/v1/chat"
-server-1  | 2026-09-04T10:01:04.074Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
-server-1  | 2026-09-04T10:01:04.076Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] s.w.r.r.m.a.RequestMappingHandlerMapping : [4f3716ca-4] Mapped to tn.albaraka.ai.api.ChatController#chat(ChatRequest)
-server-1  | 2026-09-04T10:01:04.076Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] .r.m.a.RequestBodyMethodArgumentResolver : [4f3716ca-4] Content-Type:application/json
-server-1  | 2026-09-04T10:01:04.076Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] .r.m.a.RequestBodyMethodArgumentResolver : [4f3716ca-4] 0..1 [tn.albaraka.ai.api.ChatController$ChatRequest]
-server-1  | 2026-09-04T10:01:04.077Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] org.springframework.web.HttpLogging      : [4f3716ca-4] Decoded [ChatRequest[text=comment ouvrir un compte courant ?, locale=fr-FR, clientId=null, deviceId=null, con (truncated)...]
-server-1  | 2026-09-04T10:01:04.077Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [4f3716ca-4] Using 'text/event-stream' given [*/*] and supported [text/event-stream]
-server-1  | 2026-09-04T10:01:04.078Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [4f3716ca-4] 0..N [org.springframework.http.codec.ServerSentEvent<java.lang.String>]
-server-1  | 2026-09-04T10:01:04.082Z DEBUG 1 --- [albaraka-assistant] [undedElastic-80] o.s.w.r.f.client.ExchangeFunctions       : [5d997ed2] HTTP POST http://rag-assistant:8000/v1/rag/chat
-server-1  | 2026-09-04T10:01:04.085Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] org.springframework.web.HttpLogging      : [5d997ed2] Encoding [RagChatRequest[text=comment ouvrir un compte courant ?, context={max_classification=PUBLIC, audience (truncated)...]
-server-1  | 2026-09-04T10:01:04.090Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] o.s.w.r.f.client.ExchangeFunctions       : [5d997ed2] [7014b1b0-1] Response 200 OK
-server-1  | 2026-09-04T10:01:04.117Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.s.adapter.HttpWebHandlerAdapter    : [4f3716ca-4] Completed 200 OK
-server-1  | 2026-09-04T10:01:06.260Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.s.adapter.HttpWebHandlerAdapter    : [f59ea6cb-5] HTTP GET "/actuator/health/liveness"
-server-1  | 2026-09-04T10:01:06.261Z DEBUG 1 --- [albaraka-assistant] [     parallel-1] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
-server-1  | 2026-09-04T10:01:06.265Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-151] .s.w.r.r.m.a.ResponseEntityResultHandler : [f59ea6cb-5] Using 'application/vnd.spring-boot.actuator.v3+json' given [*/*] and supported [application/vnd.spring-boot.actuator.v3+json, application/vnd.spring-boot.actuator.v2+json, application/json]
-server-1  | 2026-09-04T10:01:06.265Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-151] .s.w.r.r.m.a.ResponseEntityResultHandler : [f59ea6cb-5] 0..1 [org.springframework.boot.health.actuate.endpoint.CompositeHealthDescriptor]
-server-1  | 2026-09-04T10:01:06.265Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-151] org.springframework.web.HttpLogging      : [f59ea6cb-5] Encoding [org.springframework.boot.health.actuate.endpoint.CompositeHealthDescriptor@54894bff]
-server-1  | 2026-09-04T10:01:06.266Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-151] o.s.w.s.adapter.HttpWebHandlerAdapter    : [f59ea6cb-5] Completed 200 OK
-server-1  | 2026-09-04T10:01:09.142Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.s.adapter.HttpWebHandlerAdapter    : [651ddb61-6] HTTP POST "/api/v1/chat"
-server-1  | 2026-09-04T10:01:09.143Z DEBUG 1 --- [albaraka-assistant] [     parallel-2] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
-server-1  | 2026-09-04T10:01:09.145Z DEBUG 1 --- [albaraka-assistant] [     parallel-2] s.w.r.r.m.a.RequestMappingHandlerMapping : [651ddb61-6] Mapped to tn.albaraka.ai.api.ChatController#chat(ChatRequest)
-server-1  | 2026-09-04T10:01:09.145Z DEBUG 1 --- [albaraka-assistant] [     parallel-2] .r.m.a.RequestBodyMethodArgumentResolver : [651ddb61-6] Content-Type:application/json
-server-1  | 2026-09-04T10:01:09.145Z DEBUG 1 --- [albaraka-assistant] [     parallel-2] .r.m.a.RequestBodyMethodArgumentResolver : [651ddb61-6] 0..1 [tn.albaraka.ai.api.ChatController$ChatRequest]
-server-1  | 2026-09-04T10:01:09.146Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] org.springframework.web.HttpLogging      : [651ddb61-6] Decoded [ChatRequest[text=comment ouvrir un compte courant ?, locale=fr-FR, clientId=null, deviceId=null, con (truncated)...]
-server-1  | 2026-09-04T10:01:09.146Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [651ddb61-6] Using 'text/event-stream' given [*/*] and supported [text/event-stream]
-server-1  | 2026-09-04T10:01:09.147Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [651ddb61-6] 0..N [org.springframework.http.codec.ServerSentEvent<java.lang.String>]
-server-1  | 2026-09-04T10:01:09.151Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-154] o.s.w.r.f.client.ExchangeFunctions       : [4ca9d37b] HTTP POST http://rag-assistant:8000/v1/rag/chat
-server-1  | 2026-09-04T10:01:09.153Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] org.springframework.web.HttpLogging      : [4ca9d37b] Encoding [RagChatRequest[text=comment ouvrir un compte courant ?, context={max_classification=PUBLIC, audience (truncated)...]
-server-1  | 2026-09-04T10:01:09.158Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] o.s.w.r.f.client.ExchangeFunctions       : [4ca9d37b] [c796fa67-1] Response 200 OK
-server-1  | 2026-09-04T10:01:09.186Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.s.adapter.HttpWebHandlerAdapter    : [651ddb61-6] Completed 200 OK
-server-1  | 2026-09-04T10:01:14.213Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.s.adapter.HttpWebHandlerAdapter    : [71dbdc4e-7] HTTP POST "/api/v1/chat"
-server-1  | 2026-09-04T10:01:14.215Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
-server-1  | 2026-09-04T10:01:14.216Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] s.w.r.r.m.a.RequestMappingHandlerMapping : [71dbdc4e-7] Mapped to tn.albaraka.ai.api.ChatController#chat(ChatRequest)
-server-1  | 2026-09-04T10:01:14.216Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] .r.m.a.RequestBodyMethodArgumentResolver : [71dbdc4e-7] Content-Type:application/json
-server-1  | 2026-09-04T10:01:14.217Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] .r.m.a.RequestBodyMethodArgumentResolver : [71dbdc4e-7] 0..1 [tn.albaraka.ai.api.ChatController$ChatRequest]
-server-1  | 2026-09-04T10:01:14.217Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] org.springframework.web.HttpLogging      : [71dbdc4e-7] Decoded [ChatRequest[text=comment ouvrir un compte courant ?, locale=fr-FR, clientId=null, deviceId=null, con (truncated)...]
-server-1  | 2026-09-04T10:01:14.218Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [71dbdc4e-7] Using 'text/event-stream' given [*/*] and supported [text/event-stream]
-server-1  | 2026-09-04T10:01:14.218Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [71dbdc4e-7] 0..N [org.springframework.http.codec.ServerSentEvent<java.lang.String>]
-server-1  | 2026-09-04T10:01:14.222Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-226] o.s.w.r.f.client.ExchangeFunctions       : [710e0611] HTTP POST http://rag-assistant:8000/v1/rag/chat
-server-1  | 2026-09-04T10:01:14.223Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] org.springframework.web.HttpLogging      : [710e0611] Encoding [RagChatRequest[text=comment ouvrir un compte courant ?, context={max_classification=PUBLIC, audience (truncated)...]
-server-1  | 2026-09-04T10:01:14.227Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.r.f.client.ExchangeFunctions       : [710e0611] [bb4ca7d5-1] Response 200 OK
-server-1  | 2026-09-04T10:01:14.256Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.s.adapter.HttpWebHandlerAdapter    : [71dbdc4e-7] Completed 200 OK
-server-1  | 2026-09-04T10:01:16.308Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] o.s.w.s.adapter.HttpWebHandlerAdapter    : [3e121f60-8] HTTP GET "/actuator/health/liveness"
-server-1  | 2026-09-04T10:01:16.310Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
-server-1  | 2026-09-04T10:01:16.313Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-297] .s.w.r.r.m.a.ResponseEntityResultHandler : [3e121f60-8] Using 'application/vnd.spring-boot.actuator.v3+json' given [*/*] and supported [application/vnd.spring-boot.actuator.v3+json, application/vnd.spring-boot.actuator.v2+json, application/json]
-server-1  | 2026-09-04T10:01:16.313Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-297] .s.w.r.r.m.a.ResponseEntityResultHandler : [3e121f60-8] 0..1 [org.springframework.boot.health.actuate.endpoint.CompositeHealthDescriptor]
-server-1  | 2026-09-04T10:01:16.313Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-297] org.springframework.web.HttpLogging      : [3e121f60-8] Encoding [org.springframework.boot.health.actuate.endpoint.CompositeHealthDescriptor@571eebe2]
-server-1  | 2026-09-04T10:01:16.314Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-297] o.s.w.s.adapter.HttpWebHandlerAdapter    : [3e121f60-8] Completed 200 OK
-server-1  | 2026-09-04T10:01:19.281Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.s.adapter.HttpWebHandlerAdapter    : [ddfbba95-9] HTTP POST "/api/v1/chat"
-server-1  | 2026-09-04T10:01:19.283Z DEBUG 1 --- [albaraka-assistant] [     parallel-1] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
-server-1  | 2026-09-04T10:01:19.284Z DEBUG 1 --- [albaraka-assistant] [     parallel-1] s.w.r.r.m.a.RequestMappingHandlerMapping : [ddfbba95-9] Mapped to tn.albaraka.ai.api.ChatController#chat(ChatRequest)
-server-1  | 2026-09-04T10:01:19.284Z DEBUG 1 --- [albaraka-assistant] [     parallel-1] .r.m.a.RequestBodyMethodArgumentResolver : [ddfbba95-9] Content-Type:application/json
-server-1  | 2026-09-04T10:01:19.284Z DEBUG 1 --- [albaraka-assistant] [     parallel-1] .r.m.a.RequestBodyMethodArgumentResolver : [ddfbba95-9] 0..1 [tn.albaraka.ai.api.ChatController$ChatRequest]
-server-1  | 2026-09-04T10:01:19.285Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] org.springframework.web.HttpLogging      : [ddfbba95-9] Decoded [ChatRequest[text=comment ouvrir un compte courant ?, locale=fr-FR, clientId=null, deviceId=null, con (truncated)...]
-server-1  | 2026-09-04T10:01:19.285Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [ddfbba95-9] Using 'text/event-stream' given [*/*] and supported [text/event-stream]
-server-1  | 2026-09-04T10:01:19.285Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [ddfbba95-9] 0..N [org.springframework.http.codec.ServerSentEvent<java.lang.String>]
-server-1  | 2026-09-04T10:01:19.290Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-300] o.s.w.r.f.client.ExchangeFunctions       : [4e39fa24] HTTP POST http://rag-assistant:8000/v1/rag/chat
-server-1  | 2026-09-04T10:01:19.292Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] org.springframework.web.HttpLogging      : [4e39fa24] Encoding [RagChatRequest[text=comment ouvrir un compte courant ?, context={max_classification=PUBLIC, audience (truncated)...]
-server-1  | 2026-09-04T10:01:19.296Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.r.f.client.ExchangeFunctions       : [4e39fa24] [5eb862cf-1] Response 200 OK
-server-1  | 2026-09-04T10:01:19.319Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.s.adapter.HttpWebHandlerAdapter    : [ddfbba95-9] Completed 200 OK
-server-1  | 2026-09-04T10:01:24.345Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] o.s.w.s.adapter.HttpWebHandlerAdapter    : [088108d3-10] HTTP POST "/api/v1/chat"
-server-1  | 2026-09-04T10:01:24.347Z DEBUG 1 --- [albaraka-assistant] [     parallel-2] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
-server-1  | 2026-09-04T10:01:24.348Z DEBUG 1 --- [albaraka-assistant] [     parallel-2] s.w.r.r.m.a.RequestMappingHandlerMapping : [088108d3-10] Mapped to tn.albaraka.ai.api.ChatController#chat(ChatRequest)
-server-1  | 2026-09-04T10:01:24.348Z DEBUG 1 --- [albaraka-assistant] [     parallel-2] .r.m.a.RequestBodyMethodArgumentResolver : [088108d3-10] Content-Type:application/json
-server-1  | 2026-09-04T10:01:24.348Z DEBUG 1 --- [albaraka-assistant] [     parallel-2] .r.m.a.RequestBodyMethodArgumentResolver : [088108d3-10] 0..1 [tn.albaraka.ai.api.ChatController$ChatRequest]
-server-1  | 2026-09-04T10:01:24.349Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] org.springframework.web.HttpLogging      : [088108d3-10] Decoded [ChatRequest[text=comment ouvrir un compte courant ?, locale=fr-FR, clientId=null, deviceId=null, con (truncated)...]
-server-1  | 2026-09-04T10:01:24.349Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [088108d3-10] Using 'text/event-stream' given [*/*] and supported [text/event-stream]
-server-1  | 2026-09-04T10:01:24.350Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [088108d3-10] 0..N [org.springframework.http.codec.ServerSentEvent<java.lang.String>]
-server-1  | 2026-09-04T10:01:24.354Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-372] o.s.w.r.f.client.ExchangeFunctions       : [38532063] HTTP POST http://rag-assistant:8000/v1/rag/chat
-server-1  | 2026-09-04T10:01:24.355Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] org.springframework.web.HttpLogging      : [38532063] Encoding [RagChatRequest[text=comment ouvrir un compte courant ?, context={max_classification=PUBLIC, audience (truncated)...]
-server-1  | 2026-09-04T10:01:24.359Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.r.f.client.ExchangeFunctions       : [38532063] [caf93697-1] Response 200 OK
-server-1  | 2026-09-04T10:01:24.385Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] o.s.w.s.adapter.HttpWebHandlerAdapter    : [088108d3-10] Completed 200 OK
-server-1  | 2026-09-04T10:01:26.355Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] o.s.w.s.adapter.HttpWebHandlerAdapter    : [4b79fd68-11] HTTP GET "/actuator/health/liveness"
-server-1  | 2026-09-04T10:01:26.357Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
-server-1  | 2026-09-04T10:01:26.360Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-443] .s.w.r.r.m.a.ResponseEntityResultHandler : [4b79fd68-11] Using 'application/vnd.spring-boot.actuator.v3+json' given [*/*] and supported [application/vnd.spring-boot.actuator.v3+json, application/vnd.spring-boot.actuator.v2+json, application/json]
-server-1  | 2026-09-04T10:01:26.360Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-443] .s.w.r.r.m.a.ResponseEntityResultHandler : [4b79fd68-11] 0..1 [org.springframework.boot.health.actuate.endpoint.CompositeHealthDescriptor]
-server-1  | 2026-09-04T10:01:26.360Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-443] org.springframework.web.HttpLogging      : [4b79fd68-11] Encoding [org.springframework.boot.health.actuate.endpoint.CompositeHealthDescriptor@567a66]
-server-1  | 2026-09-04T10:01:26.361Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-443] o.s.w.s.adapter.HttpWebHandlerAdapter    : [4b79fd68-11] Completed 200 OK
-server-1  | 2026-09-04T10:01:29.411Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] o.s.w.s.adapter.HttpWebHandlerAdapter    : [491c45e0-12] HTTP POST "/api/v1/chat"
-server-1  | 2026-09-04T10:01:29.412Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
-server-1  | 2026-09-04T10:01:29.413Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] s.w.r.r.m.a.RequestMappingHandlerMapping : [491c45e0-12] Mapped to tn.albaraka.ai.api.ChatController#chat(ChatRequest)
-server-1  | 2026-09-04T10:01:29.414Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] .r.m.a.RequestBodyMethodArgumentResolver : [491c45e0-12] Content-Type:application/json
-server-1  | 2026-09-04T10:01:29.414Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] .r.m.a.RequestBodyMethodArgumentResolver : [491c45e0-12] 0..1 [tn.albaraka.ai.api.ChatController$ChatRequest]
-server-1  | 2026-09-04T10:01:29.414Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] org.springframework.web.HttpLogging      : [491c45e0-12] Decoded [ChatRequest[text=comment ouvrir un compte courant ?, locale=fr-FR, clientId=null, deviceId=null, con (truncated)...]
-server-1  | 2026-09-04T10:01:29.415Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [491c45e0-12] Using 'text/event-stream' given [*/*] and supported [text/event-stream]
-server-1  | 2026-09-04T10:01:29.415Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [491c45e0-12] 0..N [org.springframework.http.codec.ServerSentEvent<java.lang.String>]
-server-1  | 2026-09-04T10:01:29.419Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-446] o.s.w.r.f.client.ExchangeFunctions       : [2b7af34f] HTTP POST http://rag-assistant:8000/v1/rag/chat
-server-1  | 2026-09-04T10:01:29.420Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] org.springframework.web.HttpLogging      : [2b7af34f] Encoding [RagChatRequest[text=comment ouvrir un compte courant ?, context={max_classification=PUBLIC, audience (truncated)...]
-server-1  | 2026-09-04T10:01:29.424Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.r.f.client.ExchangeFunctions       : [2b7af34f] [c14edfa8-1] Response 200 OK
-server-1  | 2026-09-04T10:01:29.447Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] o.s.w.s.adapter.HttpWebHandlerAdapter    : [491c45e0-12] Completed 200 OK
-server-1  | 2026-09-04T10:01:34.472Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] o.s.w.s.adapter.HttpWebHandlerAdapter    : [bf318cd4-13] HTTP POST "/api/v1/chat"
-server-1  | 2026-09-04T10:01:34.473Z DEBUG 1 --- [albaraka-assistant] [     parallel-1] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
-server-1  | 2026-09-04T10:01:34.474Z DEBUG 1 --- [albaraka-assistant] [     parallel-1] s.w.r.r.m.a.RequestMappingHandlerMapping : [bf318cd4-13] Mapped to tn.albaraka.ai.api.ChatController#chat(ChatRequest)
-server-1  | 2026-09-04T10:01:34.475Z DEBUG 1 --- [albaraka-assistant] [     parallel-1] .r.m.a.RequestBodyMethodArgumentResolver : [bf318cd4-13] Content-Type:application/json
-server-1  | 2026-09-04T10:01:34.475Z DEBUG 1 --- [albaraka-assistant] [     parallel-1] .r.m.a.RequestBodyMethodArgumentResolver : [bf318cd4-13] 0..1 [tn.albaraka.ai.api.ChatController$ChatRequest]
-server-1  | 2026-09-04T10:01:34.475Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] org.springframework.web.HttpLogging      : [bf318cd4-13] Decoded [ChatRequest[text=comment ouvrir un compte courant ?, locale=fr-FR, clientId=null, deviceId=null, con (truncated)...]
-server-1  | 2026-09-04T10:01:34.476Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [bf318cd4-13] Using 'text/event-stream' given [*/*] and supported [text/event-stream]
-server-1  | 2026-09-04T10:01:34.476Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [bf318cd4-13] 0..N [org.springframework.http.codec.ServerSentEvent<java.lang.String>]
-server-1  | 2026-09-04T10:01:34.480Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-518] o.s.w.r.f.client.ExchangeFunctions       : [5799d8b2] HTTP POST http://rag-assistant:8000/v1/rag/chat
-server-1  | 2026-09-04T10:01:34.482Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] org.springframework.web.HttpLogging      : [5799d8b2] Encoding [RagChatRequest[text=comment ouvrir un compte courant ?, context={max_classification=PUBLIC, audience (truncated)...]
-server-1  | 2026-09-04T10:01:34.486Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] o.s.w.r.f.client.ExchangeFunctions       : [5799d8b2] [1b0ef099-1] Response 200 OK
-server-1  | 2026-09-04T10:01:34.509Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] o.s.w.s.adapter.HttpWebHandlerAdapter    : [bf318cd4-13] Completed 200 OK
-server-1  | 2026-09-04T10:01:36.405Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.s.adapter.HttpWebHandlerAdapter    : [034cacdb-14] HTTP GET "/actuator/health/liveness"
-server-1  | 2026-09-04T10:01:36.407Z DEBUG 1 --- [albaraka-assistant] [     parallel-2] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
-server-1  | 2026-09-04T10:01:36.409Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-589] .s.w.r.r.m.a.ResponseEntityResultHandler : [034cacdb-14] Using 'application/vnd.spring-boot.actuator.v3+json' given [*/*] and supported [application/vnd.spring-boot.actuator.v3+json, application/vnd.spring-boot.actuator.v2+json, application/json]
-server-1  | 2026-09-04T10:01:36.409Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-589] .s.w.r.r.m.a.ResponseEntityResultHandler : [034cacdb-14] 0..1 [org.springframework.boot.health.actuate.endpoint.CompositeHealthDescriptor]
-server-1  | 2026-09-04T10:01:36.410Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-589] org.springframework.web.HttpLogging      : [034cacdb-14] Encoding [org.springframework.boot.health.actuate.endpoint.CompositeHealthDescriptor@7db49cd6]
-server-1  | 2026-09-04T10:01:36.411Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-589] o.s.w.s.adapter.HttpWebHandlerAdapter    : [034cacdb-14] Completed 200 OK
-server-1  | 2026-09-04T10:01:39.533Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] o.s.w.s.adapter.HttpWebHandlerAdapter    : [84915433-15] HTTP POST "/api/v1/chat"
-server-1  | 2026-09-04T10:01:39.535Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
-server-1  | 2026-09-04T10:01:39.536Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] s.w.r.r.m.a.RequestMappingHandlerMapping : [84915433-15] Mapped to tn.albaraka.ai.api.ChatController#chat(ChatRequest)
-server-1  | 2026-09-04T10:01:39.536Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] .r.m.a.RequestBodyMethodArgumentResolver : [84915433-15] Content-Type:application/json
-server-1  | 2026-09-04T10:01:39.536Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] .r.m.a.RequestBodyMethodArgumentResolver : [84915433-15] 0..1 [tn.albaraka.ai.api.ChatController$ChatRequest]
-server-1  | 2026-09-04T10:01:39.537Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] org.springframework.web.HttpLogging      : [84915433-15] Decoded [ChatRequest[text=comment ouvrir un compte courant ?, locale=fr-FR, clientId=null, deviceId=null, con (truncated)...]
-server-1  | 2026-09-04T10:01:39.537Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [84915433-15] Using 'text/event-stream' given [*/*] and supported [text/event-stream]
-server-1  | 2026-09-04T10:01:39.537Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [84915433-15] 0..N [org.springframework.http.codec.ServerSentEvent<java.lang.String>]
-server-1  | 2026-09-04T10:01:39.541Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-592] o.s.w.r.f.client.ExchangeFunctions       : [7c8b23ff] HTTP POST http://rag-assistant:8000/v1/rag/chat
-server-1  | 2026-09-04T10:01:39.543Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] org.springframework.web.HttpLogging      : [7c8b23ff] Encoding [RagChatRequest[text=comment ouvrir un compte courant ?, context={max_classification=PUBLIC, audience (truncated)...]
-server-1  | 2026-09-04T10:01:39.547Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] o.s.w.r.f.client.ExchangeFunctions       : [7c8b23ff] [eb7ae1c2-1] Response 200 OK
-server-1  | 2026-09-04T10:01:39.566Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] o.s.w.s.adapter.HttpWebHandlerAdapter    : [84915433-15] Completed 200 OK
-server-1  | 2026-09-04T10:01:44.590Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.s.adapter.HttpWebHandlerAdapter    : [3716033e-16] HTTP POST "/api/v1/chat"
-server-1  | 2026-09-04T10:01:44.592Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
-server-1  | 2026-09-04T10:01:44.593Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] s.w.r.r.m.a.RequestMappingHandlerMapping : [3716033e-16] Mapped to tn.albaraka.ai.api.ChatController#chat(ChatRequest)
-server-1  | 2026-09-04T10:01:44.593Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] .r.m.a.RequestBodyMethodArgumentResolver : [3716033e-16] Content-Type:application/json
-server-1  | 2026-09-04T10:01:44.594Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] .r.m.a.RequestBodyMethodArgumentResolver : [3716033e-16] 0..1 [tn.albaraka.ai.api.ChatController$ChatRequest]
-server-1  | 2026-09-04T10:01:44.594Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] org.springframework.web.HttpLogging      : [3716033e-16] Decoded [ChatRequest[text=comment ouvrir un compte courant ?, locale=fr-FR, clientId=null, deviceId=null, con (truncated)...]
-server-1  | 2026-09-04T10:01:44.595Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [3716033e-16] Using 'text/event-stream' given [*/*] and supported [text/event-stream]
-server-1  | 2026-09-04T10:01:44.595Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [3716033e-16] 0..N [org.springframework.http.codec.ServerSentEvent<java.lang.String>]
-server-1  | 2026-09-04T10:01:44.598Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-664] o.s.w.r.f.client.ExchangeFunctions       : [74af9e3] HTTP POST http://rag-assistant:8000/v1/rag/chat
-server-1  | 2026-09-04T10:01:44.599Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] org.springframework.web.HttpLogging      : [74af9e3] Encoding [RagChatRequest[text=comment ouvrir un compte courant ?, context={max_classification=PUBLIC, audience (truncated)...]
-server-1  | 2026-09-04T10:01:44.604Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] o.s.w.r.f.client.ExchangeFunctions       : [74af9e3] [bd256cb2-1] Response 200 OK
-server-1  | 2026-09-04T10:01:44.621Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.s.adapter.HttpWebHandlerAdapter    : [3716033e-16] Completed 200 OK
-server-1  | 2026-09-04T10:01:46.452Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.s.adapter.HttpWebHandlerAdapter    : [40c2e68b-17] HTTP GET "/actuator/health/liveness"
-server-1  | 2026-09-04T10:01:46.453Z DEBUG 1 --- [albaraka-assistant] [     parallel-1] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
-server-1  | 2026-09-04T10:01:46.456Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-734] .s.w.r.r.m.a.ResponseEntityResultHandler : [40c2e68b-17] Using 'application/vnd.spring-boot.actuator.v3+json' given [*/*] and supported [application/vnd.spring-boot.actuator.v3+json, application/vnd.spring-boot.actuator.v2+json, application/json]
-server-1  | 2026-09-04T10:01:46.456Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-734] .s.w.r.r.m.a.ResponseEntityResultHandler : [40c2e68b-17] 0..1 [org.springframework.boot.health.actuate.endpoint.CompositeHealthDescriptor]
-server-1  | 2026-09-04T10:01:46.456Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-734] org.springframework.web.HttpLogging      : [40c2e68b-17] Encoding [org.springframework.boot.health.actuate.endpoint.CompositeHealthDescriptor@4f82e6f8]
-server-1  | 2026-09-04T10:01:46.457Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-734] o.s.w.s.adapter.HttpWebHandlerAdapter    : [40c2e68b-17] Completed 200 OK
-server-1  | 2026-09-04T10:01:49.646Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.s.adapter.HttpWebHandlerAdapter    : [779e3e33-18] HTTP POST "/api/v1/chat"
-server-1  | 2026-09-04T10:01:49.648Z DEBUG 1 --- [albaraka-assistant] [     parallel-2] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
-server-1  | 2026-09-04T10:01:49.649Z DEBUG 1 --- [albaraka-assistant] [     parallel-2] s.w.r.r.m.a.RequestMappingHandlerMapping : [779e3e33-18] Mapped to tn.albaraka.ai.api.ChatController#chat(ChatRequest)
-server-1  | 2026-09-04T10:01:49.649Z DEBUG 1 --- [albaraka-assistant] [     parallel-2] .r.m.a.RequestBodyMethodArgumentResolver : [779e3e33-18] Content-Type:application/json
-server-1  | 2026-09-04T10:01:49.649Z DEBUG 1 --- [albaraka-assistant] [     parallel-2] .r.m.a.RequestBodyMethodArgumentResolver : [779e3e33-18] 0..1 [tn.albaraka.ai.api.ChatController$ChatRequest]
-server-1  | 2026-09-04T10:01:49.650Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] org.springframework.web.HttpLogging      : [779e3e33-18] Decoded [ChatRequest[text=comment ouvrir un compte courant ?, locale=fr-FR, clientId=null, deviceId=null, con (truncated)...]
-server-1  | 2026-09-04T10:01:49.650Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [779e3e33-18] Using 'text/event-stream' given [*/*] and supported [text/event-stream]
-server-1  | 2026-09-04T10:01:49.651Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [779e3e33-18] 0..N [org.springframework.http.codec.ServerSentEvent<java.lang.String>]
-server-1  | 2026-09-04T10:01:49.654Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-737] o.s.w.r.f.client.ExchangeFunctions       : [20948219] HTTP POST http://rag-assistant:8000/v1/rag/chat
-server-1  | 2026-09-04T10:01:49.655Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] org.springframework.web.HttpLogging      : [20948219] Encoding [RagChatRequest[text=comment ouvrir un compte courant ?, context={max_classification=PUBLIC, audience (truncated)...]
-server-1  | 2026-09-04T10:01:49.659Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] o.s.w.r.f.client.ExchangeFunctions       : [20948219] [c13151c1-1] Response 200 OK
-server-1  | 2026-09-04T10:01:49.679Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.s.adapter.HttpWebHandlerAdapter    : [779e3e33-18] Completed 200 OK
-server-1  | 2026-09-04T10:01:54.705Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.s.adapter.HttpWebHandlerAdapter    : [8c5d2a3c-19] HTTP POST "/api/v1/chat"
-server-1  | 2026-09-04T10:01:54.707Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
-server-1  | 2026-09-04T10:01:54.708Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] s.w.r.r.m.a.RequestMappingHandlerMapping : [8c5d2a3c-19] Mapped to tn.albaraka.ai.api.ChatController#chat(ChatRequest)
-server-1  | 2026-09-04T10:01:54.708Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] .r.m.a.RequestBodyMethodArgumentResolver : [8c5d2a3c-19] Content-Type:application/json
-server-1  | 2026-09-04T10:01:54.708Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] .r.m.a.RequestBodyMethodArgumentResolver : [8c5d2a3c-19] 0..1 [tn.albaraka.ai.api.ChatController$ChatRequest]
-server-1  | 2026-09-04T10:01:54.709Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] org.springframework.web.HttpLogging      : [8c5d2a3c-19] Decoded [ChatRequest[text=comment ouvrir un compte courant ?, locale=fr-FR, clientId=null, deviceId=null, con (truncated)...]
-server-1  | 2026-09-04T10:01:54.709Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [8c5d2a3c-19] Using 'text/event-stream' given [*/*] and supported [text/event-stream]
-server-1  | 2026-09-04T10:01:54.709Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [8c5d2a3c-19] 0..N [org.springframework.http.codec.ServerSentEvent<java.lang.String>]
-server-1  | 2026-09-04T10:01:54.716Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-809] o.s.w.r.f.client.ExchangeFunctions       : [4e0cc6c] HTTP POST http://rag-assistant:8000/v1/rag/chat
-server-1  | 2026-09-04T10:01:54.717Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] org.springframework.web.HttpLogging      : [4e0cc6c] Encoding [RagChatRequest[text=comment ouvrir un compte courant ?, context={max_classification=PUBLIC, audience (truncated)...]
-server-1  | 2026-09-04T10:01:54.722Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.r.f.client.ExchangeFunctions       : [4e0cc6c] [e683cc05-1] Response 200 OK
-server-1  | 2026-09-04T10:01:54.745Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.s.adapter.HttpWebHandlerAdapter    : [8c5d2a3c-19] Completed 200 OK
-server-1  | 2026-09-04T10:01:56.500Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] o.s.w.s.adapter.HttpWebHandlerAdapter    : [d0962288-20] HTTP GET "/actuator/health/liveness"
-server-1  | 2026-09-04T10:01:56.501Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
-server-1  | 2026-09-04T10:01:56.504Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-880] .s.w.r.r.m.a.ResponseEntityResultHandler : [d0962288-20] Using 'application/vnd.spring-boot.actuator.v3+json' given [*/*] and supported [application/vnd.spring-boot.actuator.v3+json, application/vnd.spring-boot.actuator.v2+json, application/json]
-server-1  | 2026-09-04T10:01:56.504Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-880] .s.w.r.r.m.a.ResponseEntityResultHandler : [d0962288-20] 0..1 [org.springframework.boot.health.actuate.endpoint.CompositeHealthDescriptor]
-server-1  | 2026-09-04T10:01:56.504Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-880] org.springframework.web.HttpLogging      : [d0962288-20] Encoding [org.springframework.boot.health.actuate.endpoint.CompositeHealthDescriptor@2591b4ab]
-server-1  | 2026-09-04T10:01:56.505Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-880] o.s.w.s.adapter.HttpWebHandlerAdapter    : [d0962288-20] Completed 200 OK
+server-1  | 2026-09-04T10:17:17.873Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "2 - demo seed"
+server-1  | 2026-09-04T10:17:17.954Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "900 - seed glossary"
+server-1  | 2026-09-04T10:17:17.988Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "901 - seed prompts"
+server-1  | 2026-09-04T10:17:18.021Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "902 - seed policies"
+server-1  | 2026-09-04T10:17:18.061Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "903 - seed dialect"
+server-1  | 2026-09-04T10:17:18.094Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Successfully applied 6 migrations to schema "public", now at version v903 (execution time 00:00.318s)
+server-1  | 2026-09-04T10:17:18.786Z DEBUG 1 --- [albaraka-assistant] [           main] s.w.r.r.m.a.RequestMappingHandlerMapping : 21 mappings in 'requestMappingHandlerMapping'
+server-1  | 2026-09-04T10:17:18.953Z DEBUG 1 --- [albaraka-assistant] [           main] o.s.w.r.handler.SimpleUrlHandlerMapping  : Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+server-1  | 2026-09-04T10:17:19.090Z  INFO 1 --- [albaraka-assistant] [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 6 endpoints beneath base path '/actuator'
+server-1  | 2026-09-04T10:17:19.140Z DEBUG 1 --- [albaraka-assistant] [           main] o.s.w.r.r.m.a.ControllerMethodResolver   : ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 @ExceptionHandler
+server-1  | 2026-09-04T10:17:19.168Z DEBUG 1 --- [albaraka-assistant] [           main] o.s.w.s.adapter.HttpWebHandlerAdapter    : enableLoggingRequestDetails='false': form data and headers will be masked to prevent unsafe logging of potentially sensitive data
+server-1  | 2026-09-04T10:17:19.558Z  INFO 1 --- [albaraka-assistant] [           main] o.s.boot.reactor.netty.NettyWebServer    : Netty started on port 8080 (http)
+server-1  | 2026-09-04T10:17:19.571Z  INFO 1 --- [albaraka-assistant] [           main] t.a.ai.AlBarakaAssistantApplication      : Started AlBarakaAssistantApplication in 5.11 seconds (process running for 5.699)
+server-1  | 2026-09-04T10:17:24.079Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] o.s.w.s.adapter.HttpWebHandlerAdapter    : [e6a91c57-1] HTTP GET "/actuator/health/liveness"
+server-1  | 2026-09-04T10:17:24.137Z DEBUG 1 --- [albaraka-assistant] [     parallel-1] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
+server-1  | 2026-09-04T10:17:24.186Z DEBUG 1 --- [albaraka-assistant] [oundedElastic-2] .s.w.r.r.m.a.ResponseEntityResultHandler : [e6a91c57-1] Using 'application/vnd.spring-boot.actuator.v3+json' given [*/*] and supported [application/vnd.spring-boot.actuator.v3+json, application/vnd.spring-boot.actuator.v2+json, application/json]
+server-1  | 2026-09-04T10:17:24.187Z DEBUG 1 --- [albaraka-assistant] [oundedElastic-2] .s.w.r.r.m.a.ResponseEntityResultHandler : [e6a91c57-1] 0..1 [org.springframework.boot.health.actuate.endpoint.CompositeHealthDescriptor]
+server-1  | 2026-09-04T10:17:24.195Z DEBUG 1 --- [albaraka-assistant] [oundedElastic-2] org.springframework.web.HttpLogging      : [e6a91c57-1] Encoding [org.springframework.boot.health.actuate.endpoint.CompositeHealthDescriptor@3846a035]
+server-1  | 2026-09-04T10:17:24.232Z DEBUG 1 --- [albaraka-assistant] [oundedElastic-2] o.s.w.s.adapter.HttpWebHandlerAdapter    : [e6a91c57-1] Completed 200 OK
+server-1  | 2026-09-04T10:17:25.195Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.s.adapter.HttpWebHandlerAdapter    : [01b3829a-2] HTTP GET "/actuator/health/readiness"
+server-1  | 2026-09-04T10:17:25.197Z DEBUG 1 --- [albaraka-assistant] [     parallel-2] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
+server-1  | 2026-09-04T10:17:25.203Z DEBUG 1 --- [albaraka-assistant] [oundedElastic-5] .s.w.r.r.m.a.ResponseEntityResultHandler : [01b3829a-2] Using 'application/vnd.spring-boot.actuator.v3+json' given [*/*] and supported [application/vnd.spring-boot.actuator.v3+json, application/vnd.spring-boot.actuator.v2+json, application/json]
+server-1  | 2026-09-04T10:17:25.203Z DEBUG 1 --- [albaraka-assistant] [oundedElastic-5] .s.w.r.r.m.a.ResponseEntityResultHandler : [01b3829a-2] 0..1 [org.springframework.boot.health.actuate.endpoint.CompositeHealthDescriptor]
+server-1  | 2026-09-04T10:17:25.204Z DEBUG 1 --- [albaraka-assistant] [oundedElastic-5] org.springframework.web.HttpLogging      : [01b3829a-2] Encoding [org.springframework.boot.health.actuate.endpoint.CompositeHealthDescriptor@638b5f59]
+server-1  | 2026-09-04T10:17:25.206Z DEBUG 1 --- [albaraka-assistant] [oundedElastic-5] o.s.w.s.adapter.HttpWebHandlerAdapter    : [01b3829a-2] Completed 200 OK
+server-1  | 2026-09-04T10:17:26.811Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.s.adapter.HttpWebHandlerAdapter    : [2c94dc1f-3] HTTP POST "/api/v1/chat"
+server-1  | 2026-09-04T10:17:26.813Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
+server-1  | 2026-09-04T10:17:26.816Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] s.w.r.r.m.a.RequestMappingHandlerMapping : [2c94dc1f-3] Mapped to tn.albaraka.ai.api.ChatController#chat(ChatRequest)
+server-1  | 2026-09-04T10:17:26.818Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] .r.m.a.RequestBodyMethodArgumentResolver : [2c94dc1f-3] Content-Type:application/json
+server-1  | 2026-09-04T10:17:26.818Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] .r.m.a.RequestBodyMethodArgumentResolver : [2c94dc1f-3] 0..1 [tn.albaraka.ai.api.ChatController$ChatRequest]
+server-1  | 2026-09-04T10:17:26.841Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] org.springframework.web.HttpLogging      : [2c94dc1f-3] Decoded [ChatRequest[text=comment ouvrir un compte courant ?, locale=fr-FR, clientId=null, deviceId=null, con (truncated)...]
+server-1  | 2026-09-04T10:17:26.844Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [2c94dc1f-3] Using 'text/event-stream' given [*/*] and supported [text/event-stream]
+server-1  | 2026-09-04T10:17:26.844Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [2c94dc1f-3] 0..N [org.springframework.http.codec.ServerSentEvent<java.lang.String>]
+server-1  | 2026-09-04T10:17:26.896Z DEBUG 1 --- [albaraka-assistant] [oundedElastic-8] o.s.w.r.f.client.ExchangeFunctions       : [29543f76] HTTP POST http://rag-assistant:8000/v1/rag/chat
+server-1  | 2026-09-04T10:17:27.033Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] org.springframework.web.HttpLogging      : [29543f76] Encoding [RagChatRequest[text=comment ouvrir un compte courant ?, context={max_classification=PUBLIC, audience (truncated)...]
+server-1  | 2026-09-04T10:17:27.067Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] o.s.w.r.f.client.ExchangeFunctions       : [29543f76] [dcd53415-1] Response 200 OK
+server-1  | 2026-09-04T10:17:27.177Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.s.adapter.HttpWebHandlerAdapter    : [2c94dc1f-3] Completed 200 OK
+server-1  | 2026-09-04T10:17:32.204Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.s.adapter.HttpWebHandlerAdapter    : [cb1337bc-4] HTTP POST "/api/v1/chat"
+server-1  | 2026-09-04T10:17:32.206Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
+server-1  | 2026-09-04T10:17:32.208Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] s.w.r.r.m.a.RequestMappingHandlerMapping : [cb1337bc-4] Mapped to tn.albaraka.ai.api.ChatController#chat(ChatRequest)
+server-1  | 2026-09-04T10:17:32.208Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] .r.m.a.RequestBodyMethodArgumentResolver : [cb1337bc-4] Content-Type:application/json
+server-1  | 2026-09-04T10:17:32.208Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] .r.m.a.RequestBodyMethodArgumentResolver : [cb1337bc-4] 0..1 [tn.albaraka.ai.api.ChatController$ChatRequest]
+server-1  | 2026-09-04T10:17:32.209Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] org.springframework.web.HttpLogging      : [cb1337bc-4] Decoded [ChatRequest[text=comment ouvrir un compte courant ?, locale=fr-FR, clientId=null, deviceId=null, con (truncated)...]
+server-1  | 2026-09-04T10:17:32.210Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [cb1337bc-4] Using 'text/event-stream' given [*/*] and supported [text/event-stream]
+server-1  | 2026-09-04T10:17:32.210Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [cb1337bc-4] 0..N [org.springframework.http.codec.ServerSentEvent<java.lang.String>]
+server-1  | 2026-09-04T10:17:32.214Z DEBUG 1 --- [albaraka-assistant] [undedElastic-80] o.s.w.r.f.client.ExchangeFunctions       : [29b80e75] HTTP POST http://rag-assistant:8000/v1/rag/chat
+server-1  | 2026-09-04T10:17:32.217Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] org.springframework.web.HttpLogging      : [29b80e75] Encoding [RagChatRequest[text=comment ouvrir un compte courant ?, context={max_classification=PUBLIC, audience (truncated)...]
+server-1  | 2026-09-04T10:17:32.222Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] o.s.w.r.f.client.ExchangeFunctions       : [29b80e75] [bc1d25eb-1] Response 200 OK
+server-1  | 2026-09-04T10:17:32.253Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.s.adapter.HttpWebHandlerAdapter    : [cb1337bc-4] Completed 200 OK
+server-1  | 2026-09-04T10:17:34.279Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.s.adapter.HttpWebHandlerAdapter    : [bc1c5ec7-5] HTTP GET "/actuator/health/liveness"
+server-1  | 2026-09-04T10:17:34.281Z DEBUG 1 --- [albaraka-assistant] [     parallel-1] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
+server-1  | 2026-09-04T10:17:34.284Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-151] .s.w.r.r.m.a.ResponseEntityResultHandler : [bc1c5ec7-5] Using 'application/vnd.spring-boot.actuator.v3+json' given [*/*] and supported [application/vnd.spring-boot.actuator.v3+json, application/vnd.spring-boot.actuator.v2+json, application/json]
+server-1  | 2026-09-04T10:17:34.285Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-151] .s.w.r.r.m.a.ResponseEntityResultHandler : [bc1c5ec7-5] 0..1 [org.springframework.boot.health.actuate.endpoint.CompositeHealthDescriptor]
+server-1  | 2026-09-04T10:17:34.285Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-151] org.springframework.web.HttpLogging      : [bc1c5ec7-5] Encoding [org.springframework.boot.health.actuate.endpoint.CompositeHealthDescriptor@1512d807]
+server-1  | 2026-09-04T10:17:34.286Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-151] o.s.w.s.adapter.HttpWebHandlerAdapter    : [bc1c5ec7-5] Completed 200 OK
+server-1  | 2026-09-04T10:17:37.278Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.s.adapter.HttpWebHandlerAdapter    : [14c67b15-6] HTTP POST "/api/v1/chat"
+server-1  | 2026-09-04T10:17:37.279Z DEBUG 1 --- [albaraka-assistant] [     parallel-2] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
+server-1  | 2026-09-04T10:17:37.281Z DEBUG 1 --- [albaraka-assistant] [     parallel-2] s.w.r.r.m.a.RequestMappingHandlerMapping : [14c67b15-6] Mapped to tn.albaraka.ai.api.ChatController#chat(ChatRequest)
+server-1  | 2026-09-04T10:17:37.281Z DEBUG 1 --- [albaraka-assistant] [     parallel-2] .r.m.a.RequestBodyMethodArgumentResolver : [14c67b15-6] Content-Type:application/json
+server-1  | 2026-09-04T10:17:37.281Z DEBUG 1 --- [albaraka-assistant] [     parallel-2] .r.m.a.RequestBodyMethodArgumentResolver : [14c67b15-6] 0..1 [tn.albaraka.ai.api.ChatController$ChatRequest]
+server-1  | 2026-09-04T10:17:37.282Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] org.springframework.web.HttpLogging      : [14c67b15-6] Decoded [ChatRequest[text=comment ouvrir un compte courant ?, locale=fr-FR, clientId=null, deviceId=null, con (truncated)...]
+server-1  | 2026-09-04T10:17:37.282Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [14c67b15-6] Using 'text/event-stream' given [*/*] and supported [text/event-stream]
+server-1  | 2026-09-04T10:17:37.282Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [14c67b15-6] 0..N [org.springframework.http.codec.ServerSentEvent<java.lang.String>]
+server-1  | 2026-09-04T10:17:37.286Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-154] o.s.w.r.f.client.ExchangeFunctions       : [356da527] HTTP POST http://rag-assistant:8000/v1/rag/chat
+server-1  | 2026-09-04T10:17:37.288Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] org.springframework.web.HttpLogging      : [356da527] Encoding [RagChatRequest[text=comment ouvrir un compte courant ?, context={max_classification=PUBLIC, audience (truncated)...]
+server-1  | 2026-09-04T10:17:37.292Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] o.s.w.r.f.client.ExchangeFunctions       : [356da527] [65a635f5-1] Response 200 OK
+server-1  | 2026-09-04T10:17:37.324Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.s.adapter.HttpWebHandlerAdapter    : [14c67b15-6] Completed 200 OK
+server-1  | 2026-09-04T10:17:42.349Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.s.adapter.HttpWebHandlerAdapter    : [9d0373d8-7] HTTP POST "/api/v1/chat"
+server-1  | 2026-09-04T10:17:42.351Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
+server-1  | 2026-09-04T10:17:42.352Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] s.w.r.r.m.a.RequestMappingHandlerMapping : [9d0373d8-7] Mapped to tn.albaraka.ai.api.ChatController#chat(ChatRequest)
+server-1  | 2026-09-04T10:17:42.353Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] .r.m.a.RequestBodyMethodArgumentResolver : [9d0373d8-7] Content-Type:application/json
+server-1  | 2026-09-04T10:17:42.353Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] .r.m.a.RequestBodyMethodArgumentResolver : [9d0373d8-7] 0..1 [tn.albaraka.ai.api.ChatController$ChatRequest]
+server-1  | 2026-09-04T10:17:42.354Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] org.springframework.web.HttpLogging      : [9d0373d8-7] Decoded [ChatRequest[text=comment ouvrir un compte courant ?, locale=fr-FR, clientId=null, deviceId=null, con (truncated)...]
+server-1  | 2026-09-04T10:17:42.354Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [9d0373d8-7] Using 'text/event-stream' given [*/*] and supported [text/event-stream]
+server-1  | 2026-09-04T10:17:42.354Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [9d0373d8-7] 0..N [org.springframework.http.codec.ServerSentEvent<java.lang.String>]
+server-1  | 2026-09-04T10:17:42.359Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-226] o.s.w.r.f.client.ExchangeFunctions       : [4c7d99eb] HTTP POST http://rag-assistant:8000/v1/rag/chat
+server-1  | 2026-09-04T10:17:42.361Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] org.springframework.web.HttpLogging      : [4c7d99eb] Encoding [RagChatRequest[text=comment ouvrir un compte courant ?, context={max_classification=PUBLIC, audience (truncated)...]
+server-1  | 2026-09-04T10:17:42.365Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.r.f.client.ExchangeFunctions       : [4c7d99eb] [074cb379-1] Response 200 OK
+server-1  | 2026-09-04T10:17:42.394Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.s.adapter.HttpWebHandlerAdapter    : [9d0373d8-7] Completed 200 OK
+server-1  | 2026-09-04T10:17:44.329Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] o.s.w.s.adapter.HttpWebHandlerAdapter    : [d88c2650-8] HTTP GET "/actuator/health/liveness"
+server-1  | 2026-09-04T10:17:44.331Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
+server-1  | 2026-09-04T10:17:44.334Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-297] .s.w.r.r.m.a.ResponseEntityResultHandler : [d88c2650-8] Using 'application/vnd.spring-boot.actuator.v3+json' given [*/*] and supported [application/vnd.spring-boot.actuator.v3+json, application/vnd.spring-boot.actuator.v2+json, application/json]
+server-1  | 2026-09-04T10:17:44.334Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-297] .s.w.r.r.m.a.ResponseEntityResultHandler : [d88c2650-8] 0..1 [org.springframework.boot.health.actuate.endpoint.CompositeHealthDescriptor]
+server-1  | 2026-09-04T10:17:44.335Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-297] org.springframework.web.HttpLogging      : [d88c2650-8] Encoding [org.springframework.boot.health.actuate.endpoint.CompositeHealthDescriptor@26023e01]
+server-1  | 2026-09-04T10:17:44.336Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-297] o.s.w.s.adapter.HttpWebHandlerAdapter    : [d88c2650-8] Completed 200 OK
+server-1  | 2026-09-04T10:17:47.420Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.s.adapter.HttpWebHandlerAdapter    : [60a42d99-9] HTTP POST "/api/v1/chat"
+server-1  | 2026-09-04T10:17:47.421Z DEBUG 1 --- [albaraka-assistant] [     parallel-1] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
+server-1  | 2026-09-04T10:17:47.423Z DEBUG 1 --- [albaraka-assistant] [     parallel-1] s.w.r.r.m.a.RequestMappingHandlerMapping : [60a42d99-9] Mapped to tn.albaraka.ai.api.ChatController#chat(ChatRequest)
+server-1  | 2026-09-04T10:17:47.423Z DEBUG 1 --- [albaraka-assistant] [     parallel-1] .r.m.a.RequestBodyMethodArgumentResolver : [60a42d99-9] Content-Type:application/json
+server-1  | 2026-09-04T10:17:47.423Z DEBUG 1 --- [albaraka-assistant] [     parallel-1] .r.m.a.RequestBodyMethodArgumentResolver : [60a42d99-9] 0..1 [tn.albaraka.ai.api.ChatController$ChatRequest]
+server-1  | 2026-09-04T10:17:47.424Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] org.springframework.web.HttpLogging      : [60a42d99-9] Decoded [ChatRequest[text=comment ouvrir un compte courant ?, locale=fr-FR, clientId=null, deviceId=null, con (truncated)...]
+server-1  | 2026-09-04T10:17:47.424Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [60a42d99-9] Using 'text/event-stream' given [*/*] and supported [text/event-stream]
+server-1  | 2026-09-04T10:17:47.424Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [60a42d99-9] 0..N [org.springframework.http.codec.ServerSentEvent<java.lang.String>]
+server-1  | 2026-09-04T10:17:47.430Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-300] o.s.w.r.f.client.ExchangeFunctions       : [323b0e82] HTTP POST http://rag-assistant:8000/v1/rag/chat
+server-1  | 2026-09-04T10:17:47.431Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] org.springframework.web.HttpLogging      : [323b0e82] Encoding [RagChatRequest[text=comment ouvrir un compte courant ?, context={max_classification=PUBLIC, audience (truncated)...]
+server-1  | 2026-09-04T10:17:47.435Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.r.f.client.ExchangeFunctions       : [323b0e82] [47513cd2-1] Response 200 OK
+server-1  | 2026-09-04T10:17:47.463Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.s.adapter.HttpWebHandlerAdapter    : [60a42d99-9] Completed 200 OK
+server-1  | 2026-09-04T10:17:52.488Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] o.s.w.s.adapter.HttpWebHandlerAdapter    : [02332241-10] HTTP POST "/api/v1/chat"
+server-1  | 2026-09-04T10:17:52.490Z DEBUG 1 --- [albaraka-assistant] [     parallel-2] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
+server-1  | 2026-09-04T10:17:52.492Z DEBUG 1 --- [albaraka-assistant] [     parallel-2] s.w.r.r.m.a.RequestMappingHandlerMapping : [02332241-10] Mapped to tn.albaraka.ai.api.ChatController#chat(ChatRequest)
+server-1  | 2026-09-04T10:17:52.492Z DEBUG 1 --- [albaraka-assistant] [     parallel-2] .r.m.a.RequestBodyMethodArgumentResolver : [02332241-10] Content-Type:application/json
+server-1  | 2026-09-04T10:17:52.492Z DEBUG 1 --- [albaraka-assistant] [     parallel-2] .r.m.a.RequestBodyMethodArgumentResolver : [02332241-10] 0..1 [tn.albaraka.ai.api.ChatController$ChatRequest]
+server-1  | 2026-09-04T10:17:52.493Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] org.springframework.web.HttpLogging      : [02332241-10] Decoded [ChatRequest[text=comment ouvrir un compte courant ?, locale=fr-FR, clientId=null, deviceId=null, con (truncated)...]
+server-1  | 2026-09-04T10:17:52.493Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [02332241-10] Using 'text/event-stream' given [*/*] and supported [text/event-stream]
+server-1  | 2026-09-04T10:17:52.493Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [02332241-10] 0..N [org.springframework.http.codec.ServerSentEvent<java.lang.String>]
+server-1  | 2026-09-04T10:17:52.498Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-372] o.s.w.r.f.client.ExchangeFunctions       : [53befba3] HTTP POST http://rag-assistant:8000/v1/rag/chat
+server-1  | 2026-09-04T10:17:52.499Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] org.springframework.web.HttpLogging      : [53befba3] Encoding [RagChatRequest[text=comment ouvrir un compte courant ?, context={max_classification=PUBLIC, audience (truncated)...]
+server-1  | 2026-09-04T10:17:52.503Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.r.f.client.ExchangeFunctions       : [53befba3] [64260d9e-1] Response 200 OK
+server-1  | 2026-09-04T10:17:52.528Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] o.s.w.s.adapter.HttpWebHandlerAdapter    : [02332241-10] Completed 200 OK
+server-1  | 2026-09-04T10:17:54.378Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] o.s.w.s.adapter.HttpWebHandlerAdapter    : [fafc0033-11] HTTP GET "/actuator/health/liveness"
+server-1  | 2026-09-04T10:17:54.379Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
+server-1  | 2026-09-04T10:17:54.382Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-443] .s.w.r.r.m.a.ResponseEntityResultHandler : [fafc0033-11] Using 'application/vnd.spring-boot.actuator.v3+json' given [*/*] and supported [application/vnd.spring-boot.actuator.v3+json, application/vnd.spring-boot.actuator.v2+json, application/json]
+server-1  | 2026-09-04T10:17:54.382Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-443] .s.w.r.r.m.a.ResponseEntityResultHandler : [fafc0033-11] 0..1 [org.springframework.boot.health.actuate.endpoint.CompositeHealthDescriptor]
+server-1  | 2026-09-04T10:17:54.382Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-443] org.springframework.web.HttpLogging      : [fafc0033-11] Encoding [org.springframework.boot.health.actuate.endpoint.CompositeHealthDescriptor@4ca7a779]
+server-1  | 2026-09-04T10:17:54.384Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-443] o.s.w.s.adapter.HttpWebHandlerAdapter    : [fafc0033-11] Completed 200 OK
+server-1  | 2026-09-04T10:17:57.556Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] o.s.w.s.adapter.HttpWebHandlerAdapter    : [e7578532-12] HTTP POST "/api/v1/chat"
+server-1  | 2026-09-04T10:17:57.558Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
+server-1  | 2026-09-04T10:17:57.559Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] s.w.r.r.m.a.RequestMappingHandlerMapping : [e7578532-12] Mapped to tn.albaraka.ai.api.ChatController#chat(ChatRequest)
+server-1  | 2026-09-04T10:17:57.559Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] .r.m.a.RequestBodyMethodArgumentResolver : [e7578532-12] Content-Type:application/json
+server-1  | 2026-09-04T10:17:57.559Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] .r.m.a.RequestBodyMethodArgumentResolver : [e7578532-12] 0..1 [tn.albaraka.ai.api.ChatController$ChatRequest]
+server-1  | 2026-09-04T10:17:57.560Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] org.springframework.web.HttpLogging      : [e7578532-12] Decoded [ChatRequest[text=comment ouvrir un compte courant ?, locale=fr-FR, clientId=null, deviceId=null, con (truncated)...]
+server-1  | 2026-09-04T10:17:57.561Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [e7578532-12] Using 'text/event-stream' given [*/*] and supported [text/event-stream]
+server-1  | 2026-09-04T10:17:57.561Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [e7578532-12] 0..N [org.springframework.http.codec.ServerSentEvent<java.lang.String>]
+server-1  | 2026-09-04T10:17:57.567Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-446] o.s.w.r.f.client.ExchangeFunctions       : [7a01e7e1] HTTP POST http://rag-assistant:8000/v1/rag/chat
+server-1  | 2026-09-04T10:17:57.569Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] org.springframework.web.HttpLogging      : [7a01e7e1] Encoding [RagChatRequest[text=comment ouvrir un compte courant ?, context={max_classification=PUBLIC, audience (truncated)...]
+server-1  | 2026-09-04T10:17:57.573Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.r.f.client.ExchangeFunctions       : [7a01e7e1] [3e845685-1] Response 200 OK
+server-1  | 2026-09-04T10:17:57.595Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] o.s.w.s.adapter.HttpWebHandlerAdapter    : [e7578532-12] Completed 200 OK
+server-1  | 2026-09-04T10:18:02.621Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] o.s.w.s.adapter.HttpWebHandlerAdapter    : [5aa2b436-13] HTTP POST "/api/v1/chat"
+server-1  | 2026-09-04T10:18:02.623Z DEBUG 1 --- [albaraka-assistant] [     parallel-1] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
+server-1  | 2026-09-04T10:18:02.625Z DEBUG 1 --- [albaraka-assistant] [     parallel-1] s.w.r.r.m.a.RequestMappingHandlerMapping : [5aa2b436-13] Mapped to tn.albaraka.ai.api.ChatController#chat(ChatRequest)
+server-1  | 2026-09-04T10:18:02.625Z DEBUG 1 --- [albaraka-assistant] [     parallel-1] .r.m.a.RequestBodyMethodArgumentResolver : [5aa2b436-13] Content-Type:application/json
+server-1  | 2026-09-04T10:18:02.625Z DEBUG 1 --- [albaraka-assistant] [     parallel-1] .r.m.a.RequestBodyMethodArgumentResolver : [5aa2b436-13] 0..1 [tn.albaraka.ai.api.ChatController$ChatRequest]
+server-1  | 2026-09-04T10:18:02.626Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] org.springframework.web.HttpLogging      : [5aa2b436-13] Decoded [ChatRequest[text=comment ouvrir un compte courant ?, locale=fr-FR, clientId=null, deviceId=null, con (truncated)...]
+server-1  | 2026-09-04T10:18:02.627Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [5aa2b436-13] Using 'text/event-stream' given [*/*] and supported [text/event-stream]
+server-1  | 2026-09-04T10:18:02.627Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [5aa2b436-13] 0..N [org.springframework.http.codec.ServerSentEvent<java.lang.String>]
+server-1  | 2026-09-04T10:18:02.632Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-518] o.s.w.r.f.client.ExchangeFunctions       : [71c56bee] HTTP POST http://rag-assistant:8000/v1/rag/chat
+server-1  | 2026-09-04T10:18:02.634Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] org.springframework.web.HttpLogging      : [71c56bee] Encoding [RagChatRequest[text=comment ouvrir un compte courant ?, context={max_classification=PUBLIC, audience (truncated)...]
+server-1  | 2026-09-04T10:18:02.637Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] o.s.w.r.f.client.ExchangeFunctions       : [71c56bee] [1a9bb97e-1] Response 200 OK
+server-1  | 2026-09-04T10:18:02.663Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] o.s.w.s.adapter.HttpWebHandlerAdapter    : [5aa2b436-13] Completed 200 OK
+server-1  | 2026-09-04T10:18:04.425Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.s.adapter.HttpWebHandlerAdapter    : [b18707b2-14] HTTP GET "/actuator/health/liveness"
+server-1  | 2026-09-04T10:18:04.427Z DEBUG 1 --- [albaraka-assistant] [     parallel-2] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
+server-1  | 2026-09-04T10:18:04.431Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-589] .s.w.r.r.m.a.ResponseEntityResultHandler : [b18707b2-14] Using 'application/vnd.spring-boot.actuator.v3+json' given [*/*] and supported [application/vnd.spring-boot.actuator.v3+json, application/vnd.spring-boot.actuator.v2+json, application/json]
+server-1  | 2026-09-04T10:18:04.431Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-589] .s.w.r.r.m.a.ResponseEntityResultHandler : [b18707b2-14] 0..1 [org.springframework.boot.health.actuate.endpoint.CompositeHealthDescriptor]
+server-1  | 2026-09-04T10:18:04.431Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-589] org.springframework.web.HttpLogging      : [b18707b2-14] Encoding [org.springframework.boot.health.actuate.endpoint.CompositeHealthDescriptor@44ec15eb]
+server-1  | 2026-09-04T10:18:04.432Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-589] o.s.w.s.adapter.HttpWebHandlerAdapter    : [b18707b2-14] Completed 200 OK
+server-1  | 2026-09-04T10:18:07.689Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] o.s.w.s.adapter.HttpWebHandlerAdapter    : [5c99a82b-15] HTTP POST "/api/v1/chat"
+server-1  | 2026-09-04T10:18:07.691Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
+server-1  | 2026-09-04T10:18:07.692Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] s.w.r.r.m.a.RequestMappingHandlerMapping : [5c99a82b-15] Mapped to tn.albaraka.ai.api.ChatController#chat(ChatRequest)
+server-1  | 2026-09-04T10:18:07.692Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] .r.m.a.RequestBodyMethodArgumentResolver : [5c99a82b-15] Content-Type:application/json
+server-1  | 2026-09-04T10:18:07.692Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] .r.m.a.RequestBodyMethodArgumentResolver : [5c99a82b-15] 0..1 [tn.albaraka.ai.api.ChatController$ChatRequest]
+server-1  | 2026-09-04T10:18:07.693Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] org.springframework.web.HttpLogging      : [5c99a82b-15] Decoded [ChatRequest[text=comment ouvrir un compte courant ?, locale=fr-FR, clientId=null, deviceId=null, con (truncated)...]
+server-1  | 2026-09-04T10:18:07.693Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [5c99a82b-15] Using 'text/event-stream' given [*/*] and supported [text/event-stream]
+server-1  | 2026-09-04T10:18:07.693Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [5c99a82b-15] 0..N [org.springframework.http.codec.ServerSentEvent<java.lang.String>]
+server-1  | 2026-09-04T10:18:07.697Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-592] o.s.w.r.f.client.ExchangeFunctions       : [55694ae4] HTTP POST http://rag-assistant:8000/v1/rag/chat
+server-1  | 2026-09-04T10:18:07.699Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] org.springframework.web.HttpLogging      : [55694ae4] Encoding [RagChatRequest[text=comment ouvrir un compte courant ?, context={max_classification=PUBLIC, audience (truncated)...]
+server-1  | 2026-09-04T10:18:07.703Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] o.s.w.r.f.client.ExchangeFunctions       : [55694ae4] [0a2a9e8e-1] Response 200 OK
+server-1  | 2026-09-04T10:18:07.722Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] o.s.w.s.adapter.HttpWebHandlerAdapter    : [5c99a82b-15] Completed 200 OK
+server-1  | 2026-09-04T10:18:12.749Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.s.adapter.HttpWebHandlerAdapter    : [455c82a1-16] HTTP POST "/api/v1/chat"
+server-1  | 2026-09-04T10:18:12.750Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
+server-1  | 2026-09-04T10:18:12.751Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] s.w.r.r.m.a.RequestMappingHandlerMapping : [455c82a1-16] Mapped to tn.albaraka.ai.api.ChatController#chat(ChatRequest)
+server-1  | 2026-09-04T10:18:12.752Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] .r.m.a.RequestBodyMethodArgumentResolver : [455c82a1-16] Content-Type:application/json
+server-1  | 2026-09-04T10:18:12.752Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] .r.m.a.RequestBodyMethodArgumentResolver : [455c82a1-16] 0..1 [tn.albaraka.ai.api.ChatController$ChatRequest]
+server-1  | 2026-09-04T10:18:12.752Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] org.springframework.web.HttpLogging      : [455c82a1-16] Decoded [ChatRequest[text=comment ouvrir un compte courant ?, locale=fr-FR, clientId=null, deviceId=null, con (truncated)...]
+server-1  | 2026-09-04T10:18:12.753Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [455c82a1-16] Using 'text/event-stream' given [*/*] and supported [text/event-stream]
+server-1  | 2026-09-04T10:18:12.753Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [455c82a1-16] 0..N [org.springframework.http.codec.ServerSentEvent<java.lang.String>]
+server-1  | 2026-09-04T10:18:12.756Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-664] o.s.w.r.f.client.ExchangeFunctions       : [61d30e7f] HTTP POST http://rag-assistant:8000/v1/rag/chat
+server-1  | 2026-09-04T10:18:12.758Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] org.springframework.web.HttpLogging      : [61d30e7f] Encoding [RagChatRequest[text=comment ouvrir un compte courant ?, context={max_classification=PUBLIC, audience (truncated)...]
+server-1  | 2026-09-04T10:18:12.762Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] o.s.w.r.f.client.ExchangeFunctions       : [61d30e7f] [db95665b-1] Response 200 OK
+server-1  | 2026-09-04T10:18:12.779Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.s.adapter.HttpWebHandlerAdapter    : [455c82a1-16] Completed 200 OK
+server-1  | 2026-09-04T10:18:14.474Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.s.adapter.HttpWebHandlerAdapter    : [03c9ecf3-17] HTTP GET "/actuator/health/liveness"
+server-1  | 2026-09-04T10:18:14.475Z DEBUG 1 --- [albaraka-assistant] [     parallel-1] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
+server-1  | 2026-09-04T10:18:14.478Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-735] .s.w.r.r.m.a.ResponseEntityResultHandler : [03c9ecf3-17] Using 'application/vnd.spring-boot.actuator.v3+json' given [*/*] and supported [application/vnd.spring-boot.actuator.v3+json, application/vnd.spring-boot.actuator.v2+json, application/json]
+server-1  | 2026-09-04T10:18:14.478Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-735] .s.w.r.r.m.a.ResponseEntityResultHandler : [03c9ecf3-17] 0..1 [org.springframework.boot.health.actuate.endpoint.CompositeHealthDescriptor]
+server-1  | 2026-09-04T10:18:14.478Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-735] org.springframework.web.HttpLogging      : [03c9ecf3-17] Encoding [org.springframework.boot.health.actuate.endpoint.CompositeHealthDescriptor@670556e4]
+server-1  | 2026-09-04T10:18:14.479Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-735] o.s.w.s.adapter.HttpWebHandlerAdapter    : [03c9ecf3-17] Completed 200 OK
+server-1  | 2026-09-04T10:18:17.805Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.s.adapter.HttpWebHandlerAdapter    : [76327724-18] HTTP POST "/api/v1/chat"
+server-1  | 2026-09-04T10:18:17.806Z DEBUG 1 --- [albaraka-assistant] [     parallel-2] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
+server-1  | 2026-09-04T10:18:17.808Z DEBUG 1 --- [albaraka-assistant] [     parallel-2] s.w.r.r.m.a.RequestMappingHandlerMapping : [76327724-18] Mapped to tn.albaraka.ai.api.ChatController#chat(ChatRequest)
+server-1  | 2026-09-04T10:18:17.808Z DEBUG 1 --- [albaraka-assistant] [     parallel-2] .r.m.a.RequestBodyMethodArgumentResolver : [76327724-18] Content-Type:application/json
+server-1  | 2026-09-04T10:18:17.808Z DEBUG 1 --- [albaraka-assistant] [     parallel-2] .r.m.a.RequestBodyMethodArgumentResolver : [76327724-18] 0..1 [tn.albaraka.ai.api.ChatController$ChatRequest]
+server-1  | 2026-09-04T10:18:17.809Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] org.springframework.web.HttpLogging      : [76327724-18] Decoded [ChatRequest[text=comment ouvrir un compte courant ?, locale=fr-FR, clientId=null, deviceId=null, con (truncated)...]
+server-1  | 2026-09-04T10:18:17.809Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [76327724-18] Using 'text/event-stream' given [*/*] and supported [text/event-stream]
+server-1  | 2026-09-04T10:18:17.809Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [76327724-18] 0..N [org.springframework.http.codec.ServerSentEvent<java.lang.String>]
+server-1  | 2026-09-04T10:18:17.813Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-738] o.s.w.r.f.client.ExchangeFunctions       : [2d2e5765] HTTP POST http://rag-assistant:8000/v1/rag/chat
+server-1  | 2026-09-04T10:18:17.814Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] org.springframework.web.HttpLogging      : [2d2e5765] Encoding [RagChatRequest[text=comment ouvrir un compte courant ?, context={max_classification=PUBLIC, audience (truncated)...]
+server-1  | 2026-09-04T10:18:17.819Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] o.s.w.r.f.client.ExchangeFunctions       : [2d2e5765] [3975fe2e-1] Response 200 OK
+server-1  | 2026-09-04T10:18:17.837Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.s.adapter.HttpWebHandlerAdapter    : [76327724-18] Completed 200 OK
+server-1  | 2026-09-04T10:18:22.864Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.s.adapter.HttpWebHandlerAdapter    : [f824ec26-19] HTTP POST "/api/v1/chat"
+server-1  | 2026-09-04T10:18:22.866Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
+server-1  | 2026-09-04T10:18:22.867Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] s.w.r.r.m.a.RequestMappingHandlerMapping : [f824ec26-19] Mapped to tn.albaraka.ai.api.ChatController#chat(ChatRequest)
+server-1  | 2026-09-04T10:18:22.867Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] .r.m.a.RequestBodyMethodArgumentResolver : [f824ec26-19] Content-Type:application/json
+server-1  | 2026-09-04T10:18:22.867Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] .r.m.a.RequestBodyMethodArgumentResolver : [f824ec26-19] 0..1 [tn.albaraka.ai.api.ChatController$ChatRequest]
+server-1  | 2026-09-04T10:18:22.868Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] org.springframework.web.HttpLogging      : [f824ec26-19] Decoded [ChatRequest[text=comment ouvrir un compte courant ?, locale=fr-FR, clientId=null, deviceId=null, con (truncated)...]
+server-1  | 2026-09-04T10:18:22.868Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [f824ec26-19] Using 'text/event-stream' given [*/*] and supported [text/event-stream]
+server-1  | 2026-09-04T10:18:22.868Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [f824ec26-19] 0..N [org.springframework.http.codec.ServerSentEvent<java.lang.String>]
+server-1  | 2026-09-04T10:18:22.872Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-810] o.s.w.r.f.client.ExchangeFunctions       : [338cf99d] HTTP POST http://rag-assistant:8000/v1/rag/chat
+server-1  | 2026-09-04T10:18:22.873Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] org.springframework.web.HttpLogging      : [338cf99d] Encoding [RagChatRequest[text=comment ouvrir un compte courant ?, context={max_classification=PUBLIC, audience (truncated)...]
+server-1  | 2026-09-04T10:18:22.878Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.r.f.client.ExchangeFunctions       : [338cf99d] [7cf3f19b-1] Response 200 OK
+server-1  | 2026-09-04T10:18:22.896Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.s.adapter.HttpWebHandlerAdapter    : [f824ec26-19] Completed 200 OK
+server-1  | 2026-09-04T10:18:24.521Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] o.s.w.s.adapter.HttpWebHandlerAdapter    : [8f880356-20] HTTP GET "/actuator/health/liveness"
+server-1  | 2026-09-04T10:18:24.523Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
+server-1  | 2026-09-04T10:18:24.526Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-881] .s.w.r.r.m.a.ResponseEntityResultHandler : [8f880356-20] Using 'application/vnd.spring-boot.actuator.v3+json' given [*/*] and supported [application/vnd.spring-boot.actuator.v3+json, application/vnd.spring-boot.actuator.v2+json, application/json]
+server-1  | 2026-09-04T10:18:24.526Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-881] .s.w.r.r.m.a.ResponseEntityResultHandler : [8f880356-20] 0..1 [org.springframework.boot.health.actuate.endpoint.CompositeHealthDescriptor]
+server-1  | 2026-09-04T10:18:24.526Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-881] org.springframework.web.HttpLogging      : [8f880356-20] Encoding [org.springframework.boot.health.actuate.endpoint.CompositeHealthDescriptor@174b7fac]
+server-1  | 2026-09-04T10:18:24.527Z DEBUG 1 --- [albaraka-assistant] [ndedElastic-881] o.s.w.s.adapter.HttpWebHandlerAdapter    : [8f880356-20] Completed 200 OK
 
 ## server — flyway / migration lines (whole log)
-server-1  | 2026-09-04T10:00:53.928Z  INFO 1 --- [albaraka-assistant] [           main] org.flywaydb.core.FlywayExecutor         : Database: jdbc:postgresql://postgres:5432/albaraka_ai (PostgreSQL 17.8)
-server-1  | 2026-09-04T10:00:54.051Z  INFO 1 --- [albaraka-assistant] [           main] o.f.c.i.s.JdbcTableSchemaHistory         : Schema history table "public"."flyway_schema_history" does not exist yet
-server-1  | 2026-09-04T10:00:54.055Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbValidate     : Successfully validated 6 migrations (execution time 00:00.056s)
-server-1  | 2026-09-04T10:00:54.070Z  INFO 1 --- [albaraka-assistant] [           main] o.f.c.i.s.JdbcTableSchemaHistory         : Creating Schema History table "public"."flyway_schema_history" ...
-server-1  | 2026-09-04T10:00:54.119Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Current version of schema "public": << Empty Schema >>
-server-1  | 2026-09-04T10:00:54.216Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "1 - baseline schema"
-server-1  | 2026-09-04T10:00:54.476Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "2 - demo seed"
-server-1  | 2026-09-04T10:00:54.533Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "900 - seed glossary"
-server-1  | 2026-09-04T10:00:54.580Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "901 - seed prompts"
-server-1  | 2026-09-04T10:00:54.609Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "902 - seed policies"
-server-1  | 2026-09-04T10:00:54.677Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "903 - seed dialect"
-server-1  | 2026-09-04T10:00:54.712Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Successfully applied 6 migrations to schema "public", now at version v903 (execution time 00:00.333s)
+server-1  | 2026-09-04T10:17:17.331Z  INFO 1 --- [albaraka-assistant] [           main] org.flywaydb.core.FlywayExecutor         : Database: jdbc:postgresql://postgres:5432/albaraka_ai (PostgreSQL 17.8)
+server-1  | 2026-09-04T10:17:17.435Z  INFO 1 --- [albaraka-assistant] [           main] o.f.c.i.s.JdbcTableSchemaHistory         : Schema history table "public"."flyway_schema_history" does not exist yet
+server-1  | 2026-09-04T10:17:17.439Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbValidate     : Successfully validated 6 migrations (execution time 00:00.044s)
+server-1  | 2026-09-04T10:17:17.454Z  INFO 1 --- [albaraka-assistant] [           main] o.f.c.i.s.JdbcTableSchemaHistory         : Creating Schema History table "public"."flyway_schema_history" ...
+server-1  | 2026-09-04T10:17:17.512Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Current version of schema "public": << Empty Schema >>
+server-1  | 2026-09-04T10:17:17.613Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "1 - baseline schema"
+server-1  | 2026-09-04T10:17:17.873Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "2 - demo seed"
+server-1  | 2026-09-04T10:17:17.954Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "900 - seed glossary"
+server-1  | 2026-09-04T10:17:17.988Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "901 - seed prompts"
+server-1  | 2026-09-04T10:17:18.021Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "902 - seed policies"
+server-1  | 2026-09-04T10:17:18.061Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "903 - seed dialect"
+server-1  | 2026-09-04T10:17:18.094Z  INFO 1 --- [albaraka-assistant] [           main] o.f.core.internal.command.DbMigrate      : Successfully applied 6 migrations to schema "public", now at version v903 (execution time 00:00.318s)
 
 ## rag-assistant
 rag-assistant-1  | INFO:     Started server process [1]
 rag-assistant-1  | INFO:     Waiting for application startup.
-rag-assistant-1  | 2026-09-04 10:00:21,036 INFO rag_assistant mock vector backend ready — 10 demo chunks indexed
+rag-assistant-1  | 2026-09-04 10:16:44,479 INFO rag_assistant mock vector backend ready — 10 demo chunks indexed
 rag-assistant-1  | INFO:     Application startup complete.
 rag-assistant-1  | INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
-rag-assistant-1  | INFO:     127.0.0.1:40196 - "GET /v1/rag/health HTTP/1.1" 200 OK
-rag-assistant-1  | INFO:     127.0.0.1:54930 - "GET /v1/rag/health HTTP/1.1" 200 OK
-rag-assistant-1  | INFO:     127.0.0.1:55832 - "GET /v1/rag/health HTTP/1.1" 200 OK
-rag-assistant-1  | INFO:     127.0.0.1:52192 - "GET /v1/rag/health HTTP/1.1" 200 OK
-rag-assistant-1  | INFO:     172.18.0.1:38254 - "GET /v1/rag/health HTTP/1.1" 200 OK
-rag-assistant-1  | INFO:     172.18.0.5:53166 - "POST /v1/rag/chat HTTP/1.1" 200 OK
-rag-assistant-1  | INFO:     172.18.0.1:38266 - "POST /v1/rag/chat HTTP/1.1" 401 Unauthorized
-rag-assistant-1  | INFO:     172.18.0.5:53182 - "POST /v1/rag/chat HTTP/1.1" 200 OK
-rag-assistant-1  | INFO:     172.18.0.1:38274 - "POST /v1/rag/chat HTTP/1.1" 401 Unauthorized
-rag-assistant-1  | INFO:     127.0.0.1:54742 - "GET /v1/rag/health HTTP/1.1" 200 OK
-rag-assistant-1  | INFO:     172.18.0.5:36550 - "POST /v1/rag/chat HTTP/1.1" 200 OK
-rag-assistant-1  | INFO:     172.18.0.1:51802 - "POST /v1/rag/chat HTTP/1.1" 401 Unauthorized
-rag-assistant-1  | INFO:     172.18.0.5:36560 - "POST /v1/rag/chat HTTP/1.1" 200 OK
-rag-assistant-1  | INFO:     172.18.0.1:51804 - "POST /v1/rag/chat HTTP/1.1" 401 Unauthorized
-rag-assistant-1  | INFO:     127.0.0.1:46886 - "GET /v1/rag/health HTTP/1.1" 200 OK
-rag-assistant-1  | INFO:     172.18.0.5:36066 - "POST /v1/rag/chat HTTP/1.1" 200 OK
-rag-assistant-1  | INFO:     172.18.0.1:50686 - "POST /v1/rag/chat HTTP/1.1" 401 Unauthorized
-rag-assistant-1  | INFO:     172.18.0.5:36076 - "POST /v1/rag/chat HTTP/1.1" 200 OK
-rag-assistant-1  | INFO:     172.18.0.1:50690 - "POST /v1/rag/chat HTTP/1.1" 401 Unauthorized
-rag-assistant-1  | INFO:     127.0.0.1:47594 - "GET /v1/rag/health HTTP/1.1" 200 OK
-rag-assistant-1  | INFO:     172.18.0.5:59020 - "POST /v1/rag/chat HTTP/1.1" 200 OK
-rag-assistant-1  | INFO:     172.18.0.1:39470 - "POST /v1/rag/chat HTTP/1.1" 401 Unauthorized
-rag-assistant-1  | INFO:     172.18.0.5:59024 - "POST /v1/rag/chat HTTP/1.1" 200 OK
-rag-assistant-1  | INFO:     172.18.0.1:39486 - "POST /v1/rag/chat HTTP/1.1" 401 Unauthorized
-rag-assistant-1  | INFO:     127.0.0.1:48026 - "GET /v1/rag/health HTTP/1.1" 200 OK
-rag-assistant-1  | INFO:     172.18.0.5:34218 - "POST /v1/rag/chat HTTP/1.1" 200 OK
-rag-assistant-1  | INFO:     172.18.0.1:49992 - "POST /v1/rag/chat HTTP/1.1" 401 Unauthorized
-rag-assistant-1  | INFO:     172.18.0.5:34228 - "POST /v1/rag/chat HTTP/1.1" 200 OK
-rag-assistant-1  | INFO:     172.18.0.1:50002 - "POST /v1/rag/chat HTTP/1.1" 401 Unauthorized
-rag-assistant-1  | INFO:     127.0.0.1:35626 - "GET /v1/rag/health HTTP/1.1" 200 OK
-rag-assistant-1  | INFO:     172.18.0.5:41792 - "POST /v1/rag/chat HTTP/1.1" 200 OK
-rag-assistant-1  | INFO:     172.18.0.1:33654 - "POST /v1/rag/chat HTTP/1.1" 401 Unauthorized
-rag-assistant-1  | INFO:     172.18.0.5:41802 - "POST /v1/rag/chat HTTP/1.1" 200 OK
-rag-assistant-1  | INFO:     172.18.0.1:33664 - "POST /v1/rag/chat HTTP/1.1" 401 Unauthorized
-rag-assistant-1  | INFO:     127.0.0.1:52154 - "GET /v1/rag/health HTTP/1.1" 200 OK
+rag-assistant-1  | INFO:     127.0.0.1:44958 - "GET /v1/rag/health HTTP/1.1" 200 OK
+rag-assistant-1  | INFO:     127.0.0.1:40682 - "GET /v1/rag/health HTTP/1.1" 200 OK
+rag-assistant-1  | INFO:     127.0.0.1:52842 - "GET /v1/rag/health HTTP/1.1" 200 OK
+rag-assistant-1  | INFO:     127.0.0.1:41248 - "GET /v1/rag/health HTTP/1.1" 200 OK
+rag-assistant-1  | INFO:     172.18.0.1:37750 - "GET /v1/rag/health HTTP/1.1" 200 OK
+rag-assistant-1  | INFO:     172.18.0.5:38202 - "POST /v1/rag/chat HTTP/1.1" 200 OK
+rag-assistant-1  | INFO:     172.18.0.1:37758 - "POST /v1/rag/chat HTTP/1.1" 401 Unauthorized
+rag-assistant-1  | INFO:     127.0.0.1:33888 - "GET /v1/rag/health HTTP/1.1" 200 OK
+rag-assistant-1  | INFO:     172.18.0.5:38214 - "POST /v1/rag/chat HTTP/1.1" 200 OK
+rag-assistant-1  | INFO:     172.18.0.1:37768 - "POST /v1/rag/chat HTTP/1.1" 401 Unauthorized
+rag-assistant-1  | INFO:     172.18.0.5:39720 - "POST /v1/rag/chat HTTP/1.1" 200 OK
+rag-assistant-1  | INFO:     172.18.0.1:54680 - "POST /v1/rag/chat HTTP/1.1" 401 Unauthorized
+rag-assistant-1  | INFO:     127.0.0.1:60228 - "GET /v1/rag/health HTTP/1.1" 200 OK
+rag-assistant-1  | INFO:     172.18.0.5:39736 - "POST /v1/rag/chat HTTP/1.1" 200 OK
+rag-assistant-1  | INFO:     172.18.0.1:54690 - "POST /v1/rag/chat HTTP/1.1" 401 Unauthorized
+rag-assistant-1  | INFO:     172.18.0.5:46594 - "POST /v1/rag/chat HTTP/1.1" 200 OK
+rag-assistant-1  | INFO:     172.18.0.1:58356 - "POST /v1/rag/chat HTTP/1.1" 401 Unauthorized
+rag-assistant-1  | INFO:     127.0.0.1:47326 - "GET /v1/rag/health HTTP/1.1" 200 OK
+rag-assistant-1  | INFO:     172.18.0.5:46602 - "POST /v1/rag/chat HTTP/1.1" 200 OK
+rag-assistant-1  | INFO:     172.18.0.1:58372 - "POST /v1/rag/chat HTTP/1.1" 401 Unauthorized
+rag-assistant-1  | INFO:     172.18.0.5:60922 - "POST /v1/rag/chat HTTP/1.1" 200 OK
+rag-assistant-1  | INFO:     172.18.0.1:52922 - "POST /v1/rag/chat HTTP/1.1" 401 Unauthorized
+rag-assistant-1  | INFO:     127.0.0.1:36684 - "GET /v1/rag/health HTTP/1.1" 200 OK
+rag-assistant-1  | INFO:     172.18.0.5:60934 - "POST /v1/rag/chat HTTP/1.1" 200 OK
+rag-assistant-1  | INFO:     172.18.0.1:52928 - "POST /v1/rag/chat HTTP/1.1" 401 Unauthorized
+rag-assistant-1  | INFO:     172.18.0.5:40838 - "POST /v1/rag/chat HTTP/1.1" 200 OK
+rag-assistant-1  | INFO:     172.18.0.1:45710 - "POST /v1/rag/chat HTTP/1.1" 401 Unauthorized
+rag-assistant-1  | INFO:     127.0.0.1:35886 - "GET /v1/rag/health HTTP/1.1" 200 OK
+rag-assistant-1  | INFO:     172.18.0.5:40854 - "POST /v1/rag/chat HTTP/1.1" 200 OK
+rag-assistant-1  | INFO:     172.18.0.1:45718 - "POST /v1/rag/chat HTTP/1.1" 401 Unauthorized
+rag-assistant-1  | INFO:     172.18.0.5:41190 - "POST /v1/rag/chat HTTP/1.1" 200 OK
+rag-assistant-1  | INFO:     172.18.0.1:48340 - "POST /v1/rag/chat HTTP/1.1" 401 Unauthorized
+rag-assistant-1  | INFO:     127.0.0.1:54372 - "GET /v1/rag/health HTTP/1.1" 200 OK
+rag-assistant-1  | INFO:     172.18.0.5:41192 - "POST /v1/rag/chat HTTP/1.1" 200 OK
+rag-assistant-1  | INFO:     172.18.0.1:48348 - "POST /v1/rag/chat HTTP/1.1" 401 Unauthorized
 
 ## chat smoke diagnostics
-== attempt 1/12 — no answer; received 2043 bytes via edge:
+== attempt 1/12 — no answer; received 3592 bytes via edge:
 event:accepted
-data:{"messageId":"b232fd16-3d85-484d-8fa1-d9d1ed4bba4b","conversationId":"4ccced9e-7f72-4de6-8b98-214f4b1c35bf","locale":"fr-FR","dir":"ltr"}
+data:{"messageId":"2d086c39-3fe1-46e9-81c8-e78fb1a9897e","conversationId":"33a85111-7c0d-4f74-8088-8c6324cb92ad","locale":"fr-FR","dir":"ltr"}
 
 event:status
 data:{"stage":"SCREENING","label":"Vérification des règles"}
@@ -331,45 +331,12 @@ event:status
 data:{"stage":"RERANKING","label":"Classement des sources"}
 
 event:sources
-data:{"sources":[]}
-
-event:status
-data:{"stage":"GENERATING","label":"Rédaction de la réponse"}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-d
+data:{"citations":[{"id":"S1","chunkId":"20000000-0000-4000-8000-000000000001","documentId":"10000000-0000-4000-8000-000000000001","documentTitle":"Ouverture d'un compte courant","documentTitleLocale":"fr-FR","collectionCode":"PRODUCTS","headingPath":["Compte courant","Conditions"],"excerpt":"L'ouver
 -- raw RAG probe (what the server receives):
 
-== attempt 2/12 — no answer; received 2043 bytes via edge:
+== attempt 2/12 — no answer; received 3592 bytes via edge:
 event:accepted
-data:{"messageId":"5a17a970-69ac-4140-ab0c-99459dbf3566","conversationId":"85b5b075-ef66-45cf-b233-1aaded4a56f5","locale":"fr-FR","dir":"ltr"}
+data:{"messageId":"f855b4c8-ebff-40f0-873a-c421a09f25b6","conversationId":"e36a8661-e8e7-4b77-a1cf-d708d4b733e4","locale":"fr-FR","dir":"ltr"}
 
 event:status
 data:{"stage":"SCREENING","label":"Vérification des règles"}
@@ -381,45 +348,12 @@ event:status
 data:{"stage":"RERANKING","label":"Classement des sources"}
 
 event:sources
-data:{"sources":[]}
-
-event:status
-data:{"stage":"GENERATING","label":"Rédaction de la réponse"}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-d
+data:{"citations":[{"id":"S1","chunkId":"20000000-0000-4000-8000-000000000001","documentId":"10000000-0000-4000-8000-000000000001","documentTitle":"Ouverture d'un compte courant","documentTitleLocale":"fr-FR","collectionCode":"PRODUCTS","headingPath":["Compte courant","Conditions"],"excerpt":"L'ouver
 -- raw RAG probe (what the server receives):
 
-== attempt 3/12 — no answer; received 2043 bytes via edge:
+== attempt 3/12 — no answer; received 3592 bytes via edge:
 event:accepted
-data:{"messageId":"211d2c22-67e0-4bf3-b5fb-acf1ebaf4aa0","conversationId":"1c6750a1-3217-4cd9-8292-990e1bbc7b67","locale":"fr-FR","dir":"ltr"}
+data:{"messageId":"11a49d7d-6dad-4929-9ea4-1e059a31ac71","conversationId":"dbbfadb9-05ba-43ba-b756-1327148c490f","locale":"fr-FR","dir":"ltr"}
 
 event:status
 data:{"stage":"SCREENING","label":"Vérification des règles"}
@@ -431,45 +365,12 @@ event:status
 data:{"stage":"RERANKING","label":"Classement des sources"}
 
 event:sources
-data:{"sources":[]}
-
-event:status
-data:{"stage":"GENERATING","label":"Rédaction de la réponse"}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-d
+data:{"citations":[{"id":"S1","chunkId":"20000000-0000-4000-8000-000000000001","documentId":"10000000-0000-4000-8000-000000000001","documentTitle":"Ouverture d'un compte courant","documentTitleLocale":"fr-FR","collectionCode":"PRODUCTS","headingPath":["Compte courant","Conditions"],"excerpt":"L'ouver
 -- raw RAG probe (what the server receives):
 
-== attempt 4/12 — no answer; received 2043 bytes via edge:
+== attempt 4/12 — no answer; received 3592 bytes via edge:
 event:accepted
-data:{"messageId":"f2acbb91-9089-4cc7-8c2f-0223e2c498aa","conversationId":"d666b78e-349c-4bf9-a299-1459941b09f5","locale":"fr-FR","dir":"ltr"}
+data:{"messageId":"cc8ce2a8-544c-4ad2-9a48-430a1991fd99","conversationId":"9b24fc76-4239-4694-99f3-5ee9d4bae79a","locale":"fr-FR","dir":"ltr"}
 
 event:status
 data:{"stage":"SCREENING","label":"Vérification des règles"}
@@ -481,45 +382,12 @@ event:status
 data:{"stage":"RERANKING","label":"Classement des sources"}
 
 event:sources
-data:{"sources":[]}
-
-event:status
-data:{"stage":"GENERATING","label":"Rédaction de la réponse"}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-d
+data:{"citations":[{"id":"S1","chunkId":"20000000-0000-4000-8000-000000000001","documentId":"10000000-0000-4000-8000-000000000001","documentTitle":"Ouverture d'un compte courant","documentTitleLocale":"fr-FR","collectionCode":"PRODUCTS","headingPath":["Compte courant","Conditions"],"excerpt":"L'ouver
 -- raw RAG probe (what the server receives):
 
-== attempt 5/12 — no answer; received 2043 bytes via edge:
+== attempt 5/12 — no answer; received 3592 bytes via edge:
 event:accepted
-data:{"messageId":"bb02aed5-a6de-4eda-8161-4615f21e24c0","conversationId":"07bffcf6-5df0-4877-933d-3bb7d2323a3e","locale":"fr-FR","dir":"ltr"}
+data:{"messageId":"b576b93c-4216-47b1-870f-18c5be3f3e3c","conversationId":"f044283e-c1f5-4953-8986-ad843f4dc5d5","locale":"fr-FR","dir":"ltr"}
 
 event:status
 data:{"stage":"SCREENING","label":"Vérification des règles"}
@@ -531,45 +399,12 @@ event:status
 data:{"stage":"RERANKING","label":"Classement des sources"}
 
 event:sources
-data:{"sources":[]}
-
-event:status
-data:{"stage":"GENERATING","label":"Rédaction de la réponse"}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-d
+data:{"citations":[{"id":"S1","chunkId":"20000000-0000-4000-8000-000000000001","documentId":"10000000-0000-4000-8000-000000000001","documentTitle":"Ouverture d'un compte courant","documentTitleLocale":"fr-FR","collectionCode":"PRODUCTS","headingPath":["Compte courant","Conditions"],"excerpt":"L'ouver
 -- raw RAG probe (what the server receives):
 
-== attempt 6/12 — no answer; received 2043 bytes via edge:
+== attempt 6/12 — no answer; received 3592 bytes via edge:
 event:accepted
-data:{"messageId":"79c975b3-1c14-4a5d-9e9c-1b22dc0f580f","conversationId":"0312c93e-ecbd-40cc-aa52-e729f9a4635e","locale":"fr-FR","dir":"ltr"}
+data:{"messageId":"f842a9a8-f84c-46a3-acb9-e456f09f88b9","conversationId":"2febc30d-4a1d-4313-b0a3-96f3a837ef1c","locale":"fr-FR","dir":"ltr"}
 
 event:status
 data:{"stage":"SCREENING","label":"Vérification des règles"}
@@ -581,45 +416,12 @@ event:status
 data:{"stage":"RERANKING","label":"Classement des sources"}
 
 event:sources
-data:{"sources":[]}
-
-event:status
-data:{"stage":"GENERATING","label":"Rédaction de la réponse"}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-d
+data:{"citations":[{"id":"S1","chunkId":"20000000-0000-4000-8000-000000000001","documentId":"10000000-0000-4000-8000-000000000001","documentTitle":"Ouverture d'un compte courant","documentTitleLocale":"fr-FR","collectionCode":"PRODUCTS","headingPath":["Compte courant","Conditions"],"excerpt":"L'ouver
 -- raw RAG probe (what the server receives):
 
-== attempt 7/12 — no answer; received 2043 bytes via edge:
+== attempt 7/12 — no answer; received 3592 bytes via edge:
 event:accepted
-data:{"messageId":"d17a0721-5dd9-4b9b-a656-58a17672cae4","conversationId":"9d5a4613-1f5f-420c-9200-00737484e3bf","locale":"fr-FR","dir":"ltr"}
+data:{"messageId":"d3a212a5-2dc4-45f7-b4e0-649db598aaa8","conversationId":"abfbc320-093b-42d2-9dbd-1ea15cb50464","locale":"fr-FR","dir":"ltr"}
 
 event:status
 data:{"stage":"SCREENING","label":"Vérification des règles"}
@@ -631,45 +433,12 @@ event:status
 data:{"stage":"RERANKING","label":"Classement des sources"}
 
 event:sources
-data:{"sources":[]}
-
-event:status
-data:{"stage":"GENERATING","label":"Rédaction de la réponse"}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-d
+data:{"citations":[{"id":"S1","chunkId":"20000000-0000-4000-8000-000000000001","documentId":"10000000-0000-4000-8000-000000000001","documentTitle":"Ouverture d'un compte courant","documentTitleLocale":"fr-FR","collectionCode":"PRODUCTS","headingPath":["Compte courant","Conditions"],"excerpt":"L'ouver
 -- raw RAG probe (what the server receives):
 
-== attempt 8/12 — no answer; received 2043 bytes via edge:
+== attempt 8/12 — no answer; received 3592 bytes via edge:
 event:accepted
-data:{"messageId":"9d5a7e24-c68b-4fcd-ab24-03f50172e1c4","conversationId":"fe3db073-700e-462d-9928-cefd6d8da5f6","locale":"fr-FR","dir":"ltr"}
+data:{"messageId":"ce95d360-50d4-4619-93e6-22057988322d","conversationId":"e56d5231-5073-475b-95cd-2e4c7bc415f7","locale":"fr-FR","dir":"ltr"}
 
 event:status
 data:{"stage":"SCREENING","label":"Vérification des règles"}
@@ -681,45 +450,12 @@ event:status
 data:{"stage":"RERANKING","label":"Classement des sources"}
 
 event:sources
-data:{"sources":[]}
-
-event:status
-data:{"stage":"GENERATING","label":"Rédaction de la réponse"}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-d
+data:{"citations":[{"id":"S1","chunkId":"20000000-0000-4000-8000-000000000001","documentId":"10000000-0000-4000-8000-000000000001","documentTitle":"Ouverture d'un compte courant","documentTitleLocale":"fr-FR","collectionCode":"PRODUCTS","headingPath":["Compte courant","Conditions"],"excerpt":"L'ouver
 -- raw RAG probe (what the server receives):
 
-== attempt 9/12 — no answer; received 2043 bytes via edge:
+== attempt 9/12 — no answer; received 3592 bytes via edge:
 event:accepted
-data:{"messageId":"729c2864-0f5b-456c-bd6f-54b098cf2df5","conversationId":"55d603ea-c438-4178-9d24-574f6e173152","locale":"fr-FR","dir":"ltr"}
+data:{"messageId":"22174432-06bf-4be2-a0d3-d7ec37f6b4db","conversationId":"e47653ce-23ad-4865-8ccf-a4eba27fabb5","locale":"fr-FR","dir":"ltr"}
 
 event:status
 data:{"stage":"SCREENING","label":"Vérification des règles"}
@@ -731,45 +467,12 @@ event:status
 data:{"stage":"RERANKING","label":"Classement des sources"}
 
 event:sources
-data:{"sources":[]}
-
-event:status
-data:{"stage":"GENERATING","label":"Rédaction de la réponse"}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-d
+data:{"citations":[{"id":"S1","chunkId":"20000000-0000-4000-8000-000000000001","documentId":"10000000-0000-4000-8000-000000000001","documentTitle":"Ouverture d'un compte courant","documentTitleLocale":"fr-FR","collectionCode":"PRODUCTS","headingPath":["Compte courant","Conditions"],"excerpt":"L'ouver
 -- raw RAG probe (what the server receives):
 
-== attempt 10/12 — no answer; received 2043 bytes via edge:
+== attempt 10/12 — no answer; received 3592 bytes via edge:
 event:accepted
-data:{"messageId":"7d7f9659-e7f0-45c6-9e41-4f4bca8f611c","conversationId":"9c9e3540-ff51-42da-96b9-53bc7cdd1d61","locale":"fr-FR","dir":"ltr"}
+data:{"messageId":"cad062d3-2134-400a-a2a7-7ac3aa7ad773","conversationId":"d27edc2a-8757-4b47-bb0c-71744e051c4d","locale":"fr-FR","dir":"ltr"}
 
 event:status
 data:{"stage":"SCREENING","label":"Vérification des règles"}
@@ -781,45 +484,12 @@ event:status
 data:{"stage":"RERANKING","label":"Classement des sources"}
 
 event:sources
-data:{"sources":[]}
-
-event:status
-data:{"stage":"GENERATING","label":"Rédaction de la réponse"}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-d
+data:{"citations":[{"id":"S1","chunkId":"20000000-0000-4000-8000-000000000001","documentId":"10000000-0000-4000-8000-000000000001","documentTitle":"Ouverture d'un compte courant","documentTitleLocale":"fr-FR","collectionCode":"PRODUCTS","headingPath":["Compte courant","Conditions"],"excerpt":"L'ouver
 -- raw RAG probe (what the server receives):
 
-== attempt 11/12 — no answer; received 2043 bytes via edge:
+== attempt 11/12 — no answer; received 3592 bytes via edge:
 event:accepted
-data:{"messageId":"4a937f88-c307-43ea-a48d-331d13a1c433","conversationId":"64b6c5ab-9a78-46f4-9be2-4dd5c62221c3","locale":"fr-FR","dir":"ltr"}
+data:{"messageId":"260f0c26-698b-4a15-85f4-74cd2f68c32d","conversationId":"973592c8-5482-4ed4-9559-9da70a66a119","locale":"fr-FR","dir":"ltr"}
 
 event:status
 data:{"stage":"SCREENING","label":"Vérification des règles"}
@@ -831,45 +501,12 @@ event:status
 data:{"stage":"RERANKING","label":"Classement des sources"}
 
 event:sources
-data:{"sources":[]}
-
-event:status
-data:{"stage":"GENERATING","label":"Rédaction de la réponse"}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-d
+data:{"citations":[{"id":"S1","chunkId":"20000000-0000-4000-8000-000000000001","documentId":"10000000-0000-4000-8000-000000000001","documentTitle":"Ouverture d'un compte courant","documentTitleLocale":"fr-FR","collectionCode":"PRODUCTS","headingPath":["Compte courant","Conditions"],"excerpt":"L'ouver
 -- raw RAG probe (what the server receives):
 
-== attempt 12/12 — no answer; received 2043 bytes via edge:
+== attempt 12/12 — no answer; received 3592 bytes via edge:
 event:accepted
-data:{"messageId":"ac5398a3-6021-44c9-b379-d95b1909e1b5","conversationId":"be8e4269-5908-4303-8402-83ea73d191cb","locale":"fr-FR","dir":"ltr"}
+data:{"messageId":"76ddfb87-957e-49d8-bc0e-0b024ccf4b21","conversationId":"4ed44b89-259a-4b3f-8e78-8f3a11bcacaf","locale":"fr-FR","dir":"ltr"}
 
 event:status
 data:{"stage":"SCREENING","label":"Vérification des règles"}
@@ -881,40 +518,7 @@ event:status
 data:{"stage":"RERANKING","label":"Classement des sources"}
 
 event:sources
-data:{"sources":[]}
-
-event:status
-data:{"stage":"GENERATING","label":"Rédaction de la réponse"}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-data:{}
-
-event:token
-d
+data:{"citations":[{"id":"S1","chunkId":"20000000-0000-4000-8000-000000000001","documentId":"10000000-0000-4000-8000-000000000001","documentTitle":"Ouverture d'un compte courant","documentTitleLocale":"fr-FR","collectionCode":"PRODUCTS","headingPath":["Compte courant","Conditions"],"excerpt":"L'ouver
 -- raw RAG probe (what the server receives):
 
 chat SSE smoke failed — no answer event
@@ -959,10 +563,10 @@ postgres-1  |     pg_ctl -D /var/lib/postgresql/data -l logfile start
 postgres-1  | 
 postgres-1  | initdb: warning: enabling "trust" authentication for local connections
 postgres-1  | initdb: hint: You can change this by editing pg_hba.conf or using the option -A, or --auth-local and --auth-host, the next time you run initdb.
-postgres-1  | waiting for server to start....2026-09-04 10:00:14.625 UTC [48] LOG:  starting PostgreSQL 17.8 (Debian 17.8-1.pgdg12+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit
-postgres-1  | 2026-09-04 10:00:14.626 UTC [48] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
-postgres-1  | 2026-09-04 10:00:14.628 UTC [51] LOG:  database system was shut down at 2026-09-04 10:00:14 UTC
-postgres-1  | 2026-09-04 10:00:14.632 UTC [48] LOG:  database system is ready to accept connections
+postgres-1  | waiting for server to start....2026-09-04 10:16:38.148 UTC [48] LOG:  starting PostgreSQL 17.8 (Debian 17.8-1.pgdg12+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit
+postgres-1  | 2026-09-04 10:16:38.149 UTC [48] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+postgres-1  | 2026-09-04 10:16:38.151 UTC [51] LOG:  database system was shut down at 2026-09-04 10:16:38 UTC
+postgres-1  | 2026-09-04 10:16:38.155 UTC [48] LOG:  database system is ready to accept connections
 postgres-1  |  done
 postgres-1  | server started
 postgres-1  | CREATE DATABASE
@@ -972,27 +576,27 @@ postgres-1  | /usr/local/bin/docker-entrypoint.sh: running /docker-entrypoint-in
 postgres-1  | CREATE DATABASE
 postgres-1  | 
 postgres-1  | 
-postgres-1  | waiting for server to shut down...2026-09-04 10:00:14.874 UTC [48] LOG:  received fast shutdown request
-postgres-1  | .2026-09-04 10:00:14.875 UTC [48] LOG:  aborting any active transactions
-postgres-1  | 2026-09-04 10:00:14.877 UTC [48] LOG:  background worker "logical replication launcher" (PID 54) exited with exit code 1
-postgres-1  | 2026-09-04 10:00:14.878 UTC [49] LOG:  shutting down
-postgres-1  | 2026-09-04 10:00:14.878 UTC [49] LOG:  checkpoint starting: shutdown immediate
-postgres-1  | 2026-09-04 10:00:14.906 UTC [49] LOG:  checkpoint complete: wrote 1836 buffers (11.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.025 s, sync=0.003 s, total=0.029 s; sync files=597, longest=0.001 s, average=0.001 s; distance=8476 kB, estimate=8476 kB; lsn=0/1D2BED8, redo lsn=0/1D2BED8
-postgres-1  | 2026-09-04 10:00:14.916 UTC [48] LOG:  database system is shut down
+postgres-1  | waiting for server to shut down...2026-09-04 10:16:38.399 UTC [48] LOG:  received fast shutdown request
+postgres-1  | .2026-09-04 10:16:38.400 UTC [48] LOG:  aborting any active transactions
+postgres-1  | 2026-09-04 10:16:38.403 UTC [48] LOG:  background worker "logical replication launcher" (PID 54) exited with exit code 1
+postgres-1  | 2026-09-04 10:16:38.403 UTC [49] LOG:  shutting down
+postgres-1  | 2026-09-04 10:16:38.404 UTC [49] LOG:  checkpoint starting: shutdown immediate
+postgres-1  | 2026-09-04 10:16:38.431 UTC [49] LOG:  checkpoint complete: wrote 1836 buffers (11.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.024 s, sync=0.003 s, total=0.028 s; sync files=597, longest=0.001 s, average=0.001 s; distance=8476 kB, estimate=8476 kB; lsn=0/1D2BED8, redo lsn=0/1D2BED8
+postgres-1  | 2026-09-04 10:16:38.440 UTC [48] LOG:  database system is shut down
 postgres-1  |  done
 postgres-1  | server stopped
 postgres-1  | 
 postgres-1  | PostgreSQL init process complete; ready for start up.
 postgres-1  | 
-postgres-1  | 2026-09-04 10:00:14.998 UTC [1] LOG:  starting PostgreSQL 17.8 (Debian 17.8-1.pgdg12+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit
-postgres-1  | 2026-09-04 10:00:14.999 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
-postgres-1  | 2026-09-04 10:00:14.999 UTC [1] LOG:  listening on IPv6 address "::", port 5432
-postgres-1  | 2026-09-04 10:00:14.999 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
-postgres-1  | 2026-09-04 10:00:15.003 UTC [66] LOG:  database system was shut down at 2026-09-04 10:00:14 UTC
-postgres-1  | 2026-09-04 10:00:15.016 UTC [1] LOG:  database system is ready to accept connections
-postgres-1  | 2026-09-04 10:00:33.691 UTC [94] ERROR:  relation "migration_model" does not exist at character 25
-postgres-1  | 2026-09-04 10:00:33.691 UTC [94] STATEMENT:  SELECT ID, VERSION FROM MIGRATION_MODEL ORDER BY UPDATE_TIME DESC
-postgres-1  | 2026-09-04 10:00:34.645 UTC [103] ERROR:  relation "public.databasechangeloglock" does not exist at character 22
-postgres-1  | 2026-09-04 10:00:34.645 UTC [103] STATEMENT:  SELECT COUNT(*) FROM public.databasechangeloglock
-postgres-1  | 2026-09-04 10:00:58.518 UTC [64] LOG:  checkpoint starting: immediate force wait
-postgres-1  | 2026-09-04 10:00:58.626 UTC [64] LOG:  checkpoint complete: wrote 1165 buffers (7.1%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.013 s, sync=0.091 s, total=0.109 s; sync files=1066, longest=0.001 s, average=0.001 s; distance=14997 kB, estimate=14997 kB; lsn=0/2BD1428, redo lsn=0/2BD13D0
+postgres-1  | 2026-09-04 10:16:38.526 UTC [1] LOG:  starting PostgreSQL 17.8 (Debian 17.8-1.pgdg12+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit
+postgres-1  | 2026-09-04 10:16:38.526 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+postgres-1  | 2026-09-04 10:16:38.526 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+postgres-1  | 2026-09-04 10:16:38.527 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+postgres-1  | 2026-09-04 10:16:38.530 UTC [66] LOG:  database system was shut down at 2026-09-04 10:16:38 UTC
+postgres-1  | 2026-09-04 10:16:38.543 UTC [1] LOG:  database system is ready to accept connections
+postgres-1  | 2026-09-04 10:16:58.197 UTC [94] ERROR:  relation "migration_model" does not exist at character 25
+postgres-1  | 2026-09-04 10:16:58.197 UTC [94] STATEMENT:  SELECT ID, VERSION FROM MIGRATION_MODEL ORDER BY UPDATE_TIME DESC
+postgres-1  | 2026-09-04 10:16:59.325 UTC [104] ERROR:  relation "public.databasechangeloglock" does not exist at character 22
+postgres-1  | 2026-09-04 10:16:59.325 UTC [104] STATEMENT:  SELECT COUNT(*) FROM public.databasechangeloglock
+postgres-1  | 2026-09-04 10:17:26.626 UTC [64] LOG:  checkpoint starting: immediate force wait
+postgres-1  | 2026-09-04 10:17:26.743 UTC [64] LOG:  checkpoint complete: wrote 1165 buffers (7.1%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.018 s, sync=0.094 s, total=0.117 s; sync files=1066, longest=0.002 s, average=0.001 s; distance=14997 kB, estimate=14997 kB; lsn=0/2BD13D8, redo lsn=0/2BD1380
