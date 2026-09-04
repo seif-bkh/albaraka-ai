@@ -27,7 +27,7 @@ const ADR008 = join(root, 'docs', 'adr', 'ADR-008-platform-versions.md');
 
 const readCompose = () => yaml.load(readFileSync(SRC, 'utf8'));
 
-function runLint(compose, { doc02, adr008, envExample, makefile, envSync } = {}) {
+function runLint(compose, { doc02, adr008, envExample, makefile, envSync, rootCompose } = {}) {
   const dir = mkdtempSync(join(tmpdir(), 'compose-lint-'));
   const env = { ...process.env, COMPOSE_FILE: join(dir, 'docker-compose.yml') };
   writeFileSync(env.COMPOSE_FILE, yaml.dump(compose, { lineWidth: 120 }), 'utf8');
@@ -36,6 +36,7 @@ function runLint(compose, { doc02, adr008, envExample, makefile, envSync } = {})
   if (envExample) { env.ENV_EXAMPLE = join(dir, 'env.example'); writeFileSync(env.ENV_EXAMPLE, envExample, 'utf8'); }
   if (makefile) { env.MAKEFILE_FILE = join(dir, 'Makefile'); writeFileSync(env.MAKEFILE_FILE, makefile, 'utf8'); }
   if (envSync) { env.ENV_SYNC_FILE = join(dir, 'env-sync.sh'); writeFileSync(env.ENV_SYNC_FILE, envSync, 'utf8'); }
+  if (rootCompose) { env.ROOT_COMPOSE_FILE = join(dir, 'compose.yaml'); writeFileSync(env.ROOT_COMPOSE_FILE, rootCompose, 'utf8'); }
   let r;
   try {
     const out = execFileSync(process.execPath, [LINT], { env, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
@@ -58,6 +59,8 @@ const envExampleSrc = () => readFileSync(ENV_EXAMPLE, 'utf8');
 const makefileSrc = () => readFileSync(MAKEFILE, 'utf8');
 const ENV_SYNCFILE = join(root, 'tools', 'env-sync.sh');
 const envSyncSrc = () => readFileSync(ENV_SYNCFILE, 'utf8');
+const ROOTCOMPOSE = join(root, 'compose.yaml');
+const rootComposeSrc = () => readFileSync(ROOTCOMPOSE, 'utf8');
 
 const MUTATIONS = [
   // ── G — services & profiles ─────────────────────────────────────────────────────────────────
@@ -150,6 +153,13 @@ const MUTATIONS = [
   { id: 'M37 make clean is removed (raw down -v hits the --env-file footgun)', run: () => {}, expect: '[E12] Makefile must define `clean:`', file: 'makefile',
     prepare: () => makefileSrc().replace(/\t\$\(COMPOSE\) down -v\n/, '') },
 
+  // ── operational surfacing (logs on failure, root compose shim, Keycloak grace) ─────────────
+  { id: 'M38 the repo-root compose wrapper is dropped', run: () => {}, expect: '[E13] root compose.yaml must include', file: 'rootCompose',
+    prepare: () => rootComposeSrc().replace('include:\n  - deploy/docker-compose.yml\n', '# nothing here\n') },
+  { id: 'M39 make up swallows the failure logs', run: () => {}, expect: '[E14] Makefile `up` must print', file: 'makefile',
+    prepare: () => makefileSrc().replace(/\t\s*\$\(COMPOSE\) logs --tail=60 2>&1 \| tail -300; \\\n/, '\t\t: # no logs\n') },
+  { id: 'M40 keycloak returns to a 5-minute health grace', run: (c) => { svc(c, 'keycloak').healthcheck.retries = 30; }, expect: '[K06] keycloak healthcheck retries must be ≥60' },
+
   // ── negative controls ───────────────────────────────────────────────────────────────────────
   { id: 'N1 a label is not a contract change', expectPass: true, run: (c) => { svc(c, 'redis').labels = { 'dev.notes': 'local cache' }; }, expect: null },
   { id: 'N2 a restart policy change is not checked', expectPass: true, run: (c) => { svc(c, 'minio-init').restart = 'unless-stopped'; }, expect: null },
@@ -176,13 +186,14 @@ for (const m of MUTATIONS) {
   const envExample = m.file === 'envExample' ? m.prepare() : undefined;
   const makefile = m.file === 'makefile' ? m.prepare() : undefined;
   const envSync = m.file === 'envSync' ? m.prepare() : undefined;
+  const rootCompose = m.file === 'rootCompose' ? m.prepare() : undefined;
   let applied = true;
   const before = JSON.stringify(compose);
   try { if (m.run) m.run(compose); } catch (e) { applied = false; broken++; console.log(`  BROKEN  ${m.id}\n          ${e.message}`); }
   if (m.file && !m.prepare) { applied = false; broken++; console.log(`  BROKEN  ${m.id}\n          authority mutation has no preparation`); }
   if (applied && !m.file && before === JSON.stringify(compose)) { applied = false; broken++; console.log(`  BROKEN  ${m.id}\n          mutation changed nothing — anchor drifted`); }
   if (applied) {
-    const { code, out } = runLint(compose, { doc02, adr008, envExample, makefile, envSync });
+    const { code, out } = runLint(compose, { doc02, adr008, envExample, makefile, envSync, rootCompose });
     const good = m.expectPass ? code === 0 : (code !== 0 && out.includes(m.expect));
     if (good) console.log(`  ok      ${m.id}${m.expectPass ? '  (negative control)' : ''}`);
     else {

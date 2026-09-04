@@ -1,0 +1,19 @@
+# ══════════════════════════════════════════════════════════════════════════════════════════════
+#  compose.yaml — repo-root convenience wrapper (Compose v2.20+)
+# ══════════════════════════════════════════════════════════════════════════════════════════════
+#  The authoritative topology lives in deploy/docker-compose.yml (the compose-lint contract;
+#  `docker compose -f deploy/…` is what the Makefile and CI use). Compose v2 resolves the
+#  project directory from the FIRST -f file, so a bare `docker compose -f deploy/…` reads
+#  deploy/.env — not the repo root .env — and interpolation aborts with
+#  "required variable POSTGRES_PASSWORD is missing a value".
+#
+#  This wrapper makes plain commands work from the repository root:
+#
+#      docker compose --profile app up -d --build     # or: make up
+#      docker compose logs                            # or: make logs
+#      docker compose --profile app ps
+#      docker compose down -v                         # or: make clean
+#
+#  The root .env is picked up automatically (project directory = repo root).
+include:
+  - deploy/docker-compose.yml

@@ -31,6 +31,7 @@ const ENV_EXAMPLE = process.env.ENV_EXAMPLE || join(root, '.env.example');
 const CONFIG_DIR = process.env.CONFIG_DIR || join(root, 'specs', 'config');
 const MAKEFILE_FILE = process.env.MAKEFILE_FILE || join(root, 'Makefile');
 const ENV_SYNC_FILE = process.env.ENV_SYNC_FILE || join(root, 'tools', 'env-sync.sh');
+const ROOT_COMPOSE_FILE = process.env.ROOT_COMPOSE_FILE || join(root, 'compose.yaml');
 const DOC02 = process.env.DOC02_FILE || join(root, 'docs', '02-repository-layout.md');
 const DOC03 = process.env.DOC03_FILE || join(root, 'docs', '03-data-model.md');
 const DOC12 = process.env.DOC12_FILE || join(root, 'docs', '12-deployment-observability.md');
@@ -210,6 +211,8 @@ for (const f of ['application.yaml', 'application-dev.yaml', 'application-uat.ya
     if (JSON.stringify(c.ports || []).includes('8080:8080') === false) err('[K05] keycloak publishes 8080:8080 — application.yaml default KEYCLOAK_URL=http://localhost:8080 and the token issuer depend on it');
     const deps = JSON.stringify(c.depends_on || {});
     if (!deps.includes('service_healthy')) err('[K04] keycloak must depend on postgres being healthy, not merely started');
+    const kcRetries = Number(c.healthcheck?.retries ?? 0);
+    if (kcRetries < 60) err(`[K06] keycloak healthcheck retries must be ≥60 (~10 min of grace) — on a slow developer host the JVM boot + realm import can exceed 5 min before the first successful probe, and compose then aborts \`make up\` with "keycloak is unhealthy" (got ${kcRetries})`);
   }
   ok.push('keycloak: KC_BOOTSTRAP_ADMIN_*, sed-substituted realm import, postgres-backed, healthcheck on the albaraka realm');
 }
@@ -258,6 +261,21 @@ for (const f of ['application.yaml', 'application-dev.yaml', 'application-uat.ya
   if (!/^clean:.*\n\t\$\(COMPOSE\) down -v/m.test(makeText)) {
     err('[E12] Makefile must define `clean:` as `$(COMPOSE) down -v` — it is the only safe way to wipe volumes; a raw compose call without --env-file .env fails at interpolation (project directory resolves to deploy/)');
   }
+
+  // repo-root compose.yaml shim: bare `docker compose ...` from the root must read the root
+  // .env, otherwise `docker compose logs` (and down -v) abort at interpolation — the exact
+  // confusion this session's user hit when trying to read logs after a failure
+  const rootCompose = read(ROOT_COMPOSE_FILE);
+  if (!rootCompose.includes('- deploy/docker-compose.yml')) {
+    err('[E13] root compose.yaml must include deploy/docker-compose.yml — it is the wrapper that lets bare `docker compose logs/up/down -v` read the repo-root .env (the deploy/ project-dir trap otherwise aborts interpolation)');
+  }
+
+  // `make up` must surface logs when compose fails: the failure is only actionable if the user
+  // sees container state + logs in the same command (this is what the user asked for this turn)
+  const upBlock = makeText.match(/^up:[^\n]*\n((?:\t.*\n?)+)/m)?.[1] || '';
+  if (!upBlock.includes('up -d --build')) err('[E14] Makefile `up` must run $(COMPOSE) up -d --build');
+  if (!upBlock.includes('logs --tail=')) err('[E14] Makefile `up` must print `$(COMPOSE) logs --tail=…` when compose fails — a bare `docker compose logs` hits the deploy/ project-dir interpolation trap, so the failure output must carry the logs itself');
+  if (!upBlock.includes('ps -a')) err('[E14] Makefile `up` failure report must include `$(COMPOSE) ps -a` (container state)');
 
   const srv = svc('server');
   const env = srv ? (srv.environment || {}) : {};

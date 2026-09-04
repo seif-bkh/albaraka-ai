@@ -3,18 +3,25 @@
 # ══════════════════════════════════════════════════════════════════════════════════════════════
 COMPOSE = docker compose --env-file .env -f deploy/docker-compose.yml --profile app
 
-.PHONY: up down clean logs ps dev web admin eval rag-test verify-db spike build lint-all seed-gen-check
+.PHONY: up down clean logs ps diag dev web admin eval rag-test verify-db spike build lint-all seed-gen-check
 
 # ── your host: the deliverable ────────────────────────────────────────────────────────────────
 up:            ## build + start the full application (mock providers by default)
 	bash tools/env-sync.sh
-	$(COMPOSE) up -d --build
+	@$(COMPOSE) up -d --build || { \
+	  echo; echo "── make up failed — container state ──"; \
+	  $(COMPOSE) ps -a; \
+	  echo; echo "── last 60 lines per service (logs) ──"; \
+	$(COMPOSE) logs --tail=60 2>&1 | tail -300; \
+	  echo; echo "── full logs:  make logs   ·   paste this output when reporting the failure ──"; \
+	  exit 1; }
 	@echo
 	@echo "  frontoffice  http://localhost:8082"
 	@echo "  backoffice   http://localhost:8082/admin"
 	@echo "  API health   http://localhost:8081/actuator/health/liveness"
 	@echo "  RAG health   http://localhost:8000/v1/rag/health"
 	@echo "  Keycloak     http://localhost:8080  (remember .env KC_BOOTSTRAP_ADMIN_*)"
+	@echo "  logs: make logs · state+logs: make diag"
 
 down:          ## stop the application (volumes kept)
 	$(COMPOSE) down
@@ -27,6 +34,10 @@ logs:          ## tail all service logs
 
 ps:            ## service status
 	$(COMPOSE) ps
+
+diag:          ## container state + last 120 lines of every service (paste this when reporting a failure)
+	$(COMPOSE) ps -a
+	$(COMPOSE) logs --tail=120
 
 # ── checks (CI parity) ────────────────────────────────────────────────────────────────────────
 rag-test:      ## Python golden gate (mock mode — no keys, no Docker)

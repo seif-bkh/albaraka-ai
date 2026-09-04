@@ -42,8 +42,17 @@ behaviour does not require a deployment.
 make up                   # tools/env-sync.sh seeds .env from .env.example (adds missing keys,
                           # fills empty required ones, never overwrites your values); mock mode
                           # needs no keys
+                          # on failure it prints container state + the last 60 log lines
+                          # (full logs: make logs · state+logs: make diag)
 # frontoffice http://localhost:8082 · backoffice http://localhost:8082/admin
 # API health http://localhost:8081/actuator/health/liveness · Keycloak http://localhost:8080
+```
+
+Bare `docker compose` also works from the repo root (root `compose.yaml` wraps `deploy/docker-compose.yml`,
+so the root `.env` is picked up automatically):
+
+```bash
+docker compose --profile app up -d --build    # or: docker compose logs / down -v
 ```
 
 ```

@@ -125,7 +125,10 @@ services:
       test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/8080; printf 'GET /realms/albaraka/.well-known/openid-configuration HTTP/1.0\r\n\r\n' >&3; grep -q 'issuer' <&3"]
       interval: 10s
       timeout: 5s
-      retries: 30
+      # 60 × 10s ≈ 10 min of grace: on a slow developer host the JVM boot + realm import can
+      # exceed 5 min before the first successful probe; 30 retries marked the healthy-anyway
+      # container unhealthy and aborted `make up` with "keycloak is unhealthy"
+      retries: 60
       start_period: 30s
     restart: unless-stopped
 
