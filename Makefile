@@ -3,7 +3,7 @@
 # ══════════════════════════════════════════════════════════════════════════════════════════════
 COMPOSE = docker compose --env-file .env -f deploy/docker-compose.yml --profile app
 
-.PHONY: up down logs ps dev web admin eval rag-test verify-db spike build lint-all seed-gen-check
+.PHONY: up down clean logs ps dev web admin eval rag-test verify-db spike build lint-all seed-gen-check
 
 # ── your host: the deliverable ────────────────────────────────────────────────────────────────
 up:            ## build + start the full application (mock providers by default)
@@ -18,6 +18,9 @@ up:            ## build + start the full application (mock providers by default)
 
 down:          ## stop the application (volumes kept)
 	$(COMPOSE) down
+
+clean:         ## stop + remove all named volumes (fresh state — next `make up` re-seeds)
+	$(COMPOSE) down -v
 
 logs:          ## tail all service logs
 	$(COMPOSE) logs -f --tail=100

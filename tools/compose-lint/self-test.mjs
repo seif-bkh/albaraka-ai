@@ -27,7 +27,7 @@ const ADR008 = join(root, 'docs', 'adr', 'ADR-008-platform-versions.md');
 
 const readCompose = () => yaml.load(readFileSync(SRC, 'utf8'));
 
-function runLint(compose, { doc02, adr008, envExample, makefile } = {}) {
+function runLint(compose, { doc02, adr008, envExample, makefile, envSync } = {}) {
   const dir = mkdtempSync(join(tmpdir(), 'compose-lint-'));
   const env = { ...process.env, COMPOSE_FILE: join(dir, 'docker-compose.yml') };
   writeFileSync(env.COMPOSE_FILE, yaml.dump(compose, { lineWidth: 120 }), 'utf8');
@@ -35,6 +35,7 @@ function runLint(compose, { doc02, adr008, envExample, makefile } = {}) {
   if (adr008) { env.ADR008_FILE = join(dir, 'adr.md'); writeFileSync(env.ADR008_FILE, adr008, 'utf8'); }
   if (envExample) { env.ENV_EXAMPLE = join(dir, 'env.example'); writeFileSync(env.ENV_EXAMPLE, envExample, 'utf8'); }
   if (makefile) { env.MAKEFILE_FILE = join(dir, 'Makefile'); writeFileSync(env.MAKEFILE_FILE, makefile, 'utf8'); }
+  if (envSync) { env.ENV_SYNC_FILE = join(dir, 'env-sync.sh'); writeFileSync(env.ENV_SYNC_FILE, envSync, 'utf8'); }
   let r;
   try {
     const out = execFileSync(process.execPath, [LINT], { env, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
@@ -55,6 +56,8 @@ const ENV_EXAMPLE = join(root, '.env.example');
 const MAKEFILE = join(root, 'Makefile');
 const envExampleSrc = () => readFileSync(ENV_EXAMPLE, 'utf8');
 const makefileSrc = () => readFileSync(MAKEFILE, 'utf8');
+const ENV_SYNCFILE = join(root, 'tools', 'env-sync.sh');
+const envSyncSrc = () => readFileSync(ENV_SYNCFILE, 'utf8');
 
 const MUTATIONS = [
   // ── G — services & profiles ─────────────────────────────────────────────────────────────────
@@ -141,6 +144,12 @@ const MUTATIONS = [
   { id: 'M33 make up no longer calls env-sync at all', run: () => {}, expect: '[E10] Makefile `up` must invoke tools/env-sync.sh', file: 'makefile',
     prepare: () => makefileSrc().replace('\tbash tools/env-sync.sh\n', '') },
 
+  // ── pre-flight guards (MinIO password length, safe wipe) ─────────────────────────────────────
+  { id: 'M36 env-sync stops enforcing the MinIO 8-char root password', run: () => {}, expect: '[E11] tools/env-sync.sh must reject MINIO_ROOT_PASSWORD', file: 'envSync',
+    prepare: () => envSyncSrc().replaceAll('requires at least 8 characters', 'requires at least 5 characters') },
+  { id: 'M37 make clean is removed (raw down -v hits the --env-file footgun)', run: () => {}, expect: '[E12] Makefile must define `clean:`', file: 'makefile',
+    prepare: () => makefileSrc().replace(/\t\$\(COMPOSE\) down -v\n/, '') },
+
   // ── negative controls ───────────────────────────────────────────────────────────────────────
   { id: 'N1 a label is not a contract change', expectPass: true, run: (c) => { svc(c, 'redis').labels = { 'dev.notes': 'local cache' }; }, expect: null },
   { id: 'N2 a restart policy change is not checked', expectPass: true, run: (c) => { svc(c, 'minio-init').restart = 'unless-stopped'; }, expect: null },
@@ -166,13 +175,14 @@ for (const m of MUTATIONS) {
   const adr008 = m.file === 'adr008' ? m.prepare() : undefined;
   const envExample = m.file === 'envExample' ? m.prepare() : undefined;
   const makefile = m.file === 'makefile' ? m.prepare() : undefined;
+  const envSync = m.file === 'envSync' ? m.prepare() : undefined;
   let applied = true;
   const before = JSON.stringify(compose);
   try { if (m.run) m.run(compose); } catch (e) { applied = false; broken++; console.log(`  BROKEN  ${m.id}\n          ${e.message}`); }
   if (m.file && !m.prepare) { applied = false; broken++; console.log(`  BROKEN  ${m.id}\n          authority mutation has no preparation`); }
   if (applied && !m.file && before === JSON.stringify(compose)) { applied = false; broken++; console.log(`  BROKEN  ${m.id}\n          mutation changed nothing — anchor drifted`); }
   if (applied) {
-    const { code, out } = runLint(compose, { doc02, adr008, envExample, makefile });
+    const { code, out } = runLint(compose, { doc02, adr008, envExample, makefile, envSync });
     const good = m.expectPass ? code === 0 : (code !== 0 && out.includes(m.expect));
     if (good) console.log(`  ok      ${m.id}${m.expectPass ? '  (negative control)' : ''}`);
     else {

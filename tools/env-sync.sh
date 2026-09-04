@@ -71,3 +71,22 @@ if [ "${#added[@]}" -gt 0 ] || [ "${#filled[@]}" -gt 0 ]; then
 else
   echo "env-sync: $ENV_FILE is up to date"
 fi
+
+# ── pre-flight validation ─────────────────────────────────────────────────────────────────────
+# MinIO hard requirement: the root user must be ≥3 characters and the root password ≥8
+# characters. With a shorter value the server refuses to start (and the container is reported
+# "unhealthy" — the classic trap of a hand-written `.env` with MINIO_ROOT_PASSWORD=admin).
+# Fail here, before compose, with a message that says exactly what to change.
+# MINIO_ROOT_PASSWORD requires at least 8 characters (marker for compose-lint [E11])
+minio_user="$(grep -E '^MINIO_ROOT_USER=' "$ENV_FILE" | head -n1 | cut -d= -f2- | tr -d '\r')"
+minio_pass="$(grep -E '^MINIO_ROOT_PASSWORD=' "$ENV_FILE" | head -n1 | cut -d= -f2- | tr -d '\r')"
+if [ "${#minio_user}" -lt 3 ]; then
+  echo "env-sync: ERROR — MINIO_ROOT_USER must be at least 3 characters (got \"$minio_user\"); the MinIO server refuses to start otherwise" >&2
+  exit 1
+fi
+if [ "${#minio_pass}" -lt 8 ]; then
+  echo "env-sync: ERROR — MINIO_ROOT_PASSWORD requires at least 8 characters (got ${#minio_pass}); MinIO refuses to start with a shorter secret, so the container is reported unhealthy." >&2
+  echo "           Set a value of 8+ characters in $ENV_FILE, e.g. MINIO_ROOT_PASSWORD=dev-minio-change-me" >&2
+  exit 1
+fi
+echo "env-sync: minio credentials valid (root user ${#minio_user} chars, password ${#minio_pass} chars)"

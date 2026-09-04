@@ -30,6 +30,7 @@ const COMPOSE_PATH = process.env.COMPOSE_FILE || join(root, 'deploy', 'docker-co
 const ENV_EXAMPLE = process.env.ENV_EXAMPLE || join(root, '.env.example');
 const CONFIG_DIR = process.env.CONFIG_DIR || join(root, 'specs', 'config');
 const MAKEFILE_FILE = process.env.MAKEFILE_FILE || join(root, 'Makefile');
+const ENV_SYNC_FILE = process.env.ENV_SYNC_FILE || join(root, 'tools', 'env-sync.sh');
 const DOC02 = process.env.DOC02_FILE || join(root, 'docs', '02-repository-layout.md');
 const DOC03 = process.env.DOC03_FILE || join(root, 'docs', '03-data-model.md');
 const DOC12 = process.env.DOC12_FILE || join(root, 'docs', '12-deployment-observability.md');
@@ -240,6 +241,23 @@ for (const f of ['application.yaml', 'application-dev.yaml', 'application-uat.ya
   const makeText = read(MAKEFILE_FILE);
   if (!makeText.includes('tools/env-sync.sh')) err('[E10] Makefile `up` must invoke tools/env-sync.sh — it merges newly required keys into an existing .env without overwriting user values');
   if (makeText.includes('cp -n .env.example .env')) err('[E10] replace `cp -n .env.example .env` with tools/env-sync.sh — cp -n never updates an existing .env, so a stale .env misses new required vars and `make up` fails');
+
+  // env-sync is the pre-flight guard: MinIO hard-requires a root password of ≥8 characters and
+  // refuses to start with anything shorter (the container is then reported "unhealthy" while the
+  // stack looks fine). Without this check a user hand-editing .env to MINIO_ROOT_PASSWORD=admin
+  // gets an opaque health failure after compose has already started 10 containers.
+  const envSync = read(ENV_SYNC_FILE);
+  if (!envSync.includes('MINIO_ROOT_PASSWORD') || !envSync.includes('requires at least 8 characters')) {
+    err('[E11] tools/env-sync.sh must reject MINIO_ROOT_PASSWORD shorter than 8 characters — MinIO refuses to start with a short root password and the container is reported "unhealthy" (the classic hand-edited .env trap)');
+  }
+
+  // `make clean` is the supported way to wipe state (down -v) WITHOUT the --env-file footgun:
+  // a bare `docker compose -f deploy/docker-compose.yml down -v` resolves the project directory
+  // to deploy/ and cannot see the repo-root .env, so interpolation aborts with "required
+  // variable POSTGRES_PASSWORD is missing a value".
+  if (!/^clean:.*\n\t\$\(COMPOSE\) down -v/m.test(makeText)) {
+    err('[E12] Makefile must define `clean:` as `$(COMPOSE) down -v` — it is the only safe way to wipe volumes; a raw compose call without --env-file .env fails at interpolation (project directory resolves to deploy/)');
+  }
 
   const srv = svc('server');
   const env = srv ? (srv.environment || {}) : {};
