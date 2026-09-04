@@ -2,6 +2,7 @@ package tn.albaraka.ai.api;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.ServerSentEvent;
@@ -18,6 +19,7 @@ import tn.albaraka.ai.shared.Locales;
 import tn.albaraka.ai.shared.rag.RagChatRequest;
 import tn.albaraka.ai.shared.rag.RagEvent;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -89,7 +91,7 @@ public class ChatController {
                     }
                     return ServerSentEvent.<String>builder()
                             .event(nameOf(e))
-                            .data(write(e))
+                            .data(dataOf(e))
                             .build();
                 }).doOnNext(sse -> log.debug("chat frame [{}] forwarded ({})", sse.event(),
                         sse.data() == null ? 0 : sse.data().length()))
@@ -115,12 +117,51 @@ public class ChatController {
         try { return json.writeValueAsString(o); } catch (Exception e) { return "{}"; }
     }
 
+    /**
+     * The answer frame's public payload (docs/08 §3.1) carries {@code models} as an OBJECT
+     * ({@code {"chat": ..., "reranker": ..., "degradationStep": ...}}). RagClient stores it as
+     * JSON text (Jackson 3 refuses to coerce an ObjectNode to String), so it is re-parsed here
+     * to keep the documented wire shape on the public side.
+     */
+    private String dataOf(RagEvent e) {
+        if (e instanceof RagEvent.Answer a) {
+            Map<String, Object> wire = new LinkedHashMap<>();
+            wire.put("messageId", a.messageId());
+            wire.put("answerMarkdown", a.answerMarkdown());
+            wire.put("language", a.language());
+            wire.put("dir", a.dir());
+            wire.put("confidence", a.confidence());
+            wire.put("usedSources", a.usedSources());
+            wire.put("citations", a.citations());
+            wire.put("caveats", a.caveats());
+            wire.put("disclaimers", a.disclaimers());
+            wire.put("needsHuman", a.needsHuman());
+            wire.put("cached", a.cached());
+            wire.put("models", modelsNode(a.models()));
+            wire.put("latencyMs", a.latencyMs());
+            wire.put("ttftMs", a.ttftMs());
+            return write(wire);
+        }
+        return write(e);
+    }
+
+    private JsonNode modelsNode(String models) {
+        if (models == null || models.isBlank()) return null;
+        try { return json.readTree(models); } catch (Exception ex) { return null; }
+    }
+
     private static double bestScore(RagEvent.Sources s) {
         return s.citations().stream().mapToDouble(x -> x.score() == null ? 0.0 : x.score()).max().orElse(0.0);
     }
 
-    private static String modelOf(RagEvent.Answer a) {
-        return a.models() == null || a.models().isBlank() ? "undisclosed" : a.models();
+    private String modelOf(RagEvent.Answer a) {
+        if (a.models() == null || a.models().isBlank()) return "undisclosed";
+        try {
+            JsonNode chat = json.readTree(a.models()).path("chat");
+            return chat.isTextual() ? chat.asText() : a.models();
+        } catch (Exception ex) {
+            return a.models();
+        }
     }
 
     private static String policyOf(RagEvent.Refusal r) {

@@ -111,12 +111,16 @@ public class RagClient {
 
     private static String text(JsonNode n, String field) {
         JsonNode v = n.path(field);
-        return v.isNull() || v.isMissingNode() ? null : v.asText();
+        if (v.isNull() || v.isMissingNode()) return null;
+        // Jackson 3 is strict: asText() on an object/array node throws a JsonNodeException
+        // (observed on the answer frame's `models` object). Value nodes coerce; anything else
+        // keeps its JSON text so a non-scalar field never aborts the whole frame.
+        return v.isValueNode() ? v.asText() : v.toString();
     }
 
     private static List<String> strings(JsonNode arr) {
         List<String> out = new ArrayList<>();
-        if (arr.isArray()) arr.forEach(x -> out.add(x.asText()));
+        if (arr.isArray()) arr.forEach(x -> out.add(x.isValueNode() ? x.asText() : x.toString()));
         return out;
     }
 
