@@ -1,37 +1,260 @@
-## run 33857162922 — keycloak
+## run 33857794664 — keycloak
 keycloak-1  | WARNING: Hostname v1 options [hostname-port] are still in use, please review your configuration
 keycloak-1  | Updating the configuration and installing your custom providers, if any. Please wait.
-keycloak-1  | 2026-09-04 09:13:44,462 INFO  [io.quarkus.deployment.QuarkusAugmentor] (main) Quarkus augmentation completed in 8844ms
+keycloak-1  | 2026-09-04 09:21:02,207 INFO  [io.quarkus.deployment.QuarkusAugmentor] (main) Quarkus augmentation completed in 7543ms
 keycloak-1  | WARNING: Hostname v1 options [hostname-port] are still in use, please review your configuration
 keycloak-1  | Running the server in development mode. DO NOT use this configuration in production.
-keycloak-1  | 2026-09-04 09:13:46,245 INFO  [org.keycloak.url.HostnameV2ProviderFactory] (main) If hostname is specified, hostname-strict is effectively ignored
-keycloak-1  | 2026-09-04 09:13:47,202 INFO  [org.infinispan.CONTAINER] (main) ISPN000974: Virtual threads support: enabled
-keycloak-1  | 2026-09-04 09:13:47,982 INFO  [org.hibernate.orm.jdbc.batch] (JPA Startup Thread) HHH100501: Automatic JDBC statement batching enabled (maximum batch size 32)
-keycloak-1  | 2026-09-04 09:13:48,907 INFO  [org.keycloak.quarkus.runtime.storage.database.liquibase.QuarkusJpaUpdaterProvider] (main) Initializing database schema. Using changelog META-INF/jpa-changelog-master.xml
-keycloak-1  | 2026-09-04 09:13:55,046 INFO  [org.infinispan.CONTAINER] (main) ISPN000556: Starting user marshaller 'org.infinispan.commons.marshall.ImmutableProtoStreamMarshaller'
-keycloak-1  | 2026-09-04 09:13:55,314 INFO  [org.keycloak.connections.infinispan.DefaultInfinispanConnectionProviderFactory] (main) Node name: node_320270, Site name: null
-keycloak-1  | 2026-09-04 09:13:55,424 INFO  [org.keycloak.quarkus.runtime.storage.database.jpa.DatabaseIndexChecker] (db-index-checker) Running database index checker
-keycloak-1  | 2026-09-04 09:13:55,487 INFO  [org.keycloak.models.workflow.WorkflowsEventListenerFactory] (main) Workflow runner task scheduled: next execution at 21:13:55, then every PT12H
-keycloak-1  | 2026-09-04 09:13:55,511 INFO  [org.keycloak.exportimport.dir.DirImportProvider] (main) Importing from directory /opt/keycloak/bin/../data/import
-keycloak-1  | 2026-09-04 09:13:55,530 INFO  [org.keycloak.services] (main) KC-SERVICES0050: Initializing master realm
-keycloak-1  | 2026-09-04 09:13:57,038 INFO  [org.keycloak.services] (main) KC-SERVICES0030: Full model import requested. Strategy: IGNORE_EXISTING
-keycloak-1  | 2026-09-04 09:13:57,626 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
-keycloak-1  | 2026-09-04 09:13:57,631 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'profile' doesn't exist. Ignoring
-keycloak-1  | 2026-09-04 09:13:57,699 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
-keycloak-1  | 2026-09-04 09:13:57,704 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'profile' doesn't exist. Ignoring
-keycloak-1  | 2026-09-04 09:13:57,742 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'webauthn' doesn't exist. Ignoring
-keycloak-1  | 2026-09-04 09:13:57,746 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
-keycloak-1  | 2026-09-04 09:13:57,750 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'profile' doesn't exist. Ignoring
-keycloak-1  | 2026-09-04 09:13:57,754 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'email' doesn't exist. Ignoring
-keycloak-1  | 2026-09-04 09:13:57,758 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'roles' doesn't exist. Ignoring
-keycloak-1  | 2026-09-04 09:13:57,797 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
-keycloak-1  | 2026-09-04 09:13:58,956 INFO  [org.keycloak.exportimport.util.ImportUtils] (main) Realm 'albaraka' imported
-keycloak-1  | 2026-09-04 09:13:58,962 INFO  [org.keycloak.services] (main) KC-SERVICES0032: Import finished successfully
-keycloak-1  | 2026-09-04 09:13:59,049 INFO  [org.keycloak.services] (main) KC-SERVICES0077: Created temporary admin user with username admin
-keycloak-1  | 2026-09-04 09:13:59,172 INFO  [org.keycloak.services.resources.KeycloakApplication] (main) Bootstrap completed in 11.093000 seconds
-keycloak-1  | 2026-09-04 09:13:59,245 INFO  [io.quarkus] (main) Keycloak 26.6.3 on JVM (powered by Quarkus 3.33.2) started in 14.665s. Listening on: http://0.0.0.0:8080. Management interface listening on http://0.0.0.0:9000.
-keycloak-1  | 2026-09-04 09:13:59,245 INFO  [io.quarkus] (main) Profile dev activated. 
-keycloak-1  | 2026-09-04 09:13:59,246 INFO  [io.quarkus] (main) Installed features: [agroal, cdi, hibernate-orm, jdbc-postgresql, keycloak, micrometer, narayana-jta, opentelemetry, reactive-routes, rest, rest-jackson, smallrye-context-propagation, smallrye-health, vertx]
+keycloak-1  | 2026-09-04 09:21:04,045 INFO  [org.keycloak.url.HostnameV2ProviderFactory] (main) If hostname is specified, hostname-strict is effectively ignored
+keycloak-1  | 2026-09-04 09:21:05,634 INFO  [org.infinispan.CONTAINER] (main) ISPN000974: Virtual threads support: enabled
+keycloak-1  | 2026-09-04 09:21:06,554 INFO  [org.hibernate.orm.jdbc.batch] (JPA Startup Thread) HHH100501: Automatic JDBC statement batching enabled (maximum batch size 32)
+keycloak-1  | 2026-09-04 09:21:07,716 INFO  [org.keycloak.quarkus.runtime.storage.database.liquibase.QuarkusJpaUpdaterProvider] (main) Initializing database schema. Using changelog META-INF/jpa-changelog-master.xml
+keycloak-1  | 2026-09-04 09:21:14,181 INFO  [org.infinispan.CONTAINER] (main) ISPN000556: Starting user marshaller 'org.infinispan.commons.marshall.ImmutableProtoStreamMarshaller'
+keycloak-1  | 2026-09-04 09:21:14,552 INFO  [org.keycloak.connections.infinispan.DefaultInfinispanConnectionProviderFactory] (main) Node name: node_215454, Site name: null
+keycloak-1  | 2026-09-04 09:21:14,714 INFO  [org.keycloak.quarkus.runtime.storage.database.jpa.DatabaseIndexChecker] (db-index-checker) Running database index checker
+keycloak-1  | 2026-09-04 09:21:14,823 INFO  [org.keycloak.models.workflow.WorkflowsEventListenerFactory] (main) Workflow runner task scheduled: next execution at 21:21:14, then every PT12H
+keycloak-1  | 2026-09-04 09:21:14,851 INFO  [org.keycloak.exportimport.dir.DirImportProvider] (main) Importing from directory /opt/keycloak/bin/../data/import
+keycloak-1  | 2026-09-04 09:21:14,889 INFO  [org.keycloak.services] (main) KC-SERVICES0050: Initializing master realm
+keycloak-1  | 2026-09-04 09:21:16,535 INFO  [org.keycloak.services] (main) KC-SERVICES0030: Full model import requested. Strategy: IGNORE_EXISTING
+keycloak-1  | 2026-09-04 09:21:17,191 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
+keycloak-1  | 2026-09-04 09:21:17,197 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'profile' doesn't exist. Ignoring
+keycloak-1  | 2026-09-04 09:21:17,302 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
+keycloak-1  | 2026-09-04 09:21:17,307 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'profile' doesn't exist. Ignoring
+keycloak-1  | 2026-09-04 09:21:17,373 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'webauthn' doesn't exist. Ignoring
+keycloak-1  | 2026-09-04 09:21:17,377 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
+keycloak-1  | 2026-09-04 09:21:17,380 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'profile' doesn't exist. Ignoring
+keycloak-1  | 2026-09-04 09:21:17,384 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'email' doesn't exist. Ignoring
+keycloak-1  | 2026-09-04 09:21:17,387 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'roles' doesn't exist. Ignoring
+keycloak-1  | 2026-09-04 09:21:17,422 WARN  [org.keycloak.models.utils.RepresentationToModel] (main) Referenced client scope 'openid' doesn't exist. Ignoring
+keycloak-1  | 2026-09-04 09:21:18,733 INFO  [org.keycloak.exportimport.util.ImportUtils] (main) Realm 'albaraka' imported
+keycloak-1  | 2026-09-04 09:21:18,739 INFO  [org.keycloak.services] (main) KC-SERVICES0032: Import finished successfully
+keycloak-1  | 2026-09-04 09:21:18,826 INFO  [org.keycloak.services] (main) KC-SERVICES0077: Created temporary admin user with username admin
+keycloak-1  | 2026-09-04 09:21:18,978 INFO  [org.keycloak.services.resources.KeycloakApplication] (main) Bootstrap completed in 12.313000 seconds
+keycloak-1  | 2026-09-04 09:21:19,062 INFO  [io.quarkus] (main) Keycloak 26.6.3 on JVM (powered by Quarkus 3.33.2) started in 16.693s. Listening on: http://0.0.0.0:8080. Management interface listening on http://0.0.0.0:9000.
+keycloak-1  | 2026-09-04 09:21:19,062 INFO  [io.quarkus] (main) Profile dev activated. 
+keycloak-1  | 2026-09-04 09:21:19,062 INFO  [io.quarkus] (main) Installed features: [agroal, cdi, hibernate-orm, jdbc-postgresql, keycloak, micrometer, narayana-jta, opentelemetry, reactive-routes, rest, rest-jackson, smallrye-context-propagation, smallrye-health, vertx]
+
+## server (Flyway, boot, chat errors)
+server-1  | 2026-09-04T09:21:24.984Z  INFO 1 --- [albaraka-assistant] [           main] t.a.ai.AlBarakaAssistantApplication      : Starting AlBarakaAssistantApplication v0.1.0-SNAPSHOT using Java 21.0.12 with PID 1 (/app/app.jar started by app in /app)
+server-1  | 2026-09-04T09:21:24.988Z DEBUG 1 --- [albaraka-assistant] [           main] t.a.ai.AlBarakaAssistantApplication      : Running with Spring Boot v4.1.0, Spring v7.0.8
+server-1  | 2026-09-04T09:21:24.988Z  INFO 1 --- [albaraka-assistant] [           main] t.a.ai.AlBarakaAssistantApplication      : The following 1 profile is active: "dev"
+server-1  | 2026-09-04T09:21:25.930Z  INFO 1 --- [albaraka-assistant] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JDBC repositories in DEFAULT mode.
+server-1  | 2026-09-04T09:21:25.951Z  INFO 1 --- [albaraka-assistant] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 15 ms. Found 0 JDBC repository interfaces.
+server-1  | 2026-09-04T09:21:27.336Z DEBUG 1 --- [albaraka-assistant] [           main] s.w.r.r.m.a.RequestMappingHandlerMapping : 21 mappings in 'requestMappingHandlerMapping'
+server-1  | 2026-09-04T09:21:27.497Z DEBUG 1 --- [albaraka-assistant] [           main] o.s.w.r.handler.SimpleUrlHandlerMapping  : Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+server-1  | 2026-09-04T09:21:27.623Z  INFO 1 --- [albaraka-assistant] [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 5 endpoints beneath base path '/actuator'
+server-1  | 2026-09-04T09:21:27.684Z DEBUG 1 --- [albaraka-assistant] [           main] o.s.w.r.r.m.a.ControllerMethodResolver   : ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 @ExceptionHandler
+server-1  | 2026-09-04T09:21:27.720Z DEBUG 1 --- [albaraka-assistant] [           main] o.s.w.s.adapter.HttpWebHandlerAdapter    : enableLoggingRequestDetails='false': form data and headers will be masked to prevent unsafe logging of potentially sensitive data
+server-1  | 2026-09-04T09:21:27.773Z  INFO 1 --- [albaraka-assistant] [           main] com.zaxxer.hikari.HikariDataSource       : assistant-pool - Starting...
+server-1  | 2026-09-04T09:21:27.971Z  INFO 1 --- [albaraka-assistant] [           main] com.zaxxer.hikari.pool.HikariPool        : assistant-pool - Added connection org.postgresql.jdbc.PgConnection@1d0dad12
+server-1  | 2026-09-04T09:21:27.972Z  INFO 1 --- [albaraka-assistant] [           main] com.zaxxer.hikari.HikariDataSource       : assistant-pool - Start completed.
+server-1  | 2026-09-04T09:21:28.295Z  INFO 1 --- [albaraka-assistant] [           main] o.s.boot.reactor.netty.NettyWebServer    : Netty started on port 8080 (http)
+server-1  | 2026-09-04T09:21:28.308Z  INFO 1 --- [albaraka-assistant] [           main] t.a.ai.AlBarakaAssistantApplication      : Started AlBarakaAssistantApplication in 3.89 seconds (process running for 4.444)
+server-1  | 2026-09-04T09:21:29.024Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] o.s.w.s.adapter.HttpWebHandlerAdapter    : [537d7a2e-1] HTTP GET "/actuator/health/liveness"
+server-1  | 2026-09-04T09:21:29.083Z DEBUG 1 --- [albaraka-assistant] [     parallel-1] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
+server-1  | 2026-09-04T09:21:29.144Z DEBUG 1 --- [albaraka-assistant] [oundedElastic-2] .s.w.r.r.m.a.ResponseEntityResultHandler : [537d7a2e-1] Using 'application/vnd.spring-boot.actuator.v3+json' given [*/*] and supported [application/vnd.spring-boot.actuator.v3+json, application/vnd.spring-boot.actuator.v2+json, application/json]
+server-1  | 2026-09-04T09:21:29.146Z DEBUG 1 --- [albaraka-assistant] [oundedElastic-2] .s.w.r.r.m.a.ResponseEntityResultHandler : [537d7a2e-1] 0..1 [org.springframework.boot.health.actuate.endpoint.CompositeHealthDescriptor]
+server-1  | 2026-09-04T09:21:29.159Z DEBUG 1 --- [albaraka-assistant] [oundedElastic-2] org.springframework.web.HttpLogging      : [537d7a2e-1] Encoding [org.springframework.boot.health.actuate.endpoint.CompositeHealthDescriptor@2cdf9d4c]
+server-1  | 2026-09-04T09:21:29.268Z DEBUG 1 --- [albaraka-assistant] [oundedElastic-2] o.s.w.s.adapter.HttpWebHandlerAdapter    : [537d7a2e-1] Completed 200 OK
+server-1  | 2026-09-04T09:21:30.173Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.s.adapter.HttpWebHandlerAdapter    : [c71cb8d0-2] HTTP GET "/actuator/health/readiness"
+server-1  | 2026-09-04T09:21:30.175Z DEBUG 1 --- [albaraka-assistant] [     parallel-2] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
+server-1  | 2026-09-04T09:21:30.183Z DEBUG 1 --- [albaraka-assistant] [oundedElastic-5] .s.w.r.r.m.a.ResponseEntityResultHandler : [c71cb8d0-2] Using 'application/vnd.spring-boot.actuator.v3+json' given [*/*] and supported [application/vnd.spring-boot.actuator.v3+json, application/vnd.spring-boot.actuator.v2+json, application/json]
+server-1  | 2026-09-04T09:21:30.183Z DEBUG 1 --- [albaraka-assistant] [oundedElastic-5] .s.w.r.r.m.a.ResponseEntityResultHandler : [c71cb8d0-2] 0..1 [org.springframework.boot.health.actuate.endpoint.CompositeHealthDescriptor]
+server-1  | 2026-09-04T09:21:30.183Z DEBUG 1 --- [albaraka-assistant] [oundedElastic-5] org.springframework.web.HttpLogging      : [c71cb8d0-2] Encoding [org.springframework.boot.health.actuate.endpoint.CompositeHealthDescriptor@352bbe59]
+server-1  | 2026-09-04T09:21:30.186Z DEBUG 1 --- [albaraka-assistant] [oundedElastic-5] o.s.w.s.adapter.HttpWebHandlerAdapter    : [c71cb8d0-2] Completed 200 OK
+server-1  | 2026-09-04T09:21:30.532Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.s.adapter.HttpWebHandlerAdapter    : [580d1c13-3] HTTP POST "/api/v1/chat"
+server-1  | 2026-09-04T09:21:30.534Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
+server-1  | 2026-09-04T09:21:30.536Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] s.w.r.r.m.a.RequestMappingHandlerMapping : [580d1c13-3] Mapped to tn.albaraka.ai.api.ChatController#chat(ChatRequest)
+server-1  | 2026-09-04T09:21:30.538Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] .r.m.a.RequestBodyMethodArgumentResolver : [580d1c13-3] Content-Type:application/json
+server-1  | 2026-09-04T09:21:30.539Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] .r.m.a.RequestBodyMethodArgumentResolver : [580d1c13-3] 0..1 [tn.albaraka.ai.api.ChatController$ChatRequest]
+server-1  | 2026-09-04T09:21:30.590Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] org.springframework.web.HttpLogging      : [580d1c13-3] Decoded [ChatRequest[text=comment ouvrir un compte courant ?, locale=fr-FR, clientId=null, deviceId=null, con (truncated)...]
+server-1  | 2026-09-04T09:21:30.592Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [580d1c13-3] Using 'text/event-stream' given [*/*] and supported [text/event-stream]
+server-1  | 2026-09-04T09:21:30.592Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [580d1c13-3] 0..N [org.springframework.http.codec.ServerSentEvent<java.lang.String>]
+server-1  | 2026-09-04T09:21:30.617Z DEBUG 1 --- [albaraka-assistant] [oundedElastic-7] s.w.r.r.m.a.RequestMappingHandlerAdapter : [580d1c13-3] Using @ExceptionHandler tn.albaraka.ai.api.GlobalExceptionHandler#handleOther(Exception)
+server-1  | 2026-09-04T09:21:30.619Z DEBUG 1 --- [albaraka-assistant] [oundedElastic-7] .s.w.r.r.m.a.ResponseEntityResultHandler : [580d1c13-3] Using 'application/json' given [*/*] and supported [application/json, application/*+json, application/x-ndjson, text/event-stream]
+server-1  | 2026-09-04T09:21:30.619Z DEBUG 1 --- [albaraka-assistant] [oundedElastic-7] .s.w.r.r.m.a.ResponseEntityResultHandler : [580d1c13-3] 0..1 [java.util.Map<java.lang.String, java.lang.Object>]
+server-1  | 2026-09-04T09:21:30.620Z DEBUG 1 --- [albaraka-assistant] [oundedElastic-7] org.springframework.web.HttpLogging      : [580d1c13-3] Encoding [{error={message=PreparedStatementCallback; bad SQL grammar [INSERT INTO albaraka_ai.conversation (id (truncated)...]
+server-1  | 2026-09-04T09:21:30.623Z DEBUG 1 --- [albaraka-assistant] [oundedElastic-7] o.s.w.s.adapter.HttpWebHandlerAdapter    : [580d1c13-3] Completed 500 INTERNAL_SERVER_ERROR
+server-1  | 2026-09-04T09:21:35.640Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] o.s.w.s.adapter.HttpWebHandlerAdapter    : [3d01c959-4] HTTP POST "/api/v1/chat"
+server-1  | 2026-09-04T09:21:35.641Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
+server-1  | 2026-09-04T09:21:35.643Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] s.w.r.r.m.a.RequestMappingHandlerMapping : [3d01c959-4] Mapped to tn.albaraka.ai.api.ChatController#chat(ChatRequest)
+server-1  | 2026-09-04T09:21:35.643Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] .r.m.a.RequestBodyMethodArgumentResolver : [3d01c959-4] Content-Type:application/json
+server-1  | 2026-09-04T09:21:35.644Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] .r.m.a.RequestBodyMethodArgumentResolver : [3d01c959-4] 0..1 [tn.albaraka.ai.api.ChatController$ChatRequest]
+server-1  | 2026-09-04T09:21:35.644Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] org.springframework.web.HttpLogging      : [3d01c959-4] Decoded [ChatRequest[text=comment ouvrir un compte courant ?, locale=fr-FR, clientId=null, deviceId=null, con (truncated)...]
+server-1  | 2026-09-04T09:21:35.645Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [3d01c959-4] Using 'text/event-stream' given [*/*] and supported [text/event-stream]
+server-1  | 2026-09-04T09:21:35.645Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [3d01c959-4] 0..N [org.springframework.http.codec.ServerSentEvent<java.lang.String>]
+server-1  | 2026-09-04T09:21:35.647Z DEBUG 1 --- [albaraka-assistant] [oundedElastic-9] s.w.r.r.m.a.RequestMappingHandlerAdapter : [3d01c959-4] Using @ExceptionHandler tn.albaraka.ai.api.GlobalExceptionHandler#handleOther(Exception)
+server-1  | 2026-09-04T09:21:35.647Z DEBUG 1 --- [albaraka-assistant] [oundedElastic-9] .s.w.r.r.m.a.ResponseEntityResultHandler : [3d01c959-4] Using 'application/json' given [*/*] and supported [application/json, application/*+json, application/x-ndjson, text/event-stream]
+server-1  | 2026-09-04T09:21:35.647Z DEBUG 1 --- [albaraka-assistant] [oundedElastic-9] .s.w.r.r.m.a.ResponseEntityResultHandler : [3d01c959-4] 0..1 [java.util.Map<java.lang.String, java.lang.Object>]
+server-1  | 2026-09-04T09:21:35.648Z DEBUG 1 --- [albaraka-assistant] [oundedElastic-9] org.springframework.web.HttpLogging      : [3d01c959-4] Encoding [{error={message=PreparedStatementCallback; bad SQL grammar [INSERT INTO albaraka_ai.conversation (id (truncated)...]
+server-1  | 2026-09-04T09:21:35.649Z DEBUG 1 --- [albaraka-assistant] [oundedElastic-9] o.s.w.s.adapter.HttpWebHandlerAdapter    : [3d01c959-4] Completed 500 INTERNAL_SERVER_ERROR
+server-1  | 2026-09-04T09:21:39.319Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] o.s.w.s.adapter.HttpWebHandlerAdapter    : [4f3abca8-5] HTTP GET "/actuator/health/liveness"
+server-1  | 2026-09-04T09:21:39.320Z DEBUG 1 --- [albaraka-assistant] [     parallel-1] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
+server-1  | 2026-09-04T09:21:39.324Z DEBUG 1 --- [albaraka-assistant] [undedElastic-11] .s.w.r.r.m.a.ResponseEntityResultHandler : [4f3abca8-5] Using 'application/vnd.spring-boot.actuator.v3+json' given [*/*] and supported [application/vnd.spring-boot.actuator.v3+json, application/vnd.spring-boot.actuator.v2+json, application/json]
+server-1  | 2026-09-04T09:21:39.324Z DEBUG 1 --- [albaraka-assistant] [undedElastic-11] .s.w.r.r.m.a.ResponseEntityResultHandler : [4f3abca8-5] 0..1 [org.springframework.boot.health.actuate.endpoint.CompositeHealthDescriptor]
+server-1  | 2026-09-04T09:21:39.325Z DEBUG 1 --- [albaraka-assistant] [undedElastic-11] org.springframework.web.HttpLogging      : [4f3abca8-5] Encoding [org.springframework.boot.health.actuate.endpoint.CompositeHealthDescriptor@3e68f899]
+server-1  | 2026-09-04T09:21:39.326Z DEBUG 1 --- [albaraka-assistant] [undedElastic-11] o.s.w.s.adapter.HttpWebHandlerAdapter    : [4f3abca8-5] Completed 200 OK
+server-1  | 2026-09-04T09:21:40.663Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.s.adapter.HttpWebHandlerAdapter    : [6e9061f8-6] HTTP POST "/api/v1/chat"
+server-1  | 2026-09-04T09:21:40.665Z DEBUG 1 --- [albaraka-assistant] [     parallel-2] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
+server-1  | 2026-09-04T09:21:40.666Z DEBUG 1 --- [albaraka-assistant] [     parallel-2] s.w.r.r.m.a.RequestMappingHandlerMapping : [6e9061f8-6] Mapped to tn.albaraka.ai.api.ChatController#chat(ChatRequest)
+server-1  | 2026-09-04T09:21:40.666Z DEBUG 1 --- [albaraka-assistant] [     parallel-2] .r.m.a.RequestBodyMethodArgumentResolver : [6e9061f8-6] Content-Type:application/json
+server-1  | 2026-09-04T09:21:40.666Z DEBUG 1 --- [albaraka-assistant] [     parallel-2] .r.m.a.RequestBodyMethodArgumentResolver : [6e9061f8-6] 0..1 [tn.albaraka.ai.api.ChatController$ChatRequest]
+server-1  | 2026-09-04T09:21:40.667Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] org.springframework.web.HttpLogging      : [6e9061f8-6] Decoded [ChatRequest[text=comment ouvrir un compte courant ?, locale=fr-FR, clientId=null, deviceId=null, con (truncated)...]
+server-1  | 2026-09-04T09:21:40.668Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [6e9061f8-6] Using 'text/event-stream' given [*/*] and supported [text/event-stream]
+server-1  | 2026-09-04T09:21:40.668Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [6e9061f8-6] 0..N [org.springframework.http.codec.ServerSentEvent<java.lang.String>]
+server-1  | 2026-09-04T09:21:40.670Z DEBUG 1 --- [albaraka-assistant] [undedElastic-13] s.w.r.r.m.a.RequestMappingHandlerAdapter : [6e9061f8-6] Using @ExceptionHandler tn.albaraka.ai.api.GlobalExceptionHandler#handleOther(Exception)
+server-1  | 2026-09-04T09:21:40.670Z DEBUG 1 --- [albaraka-assistant] [undedElastic-13] .s.w.r.r.m.a.ResponseEntityResultHandler : [6e9061f8-6] Using 'application/json' given [*/*] and supported [application/json, application/*+json, application/x-ndjson, text/event-stream]
+server-1  | 2026-09-04T09:21:40.670Z DEBUG 1 --- [albaraka-assistant] [undedElastic-13] .s.w.r.r.m.a.ResponseEntityResultHandler : [6e9061f8-6] 0..1 [java.util.Map<java.lang.String, java.lang.Object>]
+server-1  | 2026-09-04T09:21:40.671Z DEBUG 1 --- [albaraka-assistant] [undedElastic-13] org.springframework.web.HttpLogging      : [6e9061f8-6] Encoding [{error={message=PreparedStatementCallback; bad SQL grammar [INSERT INTO albaraka_ai.conversation (id (truncated)...]
+server-1  | 2026-09-04T09:21:40.672Z DEBUG 1 --- [albaraka-assistant] [undedElastic-13] o.s.w.s.adapter.HttpWebHandlerAdapter    : [6e9061f8-6] Completed 500 INTERNAL_SERVER_ERROR
+server-1  | 2026-09-04T09:21:45.684Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.s.adapter.HttpWebHandlerAdapter    : [661f7495-7] HTTP POST "/api/v1/chat"
+server-1  | 2026-09-04T09:21:45.686Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
+server-1  | 2026-09-04T09:21:45.687Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] s.w.r.r.m.a.RequestMappingHandlerMapping : [661f7495-7] Mapped to tn.albaraka.ai.api.ChatController#chat(ChatRequest)
+server-1  | 2026-09-04T09:21:45.688Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] .r.m.a.RequestBodyMethodArgumentResolver : [661f7495-7] Content-Type:application/json
+server-1  | 2026-09-04T09:21:45.688Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] .r.m.a.RequestBodyMethodArgumentResolver : [661f7495-7] 0..1 [tn.albaraka.ai.api.ChatController$ChatRequest]
+server-1  | 2026-09-04T09:21:45.688Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] org.springframework.web.HttpLogging      : [661f7495-7] Decoded [ChatRequest[text=comment ouvrir un compte courant ?, locale=fr-FR, clientId=null, deviceId=null, con (truncated)...]
+server-1  | 2026-09-04T09:21:45.689Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [661f7495-7] Using 'text/event-stream' given [*/*] and supported [text/event-stream]
+server-1  | 2026-09-04T09:21:45.689Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [661f7495-7] 0..N [org.springframework.http.codec.ServerSentEvent<java.lang.String>]
+server-1  | 2026-09-04T09:21:45.690Z DEBUG 1 --- [albaraka-assistant] [undedElastic-15] s.w.r.r.m.a.RequestMappingHandlerAdapter : [661f7495-7] Using @ExceptionHandler tn.albaraka.ai.api.GlobalExceptionHandler#handleOther(Exception)
+server-1  | 2026-09-04T09:21:45.691Z DEBUG 1 --- [albaraka-assistant] [undedElastic-15] .s.w.r.r.m.a.ResponseEntityResultHandler : [661f7495-7] Using 'application/json' given [*/*] and supported [application/json, application/*+json, application/x-ndjson, text/event-stream]
+server-1  | 2026-09-04T09:21:45.691Z DEBUG 1 --- [albaraka-assistant] [undedElastic-15] .s.w.r.r.m.a.ResponseEntityResultHandler : [661f7495-7] 0..1 [java.util.Map<java.lang.String, java.lang.Object>]
+server-1  | 2026-09-04T09:21:45.691Z DEBUG 1 --- [albaraka-assistant] [undedElastic-15] org.springframework.web.HttpLogging      : [661f7495-7] Encoding [{error={message=PreparedStatementCallback; bad SQL grammar [INSERT INTO albaraka_ai.conversation (id (truncated)...]
+server-1  | 2026-09-04T09:21:45.693Z DEBUG 1 --- [albaraka-assistant] [undedElastic-15] o.s.w.s.adapter.HttpWebHandlerAdapter    : [661f7495-7] Completed 500 INTERNAL_SERVER_ERROR
+server-1  | 2026-09-04T09:21:49.368Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] o.s.w.s.adapter.HttpWebHandlerAdapter    : [a4accbf9-8] HTTP GET "/actuator/health/liveness"
+server-1  | 2026-09-04T09:21:49.370Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
+server-1  | 2026-09-04T09:21:49.372Z DEBUG 1 --- [albaraka-assistant] [undedElastic-17] .s.w.r.r.m.a.ResponseEntityResultHandler : [a4accbf9-8] Using 'application/vnd.spring-boot.actuator.v3+json' given [*/*] and supported [application/vnd.spring-boot.actuator.v3+json, application/vnd.spring-boot.actuator.v2+json, application/json]
+server-1  | 2026-09-04T09:21:49.373Z DEBUG 1 --- [albaraka-assistant] [undedElastic-17] .s.w.r.r.m.a.ResponseEntityResultHandler : [a4accbf9-8] 0..1 [org.springframework.boot.health.actuate.endpoint.CompositeHealthDescriptor]
+server-1  | 2026-09-04T09:21:49.373Z DEBUG 1 --- [albaraka-assistant] [undedElastic-17] org.springframework.web.HttpLogging      : [a4accbf9-8] Encoding [org.springframework.boot.health.actuate.endpoint.CompositeHealthDescriptor@5868e37a]
+server-1  | 2026-09-04T09:21:49.374Z DEBUG 1 --- [albaraka-assistant] [undedElastic-17] o.s.w.s.adapter.HttpWebHandlerAdapter    : [a4accbf9-8] Completed 200 OK
+server-1  | 2026-09-04T09:21:50.706Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] o.s.w.s.adapter.HttpWebHandlerAdapter    : [d6fbabfc-9] HTTP POST "/api/v1/chat"
+server-1  | 2026-09-04T09:21:50.708Z DEBUG 1 --- [albaraka-assistant] [     parallel-1] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
+server-1  | 2026-09-04T09:21:50.709Z DEBUG 1 --- [albaraka-assistant] [     parallel-1] s.w.r.r.m.a.RequestMappingHandlerMapping : [d6fbabfc-9] Mapped to tn.albaraka.ai.api.ChatController#chat(ChatRequest)
+server-1  | 2026-09-04T09:21:50.710Z DEBUG 1 --- [albaraka-assistant] [     parallel-1] .r.m.a.RequestBodyMethodArgumentResolver : [d6fbabfc-9] Content-Type:application/json
+server-1  | 2026-09-04T09:21:50.710Z DEBUG 1 --- [albaraka-assistant] [     parallel-1] .r.m.a.RequestBodyMethodArgumentResolver : [d6fbabfc-9] 0..1 [tn.albaraka.ai.api.ChatController$ChatRequest]
+server-1  | 2026-09-04T09:21:50.710Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] org.springframework.web.HttpLogging      : [d6fbabfc-9] Decoded [ChatRequest[text=comment ouvrir un compte courant ?, locale=fr-FR, clientId=null, deviceId=null, con (truncated)...]
+server-1  | 2026-09-04T09:21:50.711Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [d6fbabfc-9] Using 'text/event-stream' given [*/*] and supported [text/event-stream]
+server-1  | 2026-09-04T09:21:50.711Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [d6fbabfc-9] 0..N [org.springframework.http.codec.ServerSentEvent<java.lang.String>]
+server-1  | 2026-09-04T09:21:50.713Z DEBUG 1 --- [albaraka-assistant] [undedElastic-19] s.w.r.r.m.a.RequestMappingHandlerAdapter : [d6fbabfc-9] Using @ExceptionHandler tn.albaraka.ai.api.GlobalExceptionHandler#handleOther(Exception)
+server-1  | 2026-09-04T09:21:50.713Z DEBUG 1 --- [albaraka-assistant] [undedElastic-19] .s.w.r.r.m.a.ResponseEntityResultHandler : [d6fbabfc-9] Using 'application/json' given [*/*] and supported [application/json, application/*+json, application/x-ndjson, text/event-stream]
+server-1  | 2026-09-04T09:21:50.713Z DEBUG 1 --- [albaraka-assistant] [undedElastic-19] .s.w.r.r.m.a.ResponseEntityResultHandler : [d6fbabfc-9] 0..1 [java.util.Map<java.lang.String, java.lang.Object>]
+server-1  | 2026-09-04T09:21:50.714Z DEBUG 1 --- [albaraka-assistant] [undedElastic-19] org.springframework.web.HttpLogging      : [d6fbabfc-9] Encoding [{error={message=PreparedStatementCallback; bad SQL grammar [INSERT INTO albaraka_ai.conversation (id (truncated)...]
+server-1  | 2026-09-04T09:21:50.715Z DEBUG 1 --- [albaraka-assistant] [undedElastic-19] o.s.w.s.adapter.HttpWebHandlerAdapter    : [d6fbabfc-9] Completed 500 INTERNAL_SERVER_ERROR
+server-1  | 2026-09-04T09:21:55.728Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.s.adapter.HttpWebHandlerAdapter    : [342acef4-10] HTTP POST "/api/v1/chat"
+server-1  | 2026-09-04T09:21:55.729Z DEBUG 1 --- [albaraka-assistant] [     parallel-2] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
+server-1  | 2026-09-04T09:21:55.731Z DEBUG 1 --- [albaraka-assistant] [     parallel-2] s.w.r.r.m.a.RequestMappingHandlerMapping : [342acef4-10] Mapped to tn.albaraka.ai.api.ChatController#chat(ChatRequest)
+server-1  | 2026-09-04T09:21:55.731Z DEBUG 1 --- [albaraka-assistant] [     parallel-2] .r.m.a.RequestBodyMethodArgumentResolver : [342acef4-10] Content-Type:application/json
+server-1  | 2026-09-04T09:21:55.731Z DEBUG 1 --- [albaraka-assistant] [     parallel-2] .r.m.a.RequestBodyMethodArgumentResolver : [342acef4-10] 0..1 [tn.albaraka.ai.api.ChatController$ChatRequest]
+server-1  | 2026-09-04T09:21:55.732Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] org.springframework.web.HttpLogging      : [342acef4-10] Decoded [ChatRequest[text=comment ouvrir un compte courant ?, locale=fr-FR, clientId=null, deviceId=null, con (truncated)...]
+server-1  | 2026-09-04T09:21:55.732Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [342acef4-10] Using 'text/event-stream' given [*/*] and supported [text/event-stream]
+server-1  | 2026-09-04T09:21:55.732Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [342acef4-10] 0..N [org.springframework.http.codec.ServerSentEvent<java.lang.String>]
+server-1  | 2026-09-04T09:21:55.734Z DEBUG 1 --- [albaraka-assistant] [undedElastic-21] s.w.r.r.m.a.RequestMappingHandlerAdapter : [342acef4-10] Using @ExceptionHandler tn.albaraka.ai.api.GlobalExceptionHandler#handleOther(Exception)
+server-1  | 2026-09-04T09:21:55.734Z DEBUG 1 --- [albaraka-assistant] [undedElastic-21] .s.w.r.r.m.a.ResponseEntityResultHandler : [342acef4-10] Using 'application/json' given [*/*] and supported [application/json, application/*+json, application/x-ndjson, text/event-stream]
+server-1  | 2026-09-04T09:21:55.734Z DEBUG 1 --- [albaraka-assistant] [undedElastic-21] .s.w.r.r.m.a.ResponseEntityResultHandler : [342acef4-10] 0..1 [java.util.Map<java.lang.String, java.lang.Object>]
+server-1  | 2026-09-04T09:21:55.735Z DEBUG 1 --- [albaraka-assistant] [undedElastic-21] org.springframework.web.HttpLogging      : [342acef4-10] Encoding [{error={message=PreparedStatementCallback; bad SQL grammar [INSERT INTO albaraka_ai.conversation (id (truncated)...]
+server-1  | 2026-09-04T09:21:55.735Z DEBUG 1 --- [albaraka-assistant] [undedElastic-21] o.s.w.s.adapter.HttpWebHandlerAdapter    : [342acef4-10] Completed 500 INTERNAL_SERVER_ERROR
+server-1  | 2026-09-04T09:21:59.416Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.s.adapter.HttpWebHandlerAdapter    : [cd66b9d7-11] HTTP GET "/actuator/health/liveness"
+server-1  | 2026-09-04T09:21:59.418Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
+server-1  | 2026-09-04T09:21:59.421Z DEBUG 1 --- [albaraka-assistant] [undedElastic-23] .s.w.r.r.m.a.ResponseEntityResultHandler : [cd66b9d7-11] Using 'application/vnd.spring-boot.actuator.v3+json' given [*/*] and supported [application/vnd.spring-boot.actuator.v3+json, application/vnd.spring-boot.actuator.v2+json, application/json]
+server-1  | 2026-09-04T09:21:59.421Z DEBUG 1 --- [albaraka-assistant] [undedElastic-23] .s.w.r.r.m.a.ResponseEntityResultHandler : [cd66b9d7-11] 0..1 [org.springframework.boot.health.actuate.endpoint.CompositeHealthDescriptor]
+server-1  | 2026-09-04T09:21:59.421Z DEBUG 1 --- [albaraka-assistant] [undedElastic-23] org.springframework.web.HttpLogging      : [cd66b9d7-11] Encoding [org.springframework.boot.health.actuate.endpoint.CompositeHealthDescriptor@7a8c8975]
+server-1  | 2026-09-04T09:21:59.423Z DEBUG 1 --- [albaraka-assistant] [undedElastic-23] o.s.w.s.adapter.HttpWebHandlerAdapter    : [cd66b9d7-11] Completed 200 OK
+server-1  | 2026-09-04T09:22:00.748Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] o.s.w.s.adapter.HttpWebHandlerAdapter    : [52bd9bbb-12] HTTP POST "/api/v1/chat"
+server-1  | 2026-09-04T09:22:00.750Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
+server-1  | 2026-09-04T09:22:00.751Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] s.w.r.r.m.a.RequestMappingHandlerMapping : [52bd9bbb-12] Mapped to tn.albaraka.ai.api.ChatController#chat(ChatRequest)
+server-1  | 2026-09-04T09:22:00.751Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] .r.m.a.RequestBodyMethodArgumentResolver : [52bd9bbb-12] Content-Type:application/json
+server-1  | 2026-09-04T09:22:00.751Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] .r.m.a.RequestBodyMethodArgumentResolver : [52bd9bbb-12] 0..1 [tn.albaraka.ai.api.ChatController$ChatRequest]
+server-1  | 2026-09-04T09:22:00.752Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] org.springframework.web.HttpLogging      : [52bd9bbb-12] Decoded [ChatRequest[text=comment ouvrir un compte courant ?, locale=fr-FR, clientId=null, deviceId=null, con (truncated)...]
+server-1  | 2026-09-04T09:22:00.752Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [52bd9bbb-12] Using 'text/event-stream' given [*/*] and supported [text/event-stream]
+server-1  | 2026-09-04T09:22:00.752Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [52bd9bbb-12] 0..N [org.springframework.http.codec.ServerSentEvent<java.lang.String>]
+server-1  | 2026-09-04T09:22:00.754Z DEBUG 1 --- [albaraka-assistant] [undedElastic-25] s.w.r.r.m.a.RequestMappingHandlerAdapter : [52bd9bbb-12] Using @ExceptionHandler tn.albaraka.ai.api.GlobalExceptionHandler#handleOther(Exception)
+server-1  | 2026-09-04T09:22:00.755Z DEBUG 1 --- [albaraka-assistant] [undedElastic-25] .s.w.r.r.m.a.ResponseEntityResultHandler : [52bd9bbb-12] Using 'application/json' given [*/*] and supported [application/json, application/*+json, application/x-ndjson, text/event-stream]
+server-1  | 2026-09-04T09:22:00.755Z DEBUG 1 --- [albaraka-assistant] [undedElastic-25] .s.w.r.r.m.a.ResponseEntityResultHandler : [52bd9bbb-12] 0..1 [java.util.Map<java.lang.String, java.lang.Object>]
+server-1  | 2026-09-04T09:22:00.755Z DEBUG 1 --- [albaraka-assistant] [undedElastic-25] org.springframework.web.HttpLogging      : [52bd9bbb-12] Encoding [{error={message=PreparedStatementCallback; bad SQL grammar [INSERT INTO albaraka_ai.conversation (id (truncated)...]
+server-1  | 2026-09-04T09:22:00.756Z DEBUG 1 --- [albaraka-assistant] [undedElastic-25] o.s.w.s.adapter.HttpWebHandlerAdapter    : [52bd9bbb-12] Completed 500 INTERNAL_SERVER_ERROR
+server-1  | 2026-09-04T09:22:05.768Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] o.s.w.s.adapter.HttpWebHandlerAdapter    : [e7ba4bb3-13] HTTP POST "/api/v1/chat"
+server-1  | 2026-09-04T09:22:05.770Z DEBUG 1 --- [albaraka-assistant] [     parallel-1] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
+server-1  | 2026-09-04T09:22:05.771Z DEBUG 1 --- [albaraka-assistant] [     parallel-1] s.w.r.r.m.a.RequestMappingHandlerMapping : [e7ba4bb3-13] Mapped to tn.albaraka.ai.api.ChatController#chat(ChatRequest)
+server-1  | 2026-09-04T09:22:05.772Z DEBUG 1 --- [albaraka-assistant] [     parallel-1] .r.m.a.RequestBodyMethodArgumentResolver : [e7ba4bb3-13] Content-Type:application/json
+server-1  | 2026-09-04T09:22:05.772Z DEBUG 1 --- [albaraka-assistant] [     parallel-1] .r.m.a.RequestBodyMethodArgumentResolver : [e7ba4bb3-13] 0..1 [tn.albaraka.ai.api.ChatController$ChatRequest]
+server-1  | 2026-09-04T09:22:05.772Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] org.springframework.web.HttpLogging      : [e7ba4bb3-13] Decoded [ChatRequest[text=comment ouvrir un compte courant ?, locale=fr-FR, clientId=null, deviceId=null, con (truncated)...]
+server-1  | 2026-09-04T09:22:05.773Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [e7ba4bb3-13] Using 'text/event-stream' given [*/*] and supported [text/event-stream]
+server-1  | 2026-09-04T09:22:05.773Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [e7ba4bb3-13] 0..N [org.springframework.http.codec.ServerSentEvent<java.lang.String>]
+server-1  | 2026-09-04T09:22:05.774Z DEBUG 1 --- [albaraka-assistant] [undedElastic-27] s.w.r.r.m.a.RequestMappingHandlerAdapter : [e7ba4bb3-13] Using @ExceptionHandler tn.albaraka.ai.api.GlobalExceptionHandler#handleOther(Exception)
+server-1  | 2026-09-04T09:22:05.775Z DEBUG 1 --- [albaraka-assistant] [undedElastic-27] .s.w.r.r.m.a.ResponseEntityResultHandler : [e7ba4bb3-13] Using 'application/json' given [*/*] and supported [application/json, application/*+json, application/x-ndjson, text/event-stream]
+server-1  | 2026-09-04T09:22:05.775Z DEBUG 1 --- [albaraka-assistant] [undedElastic-27] .s.w.r.r.m.a.ResponseEntityResultHandler : [e7ba4bb3-13] 0..1 [java.util.Map<java.lang.String, java.lang.Object>]
+server-1  | 2026-09-04T09:22:05.775Z DEBUG 1 --- [albaraka-assistant] [undedElastic-27] org.springframework.web.HttpLogging      : [e7ba4bb3-13] Encoding [{error={message=PreparedStatementCallback; bad SQL grammar [INSERT INTO albaraka_ai.conversation (id (truncated)...]
+server-1  | 2026-09-04T09:22:05.776Z DEBUG 1 --- [albaraka-assistant] [undedElastic-27] o.s.w.s.adapter.HttpWebHandlerAdapter    : [e7ba4bb3-13] Completed 500 INTERNAL_SERVER_ERROR
+server-1  | 2026-09-04T09:22:09.463Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.s.adapter.HttpWebHandlerAdapter    : [79e607e9-14] HTTP GET "/actuator/health/liveness"
+server-1  | 2026-09-04T09:22:09.465Z DEBUG 1 --- [albaraka-assistant] [     parallel-2] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
+server-1  | 2026-09-04T09:22:09.468Z DEBUG 1 --- [albaraka-assistant] [undedElastic-29] .s.w.r.r.m.a.ResponseEntityResultHandler : [79e607e9-14] Using 'application/vnd.spring-boot.actuator.v3+json' given [*/*] and supported [application/vnd.spring-boot.actuator.v3+json, application/vnd.spring-boot.actuator.v2+json, application/json]
+server-1  | 2026-09-04T09:22:09.468Z DEBUG 1 --- [albaraka-assistant] [undedElastic-29] .s.w.r.r.m.a.ResponseEntityResultHandler : [79e607e9-14] 0..1 [org.springframework.boot.health.actuate.endpoint.CompositeHealthDescriptor]
+server-1  | 2026-09-04T09:22:09.468Z DEBUG 1 --- [albaraka-assistant] [undedElastic-29] org.springframework.web.HttpLogging      : [79e607e9-14] Encoding [org.springframework.boot.health.actuate.endpoint.CompositeHealthDescriptor@2c183df]
+server-1  | 2026-09-04T09:22:09.469Z DEBUG 1 --- [albaraka-assistant] [undedElastic-29] o.s.w.s.adapter.HttpWebHandlerAdapter    : [79e607e9-14] Completed 200 OK
+server-1  | 2026-09-04T09:22:10.789Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.s.adapter.HttpWebHandlerAdapter    : [5152bf7e-15] HTTP POST "/api/v1/chat"
+server-1  | 2026-09-04T09:22:10.790Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
+server-1  | 2026-09-04T09:22:10.791Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] s.w.r.r.m.a.RequestMappingHandlerMapping : [5152bf7e-15] Mapped to tn.albaraka.ai.api.ChatController#chat(ChatRequest)
+server-1  | 2026-09-04T09:22:10.792Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] .r.m.a.RequestBodyMethodArgumentResolver : [5152bf7e-15] Content-Type:application/json
+server-1  | 2026-09-04T09:22:10.792Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] .r.m.a.RequestBodyMethodArgumentResolver : [5152bf7e-15] 0..1 [tn.albaraka.ai.api.ChatController$ChatRequest]
+server-1  | 2026-09-04T09:22:10.792Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] org.springframework.web.HttpLogging      : [5152bf7e-15] Decoded [ChatRequest[text=comment ouvrir un compte courant ?, locale=fr-FR, clientId=null, deviceId=null, con (truncated)...]
+server-1  | 2026-09-04T09:22:10.793Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [5152bf7e-15] Using 'text/event-stream' given [*/*] and supported [text/event-stream]
+server-1  | 2026-09-04T09:22:10.793Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [5152bf7e-15] 0..N [org.springframework.http.codec.ServerSentEvent<java.lang.String>]
+server-1  | 2026-09-04T09:22:10.795Z DEBUG 1 --- [albaraka-assistant] [undedElastic-31] s.w.r.r.m.a.RequestMappingHandlerAdapter : [5152bf7e-15] Using @ExceptionHandler tn.albaraka.ai.api.GlobalExceptionHandler#handleOther(Exception)
+server-1  | 2026-09-04T09:22:10.795Z DEBUG 1 --- [albaraka-assistant] [undedElastic-31] .s.w.r.r.m.a.ResponseEntityResultHandler : [5152bf7e-15] Using 'application/json' given [*/*] and supported [application/json, application/*+json, application/x-ndjson, text/event-stream]
+server-1  | 2026-09-04T09:22:10.795Z DEBUG 1 --- [albaraka-assistant] [undedElastic-31] .s.w.r.r.m.a.ResponseEntityResultHandler : [5152bf7e-15] 0..1 [java.util.Map<java.lang.String, java.lang.Object>]
+server-1  | 2026-09-04T09:22:10.796Z DEBUG 1 --- [albaraka-assistant] [undedElastic-31] org.springframework.web.HttpLogging      : [5152bf7e-15] Encoding [{error={message=PreparedStatementCallback; bad SQL grammar [INSERT INTO albaraka_ai.conversation (id (truncated)...]
+server-1  | 2026-09-04T09:22:10.797Z DEBUG 1 --- [albaraka-assistant] [undedElastic-31] o.s.w.s.adapter.HttpWebHandlerAdapter    : [5152bf7e-15] Completed 500 INTERNAL_SERVER_ERROR
+server-1  | 2026-09-04T09:22:15.810Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] o.s.w.s.adapter.HttpWebHandlerAdapter    : [b09d9e26-16] HTTP POST "/api/v1/chat"
+server-1  | 2026-09-04T09:22:15.812Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
+server-1  | 2026-09-04T09:22:15.813Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] s.w.r.r.m.a.RequestMappingHandlerMapping : [b09d9e26-16] Mapped to tn.albaraka.ai.api.ChatController#chat(ChatRequest)
+server-1  | 2026-09-04T09:22:15.813Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] .r.m.a.RequestBodyMethodArgumentResolver : [b09d9e26-16] Content-Type:application/json
+server-1  | 2026-09-04T09:22:15.813Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] .r.m.a.RequestBodyMethodArgumentResolver : [b09d9e26-16] 0..1 [tn.albaraka.ai.api.ChatController$ChatRequest]
+server-1  | 2026-09-04T09:22:15.814Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] org.springframework.web.HttpLogging      : [b09d9e26-16] Decoded [ChatRequest[text=comment ouvrir un compte courant ?, locale=fr-FR, clientId=null, deviceId=null, con (truncated)...]
+server-1  | 2026-09-04T09:22:15.814Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [b09d9e26-16] Using 'text/event-stream' given [*/*] and supported [text/event-stream]
+server-1  | 2026-09-04T09:22:15.814Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [b09d9e26-16] 0..N [org.springframework.http.codec.ServerSentEvent<java.lang.String>]
+server-1  | 2026-09-04T09:22:15.817Z DEBUG 1 --- [albaraka-assistant] [undedElastic-33] s.w.r.r.m.a.RequestMappingHandlerAdapter : [b09d9e26-16] Using @ExceptionHandler tn.albaraka.ai.api.GlobalExceptionHandler#handleOther(Exception)
+server-1  | 2026-09-04T09:22:15.817Z DEBUG 1 --- [albaraka-assistant] [undedElastic-33] .s.w.r.r.m.a.ResponseEntityResultHandler : [b09d9e26-16] Using 'application/json' given [*/*] and supported [application/json, application/*+json, application/x-ndjson, text/event-stream]
+server-1  | 2026-09-04T09:22:15.817Z DEBUG 1 --- [albaraka-assistant] [undedElastic-33] .s.w.r.r.m.a.ResponseEntityResultHandler : [b09d9e26-16] 0..1 [java.util.Map<java.lang.String, java.lang.Object>]
+server-1  | 2026-09-04T09:22:15.818Z DEBUG 1 --- [albaraka-assistant] [undedElastic-33] org.springframework.web.HttpLogging      : [b09d9e26-16] Encoding [{error={message=PreparedStatementCallback; bad SQL grammar [INSERT INTO albaraka_ai.conversation (id (truncated)...]
+server-1  | 2026-09-04T09:22:15.819Z DEBUG 1 --- [albaraka-assistant] [undedElastic-33] o.s.w.s.adapter.HttpWebHandlerAdapter    : [b09d9e26-16] Completed 500 INTERNAL_SERVER_ERROR
+server-1  | 2026-09-04T09:22:19.511Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-4] o.s.w.s.adapter.HttpWebHandlerAdapter    : [ab3efc8b-17] HTTP GET "/actuator/health/liveness"
+server-1  | 2026-09-04T09:22:19.513Z DEBUG 1 --- [albaraka-assistant] [     parallel-1] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
+server-1  | 2026-09-04T09:22:19.515Z DEBUG 1 --- [albaraka-assistant] [undedElastic-35] .s.w.r.r.m.a.ResponseEntityResultHandler : [ab3efc8b-17] Using 'application/vnd.spring-boot.actuator.v3+json' given [*/*] and supported [application/vnd.spring-boot.actuator.v3+json, application/vnd.spring-boot.actuator.v2+json, application/json]
+server-1  | 2026-09-04T09:22:19.515Z DEBUG 1 --- [albaraka-assistant] [undedElastic-35] .s.w.r.r.m.a.ResponseEntityResultHandler : [ab3efc8b-17] 0..1 [org.springframework.boot.health.actuate.endpoint.CompositeHealthDescriptor]
+server-1  | 2026-09-04T09:22:19.516Z DEBUG 1 --- [albaraka-assistant] [undedElastic-35] org.springframework.web.HttpLogging      : [ab3efc8b-17] Encoding [org.springframework.boot.health.actuate.endpoint.CompositeHealthDescriptor@26bb8faf]
+server-1  | 2026-09-04T09:22:19.517Z DEBUG 1 --- [albaraka-assistant] [undedElastic-35] o.s.w.s.adapter.HttpWebHandlerAdapter    : [ab3efc8b-17] Completed 200 OK
+server-1  | 2026-09-04T09:22:20.833Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.s.adapter.HttpWebHandlerAdapter    : [aa7d6def-18] HTTP POST "/api/v1/chat"
+server-1  | 2026-09-04T09:22:20.835Z DEBUG 1 --- [albaraka-assistant] [     parallel-2] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
+server-1  | 2026-09-04T09:22:20.836Z DEBUG 1 --- [albaraka-assistant] [     parallel-2] s.w.r.r.m.a.RequestMappingHandlerMapping : [aa7d6def-18] Mapped to tn.albaraka.ai.api.ChatController#chat(ChatRequest)
+server-1  | 2026-09-04T09:22:20.836Z DEBUG 1 --- [albaraka-assistant] [     parallel-2] .r.m.a.RequestBodyMethodArgumentResolver : [aa7d6def-18] Content-Type:application/json
+server-1  | 2026-09-04T09:22:20.837Z DEBUG 1 --- [albaraka-assistant] [     parallel-2] .r.m.a.RequestBodyMethodArgumentResolver : [aa7d6def-18] 0..1 [tn.albaraka.ai.api.ChatController$ChatRequest]
+server-1  | 2026-09-04T09:22:20.837Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] org.springframework.web.HttpLogging      : [aa7d6def-18] Decoded [ChatRequest[text=comment ouvrir un compte courant ?, locale=fr-FR, clientId=null, deviceId=null, con (truncated)...]
+server-1  | 2026-09-04T09:22:20.838Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [aa7d6def-18] Using 'text/event-stream' given [*/*] and supported [text/event-stream]
+server-1  | 2026-09-04T09:22:20.838Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-1] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [aa7d6def-18] 0..N [org.springframework.http.codec.ServerSentEvent<java.lang.String>]
+server-1  | 2026-09-04T09:22:20.840Z DEBUG 1 --- [albaraka-assistant] [undedElastic-37] s.w.r.r.m.a.RequestMappingHandlerAdapter : [aa7d6def-18] Using @ExceptionHandler tn.albaraka.ai.api.GlobalExceptionHandler#handleOther(Exception)
+server-1  | 2026-09-04T09:22:20.840Z DEBUG 1 --- [albaraka-assistant] [undedElastic-37] .s.w.r.r.m.a.ResponseEntityResultHandler : [aa7d6def-18] Using 'application/json' given [*/*] and supported [application/json, application/*+json, application/x-ndjson, text/event-stream]
+server-1  | 2026-09-04T09:22:20.840Z DEBUG 1 --- [albaraka-assistant] [undedElastic-37] .s.w.r.r.m.a.ResponseEntityResultHandler : [aa7d6def-18] 0..1 [java.util.Map<java.lang.String, java.lang.Object>]
+server-1  | 2026-09-04T09:22:20.840Z DEBUG 1 --- [albaraka-assistant] [undedElastic-37] org.springframework.web.HttpLogging      : [aa7d6def-18] Encoding [{error={message=PreparedStatementCallback; bad SQL grammar [INSERT INTO albaraka_ai.conversation (id (truncated)...]
+server-1  | 2026-09-04T09:22:20.841Z DEBUG 1 --- [albaraka-assistant] [undedElastic-37] o.s.w.s.adapter.HttpWebHandlerAdapter    : [aa7d6def-18] Completed 500 INTERNAL_SERVER_ERROR
+server-1  | 2026-09-04T09:22:25.853Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.s.adapter.HttpWebHandlerAdapter    : [0afd9c3f-19] HTTP POST "/api/v1/chat"
+server-1  | 2026-09-04T09:22:25.855Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
+server-1  | 2026-09-04T09:22:25.856Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] s.w.r.r.m.a.RequestMappingHandlerMapping : [0afd9c3f-19] Mapped to tn.albaraka.ai.api.ChatController#chat(ChatRequest)
+server-1  | 2026-09-04T09:22:25.856Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] .r.m.a.RequestBodyMethodArgumentResolver : [0afd9c3f-19] Content-Type:application/json
+server-1  | 2026-09-04T09:22:25.856Z DEBUG 1 --- [albaraka-assistant] [     parallel-3] .r.m.a.RequestBodyMethodArgumentResolver : [0afd9c3f-19] 0..1 [tn.albaraka.ai.api.ChatController$ChatRequest]
+server-1  | 2026-09-04T09:22:25.857Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] org.springframework.web.HttpLogging      : [0afd9c3f-19] Decoded [ChatRequest[text=comment ouvrir un compte courant ?, locale=fr-FR, clientId=null, deviceId=null, con (truncated)...]
+server-1  | 2026-09-04T09:22:25.857Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [0afd9c3f-19] Using 'text/event-stream' given [*/*] and supported [text/event-stream]
+server-1  | 2026-09-04T09:22:25.857Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-2] o.s.w.r.r.m.a.ResponseBodyResultHandler  : [0afd9c3f-19] 0..N [org.springframework.http.codec.ServerSentEvent<java.lang.String>]
+server-1  | 2026-09-04T09:22:25.859Z DEBUG 1 --- [albaraka-assistant] [undedElastic-39] s.w.r.r.m.a.RequestMappingHandlerAdapter : [0afd9c3f-19] Using @ExceptionHandler tn.albaraka.ai.api.GlobalExceptionHandler#handleOther(Exception)
+server-1  | 2026-09-04T09:22:25.859Z DEBUG 1 --- [albaraka-assistant] [undedElastic-39] .s.w.r.r.m.a.ResponseEntityResultHandler : [0afd9c3f-19] Using 'application/json' given [*/*] and supported [application/json, application/*+json, application/x-ndjson, text/event-stream]
+server-1  | 2026-09-04T09:22:25.859Z DEBUG 1 --- [albaraka-assistant] [undedElastic-39] .s.w.r.r.m.a.ResponseEntityResultHandler : [0afd9c3f-19] 0..1 [java.util.Map<java.lang.String, java.lang.Object>]
+server-1  | 2026-09-04T09:22:25.860Z DEBUG 1 --- [albaraka-assistant] [undedElastic-39] org.springframework.web.HttpLogging      : [0afd9c3f-19] Encoding [{error={message=PreparedStatementCallback; bad SQL grammar [INSERT INTO albaraka_ai.conversation (id (truncated)...]
+server-1  | 2026-09-04T09:22:25.861Z DEBUG 1 --- [albaraka-assistant] [undedElastic-39] o.s.w.s.adapter.HttpWebHandlerAdapter    : [0afd9c3f-19] Completed 500 INTERNAL_SERVER_ERROR
+server-1  | 2026-09-04T09:22:29.558Z DEBUG 1 --- [albaraka-assistant] [or-http-epoll-3] o.s.w.s.adapter.HttpWebHandlerAdapter    : [061badc1-20] HTTP GET "/actuator/health/liveness"
+server-1  | 2026-09-04T09:22:29.559Z DEBUG 1 --- [albaraka-assistant] [     parallel-4] o.s.w.s.s.DefaultWebSessionManager       : Created new WebSession.
+server-1  | 2026-09-04T09:22:29.562Z DEBUG 1 --- [albaraka-assistant] [undedElastic-41] .s.w.r.r.m.a.ResponseEntityResultHandler : [061badc1-20] Using 'application/vnd.spring-boot.actuator.v3+json' given [*/*] and supported [application/vnd.spring-boot.actuator.v3+json, application/vnd.spring-boot.actuator.v2+json, application/json]
+server-1  | 2026-09-04T09:22:29.562Z DEBUG 1 --- [albaraka-assistant] [undedElastic-41] .s.w.r.r.m.a.ResponseEntityResultHandler : [061badc1-20] 0..1 [org.springframework.boot.health.actuate.endpoint.CompositeHealthDescriptor]
+server-1  | 2026-09-04T09:22:29.562Z DEBUG 1 --- [albaraka-assistant] [undedElastic-41] org.springframework.web.HttpLogging      : [061badc1-20] Encoding [org.springframework.boot.health.actuate.endpoint.CompositeHealthDescriptor@844c3d2]
+server-1  | 2026-09-04T09:22:29.563Z DEBUG 1 --- [albaraka-assistant] [undedElastic-41] o.s.w.s.adapter.HttpWebHandlerAdapter    : [061badc1-20] Completed 200 OK
+
+## server — flyway / migration lines (whole log)
 
 ## ps -a
 NAME                            IMAGE                                              COMMAND                  SERVICE           CREATED              STATUS                          PORTS
@@ -48,8 +271,6 @@ albaraka-ai-server-1            albaraka-ai/server:dev                          
 
 ## postgres
 postgres-1  | 
-postgres-1  | Data page checksums are disabled.
-postgres-1  | 
 postgres-1  | fixing permissions on existing directory /var/lib/postgresql/data ... ok
 postgres-1  | creating subdirectories ... ok
 postgres-1  | selecting dynamic shared memory implementation ... posix
@@ -61,17 +282,17 @@ postgres-1  | running bootstrap script ... ok
 postgres-1  | performing post-bootstrap initialization ... ok
 postgres-1  | syncing data to disk ... ok
 postgres-1  | 
+postgres-1  | initdb: warning: enabling "trust" authentication for local connections
 postgres-1  | 
+postgres-1  | initdb: hint: You can change this by editing pg_hba.conf or using the option -A, or --auth-local and --auth-host, the next time you run initdb.
 postgres-1  | Success. You can now start the database server using:
 postgres-1  | 
 postgres-1  |     pg_ctl -D /var/lib/postgresql/data -l logfile start
 postgres-1  | 
-postgres-1  | initdb: warning: enabling "trust" authentication for local connections
-postgres-1  | initdb: hint: You can change this by editing pg_hba.conf or using the option -A, or --auth-local and --auth-host, the next time you run initdb.
-postgres-1  | waiting for server to start....2026-09-04 09:13:29.042 UTC [48] LOG:  starting PostgreSQL 17.8 (Debian 17.8-1.pgdg12+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit
-postgres-1  | 2026-09-04 09:13:29.043 UTC [48] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
-postgres-1  | 2026-09-04 09:13:29.045 UTC [51] LOG:  database system was shut down at 2026-09-04 09:13:28 UTC
-postgres-1  | 2026-09-04 09:13:29.048 UTC [48] LOG:  database system is ready to accept connections
+postgres-1  | waiting for server to start....2026-09-04 09:20:47.670 UTC [48] LOG:  starting PostgreSQL 17.8 (Debian 17.8-1.pgdg12+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit
+postgres-1  | 2026-09-04 09:20:47.670 UTC [48] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+postgres-1  | 2026-09-04 09:20:47.673 UTC [51] LOG:  database system was shut down at 2026-09-04 09:20:47 UTC
+postgres-1  | 2026-09-04 09:20:47.676 UTC [48] LOG:  database system is ready to accept connections
 postgres-1  |  done
 postgres-1  | server started
 postgres-1  | CREATE DATABASE
@@ -81,49 +302,51 @@ postgres-1  | /usr/local/bin/docker-entrypoint.sh: running /docker-entrypoint-in
 postgres-1  | CREATE DATABASE
 postgres-1  | 
 postgres-1  | 
-postgres-1  | waiting for server to shut down....2026-09-04 09:13:29.267 UTC [48] LOG:  received fast shutdown request
-postgres-1  | 2026-09-04 09:13:29.267 UTC [48] LOG:  aborting any active transactions
-postgres-1  | 2026-09-04 09:13:29.269 UTC [48] LOG:  background worker "logical replication launcher" (PID 54) exited with exit code 1
-postgres-1  | 2026-09-04 09:13:29.270 UTC [49] LOG:  shutting down
-postgres-1  | 2026-09-04 09:13:29.270 UTC [49] LOG:  checkpoint starting: shutdown immediate
-postgres-1  | 2026-09-04 09:13:29.411 UTC [49] LOG:  checkpoint complete: wrote 1836 buffers (11.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.104 s, sync=0.037 s, total=0.142 s; sync files=597, longest=0.002 s, average=0.001 s; distance=8476 kB, estimate=8476 kB; lsn=0/1D2BED8, redo lsn=0/1D2BED8
-postgres-1  | 2026-09-04 09:13:29.416 UTC [48] LOG:  database system is shut down
+postgres-1  | waiting for server to shut down...2026-09-04 09:20:47.916 UTC [48] LOG:  received fast shutdown request
+postgres-1  | .2026-09-04 09:20:47.917 UTC [48] LOG:  aborting any active transactions
+postgres-1  | 2026-09-04 09:20:47.919 UTC [48] LOG:  background worker "logical replication launcher" (PID 54) exited with exit code 1
+postgres-1  | 2026-09-04 09:20:47.920 UTC [49] LOG:  shutting down
+postgres-1  | 2026-09-04 09:20:47.920 UTC [49] LOG:  checkpoint starting: shutdown immediate
+postgres-1  | 2026-09-04 09:20:47.954 UTC [49] LOG:  checkpoint complete: wrote 1836 buffers (11.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.031 s, sync=0.002 s, total=0.034 s; sync files=597, longest=0.001 s, average=0.001 s; distance=8476 kB, estimate=8476 kB; lsn=0/1D2BED8, redo lsn=0/1D2BED8
+postgres-1  | 2026-09-04 09:20:47.962 UTC [48] LOG:  database system is shut down
 postgres-1  |  done
 postgres-1  | server stopped
 postgres-1  | 
 postgres-1  | PostgreSQL init process complete; ready for start up.
 postgres-1  | 
-postgres-1  | 2026-09-04 09:13:29.483 UTC [1] LOG:  starting PostgreSQL 17.8 (Debian 17.8-1.pgdg12+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit
-postgres-1  | 2026-09-04 09:13:29.483 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
-postgres-1  | 2026-09-04 09:13:29.483 UTC [1] LOG:  listening on IPv6 address "::", port 5432
-postgres-1  | 2026-09-04 09:13:29.484 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
-postgres-1  | 2026-09-04 09:13:29.486 UTC [66] LOG:  database system was shut down at 2026-09-04 09:13:29 UTC
-postgres-1  | 2026-09-04 09:13:29.593 UTC [1] LOG:  database system is ready to accept connections
-postgres-1  | 2026-09-04 09:13:48.095 UTC [94] ERROR:  relation "migration_model" does not exist at character 25
-postgres-1  | 2026-09-04 09:13:48.095 UTC [94] STATEMENT:  SELECT ID, VERSION FROM MIGRATION_MODEL ORDER BY UPDATE_TIME DESC
-postgres-1  | 2026-09-04 09:13:48.871 UTC [103] ERROR:  relation "public.databasechangeloglock" does not exist at character 22
-postgres-1  | 2026-09-04 09:13:48.871 UTC [103] STATEMENT:  SELECT COUNT(*) FROM public.databasechangeloglock
-postgres-1  | 2026-09-04 09:14:06.147 UTC [123] ERROR:  relation "albaraka_ai.conversation" does not exist at character 13
-postgres-1  | 2026-09-04 09:14:06.147 UTC [123] STATEMENT:  INSERT INTO albaraka_ai.conversation (id, channel, device_id, locale, state, persist_conversation) VALUES ($1, 'WEB_APP', $2, $3, 'ACTIVE', true)
-postgres-1  | 2026-09-04 09:14:11.182 UTC [123] ERROR:  relation "albaraka_ai.conversation" does not exist at character 13
-postgres-1  | 2026-09-04 09:14:11.182 UTC [123] STATEMENT:  INSERT INTO albaraka_ai.conversation (id, channel, device_id, locale, state, persist_conversation) VALUES ($1, 'WEB_APP', $2, $3, 'ACTIVE', true)
-postgres-1  | 2026-09-04 09:14:16.204 UTC [123] ERROR:  relation "albaraka_ai.conversation" does not exist at character 13
-postgres-1  | 2026-09-04 09:14:16.204 UTC [123] STATEMENT:  INSERT INTO albaraka_ai.conversation (id, channel, device_id, locale, state, persist_conversation) VALUES ($1, 'WEB_APP', $2, $3, 'ACTIVE', true)
-postgres-1  | 2026-09-04 09:14:21.225 UTC [123] ERROR:  relation "albaraka_ai.conversation" does not exist at character 13
-postgres-1  | 2026-09-04 09:14:21.225 UTC [123] STATEMENT:  INSERT INTO albaraka_ai.conversation (id, channel, device_id, locale, state, persist_conversation) VALUES ($1, 'WEB_APP', $2, $3, 'ACTIVE', true)
-postgres-1  | 2026-09-04 09:14:26.244 UTC [123] ERROR:  relation "albaraka_ai.conversation" does not exist at character 13
-postgres-1  | 2026-09-04 09:14:26.244 UTC [123] STATEMENT:  INSERT INTO albaraka_ai.conversation (id, channel, device_id, locale, state, persist_conversation) VALUES ($1, 'WEB_APP', $2, $3, 'ACTIVE', true)
-postgres-1  | 2026-09-04 09:14:31.262 UTC [123] ERROR:  relation "albaraka_ai.conversation" does not exist at character 13
-postgres-1  | 2026-09-04 09:14:31.262 UTC [123] STATEMENT:  INSERT INTO albaraka_ai.conversation (id, channel, device_id, locale, state, persist_conversation) VALUES ($1, 'WEB_APP', $2, $3, 'ACTIVE', true)
-postgres-1  | 2026-09-04 09:14:36.280 UTC [123] ERROR:  relation "albaraka_ai.conversation" does not exist at character 13
-postgres-1  | 2026-09-04 09:14:36.280 UTC [123] STATEMENT:  INSERT INTO albaraka_ai.conversation (id, channel, device_id, locale, state, persist_conversation) VALUES ($1, 'WEB_APP', $2, $3, 'ACTIVE', true)
-postgres-1  | 2026-09-04 09:14:41.299 UTC [123] ERROR:  relation "albaraka_ai.conversation" does not exist at character 13
-postgres-1  | 2026-09-04 09:14:41.299 UTC [123] STATEMENT:  INSERT INTO albaraka_ai.conversation (id, channel, device_id, locale, state, persist_conversation) VALUES ($1, 'WEB_APP', $2, $3, 'ACTIVE', true)
-postgres-1  | 2026-09-04 09:14:46.316 UTC [123] ERROR:  relation "albaraka_ai.conversation" does not exist at character 13
-postgres-1  | 2026-09-04 09:14:46.316 UTC [123] STATEMENT:  INSERT INTO albaraka_ai.conversation (id, channel, device_id, locale, state, persist_conversation) VALUES ($1, 'WEB_APP', $2, $3, 'ACTIVE', true)
-postgres-1  | 2026-09-04 09:14:51.334 UTC [123] ERROR:  relation "albaraka_ai.conversation" does not exist at character 13
-postgres-1  | 2026-09-04 09:14:51.334 UTC [123] STATEMENT:  INSERT INTO albaraka_ai.conversation (id, channel, device_id, locale, state, persist_conversation) VALUES ($1, 'WEB_APP', $2, $3, 'ACTIVE', true)
-postgres-1  | 2026-09-04 09:14:56.352 UTC [123] ERROR:  relation "albaraka_ai.conversation" does not exist at character 13
-postgres-1  | 2026-09-04 09:14:56.352 UTC [123] STATEMENT:  INSERT INTO albaraka_ai.conversation (id, channel, device_id, locale, state, persist_conversation) VALUES ($1, 'WEB_APP', $2, $3, 'ACTIVE', true)
-postgres-1  | 2026-09-04 09:15:01.371 UTC [123] ERROR:  relation "albaraka_ai.conversation" does not exist at character 13
-postgres-1  | 2026-09-04 09:15:01.371 UTC [123] STATEMENT:  INSERT INTO albaraka_ai.conversation (id, channel, device_id, locale, state, persist_conversation) VALUES ($1, 'WEB_APP', $2, $3, 'ACTIVE', true)
+postgres-1  | 2026-09-04 09:20:48.040 UTC [1] LOG:  starting PostgreSQL 17.8 (Debian 17.8-1.pgdg12+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit
+postgres-1  | 2026-09-04 09:20:48.041 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+postgres-1  | 2026-09-04 09:20:48.041 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+postgres-1  | 2026-09-04 09:20:48.042 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+postgres-1  | 2026-09-04 09:20:48.044 UTC [66] LOG:  database system was shut down at 2026-09-04 09:20:47 UTC
+postgres-1  | 2026-09-04 09:20:48.056 UTC [1] LOG:  database system is ready to accept connections
+postgres-1  | 2026-09-04 09:21:06.692 UTC [95] ERROR:  relation "migration_model" does not exist at character 25
+postgres-1  | 2026-09-04 09:21:06.692 UTC [95] STATEMENT:  SELECT ID, VERSION FROM MIGRATION_MODEL ORDER BY UPDATE_TIME DESC
+postgres-1  | 2026-09-04 09:21:07.667 UTC [104] ERROR:  relation "public.databasechangeloglock" does not exist at character 22
+postgres-1  | 2026-09-04 09:21:07.667 UTC [104] STATEMENT:  SELECT COUNT(*) FROM public.databasechangeloglock
+postgres-1  | 2026-09-04 09:21:30.337 UTC [148] ERROR:  relation "flyway_schema_history" does not exist at character 59
+postgres-1  | 2026-09-04 09:21:30.337 UTC [148] STATEMENT:  SELECT installed_rank, version, description, success FROM flyway_schema_history ORDER BY installed_rank;
+postgres-1  | 2026-09-04 09:21:30.603 UTC [139] ERROR:  relation "albaraka_ai.conversation" does not exist at character 13
+postgres-1  | 2026-09-04 09:21:30.603 UTC [139] STATEMENT:  INSERT INTO albaraka_ai.conversation (id, channel, device_id, locale, state, persist_conversation) VALUES ($1, 'WEB_APP', $2, $3, 'ACTIVE', true)
+postgres-1  | 2026-09-04 09:21:35.646 UTC [139] ERROR:  relation "albaraka_ai.conversation" does not exist at character 13
+postgres-1  | 2026-09-04 09:21:35.646 UTC [139] STATEMENT:  INSERT INTO albaraka_ai.conversation (id, channel, device_id, locale, state, persist_conversation) VALUES ($1, 'WEB_APP', $2, $3, 'ACTIVE', true)
+postgres-1  | 2026-09-04 09:21:40.669 UTC [139] ERROR:  relation "albaraka_ai.conversation" does not exist at character 13
+postgres-1  | 2026-09-04 09:21:40.669 UTC [139] STATEMENT:  INSERT INTO albaraka_ai.conversation (id, channel, device_id, locale, state, persist_conversation) VALUES ($1, 'WEB_APP', $2, $3, 'ACTIVE', true)
+postgres-1  | 2026-09-04 09:21:45.690 UTC [139] ERROR:  relation "albaraka_ai.conversation" does not exist at character 13
+postgres-1  | 2026-09-04 09:21:45.690 UTC [139] STATEMENT:  INSERT INTO albaraka_ai.conversation (id, channel, device_id, locale, state, persist_conversation) VALUES ($1, 'WEB_APP', $2, $3, 'ACTIVE', true)
+postgres-1  | 2026-09-04 09:21:50.712 UTC [139] ERROR:  relation "albaraka_ai.conversation" does not exist at character 13
+postgres-1  | 2026-09-04 09:21:50.712 UTC [139] STATEMENT:  INSERT INTO albaraka_ai.conversation (id, channel, device_id, locale, state, persist_conversation) VALUES ($1, 'WEB_APP', $2, $3, 'ACTIVE', true)
+postgres-1  | 2026-09-04 09:21:55.733 UTC [139] ERROR:  relation "albaraka_ai.conversation" does not exist at character 13
+postgres-1  | 2026-09-04 09:21:55.733 UTC [139] STATEMENT:  INSERT INTO albaraka_ai.conversation (id, channel, device_id, locale, state, persist_conversation) VALUES ($1, 'WEB_APP', $2, $3, 'ACTIVE', true)
+postgres-1  | 2026-09-04 09:22:00.754 UTC [139] ERROR:  relation "albaraka_ai.conversation" does not exist at character 13
+postgres-1  | 2026-09-04 09:22:00.754 UTC [139] STATEMENT:  INSERT INTO albaraka_ai.conversation (id, channel, device_id, locale, state, persist_conversation) VALUES ($1, 'WEB_APP', $2, $3, 'ACTIVE', true)
+postgres-1  | 2026-09-04 09:22:05.774 UTC [139] ERROR:  relation "albaraka_ai.conversation" does not exist at character 13
+postgres-1  | 2026-09-04 09:22:05.774 UTC [139] STATEMENT:  INSERT INTO albaraka_ai.conversation (id, channel, device_id, locale, state, persist_conversation) VALUES ($1, 'WEB_APP', $2, $3, 'ACTIVE', true)
+postgres-1  | 2026-09-04 09:22:10.794 UTC [139] ERROR:  relation "albaraka_ai.conversation" does not exist at character 13
+postgres-1  | 2026-09-04 09:22:10.794 UTC [139] STATEMENT:  INSERT INTO albaraka_ai.conversation (id, channel, device_id, locale, state, persist_conversation) VALUES ($1, 'WEB_APP', $2, $3, 'ACTIVE', true)
+postgres-1  | 2026-09-04 09:22:15.816 UTC [139] ERROR:  relation "albaraka_ai.conversation" does not exist at character 13
+postgres-1  | 2026-09-04 09:22:15.816 UTC [139] STATEMENT:  INSERT INTO albaraka_ai.conversation (id, channel, device_id, locale, state, persist_conversation) VALUES ($1, 'WEB_APP', $2, $3, 'ACTIVE', true)
+postgres-1  | 2026-09-04 09:22:20.839 UTC [139] ERROR:  relation "albaraka_ai.conversation" does not exist at character 13
+postgres-1  | 2026-09-04 09:22:20.839 UTC [139] STATEMENT:  INSERT INTO albaraka_ai.conversation (id, channel, device_id, locale, state, persist_conversation) VALUES ($1, 'WEB_APP', $2, $3, 'ACTIVE', true)
+postgres-1  | 2026-09-04 09:22:25.858 UTC [139] ERROR:  relation "albaraka_ai.conversation" does not exist at character 13
+postgres-1  | 2026-09-04 09:22:25.858 UTC [139] STATEMENT:  INSERT INTO albaraka_ai.conversation (id, channel, device_id, locale, state, persist_conversation) VALUES ($1, 'WEB_APP', $2, $3, 'ACTIVE', true)
