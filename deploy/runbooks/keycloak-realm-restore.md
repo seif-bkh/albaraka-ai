@@ -20,7 +20,7 @@
 1. **Re-create from source (the normal path).**
    ```bash
    docker compose exec keycloak \
-     /opt/keycloak/bin/kcadm.sh config credentials --server http://localhost:8080 \
+     /opt/keycloak/bin/kcadm.sh config credentials --server http://localhost:9001 \
        --realm master --user "$KC_BOOTSTRAP_ADMIN_USERNAME" --password "$KC_BOOTSTRAP_ADMIN_PASSWORD"
    docker compose exec keycloak \
      /opt/keycloak/bin/kcadm.sh create realms -s realm=albaraka -s enabled=true
@@ -33,7 +33,7 @@
    `envsubst` if present on the host.
 2. **Verify what matters for the backend:**
    * `GET /realms/albaraka/.well-known/openid-configuration` → `issuer` =
-     `http://localhost:8080/realms/albaraka` (this is what the resource server checks);
+     `http://localhost:9001/realms/albaraka` (this is what the resource server checks);
    * client `frontoffice` redirect URIs include `/chat/*` + `/chat/silent-refresh.html`;
      `backoffice` `/*`; widget includes `${WIDGET_REDIRECT_URI}`;
    * JWK fetch works from inside the network: `docker compose exec server

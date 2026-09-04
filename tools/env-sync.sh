@@ -40,10 +40,11 @@ added=()
 filled=()
 
 replace_first_key() {
-  # replace the FIRST "$1=" line in $tmp with $2 (plain-text replacement via awk)
-  awk -v k="$1" -v l="$2" 'BEGIN { done = 0 }
+  # replace the FIRST "$2=" line in file "$1" with $3 (plain-text replacement via awk)
+  local file="$1" k="$2" l="$3"
+  awk -v k="$k" -v l="$l" 'BEGIN { done = 0 }
     $0 ~ "^" k "=" { if (!done) { print l; done = 1 } else print; next }
-    { print }' "$tmp" > "$tmp.awk" && mv "$tmp.awk" "$tmp"
+    { print }' "$file" > "$file.awk" && mv "$file.awk" "$file"
 }
 
 while IFS= read -r line || [ -n "$line" ]; do
@@ -58,7 +59,7 @@ while IFS= read -r line || [ -n "$line" ]; do
     printf '%s\n' "$line" >> "$tmp"
     added+=("$key")
   elif [ -z "${existing#*=}" ] && [ -n "${line#*=}" ]; then
-    replace_first_key "$key" "$line"
+    replace_first_key "$tmp" "$key" "$line"
     filled+=("$key")
   fi
 done < "$EXAMPLE"
@@ -70,6 +71,32 @@ if [ "${#added[@]}" -gt 0 ] || [ "${#filled[@]}" -gt 0 ]; then
   echo "env-sync: $ENV_FILE updated — re-run make up"
 else
   echo "env-sync: $ENV_FILE is up to date"
+fi
+
+# ── stale dev URL migration ──────────────────────────────────────────────────────────────────
+#  The host ports moved to the 9000 range (edge 9000, keycloak 9001, API 9002, RAG 9003,
+#  postgres 9004). A .env created earlier still holds the 8082 URLs, and compose's :-defaults are
+#  ignored the moment .env defines them — so without this step the realm import would substitute
+#  dead URLs and Keycloak would redirect users to a port that no longer exists.
+# marker: migrate stale dev URLs
+stale_urls="FRONTOFFICE_URL|http://localhost:8082
+BACKOFFICE_URL|http://localhost:8082/admin
+BANK_PUBLIC_URL|http://localhost:8082
+WIDGET_REDIRECT_URI|http://localhost:8082/assistant/callback"
+
+migrated=()
+while IFS='|' read -r key stale; do
+  [ -n "$key" ] || continue
+  cur="$(grep -E "^${key}=" "$ENV_FILE" | head -n1 || true)"
+  if [ "$cur" = "${key}=${stale}" ]; then
+    newline="$(grep -E "^${key}=" "$EXAMPLE" | head -n1 || true)"
+    [ -n "$newline" ] || continue
+    replace_first_key "$ENV_FILE" "$key" "$newline"
+    migrated+=("$key")
+  fi
+done <<< "$stale_urls"
+if [ "${#migrated[@]}" -gt 0 ]; then
+  echo "env-sync: migrated ${migrated[*]} to the .env.example dev URLs (host ports moved to the 9000 range)"
 fi
 
 # ── pre-flight validation ─────────────────────────────────────────────────────────────────────

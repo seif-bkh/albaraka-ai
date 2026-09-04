@@ -160,7 +160,7 @@ dependencies = [
   [`06-i18n-trilingual-rtl.md`](06-i18n-trilingual-rtl.md) §3.
 * `shared-contracts` (generated TS types) and the `widget` build target for the embedded assistant
   are later additions; the demo workspace ships `shared-ui` only.
-* Dev-server proxy (`proxy.conf.json`) forwards `/api` to the backend on `:8080`, so the browser
+* Dev-server proxy (`proxy.conf.json`) forwards `/api` to the backend on `:9002`, so the browser
   only ever talks to one origin (no CORS in dev, no hard-coded hosts). `allowedHosts: true` is set
   for sandbox preview hosting only and must be removed for production builds.
 
@@ -196,11 +196,11 @@ golden set before promotion — see [`11-quality-evaluation.md`](11-quality-eval
 cp .env.example .env                # keys optional: demo runs in mock mode
 make up                             # docker compose up -d --build
 make down                           # docker compose down
-# → web UI:        http://localhost:3000          (frontoffice)
-# → admin console: http://localhost:3000/admin    (backoffice)
-# → API health:    http://localhost:8080/actuator/health/liveness
-# → RAG health:    http://localhost:8000/v1/rag/health
-# → Keycloak:      http://localhost:8081
+# → web UI:        http://localhost:9000          (frontoffice)
+# → admin console: http://localhost:9000/admin    (backoffice)
+# → API health:    http://localhost:9002/actuator/health/liveness
+# → RAG health:    http://localhost:9003/v1/rag/health
+# → Keycloak:      http://localhost:9001
 ```
 
 Services: `postgres` (pgvector/pgvector:pg17), `redis`, `keycloak`, `minio`, `rag-assistant`,

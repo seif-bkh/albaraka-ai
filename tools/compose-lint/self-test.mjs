@@ -99,7 +99,7 @@ const MUTATIONS = [
   // ── E — environment contract ────────────────────────────────────────────────────────────────
   { id: 'M19 a provider key is handed to the server (ADR-009)', run: (c) => { svc(c, 'server').environment.GROQ_API_KEY = '${GROQ_API_KEY:-}'; }, expect: '[E08] server.GROQ_API_KEY' },
   { id: 'M19b the rag service loses its provider key wiring', run: (c) => { delete svc(c, 'rag-assistant').environment.RAG_GROQ_API_KEY; }, expect: '[E07] rag-assistant must receive RAG_GROQ_API_KEY' },
-  { id: 'M19c the rag health port is not published to the host', run: (c) => { delete svc(c, 'rag-assistant').ports; }, expect: '[E07] rag-assistant must publish 8000:8000' },
+  { id: 'M19c the rag health port is not published to the host', run: (c) => { delete svc(c, 'rag-assistant').ports; }, expect: '[E07] rag-assistant must publish 9003:8000' },
   { id: 'M-import-dir keycloak does not create the import directory',
     run: (c) => { svc(c, 'keycloak').entrypoint[2] = svc(c, 'keycloak').entrypoint[2].replace('mkdir -p /opt/keycloak/data/import\n', ''); },
     expect: '[K02] the entrypoint must mkdir' },
@@ -124,7 +124,7 @@ const MUTATIONS = [
   // ── R / N ───────────────────────────────────────────────────────────────────────────────────
   { id: 'M25 redis loses appendonly', run: (c) => { svc(c, 'redis').command = ['redis-server']; }, expect: '[R01] redis must run with --appendonly yes' },
   { id: 'M35 redis republishes host ports (developer-host conflict class)', run: (c) => { svc(c, 'redis').ports = ['6379:6379']; }, expect: '[R02] redis must not publish host ports' },
-  { id: 'M26 the nginx edge port leaves the documented dev origin', run: (c) => { svc(c, 'nginx').ports = ['8083:80']; }, expect: '[N01] nginx must publish 8082:80' },
+  { id: 'M26 the nginx edge port leaves the documented dev origin', run: (c) => { svc(c, 'nginx').ports = ['8083:80']; }, expect: '[N01] nginx must publish 9000:80' },
   { id: 'M34 minio republishes host ports (developer-host conflict class)', run: (c) => { svc(c, 'minio').ports = ['9000:9000']; }, expect: '[I07] minio must not publish host ports' },
 
   // ── authority-drift mutations: the same linter must follow the documents ─────────────────────
@@ -159,6 +159,13 @@ const MUTATIONS = [
   { id: 'M39 make up swallows the failure logs', run: () => {}, expect: '[E14] Makefile `up` must print', file: 'makefile',
     prepare: () => makefileSrc().replace(/\t\s*\$\(COMPOSE\) logs --tail=60 2>&1 \| tail -300; \\\n/, '\t\t: # no logs\n') },
   { id: 'M40 keycloak returns to a 5-minute health grace', run: (c) => { svc(c, 'keycloak').healthcheck.retries = 30; }, expect: '[K06] keycloak healthcheck retries must be ≥60' },
+
+  // ── port-map parity (the 9000-range sweep) ────────────────────────────────────────────────
+  { id: 'M41 KC_HOSTNAME_PORT drifts from the published keycloak port', run: (c) => { svc(c, 'keycloak').environment.KC_HOSTNAME_PORT = '8080'; }, expect: '[K07] KC_HOSTNAME_PORT must equal' },
+  { id: 'M42 the server port falls back to 8081', run: (c) => { svc(c, 'server').ports = ['8081:8080']; }, expect: '[E15] server must publish 9002:8080' },
+  { id: 'M43 postgres republishes 5432 to the host', run: (c) => { svc(c, 'postgres').ports = ['5432:5432']; }, expect: '[P04] postgres must publish 9004:5432' },
+  { id: 'M44 env-sync stops migrating the pre-9000 realm URLs', run: () => {}, expect: '[E16] tools/env-sync.sh must migrate', file: 'envSync',
+    prepare: () => envSyncSrc().replaceAll('migrate stale dev URLs', 'keep the old URLs') },
 
   // ── negative controls ───────────────────────────────────────────────────────────────────────
   { id: 'N1 a label is not a contract change', expectPass: true, run: (c) => { svc(c, 'redis').labels = { 'dev.notes': 'local cache' }; }, expect: null },

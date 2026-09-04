@@ -9,7 +9,7 @@
 
 spring:
   datasource:
-    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/albaraka_ai}
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:9004/albaraka_ai}
     hikari:
       maximum-pool-size: 8
       minimum-idle: 2
@@ -21,7 +21,7 @@ spring:
   # the rag-assistant service's environment; mock is the committed default (no keys required).
 
 server:
-  port: 8081
+  port: 9002
 
 management:
   endpoints:

@@ -7,7 +7,7 @@
  *                  spec-pinned chat model, one prompt-guard call (the cheapest guard path).
  *   2. Google    — key authenticated + one gemini-embedding-001 embedContent call with a
  *                  trilingual test string (the exact pipeline call, docs/02 §3 / docs/04 §4).
- *   3. local     — (--local only) postgres:5432, redis:6379, minio:9000 health, keycloak OIDC
+ *   3. local     — (--local only) postgres:9004, web edge:9000, keycloak OIDC
  *                  discovery for the `albaraka` realm — the data plane of deploy/docker-compose.yml.
  *
  * Exit code 0 = every *required* check passed. 1 = at least one failed. Skipped checks are
@@ -146,10 +146,9 @@ async function checkLocal() {
       report(name, false, e.name === 'TimeoutError' ? 'timeout (> 5 s) — is docker compose up running?' : e.message);
     }
   };
-  await probe('postgres :5432', 'http://localhost:5432/').catch(() => report('postgres :5432', null, 'TCP probe not available via fetch — run `docker compose ps`'));
-  await probe('redis :6379', 'http://localhost:6379/').catch(() => report('redis :6379', null, 'TCP probe not available via fetch — run `docker compose ps`'));
-  await probe('minio health', 'http://localhost:9000/minio/health/live');
-  await probe('keycloak oidc', 'http://localhost:8080/realms/albaraka/.well-known/openid-configuration', (t) => t.includes('issuer'));
+  await probe('postgres :9004', 'http://localhost:9004/').catch(() => report('postgres :9004', null, 'TCP probe not available via fetch — run `docker compose ps`'));
+  await probe('web edge :9000', 'http://localhost:9000/', (t) => t.includes('<')).catch(() => report('web edge :9000', null, 'edge seems down — run `make up`'));
+  await probe('keycloak oidc', 'http://localhost:9001/realms/albaraka/.well-known/openid-configuration', (t) => t.includes('issuer'));
 }
 
 console.log('\nal-Mouchir spike — provider & dependency smoke test (docs/13 Phase 0)\n' + '─'.repeat(86));

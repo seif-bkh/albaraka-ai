@@ -44,8 +44,8 @@ make up                   # tools/env-sync.sh seeds .env from .env.example (adds
                           # needs no keys
                           # on failure it prints container state + the last 60 log lines
                           # (full logs: make logs · state+logs: make diag)
-# frontoffice http://localhost:8082 · backoffice http://localhost:8082/admin
-# API health http://localhost:8081/actuator/health/liveness · Keycloak http://localhost:8080
+# frontoffice http://localhost:9000 · backoffice http://localhost:9000/admin
+# API health http://localhost:9002/actuator/health/liveness · Keycloak http://localhost:9001
 ```
 
 Bare `docker compose` also works from the repo root (root `compose.yaml` wraps `deploy/docker-compose.yml`,

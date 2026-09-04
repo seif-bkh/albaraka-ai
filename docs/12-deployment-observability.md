@@ -85,15 +85,15 @@ flowchart TB
 
 | Service | Image/build | Port (host) | Notes |
 |---|---|---|---|
-| `postgres` | `pgvector/pgvector:0.8.1-pg17` | 5432 | UTF8, vector preload, init scripts; Flyway schema + seeds |
+| `postgres` | `pgvector/pgvector:0.8.1-pg17` | 9004 | UTF8, vector preload, init scripts; Flyway schema + seeds |
 | `redis` | `redis:7-alpine` | — | cache, rate-limit, locks |
-| `keycloak` | `quay.io/keycloak/keycloak:26.6.3` | 8080 | realm import (sed-substituted), MFA structural, 5 demo users |
+| `keycloak` | `quay.io/keycloak/keycloak:26.6.3` | 9001 | realm import (sed-substituted), MFA structural, 5 demo users |
 | `minio` | `quay.io/minio/minio` (pinned RELEASE) | — (internal only) | document originals, versioned buckets; no host port — `minio-init`, `server` and `rag-assistant` reach it at `http://minio:9000` over the compose network, and publishing 9000/9001 is the classic developer-host failure (port already in use) |
-| `rag-assistant` | `deploy/docker/Dockerfile.rag-assistant` | 8000 (internal) | FastAPI + LangChain; `RAG_PROVIDER_MODE=mock` default |
-| `server` | `deploy/docker/Dockerfile.server` (Maven multi-stage) | 8081 | Spring Boot 4.1; Flyway + demo seeds |
+| `rag-assistant` | `deploy/docker/Dockerfile.rag-assistant` | 9003 (health probe) | FastAPI + LangChain; `RAG_PROVIDER_MODE=mock` default |
+| `server` | `deploy/docker/Dockerfile.server` (Maven multi-stage) | 9002 | Spring Boot 4.1; Flyway + demo seeds |
 | `frontoffice-web` | `deploy/docker/Dockerfile.frontoffice-web` | — | Angular bundle via nginx (edge only) |
 | `backoffice-web` | `deploy/docker/Dockerfile.backoffice-web` | — | admin bundle via nginx (edge only) |
-| `nginx` | `nginx:1.28-alpine` + `deploy/nginx/nginx.conf` | 8082 | one origin: `/` → frontoffice, `/admin` → backoffice, `/api` → server, SSE unbuffered |
+| `nginx` | `nginx:1.28-alpine` + `deploy/nginx/nginx.conf` | 9000 | one origin: `/` → frontoffice, `/admin` → backoffice, `/api` → server, SSE unbuffered |
 
 `RAG_PROVIDER_MODE=mock` + empty `GROQ_API_KEY`/`GOOGLE_API_KEY` gives a fully working demo
 without any paid API. Set the keys and `RAG_PROVIDER_MODE=live` to use real models. The

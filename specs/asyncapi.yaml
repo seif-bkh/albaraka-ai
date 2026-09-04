@@ -55,7 +55,7 @@ defaultContentType: application/json
 
 servers:
   backend:
-    host: localhost:8080
+    host: localhost:9002
     protocol: http
     description: Local development backend (deploy/docker-compose.yml). The internal event bus has
       no network server — it lives inside the assistant-boot JVM; the `app.event.*` channels are

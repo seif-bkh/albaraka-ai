@@ -14,12 +14,12 @@ make up                       # = docker compose --env-file .env -f deploy/docke
 
 | URL | What |
 |---|---|
-| http://localhost:8082 | **Frontoffice** — Al-Mouchir chat (FR / AR RTL / EN) |
-| http://localhost:8082/admin | **Backoffice** — Sharia review, KB, prompts, audit |
-| http://localhost:8081/actuator/health/liveness | Spring API |
-| http://localhost:8000/v1/rag/health | RAG service (LangChain) |
-| http://localhost:8080 | Keycloak (realm `albaraka`) |
-| http://localhost:5432 / 9000 | PostgreSQL (pgvector) / MinIO console |
+| http://localhost:9000 | **Frontoffice** — Al-Mouchir chat (FR / AR RTL / EN) |
+| http://localhost:9000/admin | **Backoffice** — Sharia review, KB, prompts, audit |
+| http://localhost:9002/actuator/health/liveness | Spring API |
+| http://localhost:9003/v1/rag/health | RAG service (LangChain) |
+| http://localhost:9001 | Keycloak (realm `albaraka`) |
+| http://localhost:9004 | PostgreSQL (pgvector) — MinIO is internal-only |
 
 `make down` stops everything (named volumes keep your data). `make logs` tails the stack.
 `make up` ≠ zero-config: Flyway seeds and the demo KB load on first boot; the RAG service boots
@@ -29,14 +29,14 @@ in mock mode and needs no provider keys.
 
 | Service | Image | Publish | Notes |
 |---|---|---|---|
-| `postgres` | `pgvector/pgvector:0.8.1-pg17` | 5432 | UTF8, `shared_preload_libraries=vector`, init scripts |
+| `postgres` | `pgvector/pgvector:0.8.1-pg17` | 9004 | UTF8, `shared_preload_libraries=vector`, init scripts |
 | `redis` | `redis:7.4-alpine` | — | cache / rate-limit / locks (appendonly) |
-| `keycloak` | `quay.io/keycloak/keycloak:26.6.3` | 8080 | realm import + MFA, postgres-backed |
-| `minio` | `quay.io/minio/minio` (pinned) | 9000/9001 | document originals (versioned buckets) |
-| `rag-assistant` | `albaraka-ai/rag-assistant:dev` | — | FastAPI + LangChain — **only** egress to Groq/Google |
-| `server` | `albaraka-ai/server:dev` | 8081 | Spring Boot 4.1 — Flyway, governance, SSE orchestration |
+| `keycloak` | `quay.io/keycloak/keycloak:26.6.3` | 9001 | realm import + MFA, postgres-backed |
+| `minio` | `quay.io/minio/minio` (pinned) | — (internal) | document originals (versioned buckets) |
+| `rag-assistant` | `albaraka-ai/rag-assistant:dev` | 9003 (health) | FastAPI + LangChain — **only** egress to Groq/Google |
+| `server` | `albaraka-ai/server:dev` | 9002 | Spring Boot 4.1 — Flyway, governance, SSE orchestration |
 | `frontoffice-web` / `backoffice-web` | `albaraka-ai/*-web:dev` | — | Angular 22 static bundles (nginx) |
-| `nginx` | `nginx:1.28-alpine` | 8082 | one origin: `/` → frontoffice, `/admin` → backoffice, `/api` → server |
+| `nginx` | `nginx:1.28-alpine` | 9000 | one origin: `/` → frontoffice, `/admin` → backoffice, `/api` → server |
 
 ## Provider keys — optional
 

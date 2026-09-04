@@ -167,6 +167,7 @@ for (const f of ['application.yaml', 'application-dev.yaml', 'application-uat.ya
     const vols = JSON.stringify(c.volumes || []);
     if (!vols.includes('/docker-entrypoint-initdb.d')) err('[P03] postgres must mount deploy/postgres/init (the keycloak database is created there)');
     if (!vols.includes('/var/lib/postgresql/data')) err('[P03] postgres must use a named volume for data');
+    if (!JSON.stringify(c.ports || []).includes('9004:5432')) err('[P04] postgres must publish 9004:5432 — docs/12 and the spike probe the host port, and the local DATABASE_URL default is localhost:9004');
   }
   ok.push('postgres: UTF8 initdb, vector preloaded, albaraka_ai db, healthcheck, init scripts mounted');
 }
@@ -208,11 +209,17 @@ for (const f of ['application.yaml', 'application-dev.yaml', 'application-uat.ya
     if (String(c.environment?.KC_DB || '') !== 'postgres') err('[K03] KC_DB must be postgres');
     const health = JSON.stringify(c.healthcheck || {});
     if (!health.includes('openid-configuration')) err('[K04] keycloak healthcheck should probe /realms/albaraka/.well-known/openid-configuration');
-    if (JSON.stringify(c.ports || []).includes('8080:8080') === false) err('[K05] keycloak publishes 8080:8080 — application.yaml default KEYCLOAK_URL=http://localhost:8080 and the token issuer depend on it');
+    if (JSON.stringify(c.ports || []).includes('9001:8080') === false) err('[K05] keycloak must publish 9001:8080 — the browser-visible issuer (KC_HOSTNAME_PORT, application.yaml KEYCLOAK_URL default, docs/12, runbooks, spike) all use localhost:9001');
     const deps = JSON.stringify(c.depends_on || {});
     if (!deps.includes('service_healthy')) err('[K04] keycloak must depend on postgres being healthy, not merely started');
     const kcRetries = Number(c.healthcheck?.retries ?? 0);
     if (kcRetries < 60) err(`[K06] keycloak healthcheck retries must be ≥60 (~10 min of grace) — on a slow developer host the JVM boot + realm import can exceed 5 min before the first successful probe, and compose then aborts \`make up\` with "keycloak is unhealthy" (got ${kcRetries})`);
+ 
+    const kcPub = (c.ports || []).map(String).find((p) => /^[0-9]+:8080$/.test(p)) || '';
+    const kcHostPort = kcPub ? kcPub.split(':')[0] : '';
+    if (String(c.environment?.KC_HOSTNAME_PORT || '') !== kcHostPort) {
+      err(`[K07] KC_HOSTNAME_PORT must equal the published host port (${kcHostPort}) — Keycloak advertises its issuer with this port; a mismatch makes the token issuer unreachable from the browser and the server rejects every token`);
+    }
   }
   ok.push('keycloak: KC_BOOTSTRAP_ADMIN_*, sed-substituted realm import, postgres-backed, healthcheck on the albaraka realm');
 }
@@ -252,6 +259,9 @@ for (const f of ['application.yaml', 'application-dev.yaml', 'application-uat.ya
   const envSync = read(ENV_SYNC_FILE);
   if (!envSync.includes('MINIO_ROOT_PASSWORD') || !envSync.includes('requires at least 8 characters')) {
     err('[E11] tools/env-sync.sh must reject MINIO_ROOT_PASSWORD shorter than 8 characters — MinIO refuses to start with a short root password and the container is reported "unhealthy" (the classic hand-edited .env trap)');
+  }
+  if (!envSync.includes('migrate stale dev URLs') || !envSync.includes('WIDGET_REDIRECT_URI')) {
+    err('[E16] tools/env-sync.sh must migrate the pre-9000 dev URLs (FRONTOFFICE_URL/BACKOFFICE_URL/BANK_PUBLIC_URL/WIDGET_REDIRECT_URI on :8082) in an existing .env to the .env.example values — a stale URL is substituted into the realm import and Keycloak redirects users to a dead port');
   }
 
   // `make clean` is the supported way to wipe state (down -v) WITHOUT the --env-file footgun:
@@ -313,7 +323,7 @@ for (const f of ['application.yaml', 'application-dev.yaml', 'application-uat.ya
     if (!String(env.DATABASE_PASSWORD || '').startsWith('${')) err('[E05] DATABASE_PASSWORD must come from the environment');
     const issuer = String(env.SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI || '');
     const jwk = String(env.SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI || '');
-    if (!issuer.includes(':8080/realms/albaraka')) err('[E05] issuer-uri must be the browser-visible Keycloak URL (localhost:8080) — the token issuer is what Spring validates');
+    if (!issuer.includes(':9001/realms/albaraka')) err('[E05] issuer-uri must be the browser-visible Keycloak URL (localhost:9001) — the token issuer is what Spring validates');
     if (!jwk.includes('keycloak:8080/realms/albaraka/protocol/openid-connect/certs')) err('[E05] jwk-set-uri must be resolvable on the compose network (keycloak:8080)');
     const vols = JSON.stringify(srv.volumes || []);
     if (!vols.includes('../specs:/app/specs:ro')) err('[E05] server must mount ../specs:/app/specs:ro — Flyway seeds and the i18n spec files are filesystem paths in application.yaml');
@@ -336,6 +346,7 @@ for (const f of ['application.yaml', 'application-dev.yaml', 'application-uat.ya
     if (!String(env.RAG_SERVICE_TOKEN || '').startsWith('${')) err('[E06] RAG_SERVICE_TOKEN must come from .env, not a literal');
     if (String(env.RAG_CONTRACT || '') !== '1') err('[E06] RAG_CONTRACT must be 1 (docs/08 §8 contract negotiation)');
     if (srv.depends_on?.['rag-assistant']?.condition !== 'service_healthy') err('[E06] server must wait for rag-assistant service_healthy');
+    if (!JSON.stringify(srv.ports || []).includes('9002:8080')) err('[E15] server must publish 9002:8080 — README/docs/12/Makefile/CI and the spike all probe http://localhost:9002/actuator/health/liveness'); 
   }
   const rag = svc('rag-assistant');
   if (rag) {
@@ -346,7 +357,7 @@ for (const f of ['application.yaml', 'application-dev.yaml', 'application-uat.ya
     if (!renv.includes('RAG_GOOGLE_API_KEY')) err('[E07] rag-assistant must receive RAG_GOOGLE_API_KEY (${GOOGLE_API_KEY:-} in dev — empty means mock)');
     const rhealth = JSON.stringify(rag.healthcheck || {});
     if (!rhealth.includes('/v1/rag/health')) err('[E07] rag-assistant needs a healthcheck on /v1/rag/health');
-    if (!JSON.stringify(rag.ports || []).includes('8000:8000')) err('[E07] rag-assistant must publish 8000:8000 — CI and docs/12 probe http://localhost:8000/v1/rag/health from the host; without the mapping the probe always times out while the container is healthy');
+    if (!JSON.stringify(rag.ports || []).includes('9003:8000')) err('[E07] rag-assistant must publish 9003:8000 — CI and docs/12 probe http://localhost:9003/v1/rag/health from the host; without the mapping the probe always times out while the container is healthy');
     if (rag.depends_on?.postgres?.condition !== 'service_healthy') err('[E07] rag-assistant must wait for postgres service_healthy');
   }
   ok.push(`environment: ${usedInCompose.length} vars declared in .env.example, all required config placeholders provided, no literal secret`);

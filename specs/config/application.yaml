@@ -38,7 +38,7 @@ spring:
     # Jackson 3 the default is already WRITE_DATES_AS_TIMESTAMPS = false, so the
     # property is intentionally omitted (binding it aborts startup).
   datasource:
-    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/albaraka_ai}
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:9004/albaraka_ai}
     username: ${DATABASE_USER:albaraka}
     password: ${DATABASE_PASSWORD}
     hikari:
@@ -70,15 +70,15 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: ${KEYCLOAK_URL:http://localhost:8080}/realms/albaraka
+          issuer-uri: ${KEYCLOAK_URL:http://localhost:9001}/realms/albaraka
           audiences: albaraka-assistant-api
-          jwk-set-uri: ${KEYCLOAK_URL:http://localhost:8080}/realms/albaraka/protocol/openid-connect/certs
+          jwk-set-uri: ${KEYCLOAK_URL:http://localhost:9001}/realms/albaraka/protocol/openid-connect/certs
   # No spring-ai starter here (ADR-009): model access, provider credentials and the egress PII
   # gate live in the Python rag-assistant service. The Spring API talks ONLY to that service —
   # albaraka.rag below is its contract (docs/08 §8).
 
 server:
-  port: ${SERVER_PORT:8081}
+  port: ${SERVER_PORT:9002}
   address: 0.0.0.0
   shutdown: graceful
   # `none` locally (no proxy in front); `framework` behind the TLS-terminating edge in uat/prod.
@@ -154,8 +154,8 @@ albaraka:
 
   # ── CORS: dev origins are the compose edge + the local ng serves ─────────────────────────────
   cors:
-    # dev origins: the compose edge (8082) + the two local angular dev servers
-    allowed-origins: [http://localhost:8082, http://localhost:4200, http://localhost:4201]
+    # dev origins: the compose edge (9000) + the two local angular dev servers
+    allowed-origins: [http://localhost:9000, http://localhost:4200, http://localhost:4201]
 
   # ── internal RAG service (ADR-009) ────────────────────────────────────────────────────────────
   # The Spring API is the only caller of rag-assistant; rag-assistant is the only process that can

@@ -16,11 +16,11 @@ up:            ## build + start the full application (mock providers by default)
 	  echo; echo "── full logs:  make logs   ·   paste this output when reporting the failure ──"; \
 	  exit 1; }
 	@echo
-	@echo "  frontoffice  http://localhost:8082"
-	@echo "  backoffice   http://localhost:8082/admin"
-	@echo "  API health   http://localhost:8081/actuator/health/liveness"
-	@echo "  RAG health   http://localhost:8000/v1/rag/health"
-	@echo "  Keycloak     http://localhost:8080  (remember .env KC_BOOTSTRAP_ADMIN_*)"
+	@echo "  frontoffice  http://localhost:9000"
+	@echo "  backoffice   http://localhost:9000/admin"
+	@echo "  API health   http://localhost:9002/actuator/health/liveness"
+	@echo "  RAG health   http://localhost:9003/v1/rag/health"
+	@echo "  Keycloak     http://localhost:9001  (remember .env KC_BOOTSTRAP_ADMIN_*)"
 	@echo "  logs: make logs · state+logs: make diag"
 
 down:          ## stop the application (volumes kept)

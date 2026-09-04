@@ -23,7 +23,7 @@ servers:
     description: Production
   - url: https://assistant-uat.albaraka.com.tn
     description: UAT (real approved knowledge base copy)
-  - url: http://localhost:8080
+  - url: http://localhost:9002
     description: Local development
 tags:
   - { name: assistant, description: Frontoffice conversation endpoints }

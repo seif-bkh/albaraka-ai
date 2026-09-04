@@ -190,7 +190,7 @@ jobs:
       - name: Wait for Spring liveness (max 9 min)
         run: |
           for i in $(seq 1 54); do
-            if curl -sf http://localhost:8081/actuator/health/liveness >/dev/null; then
+            if curl -sf http://localhost:9002/actuator/health/liveness >/dev/null; then
               echo "server UP after $((i*10))s"; exit 0
             fi
             sleep 10
@@ -199,7 +199,7 @@ jobs:
       - name: Wait for RAG health (max 3 min)
         run: |
           for i in $(seq 1 18); do
-            if curl -sf http://localhost:8000/v1/rag/health >/dev/null; then
+            if curl -sf http://localhost:9003/v1/rag/health >/dev/null; then
               echo "rag UP after $((i*10))s"; exit 0
             fi
             sleep 10
@@ -207,7 +207,7 @@ jobs:
           echo "rag did not become healthy"; exit 1
       - name: Smoke — one chat SSE round-trip via the edge
         run: |
-          curl -sf -N -X POST http://localhost:8082/api/v1/chat \
+          curl -sf -N -X POST http://localhost:9000/api/v1/chat \
             -H 'Content-Type: application/json' \
             -d '{"text":"comment ouvrir un compte courant ?","locale":"fr-FR"}' \
             | head -c 1200
