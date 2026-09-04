@@ -32,6 +32,9 @@ const CONFIG_DIR = process.env.CONFIG_DIR || join(root, 'specs', 'config');
 const MAKEFILE_FILE = process.env.MAKEFILE_FILE || join(root, 'Makefile');
 const ENV_SYNC_FILE = process.env.ENV_SYNC_FILE || join(root, 'tools', 'env-sync.sh');
 const ROOT_COMPOSE_FILE = process.env.ROOT_COMPOSE_FILE || join(root, 'compose.yaml');
+const EDGE_NGINX_FILE = process.env.EDGE_NGINX_FILE || join(root, 'deploy', 'nginx', 'nginx.conf');
+const BACKOFFICE_CONF_FILE = process.env.BACKOFFICE_CONF_FILE || join(root, 'deploy', 'docker', 'nginx.backoffice.conf');
+const FRONT_DOCKERFILE_FILE = process.env.FRONT_DOCKERFILE_FILE || join(root, 'deploy', 'docker', 'Dockerfile.frontoffice-web');
 const DOC02 = process.env.DOC02_FILE || join(root, 'docs', '02-repository-layout.md');
 const DOC03 = process.env.DOC03_FILE || join(root, 'docs', '03-data-model.md');
 const DOC12 = process.env.DOC12_FILE || join(root, 'docs', '12-deployment-observability.md');
@@ -379,6 +382,27 @@ for (const f of ['application.yaml', 'application-dev.yaml', 'application-uat.ya
     const ports = JSON.stringify(n.ports || []);
     if (devEdge && !ports.includes(`"${devEdge}:80"`)) err(`[N01] nginx must publish ${devEdge}:80 — the .env.example dev BANK_PUBLIC_URL (${devEdge}) is the widget origin`);
     if (!JSON.stringify(n.volumes || []).includes('./nginx/nginx.conf')) err('[N01] nginx must mount ./nginx/nginx.conf (deploy/nginx/ — Phase 1 target, frozen now)');
+  }
+  // /admin routing is the edge's job and must be the single-redirect, prefix-strip pattern:
+  // `location = /admin { return 301 /admin/; }` + `location /admin/ { proxy_pass
+  // http://backoffice-web:80/; }`. The previous regex + $request_uri delegation into an alias
+  // location left the browser on a 302 it never followed — "admin can't be loaded" with every
+  // container healthy.
+  {
+    const edge = read(EDGE_NGINX_FILE);
+    const adminRedir = edge.match(/location = \/admin[^\n]*\n\s*return 3\d\d \/admin\/;/);
+    if (!adminRedir) err('[N02] edge nginx.conf must redirect `location = /admin` with `return 301 /admin/;` — one plain redirect, no proxying');
+    const adminPrefix = edge.match(/location \/admin\/[^\n]*\n\s*proxy_pass http:\/\/backoffice-web:80\/;/);
+    if (!adminPrefix) err('[N02] edge nginx.conf must strip /admin/ with `location /admin/ { proxy_pass http://backoffice-web:80/; }` — the backoffice container always serves root-relative URLs, and $request_uri into an alias location breaks the SPA');
+    if (/proxy_pass http:\/\/backoffice-web:80\$request_uri/.test(edge)) err('[N02] edge must not proxy /admin with $request_uri — the backoffice container serves at root, so the prefix must be stripped by proxy_pass');
+    // backoffice container conf must be the simple alias-free static host
+    const bconf = read(BACKOFFICE_CONF_FILE);
+    if (!bconf.includes('try_files $uri $uri/ /index.html')) err('[N03] nginx.backoffice.conf must serve the SPA fallback `try_files $uri $uri/ /index.html` at root');
+    if (bconf.includes('alias /usr/share/nginx/html') || bconf.includes('return 302 /admin/') || bconf.includes('return 301 /admin/')) {
+      err('[N03] nginx.backoffice.conf must be alias-free and redirect-free — the edge owns /admin; alias+try_files+return produced a 302 loop that never reached the admin SPA');
+    }
+    const fdf = read(FRONT_DOCKERFILE_FILE);
+    if (!fdf.includes('nginx.frontoffice.conf')) err('[N03] Dockerfile.frontoffice-web must install deploy/nginx/nginx.frontoffice.conf — the stock nginx default.conf is not the contract (module-script MIME guard lives there)');
   }
   ok.push('redis: appendonly + healthcheck · nginx: edge port matches the .env.example dev origin');
 }

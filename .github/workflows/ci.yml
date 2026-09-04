@@ -211,6 +211,28 @@ jobs:
             -H 'Content-Type: application/json' \
             -d '{"text":"comment ouvrir un compte courant ?","locale":"fr-FR"}' \
             | head -c 1200
+      - name: Smoke — SPA shells via the edge (frontoffice, admin, module MIME)
+        run: |
+          set -euo pipefail
+          # frontoffice: index + the module bundle must be a real JS file, not HTML (a
+          # non-JS MIME makes the browser refuse the module → blank page with 200s)
+          body=$(curl -sf http://localhost:9000/)
+          echo "$body" | grep -q "Al-Mouchir" || { echo "frontoffice index missing"; exit 1; }
+          js=$(echo "$body" | grep -oE 'main-[A-Za-z0-9_-]+\.js' | head -1)
+          [ -n "$js" ] || { echo "no main bundle in frontoffice index"; exit 1; }
+          ctype=$(curl -sfI "http://localhost:9000/$js" | grep -i '^content-type:' | tr -d '\r')
+          echo "$ctype" | grep -qi "javascript" || { echo "bad module MIME: $ctype"; exit 1; }
+          echo "frontoffice OK ($js → $ctype)"
+          # admin: /admin must 301→/admin/ and follow to the real admin index (no 302 loop)
+          loc=$(curl -s -o /dev/null -w '%{redirect_url}' http://localhost:9000/admin)
+          [ "$loc" = "http://localhost:9000/admin/" ] || { echo "bad /admin redirect: $loc"; exit 1; }
+          admin=$(curl -sfL http://localhost:9000/admin/)
+          echo "$admin" | grep -q "Al-Mouchir Admin" || { echo "admin index missing"; exit 1; }
+          ajs=$(echo "$admin" | grep -oE 'main-[A-Za-z0-9_-]+\.js' | head -1)
+          [ -n "$ajs" ] || { echo "no main bundle in admin index"; exit 1; }
+          ctype2=$(curl -sfI "http://localhost:9000/admin/$ajs" | grep -i '^content-type:' | tr -d '\r')
+          echo "$ctype2" | grep -qi "javascript" || { echo "bad admin module MIME: $ctype2"; exit 1; }
+          echo "admin OK ($ajs → $ctype2)"
       - name: Show containers
         if: always()
         run: docker compose --env-file .env -f deploy/docker-compose.yml --profile app ps

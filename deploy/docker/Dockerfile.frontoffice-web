@@ -8,6 +8,7 @@ COPY apps/ ./
 RUN npm run build:ui && npx ng build frontoffice-web --configuration production
 
 FROM nginx:1.28-alpine
+COPY deploy/nginx/nginx.frontoffice.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /src/dist/frontoffice-web/browser /usr/share/nginx/html
 EXPOSE 80
 HEALTHCHECK --interval=15s --timeout=3s --retries=5 \

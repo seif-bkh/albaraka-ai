@@ -27,7 +27,7 @@ const ADR008 = join(root, 'docs', 'adr', 'ADR-008-platform-versions.md');
 
 const readCompose = () => yaml.load(readFileSync(SRC, 'utf8'));
 
-function runLint(compose, { doc02, adr008, envExample, makefile, envSync, rootCompose } = {}) {
+function runLint(compose, { doc02, adr008, envExample, makefile, envSync, rootCompose, edgeNginx, backConf, frontDf } = {}) {
   const dir = mkdtempSync(join(tmpdir(), 'compose-lint-'));
   const env = { ...process.env, COMPOSE_FILE: join(dir, 'docker-compose.yml') };
   writeFileSync(env.COMPOSE_FILE, yaml.dump(compose, { lineWidth: 120 }), 'utf8');
@@ -37,6 +37,9 @@ function runLint(compose, { doc02, adr008, envExample, makefile, envSync, rootCo
   if (makefile) { env.MAKEFILE_FILE = join(dir, 'Makefile'); writeFileSync(env.MAKEFILE_FILE, makefile, 'utf8'); }
   if (envSync) { env.ENV_SYNC_FILE = join(dir, 'env-sync.sh'); writeFileSync(env.ENV_SYNC_FILE, envSync, 'utf8'); }
   if (rootCompose) { env.ROOT_COMPOSE_FILE = join(dir, 'compose.yaml'); writeFileSync(env.ROOT_COMPOSE_FILE, rootCompose, 'utf8'); }
+  if (edgeNginx) { env.EDGE_NGINX_FILE = join(dir, 'edge.conf'); writeFileSync(env.EDGE_NGINX_FILE, edgeNginx, 'utf8'); }
+  if (backConf) { env.BACKOFFICE_CONF_FILE = join(dir, 'back.conf'); writeFileSync(env.BACKOFFICE_CONF_FILE, backConf, 'utf8'); }
+  if (frontDf) { env.FRONT_DOCKERFILE_FILE = join(dir, 'Dockerfile.front'); writeFileSync(env.FRONT_DOCKERFILE_FILE, frontDf, 'utf8'); }
   let r;
   try {
     const out = execFileSync(process.execPath, [LINT], { env, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
@@ -61,6 +64,12 @@ const ENV_SYNCFILE = join(root, 'tools', 'env-sync.sh');
 const envSyncSrc = () => readFileSync(ENV_SYNCFILE, 'utf8');
 const ROOTCOMPOSE = join(root, 'compose.yaml');
 const rootComposeSrc = () => readFileSync(ROOTCOMPOSE, 'utf8');
+const EDGENGINX = join(root, 'deploy', 'nginx', 'nginx.conf');
+const edgeNginxSrc = () => readFileSync(EDGENGINX, 'utf8');
+const BACKCONF = join(root, 'deploy', 'docker', 'nginx.backoffice.conf');
+const backConfSrc = () => readFileSync(BACKCONF, 'utf8');
+const FRONTDF = join(root, 'deploy', 'docker', 'Dockerfile.frontoffice-web');
+const frontDfSrc = () => readFileSync(FRONTDF, 'utf8');
 
 const MUTATIONS = [
   // ── G — services & profiles ─────────────────────────────────────────────────────────────────
@@ -167,6 +176,14 @@ const MUTATIONS = [
   { id: 'M44 env-sync stops migrating the pre-9000 realm URLs', run: () => {}, expect: '[E16] tools/env-sync.sh must migrate', file: 'envSync',
     prepare: () => envSyncSrc().replaceAll('migrate stale dev URLs', 'keep the old URLs') },
 
+  // ── SPA delivery (edge /admin routing, explicit container confs, module MIME guard) ────────
+  { id: 'M45 the edge regresses to $request_uri into the backoffice alias', run: () => {}, expect: '[N02] edge must not proxy /admin with $request_uri', file: 'edgeNginx',
+    prepare: () => edgeNginxSrc().replace('proxy_pass http://backoffice-web:80/;', 'proxy_pass http://backoffice-web:80$request_uri;') },
+  { id: 'M46 backoffice conf returns to alias + redirects', run: () => {}, expect: '[N03] nginx.backoffice.conf must be alias-free', file: 'backConf',
+    prepare: () => backConfSrc().replace('try_files $uri $uri/ /index.html;', 'alias /usr/share/nginx/html/;\n        try_files $uri $uri/ /index.html;\n    location = / { return 302 /admin/; }') },
+  { id: 'M47 frontoffice drops its explicit container conf', run: () => {}, expect: '[N03] Dockerfile.frontoffice-web must install', file: 'frontDf',
+    prepare: () => frontDfSrc().replace('COPY deploy/nginx/nginx.frontoffice.conf /etc/nginx/conf.d/default.conf\n', '') },
+
   // ── negative controls ───────────────────────────────────────────────────────────────────────
   { id: 'N1 a label is not a contract change', expectPass: true, run: (c) => { svc(c, 'redis').labels = { 'dev.notes': 'local cache' }; }, expect: null },
   { id: 'N2 a restart policy change is not checked', expectPass: true, run: (c) => { svc(c, 'minio-init').restart = 'unless-stopped'; }, expect: null },
@@ -194,13 +211,16 @@ for (const m of MUTATIONS) {
   const makefile = m.file === 'makefile' ? m.prepare() : undefined;
   const envSync = m.file === 'envSync' ? m.prepare() : undefined;
   const rootCompose = m.file === 'rootCompose' ? m.prepare() : undefined;
+  const edgeNginx = m.file === 'edgeNginx' ? m.prepare() : undefined;
+  const backConf = m.file === 'backConf' ? m.prepare() : undefined;
+  const frontDf = m.file === 'frontDf' ? m.prepare() : undefined;
   let applied = true;
   const before = JSON.stringify(compose);
   try { if (m.run) m.run(compose); } catch (e) { applied = false; broken++; console.log(`  BROKEN  ${m.id}\n          ${e.message}`); }
   if (m.file && !m.prepare) { applied = false; broken++; console.log(`  BROKEN  ${m.id}\n          authority mutation has no preparation`); }
   if (applied && !m.file && before === JSON.stringify(compose)) { applied = false; broken++; console.log(`  BROKEN  ${m.id}\n          mutation changed nothing — anchor drifted`); }
   if (applied) {
-    const { code, out } = runLint(compose, { doc02, adr008, envExample, makefile, envSync, rootCompose });
+    const { code, out } = runLint(compose, { doc02, adr008, envExample, makefile, envSync, rootCompose, edgeNginx, backConf, frontDf });
     const good = m.expectPass ? code === 0 : (code !== 0 && out.includes(m.expect));
     if (good) console.log(`  ok      ${m.id}${m.expectPass ? '  (negative control)' : ''}`);
     else {
