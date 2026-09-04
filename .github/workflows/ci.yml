@@ -285,17 +285,23 @@ jobs:
           [ "$ok" = "1" ] || { echo "chat SSE smoke failed — no answer event" | tee -a /tmp/devstack-smoke.txt; exit 1; }
       - name: Smoke — SPA shells via the edge (frontoffice, admin, module MIME)
         run: |
-          (
-            set -euo pipefail
+          # GHA invokes bash with -e: a bare `( ... ) > file` subshell that fails would exit
+          # the outer script before diagnostics could be captured, so take the status in an
+          # if-condition (exempt from -e) and mirror the output afterwards.
+          if ( set -euo pipefail
             # The edge/web containers only start after server AND keycloak are healthy
-            # (depends_on conditions), so the checks below must not race the boot — poll
-            # the frontoffice index first.
-            for i in $(seq 1 18); do
-              if curl -sf --max-time 5 http://localhost:9000/ 2>/dev/null | grep -q "Al-Mouchir"; then
-                echo "frontoffice index ready after $((i*5))s"
+            # (depends_on conditions), so the checks below must not race the boot — poll the
+            # WHOLE edge chain (index content, module MIME, admin index) before asserting.
+            for i in $(seq 1 24); do
+              body=$(curl -sf --max-time 5 http://localhost:9000/ 2>/dev/null || true)
+              js=$(echo "$body" | grep -oE 'main-[A-Za-z0-9_-]+\.js' | head -1)
+              if [ -n "$body" ] && [ -n "$js" ] && echo "$body" | grep -q "Al-Mouchir" &&
+                 curl -sfI --max-time 5 "http://localhost:9000/$js" 2>/dev/null | grep -qi "javascript" &&
+                 curl -sfL --max-time 5 http://localhost:9000/admin/ 2>/dev/null | grep -q "Al-Mouchir Admin"; then
+                echo "edge ready after $((i*5))s"
                 break
               fi
-              [ "$i" = "18" ] && { echo "frontoffice index missing"; exit 1; }
+              [ "$i" = "24" ] && { echo "edge not ready"; exit 1; }
               sleep 5
             done
             # frontoffice: index + the module bundle must be a real JS file, not HTML (a
@@ -317,12 +323,15 @@ jobs:
             ctype2=$(curl -sfI "http://localhost:9000/admin/$ajs" | grep -i '^content-type:' | tr -d '\r')
             echo "$ctype2" | grep -qi "javascript" || { echo "bad admin module MIME: $ctype2"; exit 1; }
             echo "admin OK ($ajs → $ctype2)"
-          ) > /tmp/devstack-spa.txt 2>&1
-          rc=$?
+          ) > /tmp/devstack-spa.txt 2>&1; then
+            rc=0
+          else
+            rc=$?
+          fi
           cat /tmp/devstack-spa.txt
           echo "── SPA smoke output (rc=$rc) ──" >> /tmp/devstack-smoke.txt
           cat /tmp/devstack-spa.txt >> /tmp/devstack-smoke.txt
-          exit $rc
+          [ "$rc" -eq 0 ] || exit "$rc"
       - name: Show containers
         if: always()
         run: docker compose --env-file .env -f deploy/docker-compose.yml --profile app ps
