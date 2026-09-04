@@ -52,10 +52,9 @@ public class ChatController {
             return new ChatContext(conv.id(), userMsg, ord);
         }).subscribeOn(Schedulers.boundedElastic());
 
-        return ctx.flatMapMany(c -> rag.streamChat(new RagChatRequest(
-                        req.text(),
-                        new RagChatRequest.Context(c.conversationId(), c.userMessageId(), locale,
-                                "WEB_APP", "PUBLIC", "PUBLIC", Map.of(), null, null, List.of())))
+        return ctx.flatMapMany(c -> rag.streamChat(RagChatRequest.chat(
+                        req.text(), c.conversationId(), c.userMessageId(), locale,
+                        "WEB_APP", "PUBLIC", "PUBLIC", Map.of()))
                 .concatMap(e -> persistAndSse(c, e))
                 .subscribeOn(Schedulers.boundedElastic()));
     }

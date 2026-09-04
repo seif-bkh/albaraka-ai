@@ -1,35 +1,34 @@
 package tn.albaraka.ai.shared.rag;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 /**
  * POST /v1/rag/chat body — internal contract docs/08 §8.2 + docs/04 §2 (X-RAG-Contract: 1).
- * Wire names are snake_case, the pydantic models on the Python side; Jackson 3 keeps its
- * annotations in com.fasterxml (only core/databind moved to tools.jackson). Optional context
- * fields (retrieval_config/prompt/model/history) are omitted when null by the global
- * non_null inclusion, matching the pydantic defaults.
+ * The wire shape is snake_case to match the pydantic ChatRequest in rag-assistant:
+ * {text, context:{conversation_id, message_id, locale, channel, audience,
+ * max_classification, retrieval_config, prompt, model, history}}.
+ *
+ * The context is carried as a map because this module has no Jackson on its classpath (annotations
+ * are unavailable here); wire keys live in this one factory so the contract stays reviewable.
+ * prompt/model/history are omitted when null — the pydantic side applies its defaults.
  */
 public record RagChatRequest(
         String text,
-        Context context
+        Map<String, Object> context
 ) {
-    public record Context(
-            @JsonProperty("conversation_id") UUID conversationId,
-            @JsonProperty("message_id") UUID messageId,
-            String locale,
-            String channel,
-            String audience,
-            @JsonProperty("max_classification") String maxClassification,
-            @JsonProperty("retrieval_config") Map<String, Object> retrievalConfig,
-            Map<String, Object> prompt,
-            Map<String, Object> model,
-            List<HistoryTurn> history
-    ) {
+    public static RagChatRequest chat(String text, UUID conversationId, UUID messageId, String locale,
+                                      String channel, String audience, String maxClassification,
+                                      Map<String, Object> retrievalConfig) {
+        Map<String, Object> ctx = new HashMap<>();
+        ctx.put("conversation_id", conversationId);
+        ctx.put("message_id", messageId);
+        ctx.put("locale", locale);
+        ctx.put("channel", channel);
+        ctx.put("audience", audience);
+        ctx.put("max_classification", maxClassification);
+        ctx.put("retrieval_config", retrievalConfig == null ? Map.of() : retrievalConfig);
+        return new RagChatRequest(text, ctx);
     }
-
-    public record HistoryTurn(String role, String content) {}
 }
