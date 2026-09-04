@@ -320,9 +320,13 @@ jobs:
             echo "── keycloak published issuer (well-known) ──"
             curl -s http://localhost:9001/realms/albaraka/.well-known/openid-configuration \
               | grep -oE '"issuer":"[^"]*"|"jwks_uri":"[^"]*"' | tee -a /tmp/devstack-smoke.txt || true
+            echo "── keycloak published JWKS (public keys only) ──"
+            curl -s http://localhost:9001/realms/albaraka/protocol/openid-connect/certs \
+              | tee -a /tmp/devstack-smoke.txt || true
+            echo ""
             echo "── server auth / keycloak lines ──"
-            docker compose --env-file .env -f deploy/docker-compose.yml --profile app logs server --tail=80 2>&1 \
-              | grep -iE "auth:|keycloak|token grant|jwt|header claims" | tail -25 | tee -a /tmp/devstack-smoke.txt || true
+            docker compose --env-file .env -f deploy/docker-compose.yml --profile app logs server --tail=120 2>&1 \
+              | grep -iE "auth:|keycloak|token grant|jwt|claims|at tn\.|Caused by" | tail -35 | tee -a /tmp/devstack-smoke.txt || true
             docker compose --env-file .env -f deploy/docker-compose.yml --profile app logs keycloak --tail=80 2>&1 \
               | grep -iE "error|warn|grant|client" | tail -25 | tee -a /tmp/devstack-smoke.txt || true
             exit 1

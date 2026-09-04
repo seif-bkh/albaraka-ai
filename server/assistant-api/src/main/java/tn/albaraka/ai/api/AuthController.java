@@ -71,11 +71,11 @@ public class AuthController {
                             .map(jwt -> new LoginResponse(token, userOf(jwt)))
                             .onErrorMap(e -> {
                                 // token issued but our resource server refuses it (audience/issuer/jwk
-                                // mismatch) — log the real reason plus the token's own alg/iss so the
+                                // mismatch) — log the real reason plus the token's own claims so the
                                 // deploy mismatch is visible without exposing the token itself
-                                log.warn("auth: token rejected by the resource server: {}", e.toString());
+                                log.warn("auth: token rejected by the resource server", e);
                                 describeToken(token).ifPresent(desc ->
-                                        log.warn("auth: token header claims — {}", desc));
+                                        log.warn("auth: token claims (parse-only) — {}", desc));
                                 return ApiException.unprocessable("AUTH.INVALID_CREDENTIALS", "invalid credentials");
                             });
                 })
@@ -92,12 +92,33 @@ public class AuthController {
                 });
     }
 
-    /** Parse-only inspection (no signature validation): alg + iss, for issuer-mismatch diagnosis. */
+    /**
+     * Parse-only inspection (no signature validation): header alg/kid/typ plus the claim fields
+     * that resource-server validation touches (iss, aud, sub, exp, nbf, azp, scope, roles). The
+     * raw token is never logged. Values are stringified defensively so a missing claim still
+     * shows up as {@code null} instead of aborting the whole diagnostic.
+     */
     private static java.util.Optional<String> describeToken(String token) {
         try {
             var jwt = com.nimbusds.jwt.SignedJWT.parse(token);
-            return java.util.Optional.of("alg=" + jwt.getHeader().getAlgorithm()
-                    + ", iss=" + jwt.getJWTClaimsSet().getIssuer());
+            var claims = jwt.getJWTClaimsSet();
+            Object aud = claims.getAudience() == null ? null
+                    : claims.getAudience().size() == 1 ? claims.getAudience().get(0) : claims.getAudience();
+            Object realmAccess = claims.getClaim("realm_access");
+            Object roles = realmAccess instanceof Map<?, ?> m ? m.get("roles") : null;
+            return java.util.Optional.of(
+                    "alg=" + jwt.getHeader().getAlgorithm()
+                            + ", kid=" + jwt.getHeader().getKeyID()
+                            + ", typ=" + jwt.getHeader().getType()
+                            + ", iss=" + claims.getIssuer()
+                            + ", aud=" + aud + " [" + (aud == null ? "null" : aud.getClass().getSimpleName()) + "]"
+                            + ", sub=" + claims.getSubject()
+                            + ", email=" + (claims.getClaim("email") != null)
+                            + ", exp=" + claims.getExpirationTime()
+                            + ", nbf=" + claims.getNotBeforeTime()
+                            + ", azp=" + claims.getClaim("azp")
+                            + ", scope=" + claims.getClaim("scope")
+                            + ", realm_access.roles=" + roles);
         } catch (Exception e) {
             return java.util.Optional.empty();
         }
@@ -113,10 +134,17 @@ public class AuthController {
         Map<String, Object> realm = jwt.getClaimAsMap("realm_access");
         List<String> roles = realm != null && realm.get("roles") instanceof List<?> l
                 ? l.stream().map(String::valueOf).toList() : List.of();
-        return Map.of(
-                "subject", jwt.getSubject(),
-                "email", jwt.getClaimAsString("email") != null ? jwt.getClaimAsString("email") : jwt.getSubject(),
-                "name", jwt.getClaimAsString("name") != null ? jwt.getClaimAsString("name") : jwt.getSubject(),
-                "roles", roles);
+        // LinkedHashMap (not Map.of): Map.of throws NPE on any null value, and a missing
+        // email/name claim must fall back to the subject instead of killing the response.
+        Map<String, Object> user = new java.util.LinkedHashMap<>();
+        user.put("subject", jwt.getSubject());
+        user.put("email", firstNonNull(jwt.getClaimAsString("email"), jwt.getSubject()));
+        user.put("name", firstNonNull(jwt.getClaimAsString("name"), jwt.getSubject()));
+        user.put("roles", roles);
+        return user;
+    }
+
+    private static String firstNonNull(String first, String fallback) {
+        return first != null ? first : fallback;
     }
 }
