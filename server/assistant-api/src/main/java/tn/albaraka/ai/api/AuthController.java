@@ -50,6 +50,7 @@ public class AuthController {
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .body(BodyInserters.fromFormData("grant_type", "password")
                         .with("client_id", kc.backofficeClientId())
+                        .with("client_secret", kc.backofficeClientSecret())
                         .with("username", body.email())
                         .with("password", body.password())
                         .with("scope", "openid"))

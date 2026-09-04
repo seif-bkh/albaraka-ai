@@ -149,7 +149,11 @@ albaraka:
   # ── keycloak integration (token bridge + resource server issuer from env) ─────────────────────
   keycloak:
     token-url: ${ALBARAKA_KEYCLOAK_TOKEN_URL:http://keycloak:8080/realms/albaraka/protocol/openid-connect/token}
-    backoffice-client-id: ${ALBARAKA_KEYCLOAK_BACKOFFICE_CLIENT_ID:albaraka-backoffice-web}
+    # The server-side password grant MUST use the confidential DAG bridge client
+    # (albaraka-assistant-bridge). The public albaraka-backoffice-web SPA client has DAG disabled
+    # by policy (realm-lint M14); pointing the bridge at it makes every login fail with
+    # AUTH.INVALID_CREDENTIALS even though the password is correct.
+    backoffice-client-id: ${ALBARAKA_KEYCLOAK_BACKOFFICE_CLIENT_ID:albaraka-assistant-bridge}
     backoffice-client-secret: ${KEYCLOAK_BRIDGE_CLIENT_SECRET:dev-bridge-secret-change-me}
 
   # ── CORS: dev origins are the compose edge + the local ng serves ─────────────────────────────
