@@ -3,7 +3,7 @@
 # ══════════════════════════════════════════════════════════════════════════════════════════════
 COMPOSE = docker compose --env-file .env -f deploy/docker-compose.yml --profile app
 
-.PHONY: up down clean logs ps diag dev web admin eval rag-test verify-db spike build lint-all seed-gen-check
+.PHONY: up down clean reset-db logs ps diag dev web admin eval rag-test verify-db spike build lint-all seed-gen-check
 
 # ── your host: the deliverable ────────────────────────────────────────────────────────────────
 up:            ## build + start the full application (mock providers by default)
@@ -13,6 +13,11 @@ up:            ## build + start the full application (mock providers by default)
 	  $(COMPOSE) ps -a; \
 	  echo; echo "── last 60 lines per service (logs) ──"; \
 	$(COMPOSE) logs --tail=60 2>&1 | tail -300; \
+	  if $(COMPOSE) logs server 2>/dev/null | grep -q "Found non-empty schema"; then \
+	    echo; echo "── stale dev database: the postgres volume has a schema but no Flyway history ──"; \
+	    echo "   (this DB was created by an older stack version; Flyway refuses to baseline it by design.)"; \
+	    echo "   fix:  make reset-db   &&   make up"; \
+	  fi; \
 	  echo; echo "── full logs:  make logs   ·   paste this output when reporting the failure ──"; \
 	  exit 1; }
 	@echo
@@ -28,6 +33,13 @@ down:          ## stop the application (volumes kept)
 
 clean:         ## stop + remove all named volumes (fresh state — next `make up` re-seeds)
 	$(COMPOSE) down -v
+
+reset-db:      ## stop + remove ONLY the postgres data volume (Flyway re-migrates on next `make up`)
+	bash tools/env-sync.sh
+	@$(COMPOSE) down 2>/dev/null || true
+	@vol=$$($(COMPOSE) config --volumes 2>/dev/null | grep -m1 pgdata || docker volume ls -q --filter name=pgdata | head -1); \
+	if [ -n "$$vol" ]; then echo "removing postgres data volume: $$vol"; docker volume rm -f "$$vol"; \
+	else echo "no postgres data volume found (nothing to reset)"; fi
 
 logs:          ## tail all service logs
 	$(COMPOSE) logs -f --tail=100

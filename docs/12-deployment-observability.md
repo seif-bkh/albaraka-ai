@@ -99,6 +99,20 @@ flowchart TB
 without any paid API. Set the keys and `RAG_PROVIDER_MODE=live` to use real models. The
 `rag-assistant` container is the only service that can reach providers (ADR-009).
 
+**Stale dev database.** The demo data is disposable, but Flyway refuses to adopt a schema that has
+no history table (production-safe `baseline-on-migrate: false`). If a volume was created by an older
+stack version, `make up` fails with `Found non-empty schema(s) "albaraka_ai" but no schema history
+table`. Fix with the surgical reset (postgres volume only — Keycloak, MinIO and Redis state is
+kept), then re-run:
+
+```bash
+make reset-db
+make up
+```
+
+`make clean` (stop + remove **all** named volumes) is the heavier alternative and is the only
+command that wipes Keycloak/MinIO state too.
+
 ## 3. Images & build
 
 | Aspect | Decision |
