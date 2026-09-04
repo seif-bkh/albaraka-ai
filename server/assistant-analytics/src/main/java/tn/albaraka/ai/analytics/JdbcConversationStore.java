@@ -105,11 +105,15 @@ public class JdbcConversationStore {
     }
 
     public void saveRetrievalTrace(UUID messageId, String intent, String contextJson, double bestScore, String outcome) {
+        // the composite FK (message_id, message_created_at) → message(id, created_at) requires the
+        // message row's ACTUAL created_at, not now(): the two now() calls never agree to the
+        // microsecond, and the insert failed with 'not present in table "message"'.
         db.update("""
                 INSERT INTO albaraka_ai.retrieval_trace
                   (id, message_id, message_created_at, intent, assembled_context, best_score, outcome, created_at)
-                VALUES (?, ?, now(), ?::intent_code, ?::jsonb, ?, ?, now())
-                """, UUID.randomUUID(), messageId, intent, contextJson, bestScore, outcome);
+                SELECT ?, m.id, m.created_at, ?::intent_code, ?::jsonb, ?, ?, m.created_at
+                FROM albaraka_ai.message m WHERE m.id = ?
+                """, UUID.randomUUID(), intent, contextJson, bestScore, outcome, messageId);
     }
 
     public void saveLlmCall(UUID messageId, String purpose, String provider, String modelId,
