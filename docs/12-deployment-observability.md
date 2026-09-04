@@ -113,6 +113,12 @@ make up
 `make clean` (stop + remove **all** named volumes) is the heavier alternative and is the only
 command that wipes Keycloak/MinIO state too.
 
+**Realm-affecting fixes need `make clean`, not `make reset-db`.** The Keycloak realm is imported
+with `IGNORE_EXISTING`, so changes to `specs/keycloak/albaraka-realm.json` (users, signing
+algorithm, clients, …) never reach an existing `keycloakdata` volume. After pulling such a fix,
+run `make clean && make up` — `make reset-db` only resets Postgres and would keep serving the
+stale realm.
+
 ## 3. Images & build
 
 | Aspect | Decision |
